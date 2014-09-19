@@ -27,7 +27,10 @@ namespace Pluton {
 		}
 
 		public void Kill() {
-			basePlayer.StartDead();
+			var info = new HitInfo ();
+			info.damageType = Rust.DamageType.Suicide;
+			info.Initiator = basePlayer as BaseEntity;
+			basePlayer.Die(info);
 		}
 
 		public bool Admin {
