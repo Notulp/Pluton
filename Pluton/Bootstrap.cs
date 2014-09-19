@@ -16,7 +16,8 @@ namespace Pluton {
 
 		public static void Init() {
 			server.official = false;
-			server.hostname += " [Pluton mod]";
+			if (!server.hostname.ToLower().Contains("pluton"))
+				server.hostname += " [Pluton mod]";
 
 			var approve = new ProtoBuf.Approval();
 			approve.modded = true;

@@ -12,6 +12,8 @@ namespace Pluton {
 
 		public static event PlayerConnectedDelegate OnPlayerConnected;
 
+		public static event PlayerDiedDelegate OnPlayerDied;
+
 		public static event PlayerDisconnectedDelegate OnPlayerDisconnected;
 
 		public static event GatheringDelegate OnGathering;
@@ -56,7 +58,7 @@ namespace Pluton {
 			OnChat(arg);
 		}
 
-		public static void Gathering(HitInfo info, BaseResource res) {
+		public static void Gathering(BaseResource res, HitInfo info) {
 			if (!Realm.Server())
 				return;
 
@@ -75,6 +77,11 @@ namespace Pluton {
 			OnPlayerConnected(new Player(player));
 		}
 
+		public static void PlayerDied(BasePlayer player, HitInfo info) {
+			Debug.Log(player.displayName + " just died");
+			OnPlayerDied(new Events.DeathEvent(new Player(player), info));
+		}
+
 		public static void PlayerDisconnected(BasePlayer player) {
 			Debug.Log(player.displayName + " left the reality");
 			OnPlayerDisconnected(new Player(player));
@@ -90,9 +97,11 @@ namespace Pluton {
 
 		public delegate void PlayerConnectedDelegate(Player player);
 
+		public delegate void PlayerDiedDelegate(Events.DeathEvent de);
+
 		public delegate void PlayerDisconnectedDelegate(Player player);
 
-		public delegate void GatheringDelegate(Events.GatherEvent evt);
+		public delegate void GatheringDelegate(Events.GatherEvent ge);
 
 		#endregion
 

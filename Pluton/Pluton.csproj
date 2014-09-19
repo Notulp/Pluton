@@ -47,6 +47,7 @@
     <Compile Include="Player.cs" />
     <Compile Include="PlaceHolder.cs" />
     <Compile Include="Events\GatherEvent.cs" />
+    <Compile Include="Events\DeathEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -52,8 +52,8 @@ namespace Pluton.Patcher {
 				CloneMethod(gather);
 				// clear out the method, we will recreate it in Pluton
 				gather.Body.Instructions.Clear();
-				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
 				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
 				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
 				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
 
@@ -77,6 +77,25 @@ namespace Pluton.Patcher {
 				// 32 = end of the method
 				iLProcessor.InsertBefore(bpInit.Body.Instructions[32], Instruction.Create(OpCodes.Ldarg_1));
 				iLProcessor.InsertAfter(bpInit.Body.Instructions[32], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
+
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void PlayerDiedPatch() {
+			try {
+				TypeDefinition bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
+				MethodDefinition die = bPlayer.GetMethod("Die");
+				MethodDefinition playerDied = hooksClass.GetMethod("PlayerDied");
+
+				CloneMethod(die);
+				// clear out the method, we will recreate it in Pluton
+				ILProcessor iLProcessor = die.Body.GetILProcessor();
+				iLProcessor.InsertBefore(die.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(die.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(die.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied)));
 
 			} catch (Exception ex) {
 				Console.WriteLine("Error at: " + ex.TargetSite.Name);
@@ -129,6 +148,7 @@ namespace Pluton.Patcher {
 			GatherPatch();
 			PlayerConnectedPatch();
 			PlayerDisconnectedPatch();
+			PlayerDiedPatch();
 
 			try {
 				// TODO: fix, crashed the server
