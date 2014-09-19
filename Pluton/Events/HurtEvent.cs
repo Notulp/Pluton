@@ -1,18 +1,12 @@
 ﻿using System;
 
 namespace Pluton.Events {
-	public class DeathEvent {
+	public class HurtEvent {
 
 		private HitInfo _info;
 
-		public DeathEvent(HitInfo info) {
+		public HurtEvent(HitInfo info) {
 			_info = info;
-		}
-
-		public float DamageAmount {
-			get {
-				return _info.damageAmount;
-			}
 		}
 
 		public string DamageType {
