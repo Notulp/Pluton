@@ -48,6 +48,13 @@
     <Compile Include="PlaceHolder.cs" />
     <Compile Include="Events\GatherEvent.cs" />
     <Compile Include="Events\DeathEvent.cs" />
+    <Compile Include="World.cs" />
+    <Compile Include="Events\HurtEvent.cs" />
+    <Compile Include="Events\PlayerHurtEvent.cs" />
+    <Compile Include="Events\PlayerDeathEvent.cs" />
+    <Compile Include="Events\NPCHurtEvent.cs" />
+    <Compile Include="Events\NPCDeathEvent.cs" />
+    <Compile Include="NPC.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
