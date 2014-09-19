@@ -35,9 +35,6 @@
     <Reference Include="Mono.Cecil">
       <HintPath>ref\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\testfiles\Assembly-CSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

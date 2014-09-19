@@ -43,6 +43,26 @@ namespace Pluton.Patcher {
 			}
 		}
 
+		private static void GatherPatch() {
+			try {
+				TypeDefinition bRes = rustAssembly.MainModule.GetType("BaseResource");
+				MethodDefinition gather = bRes.GetMethod("OnAttacked");
+				MethodDefinition gathering = hooksClass.GetMethod("Gathering");
+
+				CloneMethod(gather);
+				// clear out the method, we will recreate it in Pluton
+				gather.Body.Instructions.Clear();
+				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
+				gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
 		private static void PlayerConnectedPatch() {
 			try {
 				TypeDefinition basePlayer = rustAssembly.MainModule.GetType("BasePlayer");
@@ -104,9 +124,11 @@ namespace Pluton.Patcher {
 			bool success = true;
 
 			BootstrapAttachPatch();
+
+			ChatPatch();
+			GatherPatch();
 			PlayerConnectedPatch();
 			PlayerDisconnectedPatch();
-			ChatPatch();
 
 			try {
 				// TODO: fix, crashed the server

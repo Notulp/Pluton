@@ -14,6 +14,8 @@ namespace Pluton {
 
 		public static event PlayerDisconnectedDelegate OnPlayerDisconnected;
 
+		public static event GatheringDelegate OnGathering;
+
 		#endregion
 
 		#region Handlers
@@ -54,6 +56,19 @@ namespace Pluton {
 			OnChat(arg);
 		}
 
+		public static void Gathering(HitInfo info, BaseResource res) {
+			if (!Realm.Server())
+				return;
+
+			OnGathering(new Events.GatherEvent(info, res));
+
+			res.health -= info.damageAmount * info.resourceGatherProficiency;
+			if ((double) res.health <= 0.0)
+				res.Kill(ProtoBuf.EntityDestroy.Mode.None, 0, 0.0f, new Vector3());
+			else
+				res.Invoke("UpdateNetworkStage", 0.1f);
+		}
+
 		public static void PlayerConnected(Network.Connection connection) {
 			var player = connection.player as BasePlayer;
 			Debug.Log(player.displayName + " joined the fun");
@@ -76,6 +91,8 @@ namespace Pluton {
 		public delegate void PlayerConnectedDelegate(Player player);
 
 		public delegate void PlayerDisconnectedDelegate(Player player);
+
+		public delegate void GatheringDelegate(Events.GatherEvent evt);
 
 		#endregion
 

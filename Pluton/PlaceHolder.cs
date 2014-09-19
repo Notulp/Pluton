@@ -8,6 +8,7 @@ namespace Pluton {
 		public void InstallHooks() {
 			Hooks.OnPlayerConnected += new Hooks.PlayerConnectedDelegate(OnPlayerConnectedHandler);
 			Hooks.OnPlayerDisconnected += new Hooks.PlayerDisconnectedDelegate(OnPlayerDisconnectedHandler);
+			Hooks.OnGathering += new Hooks.GatheringDelegate(OnGatheringHandler);
 			Hooks.OnChat += new Hooks.ChatDelegate(OnChatHandler);
 			Hooks.OnCommand += new Hooks.CommandDelegate(OnCommandHandler);
 		}
@@ -18,6 +19,10 @@ namespace Pluton {
 
 		public void OnChatHandler(ConsoleSystem.Arg arg) {
 			Debug.Log(new Player(arg.Player()).Name + " says: " + arg.ArgsStr + " inside Pluton");
+		}
+
+		public void OnGatheringHandler(Events.GatherEvent evt) {
+			Debug.Log(evt.WeaponName + " " + evt.Prefab + " " + evt.DamageType);
 		}
 
 		public void OnPlayerConnectedHandler(Player player) {

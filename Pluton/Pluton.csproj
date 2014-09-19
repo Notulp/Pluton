@@ -30,14 +30,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Facepunch">
-      <HintPath>..\origFiles\Facepunch.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\origFiles\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\origFiles\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\origFiles\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\origFiles\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Facepunch">
+      <HintPath>..\..\..\origFiles\Facepunch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +46,10 @@
     <Compile Include="Hooks.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlaceHolder.cs" />
+    <Compile Include="Events\GatherEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Events\" />
+  </ItemGroup>
 </Project>
