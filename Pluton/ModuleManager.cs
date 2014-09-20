@@ -46,7 +46,7 @@ namespace Pluton
 				if (!FileInfo.Exists)
 					continue;
 
-				if (Array.IndexOf(Config.FougeriteConfig.EnumSection("Modules"), DirInfo.Name) == -1) {
+				if (Array.IndexOf(Config.PlutonConfig.EnumSection("Modules"), DirInfo.Name) == -1) {
 					Logger.LogDebug(string.Format("[Modules] {0} is not configured to be loaded.", DirInfo.Name));
 					continue;
 				}
