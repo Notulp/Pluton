@@ -11,6 +11,8 @@ namespace Pluton.Patcher {
 		private static TypeDefinition bAnimal;
 		private static TypeDefinition bPlayer;
 		private static TypeDefinition bEntity;
+		private static TypeDefinition bCorpse;
+		private static TypeDefinition bBlock;
 		private static string version = "1.0.0.0";
 
 		private static void BootstrapAttachPatch() {
@@ -240,6 +242,101 @@ namespace Pluton.Patcher {
 			}
 		}
 
+		private static void BuildingBlockAttackedPatch() {
+			try {
+				MethodDefinition bbAttacked = bBlock.GetMethod("OnAttacked");
+				MethodDefinition entAttacked = hooksClass.GetMethod("EntityAttacked");
+
+				CloneMethod(bbAttacked);
+				ILProcessor iLProcessor = bbAttacked.Body.GetILProcessor();
+				iLProcessor.InsertBefore(bbAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(bbAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(bbAttacked.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entAttacked)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void BuildingBlockFrameInitPatch() {
+			try {
+				MethodDefinition bbFrameInit = bBlock.GetMethod("BecomeFrame");
+				MethodDefinition entDeployed = hooksClass.GetMethod("EntityFrameDeployed");
+
+				CloneMethod(bbFrameInit);
+				ILProcessor iLProcessor = bbFrameInit.Body.GetILProcessor();
+				iLProcessor.InsertBefore(bbFrameInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(bbFrameInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entDeployed)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void BuildingBlockBuiltPatch() {
+			try {
+				MethodDefinition bbBuilt = bBlock.GetMethod("BecomeBuilt");
+				MethodDefinition entBuilt = hooksClass.GetMethod("EntityBuilt");
+
+				CloneMethod(bbBuilt);
+				ILProcessor iLProcessor = bbBuilt.Body.GetILProcessor();
+				iLProcessor.InsertBefore(bbBuilt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(bbBuilt.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuilt)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void BuildingBlockUpdatePatch() {
+			try {
+				MethodDefinition bbBuild = bBlock.GetMethod("DoBuild");
+				MethodDefinition entBuild = hooksClass.GetMethod("EntityBuildingUpdate");
+
+				CloneMethod(bbBuild);
+				ILProcessor iLProcessor = bbBuild.Body.GetILProcessor();
+				iLProcessor.InsertBefore(bbBuild.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(bbBuild.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(bbBuild.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldarg_2));
+				iLProcessor.InsertAfter(bbBuild.Body.Instructions[0x02], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void CorpseInitPatch() {
+			try {
+				MethodDefinition bcInit = bCorpse.GetMethod("InitCorpse");
+				MethodDefinition corpseInit = hooksClass.GetMethod("CorpseInit");
+
+				CloneMethod(bcInit);
+				ILProcessor iLProcessor = bcInit.Body.GetILProcessor();
+				iLProcessor.InsertBefore(bcInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(bcInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(bcInit.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(corpseInit)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void CorpseAttackedPatch() {
+			try {
+				MethodDefinition bcAttacked = bCorpse.GetMethod("OnAttacked");
+				MethodDefinition corpseHit = hooksClass.GetMethod("CorpseHit");
+
+				CloneMethod(bcAttacked);
+				ILProcessor iLProcessor = bcAttacked.Body.GetILProcessor();
+				iLProcessor.InsertBefore(bcAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(bcAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(bcAttacked.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(corpseHit)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
 		// from fougerite.patcher
 		private static MethodDefinition CloneMethod(MethodDefinition orig) {
 			MethodDefinition definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
@@ -261,22 +358,36 @@ namespace Pluton.Patcher {
 			hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
 			bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
 			bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
+			bEntity = rustAssembly.MainModule.GetType("BaseEntity");
+			bCorpse = rustAssembly.MainModule.GetType("BaseCorpse");
+			bBlock = rustAssembly.MainModule.GetType("BuildingBlock");
 
 			bool success = true;
 
 			BootstrapAttachPatch();
 
-			ChatPatch();
 			GatherPatch();
-			PlayerConnectedPatch();
+			ChatPatch();
+
 			PlayerDisconnectedPatch();
-			PlayerDiedPatch();
-			PlayerAttackedPatch();
-			PlayerTakeDamagePatch();
-			PlayerTakeDamageOLPatch();
+			PlayerConnectedPatch();
+
 			PlayerTakeRadiationPatch();
+			PlayerTakeDamageOLPatch();
+			PlayerTakeDamagePatch();
+			PlayerAttackedPatch();
+			PlayerDiedPatch();
+
 			NPCDiedPatch();
 			NPCHurtPatch();
+
+			CorpseAttackedPatch();
+			CorpseInitPatch();
+
+			BuildingBlockFrameInitPatch();
+			BuildingBlockAttackedPatch();
+			BuildingBlockUpdatePatch();
+			BuildingBlockBuiltPatch();
 
 			try {
 				// TODO: fix, crashed the server

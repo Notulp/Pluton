@@ -149,6 +149,68 @@ namespace Pluton {
 			Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " RAD dmg");
 		}
 
+		/*
+		 * bb.deployerUserName seems to be null
+		 * 
+		 */
+
+		// BuildingBlock.OnAttacked()
+		public static void EntityAttacked(BuildingBlock bb, HitInfo info) {
+			try { 
+				Debug.Log(info.Initiator.ToPlayer().displayName + " just hit a " + bb.blockDefinition.name + "(" + bb.blockDefinition.fullname + ")");
+				Debug.Log("built by: " + bb.deployerUserName);
+				Debug.Log("item's id base: " + bb.ItemIDBase.ToString());
+			} catch (Exception ex) {
+				Debug.Log("crap"); Debug.LogException(ex);
+			}
+		}
+
+		// BuildingBlock.BecomeFrame()
+		public static void EntityFrameDeployed(BuildingBlock bb) {
+			// FIXME: null reference here
+			try {
+				Debug.Log(bb.deployerUserName + " started to build a " + bb.blockDefinition.name);
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
+		// BuildingBlock.BecomeBuilt()
+		public static void EntityBuilt(BuildingBlock bb) {
+			try {
+				Debug.Log(bb.deployerUserName + " has built a " + bb.blockDefinition.name);
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
+		// BuildingBlock.DoBuild()
+		public static void EntityBuildingUpdate(BuildingBlock bb, BasePlayer player, float proficiency) {
+			try {
+				Debug.Log(player.displayName + " is bulding " + bb.deployerUserName + "'s " + bb.blockDefinition.name + " with " + proficiency.ToString() + " proficiency");
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
+		// BaseCorpse.InitCorpse()
+		public static void CorpseInit(BaseCorpse corpse, BaseEntity parent) {
+			try {
+				Debug.Log(corpse.ragdollPrefab + " has been initialized");
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
+		// BaseCorpse.OnAttacked()
+		public static void CorpseHit(BaseCorpse corpse, HitInfo info) {
+			try {
+				Debug.Log(corpse.ragdollPrefab + " got a hit");
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
 		#endregion
 
 		#region Delegates
