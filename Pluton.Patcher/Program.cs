@@ -161,25 +161,47 @@ namespace Pluton.Patcher {
 			try {
 				MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
 				MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamage");
+
 				foreach (var method in bPlayer.GetMethods()) {
 					if (method.Name == "TakeDamage") {
-						hurt = method;
-						if (method.Parameters.Count == 1) {
-							CloneMethod(hurt);
-							ILProcessor iLProcessor = hurt.Body.GetILProcessor();
-							iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-							iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-							iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
-						} else if (method.Parameters.Count == 2) {
-							CloneMethod(hurt);
-							ILProcessor iLProcessor = hurt.Body.GetILProcessor();
-							iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-							iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-							iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldarg_2));
-							iLProcessor.InsertAfter(hurt.Body.Instructions[0x02], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
+						if (method.Parameters.Count == 2) {
+							hurt = method;
+							break;
 						}
 					}
 				}
+
+				CloneMethod(hurt);
+				ILProcessor iLProcessor = hurt.Body.GetILProcessor();
+				iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldarg_2));
+				iLProcessor.InsertAfter(hurt.Body.Instructions[0x02], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
+		private static void PlayerTakeDamageOLPatch() {
+			try {
+				MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
+				MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamageOverload");
+
+				foreach (var method in bPlayer.GetMethods()) {
+					if (method.Name == "TakeDamage") {
+						if (method.Parameters.Count == 1) {
+							hurt = method;
+							break;
+						}
+					}
+				}
+
+				CloneMethod(hurt);
+				ILProcessor iLProcessor = hurt.Body.GetILProcessor();
+				iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+				iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
 			} catch (Exception ex) {
 				Console.WriteLine("Error at: " + ex.TargetSite.Name);
 				Console.WriteLine("Error msg: " + ex.Message);
@@ -251,6 +273,7 @@ namespace Pluton.Patcher {
 			PlayerDiedPatch();
 			PlayerAttackedPatch();
 			PlayerTakeDamagePatch();
+			PlayerTakeDamageOLPatch();
 			PlayerTakeRadiationPatch();
 			NPCDiedPatch();
 			NPCHurtPatch();

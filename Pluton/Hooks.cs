@@ -135,8 +135,13 @@ namespace Pluton {
 		}
 
 		// BasePlayer.TakeDamage()
-		public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType = Rust.DamageType.Generic) {
-			Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " dmg (" + dmgType.ToString() + ")");
+		public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType) {
+			try { Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " dmg (" + dmgType.ToString() + ")"); } catch (Exception ex) { Debug.Log("crap"); Debug.LogException(ex);}
+			try { ConsoleSystem.Broadcast("broadcasttest"); } catch (Exception ex) { Debug.Log("crap"); Debug.LogException(ex);}
+		}
+
+		public static void PlayerTakeDamageOverload(BasePlayer player, float dmgAmount) {
+			PlayerTakeDamage(player, dmgAmount, Rust.DamageType.Generic);
 		}
 
 		// BasePlayer.TakeRadiation()
