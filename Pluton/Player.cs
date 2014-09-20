@@ -22,7 +22,12 @@ namespace Pluton {
 			return new Player(BasePlayer.FindByID(UInt64.Parse(steamID)));
 		}
 
-		public void Kick(string reason = "") {
+		public void Ban(string reason = "No reason given") {
+			ServerUsers.Set(GameID, ServerUsers.UserGroup.Banned, Name, reason);
+			ServerUsers.Save();
+		}
+
+		public void Kick(string reason = "No reason given") {
 			Network.Net.sv.Kick(basePlayer.net.connection, reason);
 		}
 
@@ -31,6 +36,32 @@ namespace Pluton {
 			info.damageType = Rust.DamageType.Suicide;
 			info.Initiator = basePlayer as BaseEntity;
 			basePlayer.Die(info);
+		}
+
+		public void MakeModerator(string reason = "No reason given") {
+			ServerUsers.Set(GameID, ServerUsers.UserGroup.Moderator, Name, reason);
+		}
+
+		public void MakeOwner(string reason = "No reason given") {
+			ServerUsers.Set(GameID, ServerUsers.UserGroup.Owner, Name, reason);
+		}
+
+		public void Message(string msg) {
+			basePlayer.SendConsoleCommand("chat.add \"" + "Pluton" + "\" " + StringExtensions.QuoteSafe(msg));
+		}
+
+		public void MessageFrom(string from, string msg) {
+			basePlayer.SendConsoleCommand("chat.add \"" + from + "\" " + StringExtensions.QuoteSafe(msg));
+		}
+
+		public void Teleport(Vector3 v3to) {
+			this.Location = v3to;
+			basePlayer.supressSnapshots = true;
+			basePlayer.StopSpectating();
+			basePlayer.UpdateNetworkGroup();
+			basePlayer.metabolism.Reset();
+			basePlayer.SendFullSnapshot();
+			basePlayer.supressSnapshots = false;
 		}
 
 		public bool Admin {
