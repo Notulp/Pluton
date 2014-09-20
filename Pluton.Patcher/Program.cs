@@ -13,6 +13,7 @@ namespace Pluton.Patcher {
 		private static TypeDefinition bEntity;
 		private static TypeDefinition bCorpse;
 		private static TypeDefinition bBlock;
+		private static TypeDefinition pLoot;
 		private static string version = "1.0.0.0";
 
 		private static void BootstrapAttachPatch() {
@@ -337,6 +338,46 @@ namespace Pluton.Patcher {
 			}
 		}
 
+		private static void PlayerStartLootingPatch() {
+			try {
+				FieldDefinition owner = pLoot.GetField("Owner");
+				FieldReference ownerFieldRef = owner as FieldReference;
+				MethodDefinition plEntity = pLoot.GetMethod("StartLootingEntity");
+				MethodDefinition lootEntity = hooksClass.GetMethod("StartLootingEntity");
+				MethodDefinition plPlayer = pLoot.GetMethod("StartLootingPlayer");
+				MethodDefinition lootPlayer = hooksClass.GetMethod("StartLootingPlayer");
+				MethodDefinition plItem = pLoot.GetMethod("StartLootingItem");
+				MethodDefinition lootItem = hooksClass.GetMethod("StartLootingItem");
+
+				CloneMethod(plEntity);
+				ILProcessor eiLProcessor = plEntity.Body.GetILProcessor();
+				eiLProcessor.InsertBefore(plEntity.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
+				eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x02], Instruction.Create(OpCodes.Ldarg_1));
+				eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootEntity)));
+
+				CloneMethod(plPlayer);
+				ILProcessor piLProcessor = plPlayer.Body.GetILProcessor();
+				piLProcessor.InsertBefore(plPlayer.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
+				piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x02], Instruction.Create(OpCodes.Ldarg_1));
+				piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootPlayer)));
+
+				CloneMethod(plItem);
+				ILProcessor iiLProcessor = plItem.Body.GetILProcessor();
+				iiLProcessor.InsertBefore(plItem.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iiLProcessor.InsertAfter(plItem.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+				iiLProcessor.InsertAfter(plItem.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
+				iiLProcessor.InsertAfter(plItem.Body.Instructions[0x02], Instruction.Create(OpCodes.Ldarg_1));
+				iiLProcessor.InsertAfter(plItem.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
 		// from fougerite.patcher
 		private static MethodDefinition CloneMethod(MethodDefinition orig) {
 			MethodDefinition definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
@@ -361,6 +402,7 @@ namespace Pluton.Patcher {
 			bEntity = rustAssembly.MainModule.GetType("BaseEntity");
 			bCorpse = rustAssembly.MainModule.GetType("BaseCorpse");
 			bBlock = rustAssembly.MainModule.GetType("BuildingBlock");
+			pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
 
 			bool success = true;
 
@@ -371,6 +413,8 @@ namespace Pluton.Patcher {
 
 			PlayerDisconnectedPatch();
 			PlayerConnectedPatch();
+
+			PlayerStartLootingPatch();
 
 			PlayerTakeRadiationPatch();
 			PlayerTakeDamageOLPatch();

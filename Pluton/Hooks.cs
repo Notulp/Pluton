@@ -211,6 +211,33 @@ namespace Pluton {
 			}
 		}
 
+		// PlayerLoot.StartLootingEntity()
+		public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity) {
+			try {
+				Debug.Log(looter.displayName + " is looting this: " + entity.sourcePrefab + " in pluton");
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
+		// PlayerLoot.StartLootingPlayer()
+		public static void StartLootingPlayer(PlayerLoot playerLoot, BasePlayer looter, BasePlayer looted) {
+			try {
+				Debug.Log(looter.displayName + " is looting: " + looted.displayName + " in pluton");
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
+		// PlayerLoot.StartLootingItem()
+		public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item) {
+			try {
+				Debug.Log(looter.displayName + " is looting an item in pluton");
+			} catch (Exception ex) {
+				Debug.LogException(ex);
+			}
+		}
+
 		#endregion
 
 		#region Delegates
