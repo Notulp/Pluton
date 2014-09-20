@@ -36,6 +36,51 @@
 		/*	NetCull.Destroy(go);*/
 		}
 
+		// Dumper methods
+		public bool DumpObjToFile(string path, object obj, string prefix = "") {
+			return DumpObjToFile(path, obj, 1, 30, false, false, prefix);
+		}
+
+		public bool DumpObjToFile(string path, object obj, int depth, string prefix = "") {
+			return DumpObjToFile(path, obj, depth, 30, false, false, prefix);
+		}
+
+		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, string prefix = "") {
+			return DumpObjToFile(path, obj, depth, maxItems, false, false, prefix);
+		}
+
+		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, bool disPrivate, string prefix = "") {
+			return DumpObjToFile(path, obj, depth, maxItems, disPrivate, false, prefix);
+		}
+
+		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, bool disPrivate, bool fullClassName, string prefix = "") {
+			//path = ValidateRelativePath(path + ".dump");
+			if (path == null)
+				return false;
+
+			string result = string.Empty;
+
+			var settings = new DumpSettings();
+			settings.MaxDepth = depth;
+			settings.MaxItems = maxItems;
+			settings.DisplayPrivate = disPrivate;
+			settings.UseFullClassNames = fullClassName;
+			result = Dump.ToDump(obj, obj.GetType(), prefix, settings);
+
+			string dumpHeader =
+				"Object type: " + obj.GetType().ToString() + "\r\n" +
+				"TimeNow: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "\r\n" +
+				"Depth: " + depth.ToString() + "\r\n" +
+				"MaxItems: " + maxItems.ToString() + "\r\n" +
+				"ShowPrivate: " + disPrivate.ToString() + "\r\n" +
+				"UseFullClassName: " + fullClassName.ToString() + "\r\n\r\n";
+
+			File.AppendAllText(path, dumpHeader);
+			File.AppendAllText(path, result + "\r\n\r\n");
+			return true;
+		}
+		// dumper end
+
 		public static string NormalizePath(string path) {
 			string normal = path.Replace(@"\\", @"\").Replace(@"//", @"/").Trim();
 			return normal;
@@ -78,9 +123,11 @@
 			}
 		}
 
+		// FIXME
+		/*
 		public Vector3 Infront(Player p, float length) {
-			return (p.Location + ((Vector3)(p.Location.forward * length)));
-		}
+			return (p.Location + ((Vector3)(forward * length)));
+		}*/
 
 		public object InvokeStatic(string className, string method, object[] args) {
 			System.Type type;
