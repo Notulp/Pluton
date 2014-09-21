@@ -124,8 +124,13 @@ namespace Pluton {
 				info.Initiator = player as BaseEntity;
 			}
 
-			var p = new Player(player);
-			OnPlayerDied(new Events.PlayerDeathEvent(p, info));
+			Player p = new Player(player);
+			Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(p, info);
+			OnPlayerDied(pde);
+
+			if (!pde.dropLoot) {
+				player.inventory.Strip();
+			}
 		}
 
 		// BasePlayer.OnDisconnected()
