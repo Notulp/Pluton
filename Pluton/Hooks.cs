@@ -28,8 +28,6 @@ namespace Pluton {
 
 		#region Handlers
 
-		public static void ModulesLoaded() {}
-
 		// chat.say().Hooks.Chat()
 		public static void Command(Player player, string[] args) {
 			string cmd = args[0].Replace("/", "");
@@ -197,6 +195,11 @@ namespace Pluton {
 		// BuildingBlock.OnAttacked()
 		public static void EntityAttacked(BuildingBlock bb, HitInfo info) {
 			// works, event needed
+			// if entity will be destroyed call the method below
+		}
+
+		public static void EntityDestroyed(BuildingBlock bb, HitInfo info) {
+
 		}
 
 		// BuildingBlock.BecomeFrame()
