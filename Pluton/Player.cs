@@ -6,7 +6,7 @@ namespace Pluton {
 
 		public readonly BasePlayer basePlayer;
 
-		public Player (BasePlayer player) {
+		public Player(BasePlayer player) {
 			basePlayer = player;
 		}
 
@@ -32,7 +32,7 @@ namespace Pluton {
 		}
 
 		public void Kill() {
-			var info = new HitInfo ();
+			var info = new HitInfo();
 			info.damageType = Rust.DamageType.Suicide;
 			info.Initiator = basePlayer as BaseEntity;
 			basePlayer.Die(info);
@@ -47,7 +47,7 @@ namespace Pluton {
 		}
 
 		public void Message(string msg) {
-			basePlayer.SendConsoleCommand("chat.add \"" + "Pluton" + "\" " + StringExtensions.QuoteSafe(msg));
+			basePlayer.SendConsoleCommand("chat.add \"" + Server.server_message_name + "\" " + StringExtensions.QuoteSafe(msg));
 		}
 
 		public void MessageFrom(string from, string msg) {
@@ -85,6 +85,12 @@ namespace Pluton {
 		public float Health {
 			get {
 				return basePlayer.Health();
+			}
+		}
+
+		public Inv Inventory {
+			get {
+				return new Inv(basePlayer.inventory);
 			}
 		}
 
