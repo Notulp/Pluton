@@ -62,8 +62,6 @@ namespace Pluton {
 			Debug.Log(evt.Victim.Name + " died in Pluton");
 			try {
 				Debug.Log("DamageType: " + evt.DamageType);
-				Debug.Log("IName: " + evt.IName);
-				Debug.Log("IPrefab: " + evt.IPrefab);
 			} catch (Exception ex) {
 				Debug.Log("Maybe HitInfo is null in PlayerDeathEvent?");
 				Debug.LogException(ex);
