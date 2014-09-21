@@ -54,16 +54,6 @@ namespace Pluton {
 			basePlayer.SendConsoleCommand("chat.add \"" + from + "\" " + StringExtensions.QuoteSafe(msg));
 		}
 
-		public void Teleport(Vector3 v3to) {
-			this.Location = v3to;
-			basePlayer.supressSnapshots = true;
-			basePlayer.StopSpectating();
-			basePlayer.UpdateNetworkGroup();
-			basePlayer.metabolism.Reset();
-			basePlayer.SendFullSnapshot();
-			basePlayer.supressSnapshots = false;
-		}
-
 		public bool Admin {
 			get {
 				return basePlayer.IsAdmin();
