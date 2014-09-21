@@ -125,7 +125,12 @@ namespace Pluton {
 			}
 
 			var p = new Player(player);
-			OnPlayerDied(new Events.PlayerDeathEvent(p, info));
+			Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(p, info);
+			OnPlayerDied(pde);
+
+			// not tested
+			if (!pde.dropLoot)
+				player.inventory.Strip();
 		}
 
 		// BasePlayer.OnDisconnected()

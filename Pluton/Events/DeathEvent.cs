@@ -3,8 +3,8 @@
 namespace Pluton.Events {
 	public class DeathEvent {
 
-		private HitInfo _info;
-		public bool dropLoot;
+		public HitInfo _info;
+		public bool dropLoot = true;
 
 		public DeathEvent(HitInfo info) {
 			_info = info;
