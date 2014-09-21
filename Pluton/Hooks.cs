@@ -28,6 +28,8 @@ namespace Pluton {
 
 		#region Handlers
 
+		public static void ModulesLoaded() {}
+
 		// chat.say().Hooks.Chat()
 		public static void Command(Player player, string[] args) {
 			string cmd = args[0].Replace("/", "");
@@ -61,7 +63,6 @@ namespace Pluton {
 				ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(basePlayer.displayName) + " " + StringExtensions.QuoteSafe(str));
 				arg.ReplyWith("chat.say was executed");
 			}
-			Debug.Log(arg.Player().displayName + " said: " + arg.ArgsStr);
 			OnChat(arg);
 		}
 
@@ -70,7 +71,7 @@ namespace Pluton {
 			if (!Realm.Server())
 				return;
 
-			OnGathering(new Events.GatherEvent(info, res));
+			OnGathering(new Events.GatherEvent(res, info));
 
 			res.health -= info.damageAmount * info.resourceGatherProficiency;
 			if ((double) res.health <= 0.0)
@@ -81,11 +82,14 @@ namespace Pluton {
 
 		// BaseAnimal.OnAttacked()
 		public static void NPCHurt(BaseAnimal animal, HitInfo info) {
+			// works
+			var npc = new NPC(animal);
+
 			if (!Realm.Server() || (double) animal.myHealth <= 0.0)
 				return;
 
 			if ((animal.myHealth - info.damageAmount) > 0.0f)
-				OnNPCHurt(new Events.NPCHurtEvent(new NPC(animal), info));
+				OnNPCHurt(new Events.NPCHurtEvent(npc, info));
 
 			animal.myHealth -= info.damageAmount;
 			if ((double) animal.myHealth > 0.0)
@@ -95,32 +99,64 @@ namespace Pluton {
 
 		// BaseAnimal.Die()
 		public static void NPCDied(BaseAnimal animal, HitInfo info) {
-			Debug.Log("A '" + (animal.modelPrefab == null ? "null" : animal.modelPrefab) + "' died");
-			OnNPCDied(new Events.NPCDeathEvent(new NPC(animal), info));
+			var npc = new NPC(animal);
+			OnNPCDied(new Events.NPCDeathEvent(npc, info));
 		}
 
 		// BasePlayer.PlayerInit()
 		public static void PlayerConnected(Network.Connection connection) {
 			var player = connection.player as BasePlayer;
-			Debug.Log(player.displayName + " joined the fun");
-			OnPlayerConnected(new Player(player));
+			if (Server.GetServer().OfflinePlayers.ContainsKey(player.userID)) {
+				Server.GetServer().OfflinePlayers.Remove(player.userID);
+			}
+
+			var p = new Player(player);
+			OnPlayerConnected(p);
 		}
 
 		// BasePlayer.Die()
 		public static void PlayerDied(BasePlayer player, HitInfo info) {
-			Debug.Log(player.displayName + " just died");
-			OnPlayerDied(new Events.PlayerDeathEvent(new Player(player), info));
+			// works
+
+			if (info == null) {
+				info = new HitInfo();
+				info.damageType = player.metabolism.lastDamage;
+				info.Initiator = player as BaseEntity;
+			}
+
+			var p = new Player(player);
+			OnPlayerDied(new Events.PlayerDeathEvent(p, info));
 		}
 
 		// BasePlayer.OnDisconnected()
 		public static void PlayerDisconnected(BasePlayer player) {
-			Debug.Log(player.displayName + " left the reality");
-			OnPlayerDisconnected(new Player(player));
+			// works
+			var p = new Player(player);
+
+			if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", player.userID.ToString())) {
+				var op = new OfflinePlayer(Server.GetServer().serverData.Get("OfflinePlayers", player.userID.ToString()) as string);
+				op.Update(p);
+				Server.GetServer().OfflinePlayers[player.userID] = op;
+			} else {
+				var op = new OfflinePlayer(p);
+				Server.GetServer().OfflinePlayers.Add(player.userID, op);
+			}
+
+			OnPlayerDisconnected(p);
 		}
 
 		// BasePlayer.OnAttacked()
 		public static void PlayerHurt(BasePlayer player, HitInfo info) {
-			Debug.Log("Player hurt...");
+			// not tested
+			var p = new Player(player);
+
+			if (info == null) { // it should neve accour, but just in case
+				info = new HitInfo();
+				info.damageAmount = 0.0f;
+				info.damageType = player.metabolism.lastDamage;
+				info.Initiator = player as BaseEntity;
+			}
+
 			if (!player.TestAttack(info) || !Realm.Server() || (info.damageAmount <= 0.0f))
 				return;
 			player.metabolism.bleeding.Add(Mathf.InverseLerp(0.0f, 100f, info.damageAmount));
@@ -129,15 +165,14 @@ namespace Pluton {
 			player.CheckDeathCondition(info);
 
 			if (!player.IsDead())
-				OnPlayerHurt(new Events.PlayerHurtEvent(new Player(player), info));
+				OnPlayerHurt(new Events.PlayerHurtEvent(p, info));
 
 			player.SendEffect("takedamage_hit");
 		}
 
 		// BasePlayer.TakeDamage()
 		public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType) {
-			try { Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " dmg (" + dmgType.ToString() + ")"); } catch (Exception ex) { Debug.Log("crap"); Debug.LogException(ex);}
-			try { ConsoleSystem.Broadcast("broadcasttest"); } catch (Exception ex) { Debug.Log("crap"); Debug.LogException(ex);}
+			// works?
 		}
 
 		public static void PlayerTakeDamageOverload(BasePlayer player, float dmgAmount) {
@@ -156,63 +191,39 @@ namespace Pluton {
 
 		// BuildingBlock.OnAttacked()
 		public static void EntityAttacked(BuildingBlock bb, HitInfo info) {
-			try { 
-				Debug.Log(info.Initiator.ToPlayer().displayName + " just hit a " + bb.blockDefinition.name + "(" + bb.blockDefinition.fullname + ")");
-				Debug.Log("built by: " + bb.deployerUserName);
-				Debug.Log("item's id base: " + bb.ItemIDBase.ToString());
-			} catch (Exception ex) {
-				Debug.Log("crap"); Debug.LogException(ex);
-			}
+			// works, event needed
 		}
 
 		// BuildingBlock.BecomeFrame()
 		public static void EntityFrameDeployed(BuildingBlock bb) {
-			// FIXME: null reference here
-			try {
-				Debug.Log(bb.deployerUserName + " started to build a " + bb.blockDefinition.name);
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+			// blockDefinition is null in this hook, but works
 		}
 
 		// BuildingBlock.BecomeBuilt()
 		public static void EntityBuilt(BuildingBlock bb) {
-			try {
-				Debug.Log(bb.deployerUserName + " has built a " + bb.blockDefinition.name);
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+			// works, event needed
 		}
 
 		// BuildingBlock.DoBuild()
 		public static void EntityBuildingUpdate(BuildingBlock bb, BasePlayer player, float proficiency) {
-			try {
-				Debug.Log(player.displayName + " is bulding " + bb.deployerUserName + "'s " + bb.blockDefinition.name + " with " + proficiency.ToString() + " proficiency");
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+			// hammer prof = 1
+			// works
+			// called anytime you hit a building block with a constructor item (hammer)
 		}
 
 		// BaseCorpse.InitCorpse()
 		public static void CorpseInit(BaseCorpse corpse, BaseEntity parent) {
-			try {
-				Debug.Log(corpse.ragdollPrefab + " has been initialized");
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+			// works
 		}
 
 		// BaseCorpse.OnAttacked()
 		public static void CorpseHit(BaseCorpse corpse, HitInfo info) {
-			try {
-				Debug.Log(corpse.ragdollPrefab + " got a hit");
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+			// works
 		}
 
 		// PlayerLoot.StartLootingEntity()
 		public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity) {
+			// not tested, what is a lootable entity anyway?
 			try {
 				Debug.Log(looter.displayName + " is looting this: " + entity.sourcePrefab + " in pluton");
 			} catch (Exception ex) {
@@ -222,6 +233,7 @@ namespace Pluton {
 
 		// PlayerLoot.StartLootingPlayer()
 		public static void StartLootingPlayer(PlayerLoot playerLoot, BasePlayer looter, BasePlayer looted) {
+			// not tested
 			try {
 				Debug.Log(looter.displayName + " is looting: " + looted.displayName + " in pluton");
 			} catch (Exception ex) {
@@ -231,11 +243,7 @@ namespace Pluton {
 
 		// PlayerLoot.StartLootingItem()
 		public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item) {
-			try {
-				Debug.Log(looter.displayName + " is looting an item in pluton");
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+			// works, event needed
 		}
 
 		#endregion
