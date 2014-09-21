@@ -13,8 +13,9 @@
 	public class Util {
 		private readonly Dictionary<string, System.Type> typeCache = new Dictionary<string, System.Type>();
 		private static Util util;
+		private static DirectoryInfo UtilPath;
 
-		public void ConsoleLog(string str, [Optional, DefaultParameterValue(false)] bool adminOnly) {
+		public void ConsoleLog(string str, bool adminOnly = false) {
 			try {
 				// FIXME
 				/*foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players) {
@@ -54,7 +55,8 @@
 		}
 
 		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, bool disPrivate, bool fullClassName, string prefix = "") {
-			//path = ValidateRelativePath(path + ".dump");
+			path = DataStore.GetInstance().RemoveChars(path);
+			path = Path.Combine(UtilPath.FullName, path);
 			if (path == null)
 				return false;
 
@@ -95,12 +97,13 @@
 		}
 
 		public static string GetServerFolder() {
-			return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))), "rust_server_Data");
+			return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))), "RustDedicated_Data");
 		}
 
 		public static Util GetUtil() {
 			if (util == null) {
 				util = new Util();
+				UtilPath = new DirectoryInfo (Path.Combine (Config.GetPublicFolder (), "Util"));
 			}
 			return util;
 		}
