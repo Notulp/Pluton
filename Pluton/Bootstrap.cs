@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 
 namespace Pluton {
 	public class Bootstrap : MonoBehaviour {
+
+		public static string Version = "0.9.0";
 
 		public static void AttachBootstrap() {
 			try {
@@ -15,6 +18,11 @@ namespace Pluton {
 		}
 
 		public static void Init() {
+			string FougeriteDirectoryConfig = Path.Combine(Util.GetServerFolder(), "PlutonDirectories.cfg");
+			Config.Init(FougeriteDirectoryConfig);
+			Server.GetServer();
+			Logger.Init();
+
 			server.official = false;
 			if (!server.hostname.ToLower().Contains("pluton"))
 				server.hostname += " [Pluton mod]";
