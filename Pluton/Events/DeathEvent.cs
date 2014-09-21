@@ -4,6 +4,7 @@ namespace Pluton.Events {
 	public class DeathEvent {
 
 		private HitInfo _info;
+		public bool dropLoot;
 
 		public DeathEvent(HitInfo info) {
 			_info = info;
@@ -21,15 +22,9 @@ namespace Pluton.Events {
 			}
 		}
 
-		public string IName {
+		public BaseEntity Attacker{
 			get {
-				return _info.Initiator.name;
-			}
-		}
-
-		public string IPrefab {
-			get {
-				return _info.Initiator.sourcePrefab;
+				return _info.Initiator;
 			}
 		}
 	}

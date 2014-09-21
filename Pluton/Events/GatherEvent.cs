@@ -6,7 +6,7 @@ namespace Pluton.Events {
 		private HitInfo _info;
 		private BaseResource _res;
 
-		public GatherEvent(HitInfo info, BaseResource res) {
+		public GatherEvent(BaseResource res, HitInfo info) {
 			_info = info;
 			_res = res;
 		}
