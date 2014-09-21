@@ -1,5 +1,4 @@
 ﻿namespace Pluton {
-	using Facepunch.Utility;
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -18,7 +17,7 @@
 		public void ConsoleLog(string str, bool adminOnly = false) {
 			try {
 				// FIXME
-				/*foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players) {
+				/*foreach (Player player in Server.GetServer().Players) {
 
 					if (!adminOnly) {
 						ConsoleNetworker.singleton.networkView.RPC<string>("CL_ConsoleMessage", player.PlayerClient.netPlayer, str);
@@ -39,24 +38,20 @@
 
 		// Dumper methods
 		public bool DumpObjToFile(string path, object obj, string prefix = "") {
-			return DumpObjToFile(path, obj, 1, 30, false, false, prefix);
-		}
+			return DumpObjToFile(path, obj, 1, 30, false, false, prefix); }
 
 		public bool DumpObjToFile(string path, object obj, int depth, string prefix = "") {
-			return DumpObjToFile(path, obj, depth, 30, false, false, prefix);
-		}
+			return DumpObjToFile(path, obj, depth, 30, false, false, prefix); }
 
 		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, string prefix = "") {
-			return DumpObjToFile(path, obj, depth, maxItems, false, false, prefix);
-		}
+			return DumpObjToFile(path, obj, depth, maxItems, false, false, prefix); }
 
 		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, bool disPrivate, string prefix = "") {
-			return DumpObjToFile(path, obj, depth, maxItems, disPrivate, false, prefix);
-		}
+			return DumpObjToFile(path, obj, depth, maxItems, disPrivate, false, prefix); }
 
 		public bool DumpObjToFile(string path, object obj, int depth, int maxItems, bool disPrivate, bool fullClassName, string prefix = "") {
 			path = DataStore.GetInstance().RemoveChars(path);
-			path = Path.Combine(UtilPath.FullName, path);
+			path = Path.Combine(UtilPath.FullName, path + ".dump");
 			if (path == null)
 				return false;
 
@@ -89,7 +84,11 @@
 		}
 
 		public static string GetAbsoluteFilePath(string fileName) {
-			return Path.Combine(Config.GetPublicFolder(), fileName);
+			return Path.Combine(GetPublicFolder(), fileName);
+		}
+
+		public static string GetPublicFolder() {
+			return Path.Combine(GetRootFolder(), "Save");
 		}
 
 		public static string GetRootFolder() {
@@ -103,7 +102,7 @@
 		public static Util GetUtil() {
 			if (util == null) {
 				util = new Util();
-				UtilPath = new DirectoryInfo (Path.Combine (Config.GetPublicFolder (), "Util"));
+				UtilPath = new DirectoryInfo(Path.Combine(GetPublicFolder(), "Util"));
 			}
 			return util;
 		}
@@ -131,22 +130,6 @@
 		public Vector3 Infront(Player p, float length) {
 			return (p.Location + ((Vector3)(forward * length)));
 		}*/
-
-		public object InvokeStatic(string className, string method, object[] args) {
-			System.Type type;
-			if (!this.TryFindType(className.Replace('.', '+'), out type)) {
-				return null;
-			}
-			MethodInfo info = type.GetMethod(method, BindingFlags.Static);
-			if (info == null) {
-				return null;
-			}
-			if (info.ReturnType == typeof(void)) {
-				info.Invoke(null, args);
-				return true;
-			}
-			return info.Invoke(null, args);
-		}
 
 		public bool IsNull(object obj) {
 			return (obj == null);
@@ -194,16 +177,6 @@
 			ConsoleNetworker.SendClientCommand(player, "chat.add " + Facepunch.Utility.String.QuoteSafe(customName) + " " + Facepunch.Utility.String.QuoteSafe(arg));
 		}*/
 
-		public void SetStaticField(string className, string field, object val) {
-			System.Type type;
-			if (this.TryFindType(className.Replace('.', '+'), out type)) {
-				FieldInfo info = type.GetField(field, BindingFlags.Public | BindingFlags.Static);
-				if (info != null) {
-					info.SetValue(null, Convert.ChangeType(val, info.FieldType));
-				}
-			}
-		}
-
 		public bool TryFindType(string typeName, out System.Type t) {
 			lock (this.typeCache) {
 				if (!this.typeCache.TryGetValue(typeName, out t)) {
@@ -225,21 +198,5 @@
 				return t;
 			throw new Exception("Type not found " + typeName);
 		}
-
-		// need this?
-		public bool ContainsString(string str, string key) {
-			if (str.Contains(key))
-				return true;
-			return false;
-		}
-
-		// do we need to fix it?
-		/*
-		public ItemDataBlock ConvertNameToData(string name) {
-			ItemDataBlock byName = DatablockDictionary.GetByName(name);
-			if (byName != null)
-				return byName;
-			return null;
-		}*/
 	}
 }

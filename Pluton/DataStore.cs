@@ -56,7 +56,7 @@
 		}
 
 		public bool ToIni(string inifilename = "DataStore") {
-			string inipath = Path.Combine(Config.GetPublicFolder(), RemoveChars(inifilename).Trim() + ".ini");
+			string inipath = Path.Combine(Util.GetPublicFolder(), RemoveChars(inifilename).Trim() + ".ini");
 			File.WriteAllText(inipath, "");
 			IniParser ini = new IniParser(inipath);
 			ini.Save();
@@ -228,7 +228,7 @@
 
 		public DataStore(string path) {
 			path = RemoveChars(path);
-			PATH = Path.Combine(Config.GetPublicFolder(), path);
+			PATH = Path.Combine(Util.GetPublicFolder(), path);
 		}
 	}
 }

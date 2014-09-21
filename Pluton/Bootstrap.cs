@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Pluton {
 	public class Bootstrap : MonoBehaviour {
 
-		public static string Version = "0.9.0";
+		public static string Version = "0.9.1";
 
 		public static void AttachBootstrap() {
 			try {
@@ -18,17 +18,16 @@ namespace Pluton {
 		}
 
 		public static void Init() {
-			string FougeriteDirectoryConfig = Path.Combine(Util.GetServerFolder(), "PlutonDirectories.cfg");
-			Config.Init(FougeriteDirectoryConfig);
+			if (Directory.Exists(Util.GetPublicFolder()))
+				Directory.CreateDirectory(Util.GetPublicFolder());
+
+			Config.Init();
 			Server.GetServer();
 			Logger.Init();
 
 			server.official = false;
 			if (!server.hostname.ToLower().Contains("pluton"))
 				server.hostname += " [Pluton mod]";
-
-			var approve = new ProtoBuf.Approval();
-			approve.modded = true;
 
 			var ph = new PlaceHolder();
 			ph.InstallHooks();
