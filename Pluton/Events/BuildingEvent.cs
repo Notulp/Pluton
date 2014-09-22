@@ -7,21 +7,23 @@ namespace Pluton.Events {
 		public List<Construction.Socket> Sockets;
 		public readonly BuildingBlock _block;
 		public List<ItemAmount> NeededItems;
+		public BuildingPart BuildingPart;
 		public readonly Player Builder;
 		public string BlockFullName;
 		public float Proficiency;
 		public string BlockName;
 
-		public BuildingEvent(BuildingBlock bb, Player player, float prof) {
-			NeededItems = bb.neededItems;
+		public BuildingEvent(BuildingPart bp, Player player, float prof) {
+			NeededItems = bp.NeededItems;
+			_block = bp.buildingBlock;
 			Proficiency = prof;
+			BuildingPart = bp;
 			Builder = player;
-			_block = bb;
 
-			if (bb.blockDefinition != null) {
-				BlockName = bb.blockDefinition.name;
-				Sockets = bb.blockDefinition.sockets;
-				BlockFullName = bb.blockDefinition.fullname;
+			if (_block.blockDefinition != null) {
+				BlockName = _block.blockDefinition.name;
+				Sockets = _block.blockDefinition.sockets;
+				BlockFullName = _block.blockDefinition.fullname;
 			}
 		}
 	}
