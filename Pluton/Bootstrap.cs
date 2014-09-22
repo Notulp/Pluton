@@ -24,13 +24,11 @@ namespace Pluton {
 			Config.Init();
 			Server.GetServer();
 			Logger.Init();
+			PluginLoader.GetInstance().Init();
 
 			server.official = false;
 			if (!server.hostname.ToLower().Contains("pluton"))
 				server.hostname += " [Pluton mod]";
-
-			var ph = new PlaceHolder();
-			ph.InstallHooks();
 		}
 	}
 }

@@ -19,12 +19,12 @@
 			}
 			plugins = new Dictionary<string, Plugin>();
 			ReloadPlugins();
-			if (instance == null)
-				instance = this;
 		}
 
 		public static PluginLoader GetInstance() {
-			return (PluginLoader)instance;
+			if (instance == null)
+				instance = new PluginLoader();
+			return instance;
 		}
 
 		private IEnumerable<String> GetPluginNames() {
@@ -127,7 +127,71 @@
 					continue;
 
 				Logger.LogDebug("Found function: " + method);
-				//switch (method) { }
+				switch(method) {
+				case "On_Chat":
+					Hooks.OnChat += new Hooks.ChatDelegate(plugin.OnChat);
+					break;
+				case "On_Command":
+					Hooks.OnCommand += new Hooks.CommandDelegate(plugin.OnCommand);
+					break;
+				case "On_CorpseDropped":
+					Hooks.OnCorpseDropped += new Hooks.CorpseDropDelegate(plugin.OnCorpseDropped);
+					break;
+				case "On_CorpseAttacked":
+					Hooks.OnCorpseAttacked += new Hooks.CorpseAttackedDelegate(plugin.OnCorpseAttacked);
+					break;
+				case "On_BuildingComplete":
+					Hooks.OnBuildingComplete += new Hooks.BuildingCompleteDelegate(plugin.OnBuildingComplete);
+					break;
+				case "On_BuildingUpdate":
+					Hooks.OnBuildingUpdate += new Hooks.BuildingUpdateDelegate(plugin.OnBuildingUpdate);
+					break;
+				case "On_BuildingPartAttacked":
+					Hooks.OnBuildingPartAttacked += new Hooks.BuildingPartAttackedDelegate(plugin.OnBuildingPartAttacked);
+					break;
+				case "On_BuildingPartDestroyed":
+					Hooks.OnBuildingPartDestroyed += new Hooks.BuildingPartDestroyedDelegate(plugin.OnBuildingPartDestroyed);
+					break;
+				case "On_FrameDeployed":
+					Hooks.OnBuildingFrameDeployed += new Hooks.BuildingFrameDeployedDelegate(plugin.OnFrameDeployed);
+					break;
+				case "On_NPCAttacked":
+					Hooks.OnNPCHurt += new Hooks.NPCHurtDelegate(plugin.OnNPCHurt);
+					break;
+				case "On_NPCKilled":
+					Hooks.OnNPCDied += new Hooks.NPCDiedDelegate(plugin.OnNPCKilled);
+					break;
+				case "On_LootingEntity":
+					Hooks.OnLootingEntity += new Hooks.LootingEntityDelegate(plugin.OnLootingEntity);
+					break;
+				case "On_LootingPlayer":
+					Hooks.OnLootingPlayer += new Hooks.LootingPlayerDelegate(plugin.OnLootingPlayer);
+					break;
+				case "On_LootingItem":
+					Hooks.OnLootingItem += new Hooks.LootingItemDelegate(plugin.OnLootingItem);
+					break;
+				case "On_PlayerConnected":
+					Hooks.OnPlayerConnected += new Hooks.PlayerConnectedDelegate(plugin.OnPlayerConnected);
+					break;
+				case "On_PlayerDisconnected":
+					Hooks.OnPlayerDisconnected += new Hooks.PlayerDisconnectedDelegate(plugin.OnPlayerDisconnected);
+					break;
+				case "On_PlayerGathering":
+					Hooks.OnGathering += new Hooks.GatheringDelegate(plugin.OnPlayerGathering);
+					break;
+				case "On_PlayerAttacked":
+					Hooks.OnPlayerHurt += new Hooks.PlayerHurtDelegate(plugin.OnPlayerAttacked);
+					break;
+				case "On_PlayerDied":
+					Hooks.OnPlayerDied += new Hooks.PlayerDiedDelegate(plugin.OnPlayerDied);
+					break;
+				case "On_PlayerTakeDamage":
+					Hooks.OnPlayerTakeDamage += new Hooks.PlayerTakeDamageDelegate(plugin.OnPlayerTakeDamage);
+					break;
+				case "On_PlayerTakeRadiation":
+					Hooks.OnPlayerTakeRads += new Hooks.PlayerTakeRadsDelegate(plugin.OnPlayerTakeRadiation);
+					break;
+				}
 			}
 		}
 
@@ -137,7 +201,71 @@
 					continue;
 
 				Logger.LogDebug("Removing function: " + method);
-				//switch (method) { }
+				switch (method) {
+				case "On_Chat":
+					Hooks.OnChat -= new Hooks.ChatDelegate (plugin.OnChat);
+					break;
+				case "On_Command":
+					Hooks.OnCommand -= new Hooks.CommandDelegate (plugin.OnCommand);
+					break;
+				case "On_CorpseDropped":
+					Hooks.OnCorpseDropped -= new Hooks.CorpseDropDelegate (plugin.OnCorpseDropped);
+					break;
+				case "On_CorpseAttacked":
+					Hooks.OnCorpseAttacked -= new Hooks.CorpseAttackedDelegate (plugin.OnCorpseAttacked);
+					break;
+				case "On_BuildingComplete":
+					Hooks.OnBuildingComplete -= new Hooks.BuildingCompleteDelegate (plugin.OnBuildingComplete);
+					break;
+				case "On_BuildingUpdate":
+					Hooks.OnBuildingUpdate -= new Hooks.BuildingUpdateDelegate (plugin.OnBuildingUpdate);
+					break;
+				case "On_BuildingPartAttacked":
+					Hooks.OnBuildingPartAttacked -= new Hooks.BuildingPartAttackedDelegate (plugin.OnBuildingPartAttacked);
+					break;
+				case "On_BuildingPartDestroyed":
+					Hooks.OnBuildingPartDestroyed -= new Hooks.BuildingPartDestroyedDelegate (plugin.OnBuildingPartDestroyed);
+					break;
+				case "On_FrameDeployed":
+					Hooks.OnBuildingFrameDeployed -= new Hooks.BuildingFrameDeployedDelegate (plugin.OnFrameDeployed);
+					break;
+				case "On_NPCAttacked":
+					Hooks.OnNPCHurt -= new Hooks.NPCHurtDelegate (plugin.OnNPCHurt);
+					break;
+				case "On_NPCKilled":
+					Hooks.OnNPCDied -= new Hooks.NPCDiedDelegate (plugin.OnNPCKilled);
+					break;
+				case "On_LootingEntity":
+					Hooks.OnLootingEntity -= new Hooks.LootingEntityDelegate (plugin.OnLootingEntity);
+					break;
+				case "On_LootingPlayer":
+					Hooks.OnLootingPlayer -= new Hooks.LootingPlayerDelegate (plugin.OnLootingPlayer);
+					break;
+				case "On_LootingItem":
+					Hooks.OnLootingItem -= new Hooks.LootingItemDelegate (plugin.OnLootingItem);
+					break;
+				case "On_PlayerConnected":
+					Hooks.OnPlayerConnected -= new Hooks.PlayerConnectedDelegate (plugin.OnPlayerConnected);
+					break;
+				case "On_PlayerDisconnected":
+					Hooks.OnPlayerDisconnected -= new Hooks.PlayerDisconnectedDelegate (plugin.OnPlayerDisconnected);
+					break;
+				case "On_PlayerGathering":
+					Hooks.OnGathering -= new Hooks.GatheringDelegate (plugin.OnPlayerGathering);
+					break;
+				case "On_PlayerAttacked":
+					Hooks.OnPlayerHurt -= new Hooks.PlayerHurtDelegate (plugin.OnPlayerAttacked);
+					break;
+				case "On_PlayerDied":
+					Hooks.OnPlayerDied -= new Hooks.PlayerDiedDelegate (plugin.OnPlayerDied);
+					break;
+				case "On_PlayerTakeDamage":
+					Hooks.OnPlayerTakeDamage -= new Hooks.PlayerTakeDamageDelegate (plugin.OnPlayerTakeDamage);
+					break;
+				case "On_PlayerTakeRadiation":
+					Hooks.OnPlayerTakeRads -= new Hooks.PlayerTakeRadsDelegate (plugin.OnPlayerTakeRadiation);
+					break;
+				}
 			}
 		}
 

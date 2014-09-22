@@ -212,8 +212,8 @@
 			throw new NotImplementedException("There is no OnBlueprintUse hook yet!");
 		}
 
-		public void OnChat(Player player, ConsoleSystem.Arg arg) {
-			this.Invoke("On_Chat", new object[] { player, arg });
+		public void OnChat(ConsoleSystem.Arg arg) {
+			this.Invoke("On_Chat", new object[] { arg });
 		}
 
 		public void OnCommand(Player player, string command, string[] args) {
@@ -224,6 +224,30 @@
 			throw new NotImplementedException("There is no OnConsole hook yet!");
 		}
 
+		public void OnCorpseDropped(BaseCorpse corpse, Entity parent) {
+			this.Invoke("On_CorpseDropped", new object[] { corpse, parent });
+		}
+
+		public void OnCorpseAttacked(BaseCorpse corpse, HitInfo info) {
+			this.Invoke("On_CorpseAttacked", new object[] { corpse, info });
+		}
+
+		public void OnBuildingComplete(BuildingPart bp) {
+			this.Invoke("On_BuildingComplete", new object[] { bp });
+		}
+
+		public void OnBuildingUpdate(BuildingEvent evt) {
+			this.Invoke("On_BuildingUpdate", new object[] { evt });
+		}
+
+		public void OnBuildingPartAttacked(BuildingPart bp, HitInfo info) {
+			this.Invoke("On_BuildingPartAttacked", new object[] { bp, info });
+		}
+
+		public void OnBuildingPartDestroyed(BuildingPart bp, HitInfo info) {
+			this.Invoke("On_BuildingPartDestroyed", new object[] { bp, info });
+		}
+
 		public void OnDoorUse() {
 			throw new NotImplementedException("There is no OnDoorUse hook yet!");
 		}
@@ -232,24 +256,28 @@
 			throw new NotImplementedException("There is no OnEntityDecay hook yet!");
 		}
 
-		public void OnEntityDeployed(BuildingBlock bb) {
-			this.Invoke("On_EntityDeployed", new object[] { bb });
-		}
-
-		public void OnEntityDestroyed(BuildingBlock bb, HitInfo info) {
-			this.Invoke("On_EntityDestroyed", new object[] { bb, info });
-		}
-
-		public void OnEntityHurt(BuildingBlock bb, HitInfo info) {
-			this.Invoke("On_EntityHurt", new object[] { bb, info });
+		public void OnFrameDeployed(BuildingPart bp) {
+			this.Invoke("On_FrameDeployed", new object[] { bp });
 		}
 
 		public void OnNPCHurt(NPCHurtEvent evt) {
-			this.Invoke("On_NPCHurt", new object[] { evt });
+			this.Invoke("On_NPCAttacked", new object[] { evt });
 		}
 
 		public void OnNPCKilled(NPCDeathEvent evt) {
 			this.Invoke("On_NPCKilled", new object[] { evt });
+		}
+
+		public void OnLootingEntity(EntityLootEvent evt) {
+			this.Invoke("On_LootingEntity", new object[] { evt });
+		}
+
+		public void OnLootingPlayer(PlayerLootEvent evt) {
+			this.Invoke("On_LootingPlayer", new object[] { evt });
+		}
+
+		public void OnLootingItem(ItemLootEvent evt) {
+			this.Invoke("On_LootingItem", new object[] { evt });
 		}
 
 		public void OnPlayerConnected(Player player) {
@@ -260,16 +288,24 @@
 			this.Invoke("On_PlayerDisconnected", new object[] { player });
 		}
 
-		public void OnPlayerGathering(Player player, GatherEvent evt) {
-			this.Invoke("On_PlayerGathering", new object[] { player, evt });
+		public void OnPlayerGathering(GatherEvent evt) {
+			this.Invoke("On_PlayerGathering", new object[] { evt });
 		}
 
-		public void OnPlayerHurt(PlayerHurtEvent evt) {
-			this.Invoke("On_PlayerHurt", new object[] { evt });
+		public void OnPlayerAttacked(PlayerHurtEvent evt) {
+			this.Invoke("On_PlayerAttacked", new object[] { evt });
 		}
 
-		public void OnPlayerKilled(PlayerDeathEvent evt) {
-			this.Invoke("On_PlayerKilled", new object[] { evt });
+		public void OnPlayerDied(PlayerDeathEvent evt) {
+			this.Invoke("On_PlayerDied", new object[] { evt });
+		}
+
+		public void OnPlayerTakeDamage(Player player, float dmgAmount, Rust.DamageType dmgType) {
+			this.Invoke("On_PlayerTakeDamage", new object[] { player, dmgAmount, dmgType });
+		}
+
+		public void OnPlayerTakeRadiation(Player player, float radAmount) {
+			this.Invoke("On_PlayerTakeRadiation", new object[] { player, radAmount });
 		}
 
 		public void OnServerInit() {
