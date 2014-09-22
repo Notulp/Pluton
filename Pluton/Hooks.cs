@@ -6,9 +6,23 @@ namespace Pluton {
 
 		#region Events
 
+		public static event BuildingPartAttackedDelegate OnBuildingPartAttacked;
+
+		public static event BuildingPartDestroyedDelegate OnBuildingPartDestroyed;
+
+		public static event BuildingFrameDeployedDelegate OnBuildingFrameDeployed;
+
+		public static event BuildingCompleteDelegate OnBuildingComplete;
+
+		public static event BuildingUpdateDelegate OnBuildingUpdate;
+
 		public static event ChatDelegate OnChat;
 
 		public static event CommandDelegate OnCommand;
+
+		public static event CorpseAttackedDelegate OnCorpseAttacked;
+
+		public static event CorpseDropDelegate OnCorpseDropped;
 
 		public static event NPCDiedDelegate OnNPCDied;
 
@@ -22,7 +36,17 @@ namespace Pluton {
 
 		public static event PlayerHurtDelegate OnPlayerHurt;
 
+		public static event PlayerTakeDamageDelegate OnPlayerTakeDamage;
+
+		public static event PlayerTakeRadsDelegate OnPlayerTakeRads;
+
 		public static event GatheringDelegate OnGathering;
+
+		public static event LootingEntityDelegate OnLootingEntity;
+
+		public static event LootingPlayerDelegate OnLootingPlayer;
+
+		public static event LootingItemDelegate OnLootingItem;
 
 		#endregion
 
@@ -176,6 +200,7 @@ namespace Pluton {
 		// BasePlayer.TakeDamage()
 		public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType) {
 			// works?
+			OnPlayerTakeDamage(new Player(player), dmgAmount, dmgType);
 		}
 
 		public static void PlayerTakeDamageOverload(BasePlayer player, float dmgAmount) {
@@ -185,6 +210,7 @@ namespace Pluton {
 		// BasePlayer.TakeRadiation()
 		public static void PlayerTakeRadiation(BasePlayer player, float dmgAmount) {
 			Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " RAD dmg");
+			OnPlayerTakeRads(new Player(player), dmgAmount);
 		}
 
 		/*
@@ -195,21 +221,36 @@ namespace Pluton {
 		// BuildingBlock.OnAttacked()
 		public static void EntityAttacked(BuildingBlock bb, HitInfo info) {
 			// works, event needed
+			var bp = new BuildingPart(bb);
+			new Events.BuildingHurtEvent(bp, info);
 			// if entity will be destroyed call the method below
+			if ((bb.myHealth - info.damageAmount) <= 0.0f) {
+				BuildingPartDestroyed(bp, info);
+				return;
+			}
+			if (OnBuildingPartAttacked != null)
+				OnBuildingPartAttacked(bp, info);
 		}
 
-		public static void EntityDestroyed(BuildingBlock bb, HitInfo info) {
-
+		public static void BuildingPartDestroyed(BuildingPart bp, HitInfo info) {
+			if (OnBuildingPartDestroyed != null)
+				OnBuildingPartDestroyed(bp, info);
 		}
 
 		// BuildingBlock.BecomeFrame()
 		public static void EntityFrameDeployed(BuildingBlock bb) {
 			// blockDefinition is null in this hook, but works
+
+			var bp = new BuildingPart(bb);
+			if (OnBuildingFrameDeployed != null)
+				OnBuildingFrameDeployed(bp);
 		}
 
 		// BuildingBlock.BecomeBuilt()
 		public static void EntityBuilt(BuildingBlock bb) {
-			// works, event needed
+			var bp = new BuildingPart(bb);
+			if (OnBuildingComplete != null)
+				OnBuildingComplete(bp);
 		}
 
 		// BuildingBlock.DoBuild()
@@ -217,50 +258,81 @@ namespace Pluton {
 			// hammer prof = 1
 			// works
 			// called anytime you hit a building block with a constructor item (hammer)
+
+			var bp = new BuildingPart(bb);
+			var p = new Player(player);
+			var ebe = new Events.BuildingEvent(bp, p, proficiency);
+			if (OnBuildingUpdate != null)
+				OnBuildingUpdate(ebe);
 		}
 
 		// BaseCorpse.InitCorpse()
 		public static void CorpseInit(BaseCorpse corpse, BaseEntity parent) {
 			// works
+
+			if (OnCorpseDropped != null)
+				OnCorpseDropped(corpse, new Entity(parent));
 		}
 
 		// BaseCorpse.OnAttacked()
 		public static void CorpseHit(BaseCorpse corpse, HitInfo info) {
 			// works
+
+			if (OnCorpseAttacked != null)
+				OnCorpseAttacked(corpse, info);
 		}
 
 		// PlayerLoot.StartLootingEntity()
 		public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity) {
 			// not tested, what is a lootable entity anyway?
-			try {
-				Debug.Log(looter.displayName + " is looting this: " + entity.sourcePrefab + " in pluton");
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+
+			var ele = new Events.EntityLootEvent(playerLoot, new Player(looter), new Entity(entity));
+
+			if (OnLootingEntity != null)
+				OnLootingEntity(ele);
 		}
 
 		// PlayerLoot.StartLootingPlayer()
 		public static void StartLootingPlayer(PlayerLoot playerLoot, BasePlayer looter, BasePlayer looted) {
 			// not tested
-			try {
-				Debug.Log(looter.displayName + " is looting: " + looted.displayName + " in pluton");
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-			}
+
+			var ple = new Events.PlayerLootEvent(playerLoot, new Player(looter), new Player(looted));
+
+			if (OnLootingPlayer!= null)
+				OnLootingPlayer(ple);
 		}
 
 		// PlayerLoot.StartLootingItem()
 		public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item) {
 			// works, event needed
+
+			var ile = new Events.ItemLootEvent(playerLoot, new Player(looter), item);
+
+			if (OnLootingItem != null)
+				OnLootingItem(ile);
 		}
 
 		#endregion
 
 		#region Delegates
 
+		public delegate void BuildingPartAttackedDelegate(BuildingPart bp, HitInfo info);
+
+		public delegate void BuildingPartDestroyedDelegate(BuildingPart bp, HitInfo info);
+
+		public delegate void BuildingFrameDeployedDelegate(BuildingPart bp);
+
+		public delegate void BuildingCompleteDelegate(BuildingPart bp);
+
+		public delegate void BuildingUpdateDelegate(Events.BuildingEvent be);
+
 		public delegate void ChatDelegate(ConsoleSystem.Arg arg);
 
 		public delegate void CommandDelegate(Player player, string cmd, string[] args);
+
+		public delegate void CorpseDropDelegate(BaseCorpse corpse, Entity entity);
+
+		public delegate void CorpseAttackedDelegate(BaseCorpse corpse, HitInfo info);
 
 		public delegate void NPCDiedDelegate(Events.NPCDeathEvent de);
 
@@ -274,7 +346,17 @@ namespace Pluton {
 
 		public delegate void PlayerHurtDelegate(Events.PlayerHurtEvent he);
 
+		public delegate void PlayerTakeDamageDelegate(Player player, float dmgAmount, Rust.DamageType dmgType);
+
+		public delegate void PlayerTakeRadsDelegate(Player player, float dmgAmount);
+
 		public delegate void GatheringDelegate(Events.GatherEvent ge);
+
+		public delegate void LootingEntityDelegate(Events.EntityLootEvent el);
+
+		public delegate void LootingPlayerDelegate(Events.PlayerLootEvent pl);
+
+		public delegate void LootingItemDelegate(Events.ItemLootEvent il);
 
 		#endregion
 
