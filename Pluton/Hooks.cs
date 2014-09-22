@@ -57,7 +57,12 @@ namespace Pluton {
 			string cmd = args[0].Replace("/", "");
 			string[] args2 = new string[args.Length - 1];
 			Array.Copy(args, 1, args2, 0, args.Length - 1);
-			OnCommand(player, cmd, args2);
+			if (cmd == "pluton.reload" && player.Admin) {
+				PluginLoader.GetInstance().ReloadPlugins();
+				return;
+			}
+			if (OnCommand != null)
+				OnCommand(player, cmd, args2);
 		}
 
 		// chat.say()
@@ -85,7 +90,8 @@ namespace Pluton {
 				ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(basePlayer.displayName) + " " + StringExtensions.QuoteSafe(str));
 				arg.ReplyWith("chat.say was executed");
 			}
-			OnChat(arg);
+			if (OnChat != null)
+				OnChat(arg);
 		}
 
 		// BaseResource.OnAttacked()
@@ -93,7 +99,8 @@ namespace Pluton {
 			if (!Realm.Server())
 				return;
 
-			OnGathering(new Events.GatherEvent(res, info));
+			if (OnGathering != null)
+				OnGathering(new Events.GatherEvent(res, info));
 
 			res.health -= info.damageAmount * info.resourceGatherProficiency;
 			if ((double) res.health <= 0.0)
@@ -110,7 +117,7 @@ namespace Pluton {
 			if (!Realm.Server() || (double) animal.myHealth <= 0.0)
 				return;
 
-			if ((animal.myHealth - info.damageAmount) > 0.0f)
+			if ((animal.myHealth - info.damageAmount) > 0.0f && OnNPCHurt != null)
 				OnNPCHurt(new Events.NPCHurtEvent(npc, info));
 
 			animal.myHealth -= info.damageAmount;
@@ -122,6 +129,7 @@ namespace Pluton {
 		// BaseAnimal.Die()
 		public static void NPCDied(BaseAnimal animal, HitInfo info) {
 			var npc = new NPC(animal);
+			if (OnNPCDied != null)
 			OnNPCDied(new Events.NPCDeathEvent(npc, info));
 		}
 
@@ -133,7 +141,8 @@ namespace Pluton {
 			}
 
 			var p = new Player(player);
-			OnPlayerConnected(p);
+			if (OnPlayerConnected != null)
+				OnPlayerConnected(p);
 		}
 
 		// BasePlayer.Die()
@@ -146,13 +155,15 @@ namespace Pluton {
 				info.Initiator = player as BaseEntity;
 			}
 
-			var p = new Player(player);
-			Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(p, info);
-			OnPlayerDied(pde);
+			if (OnPlayerDied != null) {
+				var p = new Player(player);
+				Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(p, info);
+				OnPlayerDied(pde);
 
-			// not tested
-			if (!pde.dropLoot)
-				player.inventory.Strip();
+				// not tested
+				if (!pde.dropLoot)
+					player.inventory.Strip();
+			}
 		}
 
 		// BasePlayer.OnDisconnected()
@@ -169,6 +180,7 @@ namespace Pluton {
 				Server.GetServer().OfflinePlayers.Add(player.userID, op);
 			}
 
+			if (OnPlayerDisconnected != null)
 			OnPlayerDisconnected(p);
 		}
 
@@ -191,7 +203,7 @@ namespace Pluton {
 			player.TakeDamageIndicator(info.damageAmount, player.transform.position - info.PointStart);
 			player.CheckDeathCondition(info);
 
-			if (!player.IsDead())
+			if (!player.IsDead() && OnPlayerHurt != null)
 				OnPlayerHurt(new Events.PlayerHurtEvent(p, info));
 
 			player.SendEffect("takedamage_hit");
@@ -200,7 +212,8 @@ namespace Pluton {
 		// BasePlayer.TakeDamage()
 		public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType) {
 			// works?
-			OnPlayerTakeDamage(new Player(player), dmgAmount, dmgType);
+			if (OnPlayerTakeDamage != null)
+				OnPlayerTakeDamage(new Player(player), dmgAmount, dmgType);
 		}
 
 		public static void PlayerTakeDamageOverload(BasePlayer player, float dmgAmount) {
@@ -210,13 +223,9 @@ namespace Pluton {
 		// BasePlayer.TakeRadiation()
 		public static void PlayerTakeRadiation(BasePlayer player, float dmgAmount) {
 			Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " RAD dmg");
-			OnPlayerTakeRads(new Player(player), dmgAmount);
+			if (OnPlayerTakeRads != null)
+				OnPlayerTakeRads(new Player(player), dmgAmount);
 		}
-
-		/*
-		 * bb.deployerUserName seems to be null
-		 * 
-		 */
 
 		// BuildingBlock.OnAttacked()
 		public static void EntityAttacked(BuildingBlock bb, HitInfo info) {
