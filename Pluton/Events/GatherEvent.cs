@@ -35,6 +35,12 @@ namespace Pluton.Events {
 			}
 		}
 
+		public Player Gatherer {
+			get {
+				return new Player(_info.Initiator as BasePlayer);
+			}
+		}
+
 		public int Stage {
 			get {
 				return _res.stage;
