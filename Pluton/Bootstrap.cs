@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Pluton {
 	public class Bootstrap : MonoBehaviour {
 
-		public static string Version = "0.9.1";
+		public static string Version = "0.9.2";
 
 		public static void AttachBootstrap() {
 			try {
@@ -27,8 +27,9 @@ namespace Pluton {
 			PluginLoader.GetInstance().Init();
 
 			server.official = false;
+
 			if (!server.hostname.ToLower().Contains("pluton"))
-				server.hostname += " [Pluton mod]";
+				server.hostname = String.Format("{0} [Pluton v.{1}]", server.hostname, Version);
 		}
 	}
 }
