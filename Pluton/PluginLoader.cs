@@ -131,6 +131,9 @@
 				case "On_Chat":
 					Hooks.OnChat += new Hooks.ChatDelegate(plugin.OnChat);
 					break;
+				case "On_ClientAuth":
+					Hooks.OnClientAuth += new Hooks.ClientAuthDelegate(plugin.OnClientAuth);
+					break;
 				case "On_Command":
 					Hooks.OnCommand += new Hooks.CommandDelegate(plugin.OnCommand);
 					break;
@@ -204,6 +207,9 @@
 				switch (method) {
 				case "On_Chat":
 					Hooks.OnChat -= new Hooks.ChatDelegate (plugin.OnChat);
+					break;
+				case "On_ClientAuth":
+					Hooks.OnClientAuth -= new Hooks.ClientAuthDelegate(plugin.OnClientAuth);
 					break;
 				case "On_Command":
 					Hooks.OnCommand -= new Hooks.CommandDelegate (plugin.OnCommand);

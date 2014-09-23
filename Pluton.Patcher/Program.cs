@@ -30,6 +30,26 @@ namespace Pluton.Patcher {
 			}
 		}
 
+		private static void ClientAuthPatch() {
+			try {
+				TypeDefinition connAuth = rustAssembly.MainModule.GetType("ConnectionAuth");
+				MethodDefinition cAuth = hooksClass.GetMethod("ClientAuth");
+				MethodDefinition approve = connAuth.GetMethod("Approve");
+
+				CloneMethod(approve);
+				// clear out the method, we will recreate it in Pluton
+				approve.Body.Instructions.Clear();
+				approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+				approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+				approve.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(cAuth)));
+				approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
 		private static void ChatPatch() {
 			try {
 				TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
@@ -407,6 +427,8 @@ namespace Pluton.Patcher {
 			bool success = true;
 
 			BootstrapAttachPatch();
+
+			ClientAuthPatch();
 
 			GatherPatch();
 			ChatPatch();

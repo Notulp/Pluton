@@ -216,8 +216,12 @@
 			this.Invoke("On_Chat", new object[] { arg });
 		}
 
-		public void OnCommand(Player player, string command, string[] args) {
-			this.Invoke("On_Command", new object[] { player, command, args });
+		public void OnClientAuth(AuthEvent evt) {
+			this.Invoke("On_ClientAuth", new object[] { evt });
+		}
+
+		public void OnCommand(Player player, Command cmd) {
+			this.Invoke("On_Command", new object[] { player, cmd });
 		}
 
 		public void OnConsole(ref ConsoleSystem.Arg arg, bool external) {
