@@ -22,13 +22,17 @@ namespace Pluton {
 			return new Player(BasePlayer.FindByID(UInt64.Parse(steamID)));
 		}
 
-		public void Ban(string reason = "No reason given") {
+		public void Ban(string reason = "no reason") {
 			ServerUsers.Set(GameID, ServerUsers.UserGroup.Banned, Name, reason);
 			ServerUsers.Save();
 		}
 
-		public void Kick(string reason = "No reason given") {
+		public void Kick(string reason = "no reason") {
 			Network.Net.sv.Kick(basePlayer.net.connection, reason);
+		}
+
+		public void Reject(string reason = "no reason") {
+			ConnectionAuth.Reject(basePlayer.net.connection, reason);
 		}
 
 		public void Kill() {
@@ -38,11 +42,11 @@ namespace Pluton {
 			basePlayer.Die(info);
 		}
 
-		public void MakeModerator(string reason = "No reason given") {
+		public void MakeModerator(string reason = "no reason") {
 			ServerUsers.Set(GameID, ServerUsers.UserGroup.Moderator, Name, reason);
 		}
 
-		public void MakeOwner(string reason = "No reason given") {
+		public void MakeOwner(string reason = "no reason") {
 			ServerUsers.Set(GameID, ServerUsers.UserGroup.Owner, Name, reason);
 		}
 
