@@ -110,6 +110,10 @@ public class IniParser {
 		return (string)this.keyPairs[pair];
 	}
 
+	public bool GetBoolSetting(string sectionName, string settingName) {
+		return (GetSetting(sectionName, settingName).ToLower() == "true");
+	}
+
 	public bool isCommandOn(string cmdName) {
 		string setting = this.GetSetting("Commands", cmdName);
 		return ((setting == null) || (setting == "true"));
