@@ -7,7 +7,7 @@
 	using UnityEngine;
 
 	public class DataStore {
-		public readonly Hashtable datastore = new Hashtable();
+		public readonly Hashtable datastore;
 		private static DataStore instance;
 		public string PATH;
 
@@ -133,8 +133,7 @@
 		}
 
 		public void Flush(string tablename) {
-			if (((Hashtable)this.datastore[tablename]) != null)
-			{
+			if (((Hashtable)this.datastore[tablename]) != null) {
 				this.datastore.Remove(tablename);
 			}
 		}
@@ -190,7 +189,7 @@
 					foreach (DictionaryEntry entry in hashtable)
 						this.datastore[entry.Key] = entry.Value;
 
-					Util.GetUtil().ConsoleLog("DataStore Loaded from " + PATH, false);
+					Debug.Log("DataStore Loaded from " + PATH);
 				} catch (Exception ex) {
 					Logger.LogException(ex);
 				}
@@ -210,7 +209,7 @@
 		public void Save() {
 			if (this.datastore.Count != 0) {
 				Util.HashtableToFile(this.datastore, PATH);
-				Util.GetUtil().ConsoleLog("DataStore saved to " + PATH, false);
+				Debug.Log("DataStore saved to " + PATH);
 			}
 		}
 
@@ -228,6 +227,7 @@
 
 		public DataStore(string path) {
 			path = RemoveChars(path);
+			datastore = new Hashtable();
 			PATH = Path.Combine(Util.GetPublicFolder(), path);
 		}
 	}
