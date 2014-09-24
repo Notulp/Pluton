@@ -17,6 +17,15 @@ namespace Pluton {
 			}
 		}
 
+		public static void SaveAll() {
+			try {
+				Server.GetServer().OnShutdown();
+				DataStore.GetInstance().Save();
+			} catch (Exception ex) {
+				Logger.LogException(ex);
+			}
+		}
+
 		public static void Init() {
 			if (Directory.Exists(Util.GetPublicFolder()))
 				Directory.CreateDirectory(Util.GetPublicFolder());
