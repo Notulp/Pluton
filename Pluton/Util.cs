@@ -31,6 +31,10 @@
 			}
 		}
 
+		public LoadOut CreateLoadOut(string name) {
+			return new LoadOut(name);
+		}
+
 		public void DestroyObject(GameObject go) {
 			// FIXME
 		/*	NetCull.Destroy(go);*/
@@ -130,6 +134,21 @@
 		public Vector3 Infront(Player p, float length) {
 			return (p.Location + ((Vector3)(forward * length)));
 		}*/
+
+		public void Items() {
+			var path = Path.Combine(GetPublicFolder(), "Items.ini");
+			if (!File.Exists(path))
+				File.AppendAllText("", path);
+			var ini = new IniParser(path);
+			foreach (Item.Definition item in ItemManager.Instance.itemList) {
+				ini.AddSetting(item.displayname, "itemid", item.itemid.ToString());
+				ini.AddSetting(item.displayname, "category", item.category);
+				ini.AddSetting(item.displayname, "shortname", item.shortname);
+				ini.AddSetting(item.displayname, "worldPrefab", item.worldprefab);
+				ini.AddSetting(item.displayname, "description", item.description);
+			}
+			ini.Save();
+		}
 
 		public bool IsNull(object obj) {
 			return (obj == null);
