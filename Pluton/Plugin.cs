@@ -34,6 +34,7 @@
 			Scope.SetVariable("Server", Pluton.Server.GetServer());
 			Scope.SetVariable("DataStore", DataStore.GetInstance());
 			Scope.SetVariable("Util", Util.GetUtil());
+			Scope.SetVariable("World", World.GetWorld());
 			Engine.Execute(code, Scope);
 			Class = Engine.Operations.Invoke(Scope.GetVariable(name));
 			Globals = Engine.Operations.GetMemberNames(Class);
@@ -212,8 +213,8 @@
 			throw new NotImplementedException("There is no OnBlueprintUse hook yet!");
 		}
 
-		public void OnChat(ConsoleSystem.Arg arg) {
-			this.Invoke("On_Chat", new object[] { arg });
+		public void OnChat(Player player, ChatString arg) {
+			this.Invoke("On_Chat", new object[] { player, arg });
 		}
 
 		public void OnClientAuth(AuthEvent evt) {
@@ -317,7 +318,7 @@
 		}
 
 		public void OnServerShutdown() {
-			throw new NotImplementedException("There is no OnServerShutdown hook yet!");
+			this.Invoke("On_ServerShutdown");
 		}
 
 		// timer hooks
