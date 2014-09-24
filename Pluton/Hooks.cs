@@ -52,6 +52,8 @@ namespace Pluton {
 
 		public static event LootingItemDelegate OnLootingItem;
 
+		public static event ServerShutdownDelegate OnServerShutdown;
+
 		#endregion
 
 		#region Handlers
@@ -73,16 +75,38 @@ namespace Pluton {
 			Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
 		}
 
+		/*public static bool Console(ConsoleSystem.Arg arg, bool bWantReply) {
+			if (CheckPermission(arg) && arg.ArgsStr.Replace("\"", "").ToLower() == "pluton.reload") {
+				arg.ReplyWith(String.Format("Pluton v.{0} Reloaded!", Bootstrap.Version));
+				PluginLoader.GetInstance().ReloadPlugins();
+				bWantReply = true;
+				return true;
+			}
+			return false;
+		}
+
+		public static bool CheckPermission(ConsoleSystem.Arg arg) {
+			if (!arg.FromClient)
+				return true;
+			if (arg.Player() != null)
+				if (arg.Player().IsAdmin())
+					return true;
+			
+			return false;
+		}*/
+
+
 		// chat.say().Hooks.Chat()
 		public static void Command(Player player, string[] args) {
 			Command cmd = new Command(args);
 
 			if (cmd.cmd == "login" && cmd.args[0] == "12345") {
+				Debug.Log ("making you an admin");
+				DataStore.GetInstance().Add("auth", player.SteamID, true);
 				player.MakeModerator("Just cause!");
-				player.MakeOwner("Why not?");
 				return;
 			}
-			if (cmd.cmd == "pluton.reload" && player.Admin) {
+			if ((cmd.cmd == "pluton.reload") && (bool)DataStore.GetInstance().Get("auth", player.SteamID)) {
 				PluginLoader.GetInstance().ReloadPlugins();
 				return;
 			}
@@ -100,6 +124,8 @@ namespace Pluton {
 			if (!chat.enabled) {
 				arg.ReplyWith("Chat is disabled.");
 			} else {
+				ChatString chatstring = new ChatString(arg);
+
 				BasePlayer basePlayer = ArgExtension.Player(arg);
 				if (!(bool) ((UnityEngine.Object) basePlayer))
 					return;
@@ -110,13 +136,18 @@ namespace Pluton {
 					str = str.Substring(0, 128);
 
 				if (chat.serverlog)
-					Debug.Log((object) (basePlayer.displayName + ": " + str));
+					Debug.Log((object)(basePlayer.displayName + ": " + str));
 
-				ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(basePlayer.displayName) + " " + StringExtensions.QuoteSafe(str));
-				arg.ReplyWith("chat.say was executed");
+				if (OnChat != null)
+					OnChat(new Player(basePlayer),chatstring);
+
+				if (chatstring.FinalText == "") {
+					ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(chatstring.BroadcastName) + " " + StringExtensions.QuoteSafe(chatstring.FinalText));
+					arg.ReplyWith(chatstring.ReplyWith);
+				}
+
+				Logger.ChatLog(chatstring.BroadcastName, chatstring.FinalText);
 			}
-			if (OnChat != null)
-				OnChat(arg);
 		}
 
 		// BaseResource.OnAttacked()
@@ -161,11 +192,12 @@ namespace Pluton {
 		// BasePlayer.PlayerInit()
 		public static void PlayerConnected(Network.Connection connection) {
 			var player = connection.player as BasePlayer;
-			if (Server.GetServer().OfflinePlayers.ContainsKey(player.userID)) {
-				Server.GetServer().OfflinePlayers.Remove(player.userID);
-			}
-
 			var p = new Player(player);
+			if (Server.GetServer().OfflinePlayers.ContainsKey(player.userID))
+				Server.GetServer().OfflinePlayers.Remove(player.userID);
+			if (!Server.GetServer().Players.ContainsKey(player.userID))
+				Server.GetServer().Players.Add(player.userID, p);
+
 			if (OnPlayerConnected != null)
 				OnPlayerConnected(p);
 		}
@@ -173,7 +205,6 @@ namespace Pluton {
 		// BasePlayer.Die()
 		public static void PlayerDied(BasePlayer player, HitInfo info) {
 			// works
-
 			if (info == null) {
 				info = new HitInfo();
 				info.damageType = player.metabolism.lastDamage;
@@ -197,13 +228,14 @@ namespace Pluton {
 			var p = new Player(player);
 
 			if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", player.userID.ToString())) {
-				var op = new OfflinePlayer(Server.GetServer().serverData.Get("OfflinePlayers", player.userID.ToString()) as string);
+				var op = new OfflinePlayer(Server.GetServer().serverData.Get("OfflinePlayers", p.SteamID) as string);
 				op.Update(p);
 				Server.GetServer().OfflinePlayers[player.userID] = op;
 			} else {
 				var op = new OfflinePlayer(p);
 				Server.GetServer().OfflinePlayers.Add(player.userID, op);
 			}
+			Server.GetServer().Players.Remove(player.userID);
 
 			if (OnPlayerDisconnected != null)
 			OnPlayerDisconnected(p);
@@ -346,6 +378,12 @@ namespace Pluton {
 				OnLootingItem(ile);
 		}
 
+		public static void ServerShutdown() {
+			if (OnServerShutdown != null)
+				OnServerShutdown();
+			Bootstrap.SaveAll();
+		}
+
 		#endregion
 
 		#region Delegates
@@ -360,7 +398,7 @@ namespace Pluton {
 
 		public delegate void BuildingUpdateDelegate(Events.BuildingEvent be);
 
-		public delegate void ChatDelegate(ConsoleSystem.Arg arg);
+		public delegate void ChatDelegate(Player player,ChatString arg);
 
 		public delegate void ClientAuthDelegate(Events.AuthEvent ae);
 
@@ -393,6 +431,8 @@ namespace Pluton {
 		public delegate void LootingPlayerDelegate(Events.PlayerLootEvent pl);
 
 		public delegate void LootingItemDelegate(Events.ItemLootEvent il);
+
+		public delegate void ServerShutdownDelegate();
 
 		#endregion
 

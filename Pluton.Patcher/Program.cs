@@ -7,6 +7,7 @@ namespace Pluton.Patcher {
 
 		private static AssemblyDefinition plutonAssembly;
 		private static AssemblyDefinition rustAssembly;
+		//private static AssemblyDefinition facepunchAssembly;
 		private static TypeDefinition hooksClass;
 		private static TypeDefinition bAnimal;
 		private static TypeDefinition bPlayer;
@@ -49,6 +50,31 @@ namespace Pluton.Patcher {
 				Console.WriteLine("Error msg: " + ex.Message);
 			}
 		}
+
+		/*private static void ConsolePatch() {
+			try {
+				TypeDefinition conSys = facepunchAssembly.MainModule.GetType("ConsoleSystem");
+				MethodDefinition runInternal = conSys.GetMethod("RunCommandInternal");
+				MethodDefinition console = hooksClass.GetMethod("Console");
+
+				CloneMethod(runInternal);
+				ILProcessor il = runInternal.Body.GetILProcessor();
+				//il.InsertBefore(il.Body.Instructions[0x00], Instruction.Create(OpCodes.Nop)); Console.WriteLine("1");
+				il.InsertBefore(il.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0)); Console.WriteLine("2");
+				il.InsertAfter(il.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1)); Console.WriteLine("3");
+				il.InsertAfter(il.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(console))); Console.WriteLine("4");
+				il.InsertAfter(il.Body.Instructions[0x03], Instruction.Create(OpCodes.Brtrue, Instruction.Create(OpCodes.Nop))); Console.WriteLine("5");
+				il.InsertAfter(il.Body.Instructions[0x04], Instruction.Create(OpCodes.Nop)); Console.WriteLine("6");
+				il.InsertAfter(il.Body.Instructions[0x05], Instruction.Create(OpCodes.Ldc_I4_1)); Console.WriteLine("7");
+				il.InsertAfter(il.Body.Instructions[0x06], Instruction.Create(OpCodes.Stloc_0)); Console.WriteLine("8");
+				il.InsertAfter(il.Body.Instructions[0x07], Instruction.Create(OpCodes.Br)); Console.WriteLine("9");
+
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+				Console.WriteLine(ex.StackTrace);
+			}
+		}*/
 
 		private static void ChatPatch() {
 			try {
@@ -398,6 +424,21 @@ namespace Pluton.Patcher {
 			}
 		}
 
+		private static void ServerShutdownPatch() {
+			try {
+				TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
+				MethodDefinition disable = serverMGR.GetMethod("OnDisable");
+				MethodDefinition shutdown = hooksClass.GetMethod("ServerShutdown");
+
+				CloneMethod(disable);
+				ILProcessor iLProcessor = disable.Body.GetILProcessor();
+				iLProcessor.InsertBefore(disable.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(shutdown)));
+			} catch (Exception ex) {
+				Console.WriteLine("Error at: " + ex.TargetSite.Name);
+				Console.WriteLine("Error msg: " + ex.Message);
+			}
+		}
+
 		// from fougerite.patcher
 		private static MethodDefinition CloneMethod(MethodDefinition orig) {
 			MethodDefinition definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
@@ -415,6 +456,7 @@ namespace Pluton.Patcher {
 
 		public static void Main(string[] args) {
 			rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
+		//	facepunchAssembly = AssemblyDefinition.ReadAssembly("Facepunch.dll");
 			plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
 			hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
 			bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
@@ -427,9 +469,11 @@ namespace Pluton.Patcher {
 			bool success = true;
 
 			BootstrapAttachPatch();
+			ServerShutdownPatch ();
 
 			ClientAuthPatch();
 
+			//ConsolePatch();
 			GatherPatch();
 			ChatPatch();
 
@@ -466,6 +510,7 @@ namespace Pluton.Patcher {
 				definition3.Constant = version;
 				rustAssembly.MainModule.GetType("Pluton_Patched").Fields.Add(definition3);*/
 				rustAssembly.Write("Assembly-CSharp.dll");
+			//	facepunchAssembly.Write("Facepunch.dll");
 			} catch (Exception ex) {
 				Console.WriteLine("Error at: " + ex.TargetSite.Name);
 				Console.WriteLine("Error msg: " + ex.Message);
