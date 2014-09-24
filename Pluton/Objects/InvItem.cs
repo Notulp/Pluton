@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Pluton {
@@ -7,21 +8,21 @@ namespace Pluton {
 		public Item _item;
 
 		public InvItem(string name, int amount) {
-			var item = ItemManager.CreateByName(name, amount);
+			var item = ItemManager.CreateByItemID(GetItemId(name), amount);
 			if (item == null) {
 				Logger.LogDebug(String.Format("[InvItem] Couldn't create item: {0}x{1}", amount, name));
 				_item = null;
-			}
-			_item = item;
+			} else
+				_item = item;
 		}
 
 		public InvItem(string name) {
-			var item = ItemManager.CreateByName(name, 1);
+			var item = ItemManager.CreateByItemID(GetItemId(name), 1);
 			if (item == null) {
 				Logger.LogDebug(String.Format("[InvItem] Couldn't create item: {0}x{1}", 1, name));
 				_item = null;
-			}
-			_item = item;
+			} else
+				_item = item;
 		}
 
 		public InvItem(Item item) {
@@ -62,6 +63,12 @@ namespace Pluton {
 			set {
 				_item.position = value;
 			}
+		}
+
+		public static int GetItemId(string itemName) {
+			return (from item in ItemManager.Instance.itemList
+					where item.displayname == itemName
+					select item.itemid).ToArray()[0];
 		}
 	}
 }

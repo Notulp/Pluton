@@ -42,12 +42,19 @@ namespace Pluton {
 			basePlayer.Die(info);
 		}
 
+		public void MakeNone(string reason = "no reason") {
+			ServerUsers.Set(GameID, ServerUsers.UserGroup.None, Name, reason);
+			ServerUsers.Save();
+		}
+
 		public void MakeModerator(string reason = "no reason") {
 			ServerUsers.Set(GameID, ServerUsers.UserGroup.Moderator, Name, reason);
+			ServerUsers.Save();
 		}
 
 		public void MakeOwner(string reason = "no reason") {
 			ServerUsers.Set(GameID, ServerUsers.UserGroup.Owner, Name, reason);
+			ServerUsers.Save();
 		}
 
 		public void Message(string msg) {
@@ -103,9 +110,21 @@ namespace Pluton {
 			}
 		}
 
+		public bool Moderator {
+			get {
+				return ServerUsers.Is(GameID, ServerUsers.UserGroup.Moderator);
+			}
+		}
+
 		public string Name {
 			get {
 				return basePlayer.displayName;
+			}
+		}
+
+		public bool Owner {
+			get {
+				return ServerUsers.Is(GameID, ServerUsers.UserGroup.Owner);
 			}
 		}
 

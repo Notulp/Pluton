@@ -6,9 +6,11 @@ namespace Pluton {
 	public class Inv {
 
 		private readonly PlayerInventory _inv;
+		public readonly Player owner;
 
-		public Inv (PlayerInventory inv) {
+		public Inv(PlayerInventory inv) {
 			_inv = inv;
+			owner = new Player(inv.GetComponent<BasePlayer>());
 		}
 
 		public bool Add(InvItem item) {
