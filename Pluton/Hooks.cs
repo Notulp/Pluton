@@ -75,27 +75,6 @@ namespace Pluton {
 			Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
 		}
 
-		/*public static bool Console(ConsoleSystem.Arg arg, bool bWantReply) {
-			if (CheckPermission(arg) && arg.ArgsStr.Replace("\"", "").ToLower() == "pluton.reload") {
-				arg.ReplyWith(String.Format("Pluton v.{0} Reloaded!", Bootstrap.Version));
-				PluginLoader.GetInstance().ReloadPlugins();
-				bWantReply = true;
-				return true;
-			}
-			return false;
-		}
-
-		public static bool CheckPermission(ConsoleSystem.Arg arg) {
-			if (!arg.FromClient)
-				return true;
-			if (arg.Player() != null)
-				if (arg.Player().IsAdmin())
-					return true;
-			
-			return false;
-		}*/
-
-
 		// chat.say().Hooks.Chat()
 		public static void Command(Player player, string[] args) {
 			Command cmd = new Command(args);
@@ -382,6 +361,23 @@ namespace Pluton {
 			if (OnServerShutdown != null)
 				OnServerShutdown();
 			Bootstrap.SaveAll();
+		}
+
+		public static void Teleport(BasePlayer player, bool newpos) {
+			++ServerPerformance.spawns;
+			if (newpos)
+			{
+				BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
+				player.transform.position = spawnPoint.pos;
+				player.transform.rotation = spawnPoint.rot;
+			}
+			player.supressSnapshots = true;
+			player.StopSpectating();
+			player.UpdateNetworkGroup();
+			player.StartSleeping();
+			player.metabolism.Reset();
+			player.inventory.GiveDefaultItems();
+			player.SendFullSnapshot();
 		}
 
 		#endregion
