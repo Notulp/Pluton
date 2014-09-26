@@ -73,26 +73,29 @@
 		}*/
 
 		public void LoadOfflinePlayers() {
-			if (serverData.GetTable("OfflinePlayers") == null)
-				return;
-			foreach (KeyValuePair<string, string> kvp in serverData.GetTable("OfflinePlayers")) {
-				server.OfflinePlayers.Add(UInt64.Parse(kvp.Key), new OfflinePlayer(kvp.Value));
+			Hashtable ht = serverData.GetTable("OfflinePlayers");
+			if (ht != null) {
+				foreach (DictionaryEntry entry in ht) {
+					server.OfflinePlayers.Add(UInt64.Parse(entry.Key as string), entry.Value as OfflinePlayer);
+				}
+			} else {
+				Debug.LogWarning("[OfflinePalyer] HT is null while loading... wut?");
 			}
 		}
 
 		public void OnShutdown() {
 			foreach (Player player in Players.Values) {
 				if (serverData.ContainsKey("OfflinePlayers", player.SteamID)) {
-					var op = new OfflinePlayer(serverData.Get("OfflinePlayers", player.SteamID) as string);
+					OfflinePlayer op = serverData.Get("OfflinePlayers", player.SteamID) as OfflinePlayer;
 					op.Update(player);
 					OfflinePlayers[player.GameID] = op;
 				} else {
-					var op = new OfflinePlayer(player);
+					OfflinePlayer op = new OfflinePlayer(player);
 					OfflinePlayers.Add(player.GameID, op);
 				}
 			}
 			foreach (OfflinePlayer op2 in OfflinePlayers.Values) {
-				serverData.Add("OfflinePlayers", op2.SteamID, op2.ToString());
+				serverData.Add("OfflinePlayers", op2.SteamID, op2);
 			}
 			serverData.Save();
 		}

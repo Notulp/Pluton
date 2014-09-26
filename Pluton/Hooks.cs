@@ -206,15 +206,17 @@ namespace Pluton {
 			// works
 			var p = new Player(player);
 
-			if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", player.userID.ToString())) {
-				var op = new OfflinePlayer(Server.GetServer().serverData.Get("OfflinePlayers", p.SteamID) as string);
+			if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", p.SteamID)) {
+				OfflinePlayer op = (Server.GetServer().serverData.Get("OfflinePlayers", p.SteamID) as OfflinePlayer);
 				op.Update(p);
 				Server.GetServer().OfflinePlayers[player.userID] = op;
 			} else {
-				var op = new OfflinePlayer(p);
+				OfflinePlayer op = new OfflinePlayer(p);
 				Server.GetServer().OfflinePlayers.Add(player.userID, op);
 			}
-			Server.GetServer().Players.Remove(player.userID);
+
+			if (Server.GetServer().Players.ContainsKey(player.userID))
+				Server.GetServer().Players.Remove(player.userID);
 
 			if (OnPlayerDisconnected != null)
 			OnPlayerDisconnected(p);
@@ -365,8 +367,8 @@ namespace Pluton {
 
 		public static void Teleport(BasePlayer player, bool newpos) {
 			++ServerPerformance.spawns;
-			if (newpos)
-			{
+			newpos = false;
+			if (newpos) {
 				BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
 				player.transform.position = spawnPoint.pos;
 				player.transform.rotation = spawnPoint.rot;
