@@ -76,7 +76,11 @@ namespace Pluton {
 		}
 
 		// chat.say().Hooks.Chat()
-		public static void Command(Player player, string[] args) {
+		public static void Command(ConsoleSystem.Arg arg) {
+
+			Player player = new Player(arg.Player());
+			string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
+
 			Command cmd = new Command(args);
 
 			if (cmd.cmd == "login" && cmd.args[0] == "12345") {
@@ -91,12 +95,16 @@ namespace Pluton {
 			}
 			if (OnCommand != null)
 				OnCommand(player, cmd);
+
+			if (cmd.ReplyWith != "")
+				arg.ReplyWith(cmd.ReplyWith);
+
 		}
 
 		// chat.say()
 		public static void Chat(ConsoleSystem.Arg arg){
 			if (arg.ArgsStr.StartsWith("\"/")) {
-				Command(new Player(arg.Player()), arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None));
+				Command(arg);
 				return;
 			}
 
@@ -371,7 +379,6 @@ namespace Pluton {
 
 		public static void Teleport(BasePlayer player, bool newpos) {
 			++ServerPerformance.spawns;
-			newpos = false;
 			if (newpos) {
 				BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
 				player.transform.position = spawnPoint.pos;
