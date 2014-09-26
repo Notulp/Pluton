@@ -78,7 +78,7 @@
 			DirectoryInfo loadoutPath = new DirectoryInfo(Util.GetLoadoutFolder());
 			foreach (FileInfo file in loadoutPath.GetFiles()) {
 				if (file.Extension == ".ini") {
-					LoadOut lo = new LoadOut(file.Name.Replace(".ini", ""));
+					new LoadOut(file.Name.Replace(".ini", ""));
 				}
 			}
 			Logger.Log("[Server] " + LoadOuts.Count.ToString() + " loadout loaded!");
