@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -130,9 +131,9 @@ namespace Pluton.Patcher {
 			MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
 			MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamage");
 
-			foreach (var method in bPlayer.GetMethods()) {
-				if (method.Name == "TakeDamage") {
-					if (method.Parameters.Count == 2) {
+			foreach(var method in bPlayer.GetMethods()) {
+				if(method.Name == "TakeDamage") {
+					if(method.Parameters.Count == 2) {
 						hurt = method;
 						break;
 					}
@@ -151,9 +152,9 @@ namespace Pluton.Patcher {
 			MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
 			MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamageOverload");
 
-			foreach (var method in bPlayer.GetMethods()) {
-				if (method.Name == "TakeDamage") {
-					if (method.Parameters.Count == 1) {
+			foreach(var method in bPlayer.GetMethods()) {
+				if(method.Name == "TakeDamage") {
+					if(method.Parameters.Count == 1) {
 						hurt = method;
 						break;
 					}
@@ -302,7 +303,7 @@ namespace Pluton.Patcher {
 			MethodDefinition respawn = bPlayer.GetMethod("Respawn");
 			MethodDefinition tPort = hooksClass.GetMethod("Teleport");
 
-			for (var l = 35; l >= 0; l--) {
+			for(var l = 35; l >= 0; l--) {
 				respawn.Body.Instructions.RemoveAt(l);
 			}
 
@@ -316,13 +317,13 @@ namespace Pluton.Patcher {
 		// from fougerite.patcher
 		private static MethodDefinition CloneMethod(MethodDefinition orig) {
 			MethodDefinition definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
-			foreach (VariableDefinition definition2 in orig.Body.Variables) {
+			foreach(VariableDefinition definition2 in orig.Body.Variables) {
 				definition.Body.Variables.Add(definition2);
 			}
-			foreach (ParameterDefinition definition3 in orig.Parameters) {
+			foreach(ParameterDefinition definition3 in orig.Parameters) {
 				definition.Parameters.Add(definition3);
 			}
-			foreach (Instruction instruction in orig.Body.Instructions) {
+			foreach(Instruction instruction in orig.Body.Instructions) {
 				definition.Body.Instructions.Add(instruction);
 			}
 			return definition;
@@ -331,9 +332,9 @@ namespace Pluton.Patcher {
 		private static bool Patch() {
 			try {
 				BootstrapAttachPatch();
-				ServerShutdownPatch ();
+				ServerShutdownPatch();
 
-				TeleportPatch ();
+				TeleportPatch();
 
 				ClientAuthPatch();
 
@@ -362,7 +363,7 @@ namespace Pluton.Patcher {
 				BuildingBlockUpdatePatch();
 				BuildingBlockBuiltPatch();
 				return true;
-			} catch (Exception ex) {
+			} catch(Exception ex) {
 				Console.WriteLine(ex.Message.ToString());
 				Console.WriteLine();
 				Console.WriteLine(ex.StackTrace.ToString());
@@ -371,8 +372,25 @@ namespace Pluton.Patcher {
 		}
 
 		public static void Main(string[] args) {
-			rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
-			plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
+			bool noInput = false;
+			foreach(var arg in args) {
+				if(arg == "--no-input") {
+					noInput = true;
+				}
+			}
+
+			try {
+				rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
+				plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
+			} catch(FileNotFoundException ex) {
+				Console.WriteLine("You are missing " + ex.FileName + " did you moved the patcher to the managed folder ?");
+				if(!noInput) {
+					Console.WriteLine("Press any key to continue...");
+					Console.ReadKey();
+				}
+				return;
+			}
+
 			hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
 			bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
 			bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
@@ -392,20 +410,26 @@ namespace Pluton.Patcher {
 				definition3.HasConstant = true;
 				definition3.Constant = version;
 				rustAssembly.MainModule.GetType("Pluton_Patched").Fields.Add(definition3);*/
-				if (success)
+				if(success)
 					rustAssembly.Write("Assembly-CSharp.dll");
-			} catch (Exception ex) {
+			} catch(Exception ex) {
 				Console.WriteLine("Error at: " + ex.TargetSite.Name);
 				Console.WriteLine("Error msg: " + ex.Message);
 				success = false;
 			}
 
-			if (success) {
-				Console.WriteLine("Yay!");
-				Console.ReadKey();
+			if(success) {
+				Console.WriteLine("Successfully patched the dll");
+				if(!noInput) {
+					Console.WriteLine("Press any key to continue...");
+					Console.ReadKey();
+				}
 			} else {
 				Console.WriteLine("Darn!");
-				Console.ReadKey();
+				if(!noInput) {
+					Console.WriteLine("Press any key to continue...");
+					Console.ReadKey();
+				}
 			}
 		}
 	}
