@@ -15,6 +15,9 @@ namespace Pluton.Events {
 			get {
 				return _info.damageAmount;
 			}
+			set {
+				_info.damageAmount = value;
+			}
 		}
 
 		public string DamageType {
@@ -27,11 +30,23 @@ namespace Pluton.Events {
 			get {
 				return _res.health;
 			}
+			set {
+				_res.health = value;
+			}
 		}
 
 		public string Prefab {
 			get {
 				return _res.sourcePrefab;
+			}
+		}
+
+		public float Proficiency {
+			get {
+				return _info.resourceGatherProficiency;
+			}
+			set {
+				_info.resourceGatherProficiency = value;
 			}
 		}
 
