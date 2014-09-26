@@ -30,22 +30,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\origFiles\Assembly-CSharp.dll</HintPath>
+    <Reference Include="IronPython.Deps">
+      <HintPath>ref\IronPython.Deps.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\origFiles\UnityEngine.dll</HintPath>
+      <HintPath>..\..\origFiles\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\testfiles\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch">
-      <HintPath>..\..\..\origFiles\Facepunch.dll</HintPath>
+      <HintPath>..\..\testfiles\Facepunch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Hooks.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="PlaceHolder.cs" />
     <Compile Include="Events\GatherEvent.cs" />
     <Compile Include="Events\DeathEvent.cs" />
     <Compile Include="World.cs" />
@@ -54,10 +55,42 @@
     <Compile Include="Events\PlayerDeathEvent.cs" />
     <Compile Include="Events\NPCHurtEvent.cs" />
     <Compile Include="Events\NPCDeathEvent.cs" />
-    <Compile Include="NPC.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="IniParser.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Dump.cs" />
+    <Compile Include="Server.cs" />
+    <Compile Include="DataStore.cs" />
+    <Compile Include="Events\BuildingEvent.cs" />
+    <Compile Include="Events\LootEvent.cs" />
+    <Compile Include="Events\ItemLootEvent.cs" />
+    <Compile Include="Events\EntityLootEvent.cs" />
+    <Compile Include="Events\PlayerLootEvent.cs" />
+    <Compile Include="PluginLoader.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="TimedEvent.cs" />
+    <Compile Include="Events\BuildingHurtEvent.cs" />
+    <Compile Include="Events\AuthEvent.cs" />
+    <Compile Include="Objects\BuildingPart.cs" />
+    <Compile Include="Objects\ChatString.cs" />
+    <Compile Include="Objects\Command.cs" />
+    <Compile Include="Objects\Entity.cs" />
+    <Compile Include="Objects\Inv.cs" />
+    <Compile Include="Objects\InvItem.cs" />
+    <Compile Include="Objects\NPC.cs" />
+    <Compile Include="Objects\OfflinePlayer.cs" />
+    <Compile Include="Objects\Player.cs" />
+    <Compile Include="Objects\LoadOut.cs" />
+    <Compile Include="Objects\LoadOutItem.cs" />
+    <Compile Include="Objects\Stats.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Events\" />
+    <Folder Include="Objects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pluton.cfg" />
   </ItemGroup>
 </Project>
