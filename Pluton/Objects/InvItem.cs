@@ -37,6 +37,10 @@ namespace Pluton {
 			_item.Drop(position, offset);
 		}
 
+		public Entity Instantiate(Vector3 v3) {
+			return new Entity(_item.CreateWorldObject(v3, Quaternion.identity));
+		}
+
 		public Entity Instantiate(Vector3 v3, Quaternion q) {
 			return new Entity(_item.CreateWorldObject(v3, q));
 		}
