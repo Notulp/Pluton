@@ -8,6 +8,7 @@ namespace Pluton {
 
 		public Player(BasePlayer player) {
 			basePlayer = player;
+			Stats = new PlayerStats(SteamID);
 		}
 
 		public static Player Find(string nameOrSteamidOrIP) {
@@ -137,6 +138,15 @@ namespace Pluton {
 		public int Ping {
 			get {
 				return basePlayer.net.connection.ping;
+			}
+		}
+
+		public PlayerStats Stats {
+			get {
+				return Server.GetServer().serverData.Get("PlayerStats", SteamID) as PlayerStats;
+			}
+			set {
+				Server.GetServer().serverData.Add("PlayerStats", SteamID, value);
 			}
 		}
 

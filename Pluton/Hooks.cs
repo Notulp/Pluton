@@ -161,7 +161,14 @@ namespace Pluton {
 			// works
 			var npc = new NPC(animal);
 
-			if (!Realm.Server() || (double) animal.myHealth <= 0.0)
+			if (info.Initiator != null) {
+				Player p = new Player(info.Initiator as BasePlayer);
+				PlayerStats stats = new PlayerStats(p.SteamID);
+				stats.AddDamageTo(info.damageAmount, false, true, false);
+				p.Stats = stats;
+			}
+
+			if (!Realm.Server() || (double)animal.myHealth <= 0.0)
 				return;
 
 			if ((animal.myHealth - info.damageAmount) > 0.0f && OnNPCHurt != null)
@@ -175,6 +182,13 @@ namespace Pluton {
 
 		// BaseAnimal.Die()
 		public static void NPCDied(BaseAnimal animal, HitInfo info) {
+			if (info.Initiator != null) {
+				Player p = new Player(info.Initiator as BasePlayer);
+				PlayerStats stats = new PlayerStats(p.SteamID);
+				stats.AddKill(false, true);
+				p.Stats = stats;
+			}
+
 			var npc = new NPC(animal);
 			if (OnNPCDied != null)
 			OnNPCDied(new Events.NPCDeathEvent(npc, info));
@@ -202,12 +216,28 @@ namespace Pluton {
 				info.Initiator = player as BaseEntity;
 			}
 
+			Player victim = new Player(player);
+
+			if (info.Initiator != null) {
+				PlayerStats statsV = new PlayerStats(victim.SteamID);
+
+				if (info.Initiator is BasePlayer) {
+					Player p = new Player(info.Initiator as BasePlayer);
+					PlayerStats stats = new PlayerStats(p.SteamID);
+					stats.AddKill(true, false);
+					p.Stats = stats;
+
+					statsV.AddDeath(true, false);
+				} else if (info.Initiator is BaseAnimal) {
+					statsV.AddDeath(false, true);
+				}
+				victim.Stats = statsV;
+			}
+
 			if (OnPlayerDied != null) {
-				var p = new Player(player);
-				Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(p, info);
+				Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
 				OnPlayerDied(pde);
 
-				// not tested
 				if (!pde.dropLoot)
 					player.inventory.Strip();
 			}
@@ -239,11 +269,23 @@ namespace Pluton {
 			// not tested
 			var p = new Player(player);
 
-			if (info == null) { // it should neve accour, but just in case
+			if (info == null) { // it should never accour, but just in case
 				info = new HitInfo();
 				info.damageAmount = 0.0f;
 				info.damageType = player.metabolism.lastDamage;
 				info.Initiator = player as BaseEntity;
+			}
+
+			bool fromPlayer = (info.Initiator is BasePlayer);
+			PlayerStats statV = p.Stats;
+			statV.AddDamageFrom(info.damageAmount, fromPlayer, !fromPlayer, false);
+			p.Stats = statV;
+
+			if (fromPlayer) {
+				string sid = info.Initiator.ToPlayer().userID.ToString();
+				PlayerStats statA = new PlayerStats(sid);
+				statA.AddDamageTo(info.damageAmount, true, false, false);
+				Server.GetServer().serverData.Add("PlayerStats", sid, statA);
 			}
 
 			if (!player.TestAttack(info) || !Realm.Server() || (info.damageAmount <= 0.0f))
@@ -280,6 +322,13 @@ namespace Pluton {
 		// BuildingBlock.OnAttacked()
 		public static void EntityAttacked(BuildingBlock bb, HitInfo info) {
 			// works, event needed
+			if (info.Initiator != null) {
+				Player p = new Player(info.Initiator as BasePlayer);
+				PlayerStats stats = new PlayerStats(p.SteamID);
+				stats.AddDamageTo(info.damageAmount, false, false, true);
+				p.Stats = stats;
+			}
+
 			var bp = new BuildingPart(bb);
 			new Events.BuildingHurtEvent(bp, info);
 			// if entity will be destroyed call the method below
