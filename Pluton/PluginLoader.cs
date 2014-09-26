@@ -197,6 +197,9 @@
 				case "On_ServerShutdown":
 					Hooks.OnServerShutdown += new Hooks.ServerShutdownDelegate(plugin.OnServerShutdown);
 					break;
+				case "On_PluginInit":
+					plugin.Invoke("On_PluginInit");
+					break;
 				}
 			}
 		}
