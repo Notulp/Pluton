@@ -37,7 +37,7 @@ namespace Pluton {
 		public static OfflinePlayer Get(ulong steamID) {
 			OfflinePlayer op = Server.GetServer().OfflinePlayers[steamID];
 			if (op == null) {
-				Logger.LogDebug("Couldn't find OfflinePlayer: " + steamID.ToString());
+				Logger.LogDebug("[OfflinePlayer] Couldn't find OfflinePlayer: " + steamID.ToString());
 				return null;
 			}
 			return op;
@@ -49,7 +49,7 @@ namespace Pluton {
 
 		public void Update(Player player) {
 			if (Name != player.Name) {
-				Logger.LogDebug(Name + " changed name to: " + player.Name);
+				Logger.LogDebug("[OfflinePlayer] " + Name + " changed name to: " + player.Name);
 				Name = player.Name;
 			}
 			IP = player.IP;

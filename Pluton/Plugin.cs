@@ -45,7 +45,7 @@
 				if (Globals.Contains(func))
 					Engine.Operations.InvokeMember(Class, func, obj);
 				else
-					Logger.LogDebug("[Pluton] Function: " + func + " not found in plugin: " + Name);
+					Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);
 			} catch (Exception ex) {
 				Logger.LogException(ex);
 			}
@@ -123,7 +123,7 @@
 						File.Replace(pathh, pathi, null);
 					}
 				} catch (Exception ex) {
-					Logger.LogError("[Pluton] RotateLog " + logfile + ", " + pathh + ", " + pathi + ", " + ex.StackTrace);
+					Logger.LogError("[Plugin] RotateLog " + logfile + ", " + pathh + ", " + pathi + ", " + ex.StackTrace);
 					continue;
 				}
 			}
@@ -180,7 +180,7 @@
 			Plugin plugin;	
 			plugin = PluginLoader.Plugins[name];
 			if (plugin == null) {
-				Logger.LogDebug("[IPModule] [GetPlugin] '" + name + "' plugin not found!");
+				Logger.LogDebug("[Plugin] [GetPlugin] '" + name + "' plugin not found!");
 				return null;
 			}
 			return plugin;

@@ -68,11 +68,11 @@
 		}
 
 		public void LoadPlugin(string name) {
-			Logger.LogDebug("[Plugin] Loading plugin " + name + ".");
+			Logger.LogDebug("[PluginLoader] Loading plugin " + name + ".");
 
 			if (plugins.ContainsKey(name)) {
-				Logger.LogError("[Plugin] " + name + " plugin is already loaded.");
-				throw new InvalidOperationException("[Plugin] " + name + " plugin is already loaded.");
+				Logger.LogError("[PluginLoader] " + name + " plugin is already loaded.");
+				throw new InvalidOperationException("[PluginLoader] " + name + " plugin is already loaded.");
 			}
 
 			try {
@@ -83,7 +83,7 @@
 				InstallHooks(plugin);
 				plugins.Add(name, plugin);
 
-				Logger.Log("[Plugin] " + name + " plugin was loaded successfuly.");
+				Logger.Log("[PluginLoader] " + name + " plugin was loaded successfuly.");
 			} catch (Exception ex) {
 				Server.GetServer().Broadcast(name + " plugin could not be loaded.");
 				Logger.LogException(ex);
@@ -91,7 +91,7 @@
 		}
 
 		public void UnloadPlugin(string name, bool removeFromDict = true) {
-			Logger.LogDebug("[Plugin] Unloading " + name + " plugin.");
+			Logger.LogDebug("[PluginLoader] Unloading " + name + " plugin.");
 
 			if (plugins.ContainsKey(name)) {
 				Plugin plugin = plugins[name];
@@ -100,10 +100,10 @@
 				RemoveHooks(plugin);
 				if (removeFromDict) plugins.Remove(name);
 
-				Logger.LogDebug("[Plugin] " + name + " plugin was unloaded successfuly.");
+				Logger.LogDebug("[PluginLoader] " + name + " plugin was unloaded successfuly.");
 			} else {
-				Logger.LogError("[Plugin] Can't unload " + name + ". Plugin is not loaded.");
-				throw new InvalidOperationException("[Plugin] Can't unload " + name + ". Plugin is not loaded.");
+				Logger.LogError("[PluginLoader] Can't unload " + name + ". Plugin is not loaded.");
+				throw new InvalidOperationException("[PluginLoader] Can't unload " + name + ". Plugin is not loaded.");
 			}
 		}
 

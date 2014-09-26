@@ -13,7 +13,7 @@ namespace Pluton {
 				Init();
 			} catch (Exception ex) {
 				Debug.LogException(ex);
-				Debug.Log("Error while loading Pluton!");
+				Debug.Log("[Bootstarp] Error while loading Pluton!");
 			}
 		}
 
