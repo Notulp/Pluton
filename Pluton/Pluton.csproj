@@ -30,17 +30,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Assembly-CSharp">
+      <HintPath>ref\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch">
+      <HintPath>ref\Facepunch.dll</HintPath>
+    </Reference>
     <Reference Include="IronPython.Deps">
       <HintPath>ref\IronPython.Deps.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\origFiles\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\testfiles\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Facepunch">
-      <HintPath>..\..\testfiles\Facepunch.dll</HintPath>
+      <HintPath>ref\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
