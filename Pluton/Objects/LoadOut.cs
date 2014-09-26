@@ -16,16 +16,16 @@ namespace Pluton {
 		public bool NormalUse;
 
 		public LoadOut(string name) {
-			path = Path.Combine(Path.Combine(Util.GetPublicFolder(), "LoadOuts"), name + ".ini");
+			path = Path.Combine(Util.GetLoadoutFolder(), name + ".ini");
 			bool nu = false;
-			if (!File.Exists (path)) {
-				File.AppendAllText (path, "");
+			if (!File.Exists(path)) {
+				File.AppendAllText(path, "");
 				nu = true;
 			}
 			var ini = new IniParser(path);
 			Name = ini.Name;
 			if (!nu) {
-				itemCount = ini.Sections.Length;
+				itemCount = Int32.Parse(ini.GetSetting("Def", "itemCount"));
 				AdminUse = ini.GetBoolSetting("Def", "adminCanUse");
 				OwnerUse = ini.GetBoolSetting("Def", "ownerCanUse");
 				ModeratorUse = ini.GetBoolSetting("Def", "modCanUse");

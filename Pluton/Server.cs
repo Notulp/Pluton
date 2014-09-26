@@ -1,5 +1,6 @@
 ﻿namespace Pluton {
 	using System;
+	using System.IO;
 	using System.Linq;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -47,6 +48,7 @@
 				server.serverData = new DataStore("ServerData.ds");
 				server.serverData.Load();
 				server.LoadOfflinePlayers();
+				server.LoadLoadouts();
 			}
 			return server;
 		}
@@ -72,6 +74,16 @@
 			}
 		}*/
 
+		public void LoadLoadouts() {
+			DirectoryInfo loadoutPath = new DirectoryInfo(Util.GetLoadoutFolder());
+			foreach (FileInfo file in loadoutPath.GetFiles()) {
+				if (file.Extension == ".ini") {
+					LoadOut lo = new LoadOut(file.Name.Replace(".ini", ""));
+				}
+			}
+			Logger.Log("[Server] " + LoadOuts.Count.ToString() + " loadout loaded!");
+		}
+
 		public void LoadOfflinePlayers() {
 			Hashtable ht = serverData.GetTable("OfflinePlayers");
 			if (ht != null) {
@@ -79,8 +91,9 @@
 					server.OfflinePlayers.Add(UInt64.Parse(entry.Key as string), entry.Value as OfflinePlayer);
 				}
 			} else {
-				Debug.LogWarning("[OfflinePalyer] HT is null while loading... wut?");
+				Logger.LogWarning("[Server] (GetTable(\"OfflinePalyers\") == null) ... wut?");
 			}
+			Logger.Log("[Server] " + OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
 		}
 
 		public void OnShutdown() {

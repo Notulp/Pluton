@@ -91,6 +91,10 @@
 			return Path.Combine(GetPublicFolder(), fileName);
 		}
 
+		public static string GetLoadoutFolder() {
+			return Path.Combine(GetPublicFolder(), "LoadOuts");
+		}
+
 		public static string GetPublicFolder() {
 			return Path.Combine(GetRootFolder(), "Save");
 		}

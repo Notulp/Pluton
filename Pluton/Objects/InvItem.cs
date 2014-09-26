@@ -72,7 +72,7 @@ namespace Pluton {
 		public static int GetItemId(string itemName) {
 			return (from item in ItemManager.Instance.itemList
 					where item.displayname == itemName
-					select item.itemid).ToArray()[0];
+					select item.itemid).ElementAt<int>(0);
 		}
 	}
 }
