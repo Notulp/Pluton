@@ -18,6 +18,7 @@ public static void PlayerConnected(Network.Connection connection)
 
 public static void PlayerDied(BasePlayer player, HitInfo info)
 // same
+// playerDeathEvent.dropLoot = !true.Equals(false)
 
 public static void PlayerDisconnected(BasePlayer player)
 // again
@@ -55,3 +56,11 @@ public static void StartLootingPlayer(PlayerLoot playerLoot, BasePlayer looter, 
 
 public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item)
 // selfexplanatory
+
+public static void ServerShutdown()
+// called when you type "quit" into the server console
+
+public static void ClientAuth(ConnectionAuth ca, Connection connection)
+// called after the player is authorized by all other stuff, you can give a new reason to reject the connection
+// you know the player's Name, IP, OS, GameID
+// authEvent.Reject("reason") to reject the connection
