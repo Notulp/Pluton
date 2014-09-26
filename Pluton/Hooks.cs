@@ -103,6 +103,10 @@ namespace Pluton {
 			if (!chat.enabled) {
 				arg.ReplyWith("Chat is disabled.");
 			} else {
+				if (arg.ArgsStr == "\"\"") {
+					return;
+				}
+
 				ChatString chatstring = new ChatString(arg);
 
 				BasePlayer basePlayer = ArgExtension.Player(arg);
@@ -118,9 +122,9 @@ namespace Pluton {
 					Debug.Log((object)(basePlayer.displayName + ": " + str));
 
 				if (OnChat != null)
-					OnChat(new Player(basePlayer),chatstring);
+					OnChat(new Player(basePlayer), chatstring);
 
-				if (chatstring.FinalText == "") {
+				if (chatstring.FinalText != "") {
 					ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(chatstring.BroadcastName) + " " + StringExtensions.QuoteSafe(chatstring.FinalText));
 					arg.ReplyWith(chatstring.ReplyWith);
 				}

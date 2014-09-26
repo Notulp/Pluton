@@ -11,12 +11,12 @@ namespace Pluton {
 
 		public ChatString(ConsoleSystem.Arg args) {
 			_arg = args;
-			if (args.FromClient)
+			if (args.connection != null)
 				BroadcastName = args.connection.username;
 			else
 				BroadcastName = Server.server_message_name;
-			OriginalText = args.ArgsStr;
-			FinalText = args.ArgsStr;
+			OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
+			FinalText = OriginalText;
 			ReplyWith = "chat.say was executed";
 		}
 	}
