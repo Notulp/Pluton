@@ -6,19 +6,27 @@ namespace Pluton {
 		[ConsoleSystem.Admin]
 		[ConsoleSystem.Help("Helps to break basic functionality", "")]
 		public static bool enabled;
-		[ConsoleSystem.Admin]
-		public static bool serverlog;
 
 		static pluton() {
 			pluton.enabled = true;
-			pluton.serverlog = true;
 		}
 
 		public pluton() {
 			base.\u002Ector();
 		}
 
+		[ConsoleSystem.User]
+		[ConsoleSystem.Help("pluton.login <rcon.password>", "")]
+		public static void login(ConsoleSystem.Arg arg) {
+			if (arg.connection != null && arg.ArgsStr == rcon.password) {
+				ServerUsers.Set(arg.connection.userid, ServerUsers.UserGroup.Moderator, arg.connection.username, "Console login!");
+				ServerUsers.Save();
+				arg.ReplyWith("You are a moderator now!");
+			}
+		}
+
 		[ConsoleSystem.Admin]
+		[ConsoleSystem.Help("pluton.reload <optional = plugin name>", "")]
 		public static void reload(ConsoleSystem.Arg arg) {
 			if (PluginLoader.Plugins.ContainsKey (arg.ArgsStr)) {
 				PluginLoader.GetInstance().ReloadPlugin(arg.ArgsStr);
@@ -29,6 +37,13 @@ namespace Pluton {
 			} else {
 				arg.ReplyWith(String.Format("Couldn't find plugin: {0}!", arg.ArgsStr));
 			}
+		}
+
+		[ConsoleSystem.Admin]
+		[ConsoleSystem.Help("manually saves stats, server", "")]
+		public static void saveall(ConsoleSystem.Arg arg) {
+			Bootstrap.SaveAll();
+			arg.ReplyWith("Everything saved!");
 		}
 	}
 }

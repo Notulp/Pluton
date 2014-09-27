@@ -9,6 +9,9 @@ namespace Pluton {
 
 		public static void AttachBootstrap() {
 			try {
+				if (!pluton.enabled)
+					return;
+
 				Console.WriteLine("Pluton Loaded!");
 				Init();
 			} catch (Exception ex) {
