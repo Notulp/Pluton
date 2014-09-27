@@ -12,15 +12,23 @@ namespace Pluton {
 		}
 
 		public static Player Find(string nameOrSteamidOrIP) {
-			return new Player(BasePlayer.Find(nameOrSteamidOrIP));
+			BasePlayer player = BasePlayer.Find(nameOrSteamidOrIP);
+			if (player != null)
+				return new Player(player);
+			Logger.LogDebug("[Player] Couldn't find player!");
+			return null;
 		}
 
 		public static Player FindByGameID(ulong steamID) {
-			return new Player(BasePlayer.FindByID(steamID));
+			BasePlayer player = BasePlayer.FindByID(steamID);
+			if (player != null)
+				return new Player(player);
+			Logger.LogDebug("[Player] Couldn't find player!");
+			return null;
 		}
 
 		public static Player FindBySteamID(string steamID) {
-			return new Player(BasePlayer.FindByID(UInt64.Parse(steamID)));
+			return FindByGameID(UInt64.Parse(steamID));
 		}
 
 		public void Ban(string reason = "no reason") {
