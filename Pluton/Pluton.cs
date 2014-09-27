@@ -3,6 +3,7 @@
 namespace Pluton {
 	[ConsoleSystem.Factory("pluton")]
 	public class pluton : ConsoleSystem {
+
 		[ConsoleSystem.Admin]
 		[ConsoleSystem.Help("Helps to break basic functionality", "")]
 		public static bool enabled;
@@ -13,6 +14,42 @@ namespace Pluton {
 
 		public pluton() {
 			base.\u002Ector();
+		}
+
+		[ConsoleSystem.Admin]
+		public static void ban(ConsoleSystem.Arg arg) {
+			Player player = Player.Find(arg.ArgsStr);
+			if (player != null) {
+				string nameFrom;
+				if (arg.connection != null && arg.connection.username != null)
+					nameFrom = arg.connection.username;
+				else
+					nameFrom = "RCON";
+
+				player.Ban("Banned by: " + nameFrom);
+				Server.GetServer().Broadcast(arg.ArgsStr + " is banned from the server by " + nameFrom + "!");
+				arg.ReplyWith(arg.ArgsStr + " is banned!");
+			} else {
+				arg.ReplyWith("Couldn't find player: " + arg.ArgsStr);
+			}
+		}
+
+		[ConsoleSystem.Admin]
+		public static void kick(ConsoleSystem.Arg arg) {
+			Player player = Player.Find(arg.ArgsStr);
+			if (player != null) {
+				string nameFrom;
+				if (arg.connection != null && arg.connection.username != null)
+					nameFrom = arg.connection.username;
+				else
+					nameFrom = "RCON";
+
+				player.Kick("Kicked by: " + nameFrom);
+				Server.GetServer().Broadcast(arg.ArgsStr + " is kicked from the server by " + nameFrom + "!");
+				arg.ReplyWith(arg.ArgsStr + " is kicked!");
+			} else {
+				arg.ReplyWith("Couldn't find player: " + arg.ArgsStr);
+			}
 		}
 
 		[ConsoleSystem.User]
@@ -40,7 +77,7 @@ namespace Pluton {
 		}
 
 		[ConsoleSystem.Admin]
-		[ConsoleSystem.Help("manually saves stats, server", "")]
+		[ConsoleSystem.Help("Manually saves stats, server", "")]
 		public static void saveall(ConsoleSystem.Arg arg) {
 			Bootstrap.SaveAll();
 			arg.ReplyWith("Everything saved!");
