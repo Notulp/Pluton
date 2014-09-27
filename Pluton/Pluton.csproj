@@ -84,6 +84,7 @@
     <Compile Include="Objects\LoadOut.cs" />
     <Compile Include="Objects\LoadOutItem.cs" />
     <Compile Include="Objects\Stats.cs" />
+    <Compile Include="Properties\Pluton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
