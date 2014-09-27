@@ -190,7 +190,7 @@ namespace Pluton.Patcher {
 		}
 
 		private static void BuildingBlockAttackedPatch() {
-			MethodDefinition bbAttacked = bBlock.GetMethod("OnAttacked");
+			MethodDefinition bbAttacked = bBlock.GetMethod("OnAttacked_Destroy");
 			MethodDefinition entAttacked = hooksClass.GetMethod("EntityAttacked");
 
 			CloneMethod(bbAttacked);
@@ -201,7 +201,7 @@ namespace Pluton.Patcher {
 		}
 
 		private static void BuildingBlockFrameInitPatch() {
-			MethodDefinition bbFrameInit = bBlock.GetMethod("BecomeFrame");
+			MethodDefinition bbFrameInit = bBlock.GetMethod("InitializeAsFrame");
 			MethodDefinition entDeployed = hooksClass.GetMethod("EntityFrameDeployed");
 
 			CloneMethod(bbFrameInit);
@@ -211,7 +211,7 @@ namespace Pluton.Patcher {
 		}
 
 		private static void BuildingBlockBuiltPatch() {
-			MethodDefinition bbBuilt = bBlock.GetMethod("BecomeBuilt");
+			MethodDefinition bbBuilt = bBlock.GetMethod("StopBeingAFrame");
 			MethodDefinition entBuilt = hooksClass.GetMethod("EntityBuilt");
 
 			CloneMethod(bbBuilt);
@@ -221,15 +221,14 @@ namespace Pluton.Patcher {
 		}
 
 		private static void BuildingBlockUpdatePatch() {
-			MethodDefinition bbBuild = bBlock.GetMethod("DoBuild");
+			MethodDefinition bbBuild = bBlock.GetMethod("OnAttacked_Build");
 			MethodDefinition entBuild = hooksClass.GetMethod("EntityBuildingUpdate");
 
 			CloneMethod(bbBuild);
 			ILProcessor iLProcessor = bbBuild.Body.GetILProcessor();
-			iLProcessor.InsertBefore(bbBuild.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-			iLProcessor.InsertAfter(bbBuild.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-			iLProcessor.InsertAfter(bbBuild.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldarg_2));
-			iLProcessor.InsertAfter(bbBuild.Body.Instructions[0x02], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));
+			iLProcessor.InsertAfter(bbBuild.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
+			iLProcessor.InsertAfter(bbBuild.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
+			iLProcessor.InsertAfter(bbBuild.Body.Instructions[6], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));
 		}
 
 		private static void CorpseInitPatch() {

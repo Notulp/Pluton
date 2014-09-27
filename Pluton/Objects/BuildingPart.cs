@@ -17,31 +17,19 @@ namespace Pluton {
 
 		public float Health {
 			get {
-				return buildingBlock.myHealth;
+				return buildingBlock.health;
 			}
 		}
 
 		public bool IsFrame {
 			get {
-				return buildingBlock.isFrame;
+				return buildingBlock.IsFrame();
 			}
 		}
 
 		public int ItemIDBase {
 			get {
 				return buildingBlock.ItemIDBase;
-			}
-		}
-
-		public List<ItemAmount> Items {
-			get {
-				return buildingBlock.containedItems;
-			}
-		}
-
-		public List<ItemAmount> NeededItems {
-			get {
-				return buildingBlock.neededItems;
 			}
 		}
 

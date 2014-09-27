@@ -33,7 +33,7 @@ namespace Pluton {
 			return _item.CanStack(item._item);
 		}
 
-		public void Drop(Transform position, Vector3 offset) {
+		public void Drop(Vector3 position, Vector3 offset) {
 			_item.Drop(position, offset);
 		}
 

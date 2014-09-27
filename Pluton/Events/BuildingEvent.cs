@@ -6,7 +6,6 @@ namespace Pluton.Events {
 
 		public List<Construction.Socket> Sockets;
 		public readonly BuildingBlock _block;
-		public List<ItemAmount> NeededItems;
 		public BuildingPart BuildingPart;
 		public readonly Player Builder;
 		public string BlockFullName;
@@ -14,7 +13,6 @@ namespace Pluton.Events {
 		public string BlockName;
 
 		public BuildingEvent(BuildingPart bp, Player player, float prof) {
-			NeededItems = bp.NeededItems;
 			_block = bp.buildingBlock;
 			Proficiency = prof;
 			BuildingPart = bp;

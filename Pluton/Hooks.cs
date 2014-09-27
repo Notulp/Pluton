@@ -332,7 +332,7 @@ namespace Pluton {
 			var bp = new BuildingPart(bb);
 			new Events.BuildingHurtEvent(bp, info);
 			// if entity will be destroyed call the method below
-			if ((bb.myHealth - info.damageAmount) <= 0.0f) {
+			if ((bb.health - info.damageAmount) <= 0.0f) {
 				BuildingPartDestroyed(bp, info);
 				return;
 			}
@@ -362,10 +362,12 @@ namespace Pluton {
 		}
 
 		// BuildingBlock.DoBuild()
-		public static void EntityBuildingUpdate(BuildingBlock bb, BasePlayer player, float proficiency) {
+		public static void EntityBuildingUpdate(BuildingBlock bb, HitInfo info) {
 			// hammer prof = 1
 			// works
 			// called anytime you hit a building block with a constructor item (hammer)
+			BasePlayer player = info.Initiator as BasePlayer;
+			float proficiency = info.resourceGatherProficiency;
 
 			var bp = new BuildingPart(bb);
 			var p = new Player(player);
