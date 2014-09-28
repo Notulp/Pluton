@@ -1,0 +1,3997 @@
+[
+    {
+        "shotgun_waterpipe": {
+            "category": "Weapon",
+            "created": "1408545390",
+            "description": "...",
+            "iconmain": "4133",
+            "itemid": "14099",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Worldmodel",
+                    "prefab": "wm_waterpipe_shotgun",
+                    "uid": "29wyb"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Viewmodel",
+                    "prefab": "vm_waterpipe_shotgun",
+                    "uid": "19c4e"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "holdtype": "shotgun",
+                    "module": "HoldType",
+                    "uid": "2y5d8"
+                },
+                {
+                    "actions": [],
+                    "ammo": [
+                        {
+                            "itemid": 14100
+                        }
+                    ],
+                    "amount": 16,
+                    "conditions": [],
+                    "cone": 15,
+                    "damage": 50,
+                    "enabled": true,
+                    "module": "ProjectileAttack",
+                    "uid": "ymoxl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "RifleControl",
+                    "timeBetweenShots": 2,
+                    "uid": "tc5lx"
+                },
+                {
+                    "actions": [],
+                    "bone": "",
+                    "clientside": true,
+                    "conditions": [],
+                    "effectPrefab": "weapons/pipe_shotgun/attack",
+                    "enabled": true,
+                    "module": "SignalEffect",
+                    "serverside": true,
+                    "signalType": "Player_Attack",
+                    "uid": "h5a3k"
+                }
+            ],
+            "name": "Waterpipe Shotgun",
+            "shortname": "shotgun_waterpipe",
+            "size": 200,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "blood": {
+            "category": "Medical",
+            "created": "1408364916",
+            "description": "Used in creation of medkits",
+            "iconmain": "2889",
+            "itemid": "11955",
+            "name": "Blood",
+            "shortname": "blood",
+            "size": 10,
+            "stackable": 1000,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "sulfur": {
+            "category": "Resources",
+            "created": "1408365018",
+            "description": "sulfur",
+            "iconmain": "3078",
+            "itemid": "11966",
+            "name": "Sulfur",
+            "shortname": "sulfur",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "woodendoorkey": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 200,
+                            "itemid": 514
+                        }
+                    ],
+                    "notbyuser": true,
+                    "time": 60,
+                    "title": "Wooden Key Crafting Blueprint"
+                }
+            ],
+            "category": "Misc",
+            "created": "1408365388",
+            "description": "A key to a wooden door",
+            "iconmain": "4012",
+            "itemid": "14046",
+            "modules": [],
+            "name": "Wooden Door Key",
+            "shortname": "woodendoorkey",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "stones": {
+            "category": "Resources",
+            "created": "1408365022",
+            "description": "Stones.",
+            "iconmain": "3081",
+            "itemid": "11964",
+            "name": "Stones",
+            "shortname": "stones",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "can_tuna_empty": {
+            "category": "Resources",
+            "created": "1408533260",
+            "description": "An empty tuna can",
+            "iconmain": "4120",
+            "itemid": "14091",
+            "name": "Tuna Can",
+            "shortname": "can_tuna_empty",
+            "size": 10,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.2
+        }
+    },
+    {
+        "wolfmeat_spoiled": {
+            "category": "Food",
+            "created": "1408532324",
+            "description": "Spoiled meat from a wolf",
+            "iconmain": "4118",
+            "itemid": "14087",
+            "name": "Spoiled Wolf Meat",
+            "shortname": "wolfmeat_spoiled",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "metal_ore": {
+            "category": "Resources",
+            "created": "1408527121",
+            "description": "A rock containing sulfur. The sulfur can be extracted using a furnace.",
+            "iconmain": "3080",
+            "itemid": "13994",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "itemid": 13995,
+                            "title": "Become Sulfur",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "maximum": 2000,
+                            "minimum": 500,
+                            "title": "If In Furnace",
+                            "type": "Temperature"
+                        }
+                    ],
+                    "enabled": true,
+                    "end_value": 5,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Smelt",
+                    "uid": "lt7o3"
+                }
+            ],
+            "name": "Metal Ore",
+            "shortname": "metal_ore",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "ammo_shotgun": {
+            "category": "Ammunition",
+            "created": "1408544269",
+            "description": "Ammunition for a Shotgun",
+            "iconmain": "4132",
+            "itemid": "14100",
+            "modules": [
+                {
+                    "actions": [],
+                    "breakProbability": 0,
+                    "conditions": [],
+                    "damage": 30,
+                    "damageType": "Bullet",
+                    "enabled": true,
+                    "module": "Projectile",
+                    "projectilePrefab": "projectiles/shotgunbullet",
+                    "stickProbability": 0,
+                    "uid": "blgmd",
+                    "velocity": 100
+                }
+            ],
+            "name": "Shotgun Cartridge",
+            "shortname": "ammo_shotgun",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "lowgradefuel": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 2,
+                            "itemid": 11954
+                        },
+                        {
+                            "count": 1,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 2,
+                    "title": "Low Grade Fuel Blueprint"
+                }
+            ],
+            "category": "Resources",
+            "created": "1408365161",
+            "description": "A low grade fuel.",
+            "iconmain": "3977",
+            "itemid": "13985",
+            "name": "Low Grade Fuel",
+            "shortname": "lowgradefuel",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "burlap_shirt": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 30,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Burlap Shirt"
+                }
+            ],
+            "category": "Attire",
+            "created": "1408632361",
+            "description": "A shirt made out of burlap.",
+            "iconmain": "4112",
+            "itemid": "14048",
+            "modules": [
+                {
+                    "actions": [],
+                    "attribute_torso": true,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Wearable",
+                    "part_name": "torso/burlap_shirt",
+                    "protected_bullet": 2,
+                    "protected_cold": 20,
+                    "protected_explosion": 2,
+                    "protected_heat": 5,
+                    "protected_melee": 5,
+                    "protected_radiation": 2,
+                    "remove": {
+                        "torso": true
+                    },
+                    "remove_torso": true,
+                    "slots": {
+                        "bum": [],
+                        "face": [],
+                        "groin": [],
+                        "head_back": [],
+                        "head_top": [],
+                        "left_arm": {
+                            "over": false,
+                            "under": true
+                        },
+                        "left_foot": [],
+                        "left_hand": {
+                            "over": false
+                        },
+                        "left_knee": [],
+                        "left_leg": [],
+                        "left_shoulder": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_arm": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_foot": [],
+                        "right_hand": [],
+                        "right_knee": [],
+                        "right_leg": [],
+                        "right_shoulder": {
+                            "over": false,
+                            "under": true
+                        },
+                        "torso_back": {
+                            "over": false,
+                            "under": true
+                        },
+                        "torso_front": {
+                            "over": false,
+                            "under": true
+                        }
+                    },
+                    "uid": "wjhjd"
+                }
+            ],
+            "name": "Burlap Shirt",
+            "shortname": "burlap_shirt",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "paper": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 514
+                        }
+                    ],
+                    "time": 30,
+                    "title": "Paper Blueprint"
+                }
+            ],
+            "category": "Resources",
+            "created": "1408365227",
+            "description": "Paper",
+            "iconmain": "3089",
+            "itemid": "11963",
+            "name": "Paper",
+            "shortname": "paper",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "wolfmeat_burned": {
+            "category": "Food",
+            "created": "1408532280",
+            "description": "Spoiled meat from a wolf",
+            "iconmain": "4115",
+            "itemid": "14089",
+            "name": "Burned Wolf Meat",
+            "shortname": "wolfmeat_burned",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "skull_human": {
+            "category": "Resources",
+            "created": "1408541346",
+            "description": "A human skull",
+            "iconmain": "4127",
+            "itemid": "14094",
+            "name": "Human Skull",
+            "shortname": "skull_human",
+            "size": 25,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.01
+        }
+    },
+    {
+        "c_floor": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364897",
+            "description": "A standard Floor",
+            "iconmain": "4031",
+            "itemid": "14028",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_floor",
+                    "uid": "atujm"
+                }
+            ],
+            "name": "Floor Plan",
+            "shortname": "c_floor",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "smg_thompson": {
+            "category": "Weapon",
+            "created": "1408549008",
+            "description": "...",
+            "iconmain": "4134",
+            "itemid": "14102",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Worldmodel",
+                    "prefab": "wm_thompson",
+                    "uid": "29wyb"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Viewmodel",
+                    "prefab": "vm_thompson",
+                    "uid": "19c4e"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "holdtype": "smg",
+                    "module": "HoldType",
+                    "uid": "2y5d8"
+                },
+                {
+                    "actions": [],
+                    "ammo": [
+                        {
+                            "itemid": 14101
+                        }
+                    ],
+                    "conditions": [],
+                    "damage": 50,
+                    "enabled": true,
+                    "module": "ProjectileAttack",
+                    "uid": "ymoxl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "RifleControl",
+                    "timeBetweenShots": 1.3,
+                    "uid": "tc5lx"
+                },
+                {
+                    "actions": [],
+                    "bone": "",
+                    "clientside": true,
+                    "conditions": [],
+                    "effectPrefab": "weapons/vm_bolt_rifle/attack",
+                    "enabled": true,
+                    "module": "SignalEffect",
+                    "serverside": true,
+                    "signalType": "Player_Attack",
+                    "uid": "h5a3k"
+                }
+            ],
+            "name": "Thompson",
+            "shortname": "smg_thompson",
+            "size": 200,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "jacket_urban_red": {
+            "blueprints": [],
+            "category": "Attire",
+            "created": "1408632395",
+            "description": "A red jacket",
+            "iconmain": "4087",
+            "itemid": "12540",
+            "modules": [
+                {
+                    "actions": [],
+                    "attribute_arms": true,
+                    "attribute_torso": true,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Wearable",
+                    "part_name": "torso/jacket_urban_red",
+                    "protected_bullet": 2,
+                    "protected_cold": 20,
+                    "protected_explosion": 2,
+                    "protected_heat": 5,
+                    "protected_melee": 5,
+                    "protected_radiation": 2,
+                    "remove": {
+                        "torso": true
+                    },
+                    "remove_torso": true,
+                    "slots": {
+                        "bum": [],
+                        "face": [],
+                        "groin": [],
+                        "head_back": [],
+                        "head_top": [],
+                        "left_arm": {
+                            "over": false,
+                            "under": true
+                        },
+                        "left_foot": [],
+                        "left_hand": {
+                            "over": false
+                        },
+                        "left_knee": {
+                            "over": false
+                        },
+                        "left_leg": [],
+                        "left_shoulder": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_arm": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_foot": [],
+                        "right_hand": {
+                            "over": false
+                        },
+                        "right_knee": [],
+                        "right_leg": [],
+                        "right_shoulder": {
+                            "over": false,
+                            "under": true
+                        },
+                        "torso_back": {
+                            "over": false,
+                            "under": true
+                        },
+                        "torso_front": {
+                            "over": false,
+                            "under": true
+                        }
+                    },
+                    "uid": "wjhjd"
+                }
+            ],
+            "name": "Red Jacket",
+            "shortname": "jacket_urban_red",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "granolabar": {
+            "category": "Food",
+            "created": "1408365115",
+            "description": "Granola Bar",
+            "iconmain": "3093",
+            "itemid": "11910",
+            "name": "Granola Bar",
+            "shortname": "granolabar",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "trap_bear": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 13995
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Bear Trap Blueprint"
+                }
+            ],
+            "category": "Traps",
+            "created": "1408527364",
+            "description": "A bear trap, used to immobilize a bear or a person",
+            "iconmain": "107",
+            "itemid": "836",
+            "name": "Bear Trap",
+            "shortname": "trap_bear",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "deployed_door": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408527300",
+            "description": "...",
+            "iconmain": "4074",
+            "itemid": "14042",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "enable": true,
+                            "title": "Open Door",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": true,
+                            "title": "Is Off",
+                            "type": "IsOn"
+                        },
+                        {
+                            "reverse": true,
+                            "testSlots": true,
+                            "title": "Not Locked",
+                            "type": "IsLocked"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "order": 100,
+                    "title": "Open Door",
+                    "title_token": "open_door",
+                    "uid": "wvzwg"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Close Door",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "title": "is On",
+                            "type": "IsOn"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "order": 100,
+                    "title": "Close Door",
+                    "title_token": "close_door",
+                    "uid": "a5jk7"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "ItemSlot",
+                    "slot": "Lock",
+                    "uid": "okevs"
+                }
+            ],
+            "name": "Wooden Door",
+            "shortname": "deployed_door",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "sleepingbag": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 50,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 30,
+                    "title": "Sleeping Bag"
+                }
+            ],
+            "category": "Items",
+            "created": "1408371607",
+            "description": "A sleeping bag",
+            "iconmain": "4097",
+            "itemid": "11923",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Deploy",
+                    "prefab": "items/sleepingbag_deployed",
+                    "prefab_ghost": "items/sleepingbag_guide",
+                    "uid": "l7uo8"
+                },
+                {
+                    "actions": [
+                        {
+                            "gib": true,
+                            "title": "Remove",
+                            "type": "Remove"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "health": 30,
+                    "module": "TakeDamage",
+                    "uid": "23rai"
+                }
+            ],
+            "name": "Sleeping Bag",
+            "shortname": "sleepingbag",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "stonehatchet": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 200,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 100,
+                            "itemid": 11964
+                        }
+                    ],
+                    "time": 120,
+                    "title": "Stone Hatchet",
+                    "title_tag": "bp_stone_hatchet"
+                }
+            ],
+            "category": "Tool",
+            "created": "1408374268",
+            "description": "A stone hatchet!",
+            "iconmain": "3082",
+            "itemid": "11983",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_stoneaxe",
+                    "uid": "cwq2w"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_stoneaxe",
+                    "uid": "e0uue"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "MeleeAttack",
+                    "uid": "6zku1"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "melee",
+                    "module": "HoldType",
+                    "uid": "0ysqh"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "i6uuq"
+                }
+            ],
+            "name": "Stone Hatchet",
+            "shortname": "stonehatchet",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "bone_fragments": {
+            "category": "Resources",
+            "created": "1408527145",
+            "description": "Extracted from animal carcass.  Used as a raw material to make a bone blade, a bone awl, bone meal, or used to make glue.",
+            "iconmain": "36",
+            "itemid": "188",
+            "name": "Bone Fragments",
+            "shortname": "bone_fragments",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "chicken_cooked": {
+            "category": "Food",
+            "created": "1408531309",
+            "description": "A piece of cooked chicken",
+            "iconmain": "4107",
+            "itemid": "2",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Option",
+                    "title": "Eat Cooked Chicken",
+                    "title_token": "eat_cooked_chicken",
+                    "uid": "t7juo"
+                },
+                {
+                    "actions": [
+                        {
+                            "itemid": 3,
+                            "title": "Become Burned",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "maximum": 250,
+                            "minimum": 150,
+                            "title": "Is Cooking",
+                            "type": "Temperature"
+                        }
+                    ],
+                    "enabled": true,
+                    "end_value": 30,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Burn",
+                    "uid": "bxc03"
+                },
+                {
+                    "actions": [
+                        {
+                            "itemid": "4",
+                            "title": "Spoil",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "maximum": 70,
+                            "minimum": 20,
+                            "title": "Room Temperature",
+                            "type": "Temperature"
+                        }
+                    ],
+                    "enabled": true,
+                    "end_value": 600,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Spoil",
+                    "uid": "hpq3h"
+                }
+            ],
+            "name": "Cooked Chicken",
+            "shortname": "chicken_cooked",
+            "size": 10,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "apple_spoiled": {
+            "category": "Food",
+            "created": "1408537535",
+            "description": "A rotten apple",
+            "iconmain": "4124",
+            "itemid": "14093",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "calories": 20,
+                            "health": 10,
+                            "poison": 0,
+                            "thirst": 5,
+                            "title": "Give Health",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "length": 2,
+                    "module": "Option",
+                    "title": "Eat Apple",
+                    "title_token": "eat_apple",
+                    "uid": "u4o1b"
+                }
+            ],
+            "name": "Rotten Apple",
+            "shortname": "apple_spoiled",
+            "size": 3,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "wolfmeat_raw": {
+            "category": "Food",
+            "created": "1408532318",
+            "description": "Meat from a wolf",
+            "iconmain": "4117",
+            "itemid": "13968",
+            "name": "Raw Wolf Meat",
+            "shortname": "wolfmeat_raw",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "bandage": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 20,
+                    "title": "Bandage"
+                }
+            ],
+            "category": "Medical",
+            "created": "1408364717",
+            "description": "This will stop bleeding",
+            "iconmain": "2887",
+            "itemid": "11949",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": -50,
+                            "calories": 0,
+                            "health": 10,
+                            "poison": -2,
+                            "thirst": 0,
+                            "title": "Heal",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 5,
+                    "module": "Option",
+                    "title": "Use Bandage",
+                    "title_token": "use_bandage",
+                    "uid": "fr1ag"
+                }
+            ],
+            "name": "Bandage",
+            "shortname": "bandage",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "burlap_gloves": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 20,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Burlap Gloves"
+                }
+            ],
+            "category": "Items",
+            "created": "1408365330",
+            "description": "A bed for sleeping. This will act as a respawn point when placed inside a house",
+            "iconmain": "2888",
+            "itemid": "11914",
+            "modules": [
+                {
+                    "actions": [],
+                    "attribute_feet": false,
+                    "attribute_hands": true,
+                    "attribute_legs": false,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Wearable",
+                    "part_name": "hands/burlap_gloves",
+                    "protected_bullet": 2,
+                    "protected_cold": 20,
+                    "protected_explosion": 2,
+                    "protected_heat": 5,
+                    "protected_melee": 5,
+                    "protected_radiation": 2,
+                    "remove": {
+                        "hands": true
+                    },
+                    "remove_feet": false,
+                    "remove_hands": true,
+                    "remove_legs": false,
+                    "remove_torso": false,
+                    "slots": {
+                        "bum": [],
+                        "face": [],
+                        "groin": [],
+                        "head_back": [],
+                        "head_top": [],
+                        "left_arm": [],
+                        "left_foot": [],
+                        "left_hand": {
+                            "over": false,
+                            "under": true
+                        },
+                        "left_knee": [],
+                        "left_leg": [],
+                        "left_shoulder": [],
+                        "right_arm": [],
+                        "right_foot": [],
+                        "right_hand": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_knee": [],
+                        "right_leg": [],
+                        "right_shoulder": [],
+                        "torso_back": [],
+                        "torso_front": []
+                    },
+                    "uid": "wjhjd"
+                }
+            ],
+            "name": "Bed",
+            "shortname": "bed",
+            "size": 200,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "can_beans": {
+            "category": "Food",
+            "created": "1408533493",
+            "description": "Boya Beans.",
+            "iconmain": "4121",
+            "itemid": "11906",
+            "name": "Can of Beans",
+            "shortname": "can_beans",
+            "size": 25,
+            "version": 2,
+            "weight": 0.2
+        }
+    },
+    {
+        "humanmeat_raw": {
+            "category": "Food",
+            "created": "1408524299",
+            "description": "Meat from a fellow human being. It's edible.. but should you eat it?",
+            "iconmain": "930",
+            "itemid": "13967",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": 0,
+                            "calories": 5,
+                            "health": 5,
+                            "poison": 10,
+                            "thirst": 3,
+                            "title": "Modify Metabolism",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 5,
+                    "module": "Option",
+                    "title": "Eat Human Meat",
+                    "title_token": "eat_human_meat",
+                    "uid": "ja5tj"
+                },
+                {
+                    "actions": [
+                        {
+                            "itemid": 13971,
+                            "title": "Become Cooked",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "end_value": 120,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Cook",
+                    "uid": "v6b36"
+                }
+            ],
+            "name": "Raw Human Meat",
+            "shortname": "humanmeat_raw",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "lantern": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 50,
+                            "itemid": 13995
+                        },
+                        {
+                            "count": 15,
+                            "itemid": 13985
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Lantern Blueprint"
+                }
+            ],
+            "category": "Items",
+            "created": "1408370443",
+            "description": "It... looks like a fire hazard.",
+            "iconmain": "4083",
+            "itemid": "14038",
+            "modules": [
+                {
+                    "enabled": false,
+                    "module": "viewmodel",
+                    "uid": "n5851"
+                },
+                {
+                    "access_in_deployed": true,
+                    "actions": [],
+                    "capacity": 1,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Container",
+                    "uid": "s6h0s"
+                },
+                {
+                    "enabled": false,
+                    "module": "Viewmodel",
+                    "uid": "mktp5"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": false,
+                    "module": "Oven",
+                    "temperature": 200,
+                    "uid": "gx3x2"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": {
+                        "model": "3967",
+                        "scale": 2
+                    },
+                    "module": "Deploy",
+                    "prefab": "items/lantern_deployed",
+                    "prefab_ghost": "items/lantern_guide",
+                    "uid": "6ayiv"
+                },
+                {
+                    "actions": [
+                        {
+                            "enable": true,
+                            "title": "Ignite Lantern",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": true,
+                            "title": "Is Off",
+                            "type": "IsOn"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "title": "Ignite Lantern",
+                    "title_token": "lantern_ignite",
+                    "uid": "wvzwg"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Drop Contents",
+                            "type": "DropContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": false,
+                    "health": 100,
+                    "module": "TakeDamage",
+                    "uid": "sgit7"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Extinguish",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "title": "is On",
+                            "type": "IsOn"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "title": "Extinguish Lantern",
+                    "title_token": "lantern_extinguish",
+                    "uid": "a5jk7"
+                },
+                {
+                    "actions": [
+                        {
+                            "paneltype": "lantern",
+                            "title": "Open",
+                            "type": "ViewContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "in_world": false,
+                    "module": "Option",
+                    "title": "Open Lantern",
+                    "title_token": "open_lantern",
+                    "uid": "9dt3x"
+                }
+            ],
+            "name": "Lantern",
+            "shortname": "lantern",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "humanmeat_burned": {
+            "category": "Food",
+            "created": "1408709809",
+            "description": "Meat from a fellow human being. It's edible.. but should you eat it?",
+            "iconmain": "930",
+            "itemid": "14109",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": 0,
+                            "calories": 6,
+                            "health": 2,
+                            "poison": 30,
+                            "thirst": 2,
+                            "title": "Modify Metabolism",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 5,
+                    "module": "Option",
+                    "title": "Eat Spoiled Human Meat",
+                    "title_token": "eat_spoiled_human_meat",
+                    "uid": "ja5tj"
+                }
+            ],
+            "name": "Burned Human Meat",
+            "shortname": "humanmeat_burned",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "c_door": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364894",
+            "description": "A door.",
+            "iconmain": "4030",
+            "itemid": "14027",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_door",
+                    "uid": "o62ry"
+                }
+            ],
+            "name": "Doorway Plan",
+            "shortname": "c_door",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "blueberries": {
+            "category": "Food",
+            "created": "1408364643",
+            "description": "Berries that can be picked from bushes and used as food or ingredients.",
+            "iconmain": "304",
+            "itemid": "1529",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Option",
+                    "title": "Eat Blueberries",
+                    "title_token": "eat_blueberries",
+                    "uid": "hc2cr"
+                }
+            ],
+            "name": "Blueberries",
+            "shortname": "blueberries",
+            "stackable": 20,
+            "version": 2
+        }
+    },
+    {
+        "bow_hunting": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 200,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 50,
+                            "itemid": 6604
+                        }
+                    ],
+                    "title": "Hunting Bow",
+                    "toolid": null
+                }
+            ],
+            "category": "Weapon",
+            "created": "1408527324",
+            "description": "A bow. For hunting.",
+            "iconmain": "4100",
+            "itemid": "6296",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_bow",
+                    "uid": "8dpo5"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_bow",
+                    "uid": "sego7"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "bow",
+                    "holdtype": "bow",
+                    "module": "HoldType",
+                    "uid": "3ej1f"
+                },
+                {
+                    "enabled": true,
+                    "module": "BowControl",
+                    "uid": "x8l1h"
+                },
+                {
+                    "actions": [],
+                    "ammo": [
+                        {
+                            "itemid": 11904
+                        }
+                    ],
+                    "conditions": [],
+                    "damage": 30,
+                    "enabled": true,
+                    "module": "ProjectileAttack",
+                    "stick": true,
+                    "uid": "3uak1"
+                }
+            ],
+            "name": "Hunting Bow",
+            "shortname": "bow_hunting",
+            "size": 50,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "can_tuna": {
+            "category": "Food",
+            "created": "1408533274",
+            "description": "Chunked tuna",
+            "iconmain": "4119",
+            "itemid": "11907",
+            "name": "Can of Tuna",
+            "shortname": "can_tuna",
+            "size": 10,
+            "version": 2,
+            "weight": 0.2
+        }
+    },
+    {
+        "ammo_pistol": {
+            "category": "Ammunition",
+            "created": "1408552338",
+            "description": "Ammunition for a Pistol",
+            "iconmain": "3979",
+            "itemid": "14101",
+            "modules": [
+                {
+                    "actions": [],
+                    "breakProbability": 0,
+                    "conditions": [],
+                    "damage": 40,
+                    "damageType": "Bullet",
+                    "enabled": true,
+                    "module": "Projectile",
+                    "projectilePrefab": "projectiles/pistolbullet",
+                    "stickProbability": 0,
+                    "uid": "blgmd",
+                    "velocity": 200
+                }
+            ],
+            "name": "Pistol Bullet",
+            "shortname": "ammo_pistol",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "wolfmeat_cooked": {
+            "category": "Food",
+            "created": "1408532304",
+            "description": "Meat from a wolf which has been cooked",
+            "iconmain": "4116",
+            "itemid": "14086",
+            "name": "Cooked Wolf Meat",
+            "shortname": "wolfmeat_cooked",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "rifle_bolt": {
+            "category": "Weapon",
+            "created": "1408527334",
+            "description": "A high powered, highly accurate rifle",
+            "iconmain": "4095",
+            "itemid": "11864",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Worldmodel",
+                    "prefab": "wm_boltrifle",
+                    "uid": "29wyb"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Viewmodel",
+                    "prefab": "vm_boltrifle",
+                    "uid": "19c4e"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "holdtype": "rifle",
+                    "module": "HoldType",
+                    "uid": "2y5d8"
+                },
+                {
+                    "actions": [],
+                    "ammo": [
+                        {
+                            "itemid": 13987
+                        }
+                    ],
+                    "conditions": [],
+                    "damage": 50,
+                    "enabled": true,
+                    "module": "ProjectileAttack",
+                    "uid": "ymoxl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "RifleControl",
+                    "timeBetweenShots": 1.3,
+                    "uid": "tc5lx"
+                },
+                {
+                    "actions": [],
+                    "bone": "",
+                    "clientside": true,
+                    "conditions": [],
+                    "effectPrefab": "weapons/vm_bolt_rifle/attack",
+                    "enabled": true,
+                    "module": "SignalEffect",
+                    "serverside": true,
+                    "signalType": "Player_Attack",
+                    "uid": "h5a3k"
+                }
+            ],
+            "name": "Bolt Action Rifle",
+            "shortname": "rifle_bolt",
+            "size": 200,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "chocholate": {
+            "category": "Food",
+            "created": "1408534070",
+            "description": "Edible chocolate. A great source of calories.",
+            "iconmain": "4125",
+            "itemid": "11908",
+            "name": "Chocolate Bar",
+            "shortname": "chocholate",
+            "size": 10,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "chicken_burned": {
+            "category": "Food",
+            "created": "1408531301",
+            "description": "Some burned chicken.",
+            "iconmain": "4106",
+            "itemid": "3",
+            "name": "Burned Chicken",
+            "shortname": "chicken_burned",
+            "size": 10,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "skull_wolf": {
+            "category": "Resources",
+            "created": "1408541381",
+            "description": "A wolf skull",
+            "iconmain": "4128",
+            "itemid": "14095",
+            "name": "Wolf Skull",
+            "shortname": "skull_wolf",
+            "size": 25,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.01
+        }
+    },
+    {
+        "black raspberries": {
+            "category": "Food",
+            "created": "1408364640",
+            "description": "Berries picked from berry bushes, contains a small amount of nutrition.",
+            "iconmain": "708",
+            "itemid": "2537",
+            "name": "Black Raspberries",
+            "shortname": "black raspberries",
+            "version": 2
+        }
+    },
+    {
+        "campfire": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 514
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Camp Fire Blueprint"
+                }
+            ],
+            "category": "Items",
+            "created": "1408371624",
+            "description": "A small camp fire",
+            "iconmain": "4098",
+            "itemid": "3533",
+            "modules": [
+                {
+                    "enabled": false,
+                    "module": "viewmodel",
+                    "uid": "n5851"
+                },
+                {
+                    "access_in_deployed": true,
+                    "actions": [],
+                    "capacity": 4,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Container",
+                    "uid": "s6h0s"
+                },
+                {
+                    "enabled": false,
+                    "module": "Viewmodel",
+                    "uid": "mktp5"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Oven",
+                    "temperature": 200,
+                    "uid": "gx3x2"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": {
+                        "model": "3967",
+                        "scale": 2
+                    },
+                    "module": "Deploy",
+                    "prefab": "items/campfire_deployed",
+                    "prefab_ghost": "items/campfire_guide",
+                    "uid": "6ayiv"
+                },
+                {
+                    "actions": [
+                        {
+                            "enable": true,
+                            "title": "Ignite Fire",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": true,
+                            "title": "Is Off",
+                            "type": "IsOn"
+                        },
+                        {
+                            "title": "Has Fuel",
+                            "type": "HasFuel"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "title": "Ignite Fire",
+                    "title_token": "fire_ignite",
+                    "uid": "wvzwg"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Drop Contents",
+                            "type": "DropContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "health": 100,
+                    "module": "TakeDamage",
+                    "uid": "sgit7"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Extinguish",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "title": "is On",
+                            "type": "IsOn"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "title": "Extinguish Fire",
+                    "title_token": "fire_extinguish",
+                    "uid": "a5jk7"
+                },
+                {
+                    "actions": [
+                        {
+                            "paneltype": "campfire",
+                            "title": "Open",
+                            "type": "ViewContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "module": "Option",
+                    "title": "Open Fire",
+                    "title_token": "open_fire",
+                    "uid": "00nyc"
+                }
+            ],
+            "name": "Camp Fire",
+            "shortname": "campfire",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "wood": {
+            "category": "Resources",
+            "created": "1408365012",
+            "description": "Wood. Made from trees.",
+            "iconmain": "1386",
+            "itemid": "514",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "amount": 1,
+                            "itemid": 11956,
+                            "title": "Give Charcoal",
+                            "type": "Give"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "chance": 50,
+                            "title": "50% chance",
+                            "type": "Chance"
+                        }
+                    ],
+                    "enabled": true,
+                    "module": "Burnable",
+                    "uid": "ovlub"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Burnt",
+                    "uid": "nbm8a"
+                }
+            ],
+            "name": "Wood",
+            "shortname": "wood",
+            "size": 50,
+            "stackable": 1000,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "charcoal": {
+            "category": "Resources",
+            "created": "1408364971",
+            "description": "Charcoal from a fire.",
+            "iconmain": "2894",
+            "itemid": "11956",
+            "name": "Charcoal",
+            "shortname": "charcoal",
+            "size": 10,
+            "stackable": 1000,
+            "version": 2,
+            "weight": 0.01
+        }
+    },
+    {
+        "metal_plate_torso": {
+            "blueprints": [
+                {
+                    "amount": 1,
+                    "ingredients": [
+                        {
+                            "count": 20,
+                            "itemid": 6604
+                        },
+                        {
+                            "count": 50,
+                            "itemid": 13995
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Metal Chest Plate",
+                    "title_tag": "metal_chest_plate"
+                }
+            ],
+            "category": "Attire",
+            "created": "1408714259",
+            "description": "A metal plate covering your torso",
+            "iconmain": "4137",
+            "itemid": "14110",
+            "modules": [
+                {
+                    "actions": [],
+                    "attribute_torso": true,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Wearable",
+                    "part_name": "torso/metal_plate_torso",
+                    "protected_bullet": 20,
+                    "protected_cold": 5,
+                    "protected_explosion": 30,
+                    "protected_heat": 10,
+                    "protected_melee": 30,
+                    "protected_radiation": 10,
+                    "remove": {
+                        "torso": false
+                    },
+                    "remove_torso": true,
+                    "slots": {
+                        "bum": [],
+                        "face": [],
+                        "groin": [],
+                        "head_back": [],
+                        "head_top": [],
+                        "left_arm": {
+                            "over": false,
+                            "under": false
+                        },
+                        "left_foot": [],
+                        "left_hand": {
+                            "over": false
+                        },
+                        "left_knee": [],
+                        "left_leg": [],
+                        "left_shoulder": {
+                            "over": true,
+                            "under": false
+                        },
+                        "right_arm": {
+                            "over": false,
+                            "under": false
+                        },
+                        "right_foot": [],
+                        "right_hand": [],
+                        "right_knee": [],
+                        "right_leg": [],
+                        "right_shoulder": {
+                            "over": true,
+                            "under": false
+                        },
+                        "torso_back": {
+                            "over": true,
+                            "under": false
+                        },
+                        "torso_front": {
+                            "over": true,
+                            "under": false
+                        }
+                    },
+                    "uid": "wjhjd"
+                }
+            ],
+            "name": "Metal Chest Plate",
+            "shortname": "metal_plate_torso",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "lock": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 40,
+                            "itemid": 13995
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Lock Blueprint"
+                }
+            ],
+            "category": "Construction",
+            "created": "1408365213",
+            "description": "A simple lock which is locked and closed using keys.",
+            "iconmain": "4077",
+            "itemid": "14072",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "itemid": 14046,
+                            "title": "Craft a Key",
+                            "type": "Craft"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": true,
+                            "title": "Not Locked",
+                            "type": "IsLocked"
+                        },
+                        {
+                            "amount": 1,
+                            "item": 14046,
+                            "title": "Can Craft Wooden Key",
+                            "type": "CanCraft"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 1,
+                    "module": "Option",
+                    "order": -100,
+                    "title": "Create A Key",
+                    "title_token": "create_a_key",
+                    "uid": "paonk"
+                },
+                {
+                    "actions": [
+                        {
+                            "lock": true,
+                            "title": "Lock The Door",
+                            "type": "LockUnlock"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": true,
+                            "title": "Not Locked",
+                            "type": "IsLocked"
+                        },
+                        {
+                            "item": 14046,
+                            "mustMatchOwner": true,
+                            "title": "Has Key",
+                            "type": "HasItem"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_world": true,
+                    "length": 1,
+                    "module": "Option",
+                    "order": -50,
+                    "title": "Lock",
+                    "title_token": "lock",
+                    "uid": "iesnq"
+                },
+                {
+                    "actions": [
+                        {
+                            "lock": false,
+                            "title": "Unlock The Door",
+                            "type": "LockUnlock"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": false,
+                            "title": "Is Locked",
+                            "type": "IsLocked"
+                        },
+                        {
+                            "item": 14046,
+                            "mustMatchOwner": true,
+                            "title": "Has Key",
+                            "type": "HasItem"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_world": true,
+                    "length": 1,
+                    "module": "Option",
+                    "order": -50,
+                    "title": "Unlock",
+                    "title_token": "unlock",
+                    "uid": "g0hku"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "DeployToItem",
+                    "slot": "Lock",
+                    "uid": "rp0iv"
+                }
+            ],
+            "name": "Lock",
+            "shortname": "lock",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "smallwaterbottle": {
+            "category": "Food",
+            "created": "1408365057",
+            "description": "Small Water Bottle",
+            "iconmain": "3083",
+            "itemid": "11913",
+            "name": "Small Water Bottle",
+            "shortname": "smallwaterbottle",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "antiradpills": {
+            "category": "Medical",
+            "created": "1408534090",
+            "description": "Taking these pills will lower your radiation level.",
+            "iconmain": "4126",
+            "itemid": "11905",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": 0,
+                            "calories": 2,
+                            "health": 0,
+                            "poison": 0,
+                            "radiation": -50,
+                            "thirst": 0,
+                            "title": "Modify Metabolism",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 4,
+                    "module": "Option",
+                    "title": "Take Pills",
+                    "title_token": "take_pills",
+                    "uid": "xzflb"
+                }
+            ],
+            "name": "Anti-Radiation Pills",
+            "shortname": "antiradpills",
+            "size": 10,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.01
+        }
+    },
+    {
+        "burlap_shoes": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 20,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Burlap Shoes"
+                }
+            ],
+            "category": "Attire",
+            "created": "1408632370",
+            "description": "Shoes made out of burlap",
+            "iconmain": "4113",
+            "itemid": "14076",
+            "modules": [
+                {
+                    "actions": [],
+                    "attribute_feet": true,
+                    "attribute_legs": false,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Wearable",
+                    "part_name": "feet/burlap_shoes",
+                    "protected_bullet": 2,
+                    "protected_cold": 20,
+                    "protected_explosion": 2,
+                    "protected_heat": 5,
+                    "protected_melee": 5,
+                    "protected_radiation": 2,
+                    "remove": {
+                        "feet": true
+                    },
+                    "remove_feet": true,
+                    "remove_legs": false,
+                    "remove_torso": false,
+                    "slots": {
+                        "bum": [],
+                        "face": [],
+                        "groin": [],
+                        "head_back": [],
+                        "head_top": [],
+                        "left_arm": [],
+                        "left_foot": {
+                            "over": false,
+                            "under": true
+                        },
+                        "left_hand": [],
+                        "left_knee": [],
+                        "left_leg": [],
+                        "left_shoulder": [],
+                        "right_arm": [],
+                        "right_foot": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_hand": [],
+                        "right_knee": [],
+                        "right_leg": [],
+                        "right_shoulder": [],
+                        "torso_back": [],
+                        "torso_front": []
+                    },
+                    "uid": "wjhjd"
+                }
+            ],
+            "name": "Burlap Shoes",
+            "shortname": "burlap_shoes",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "torch": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 50,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 30,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Torch Blueprint"
+                }
+            ],
+            "category": "Tool",
+            "created": "1408370210",
+            "description": "A Torch",
+            "iconmain": "4082",
+            "itemid": "11953",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "SignalOnOff",
+                    "onoff": true,
+                    "signalType": "Player_On",
+                    "title": "Switch On",
+                    "toggle": false,
+                    "uid": "bj7fj"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "SignalOnOff",
+                    "onoff": false,
+                    "signalType": "Player_Off",
+                    "title": "Switch Off",
+                    "toggle": false,
+                    "uid": "eevi9"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "damage": 20,
+                    "damageType": "BluntTrauma",
+                    "enabled": true,
+                    "gatherproficiency": 0,
+                    "maxdistance": 2,
+                    "module": "MeleeAttack",
+                    "uid": "sbpmi"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_torch",
+                    "uid": "ftju5"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_torch",
+                    "uid": "mi7bl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "torch",
+                    "holdtype": "torch",
+                    "module": "HoldType",
+                    "uid": "jadac"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "8jp4w"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": false,
+                    "module": "Craftable",
+                    "uid": "db5b1"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "OnOffControl",
+                    "repeatDelay": 0.1,
+                    "toggleButton": "FIRE_SECONDARY",
+                    "uid": "et6zed"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "MeleeControl",
+                    "repeatDelay": 0.5,
+                    "uid": "etzed"
+                }
+            ],
+            "name": "Torch",
+            "shortname": "torch",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "knife_bone": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 60,
+                            "itemid": 188
+                        },
+                        {
+                            "count": 30,
+                            "itemid": 6604
+                        }
+                    ],
+                    "title": "Bone Knife"
+                }
+            ],
+            "category": "Weapon",
+            "created": "1408527314",
+            "description": "Melee weapon crafted from bone blade and wood.",
+            "iconmain": "32",
+            "itemid": "373",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_boneknife",
+                    "uid": "of3rp"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_boneknife",
+                    "uid": "xkzdx"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "MeleeAttack",
+                    "uid": "32ly8"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "melee",
+                    "holdtype": "melee",
+                    "module": "HoldType",
+                    "uid": "pzlrh"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "giytx"
+                },
+                {
+                    "enabled": true,
+                    "module": "MeleeControl",
+                    "uid": "c56x5"
+                }
+            ],
+            "name": "Bone Knife",
+            "shortname": "knife_bone",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "pickaxe": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 50,
+                            "itemid": 13995
+                        }
+                    ],
+                    "time": 120,
+                    "title": "Pickaxe"
+                }
+            ],
+            "category": "Tool",
+            "created": "1408370152",
+            "description": "Pick Axe",
+            "iconmain": "4080",
+            "itemid": "11980",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_pickaxe",
+                    "uid": "21wbu"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_pickaxe",
+                    "uid": "vffbq"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "MeleeAttack",
+                    "uid": "d4zuv"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "melee",
+                    "holdtype": "melee",
+                    "module": "HoldType",
+                    "uid": "5hek3"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "bkmd5"
+                },
+                {
+                    "enabled": true,
+                    "module": "MeleeControl",
+                    "uid": "w6feh"
+                }
+            ],
+            "name": "Pick Axe",
+            "shortname": "pickaxe",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "c_window": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364881",
+            "description": "A window",
+            "iconmain": "4041",
+            "itemid": "14030",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_window",
+                    "uid": "o62ry"
+                }
+            ],
+            "name": "Window Plan",
+            "shortname": "c_window",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "c_foundation": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 1,
+                            "itemid": 11963
+                        }
+                    ],
+                    "time": 30,
+                    "title": "Building Plan",
+                    "title_tag": "building_plan"
+                }
+            ],
+            "category": "Construction",
+            "created": "1408372304",
+            "description": "A standard foundation",
+            "iconmain": "4092",
+            "itemid": "13886",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_foundation",
+                    "uid": "atujm"
+                }
+            ],
+            "name": "Foundation Plan",
+            "shortname": "c_foundation",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "chicken_raw": {
+            "category": "Food",
+            "created": "1408531317",
+            "description": "A nice, juicy raw chicken breast",
+            "iconmain": "4108",
+            "itemid": "1",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "calories": 20,
+                            "health": 5,
+                            "poison": 10,
+                            "thirst": 5,
+                            "title": "Give Health",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Option",
+                    "title": "Eat Raw Chicken",
+                    "title_token": "eat_raw_chicken",
+                    "uid": "tecoe"
+                },
+                {
+                    "actions": [
+                        {
+                            "itemid": "2",
+                            "title": "Replace with Cooked Chicken",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "maximum": 250,
+                            "minimum": 150,
+                            "title": "Cooking Temperature",
+                            "type": "Temperature"
+                        }
+                    ],
+                    "enabled": true,
+                    "end_value": 30,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Cook",
+                    "uid": "ey6ye"
+                },
+                {
+                    "actions": [
+                        {
+                            "itemid": "4",
+                            "title": "Replace with Spoiled Chicken",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "maximum": 70,
+                            "minimum": 10,
+                            "title": "Not Chilled, Not Cooking",
+                            "type": "Temperature"
+                        }
+                    ],
+                    "enabled": true,
+                    "end_value": 3600,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Spoil",
+                    "uid": "i1amh"
+                }
+            ],
+            "name": "Raw Chicken Breast",
+            "shortname": "chicken_raw",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "humanmeat_spoiled": {
+            "category": "Food",
+            "created": "1408524367",
+            "description": "Meat from a fellow human being. It's edible.. but should you eat it?",
+            "iconmain": "930",
+            "itemid": "14085",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": 0,
+                            "calories": 6,
+                            "health": 2,
+                            "poison": 30,
+                            "thirst": 2,
+                            "title": "Modify Metabolism",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 5,
+                    "module": "Option",
+                    "title": "Eat Spoiled Human Meat",
+                    "title_token": "eat_spoiled_human_meat",
+                    "uid": "ja5tj"
+                }
+            ],
+            "name": "Spoiled Human Meat",
+            "shortname": "humanmeat_spoiled",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "pistol_eoka": {
+            "category": "Weapon",
+            "created": "1408543856",
+            "description": "...",
+            "iconmain": "4129",
+            "itemid": "14098",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Worldmodel",
+                    "prefab": "wm_eoka_pistol",
+                    "uid": "29wyb"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Viewmodel",
+                    "prefab": "vm_eoka_pistol",
+                    "uid": "19c4e"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "holdtype": "pistol",
+                    "module": "HoldType",
+                    "uid": "2y5d8"
+                },
+                {
+                    "actions": [],
+                    "ammo": [
+                        {
+                            "itemid": 14101
+                        }
+                    ],
+                    "conditions": [],
+                    "damage": 50,
+                    "enabled": true,
+                    "module": "ProjectileAttack",
+                    "uid": "ymoxl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "RifleControl",
+                    "timeBetweenShots": 1.3,
+                    "uid": "tc5lx"
+                },
+                {
+                    "actions": [],
+                    "bone": "",
+                    "clientside": true,
+                    "conditions": [],
+                    "effectPrefab": "weapons/eoka_pistol/attack",
+                    "enabled": true,
+                    "module": "SignalEffect",
+                    "serverside": true,
+                    "signalType": "Player_Attack",
+                    "uid": "h5a3k"
+                }
+            ],
+            "name": "Eoka Pistol",
+            "shortname": "pistol_eoka",
+            "size": 200,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "arrow_woodenb": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 50,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 10,
+                            "itemid": 11964
+                        }
+                    ],
+                    "time": 20,
+                    "title": "Wooden Arrow"
+                }
+            ],
+            "category": "Ammunition",
+            "created": "1408527211",
+            "description": "An Arrow.",
+            "iconmain": "2886",
+            "itemid": "11904",
+            "modules": [
+                {
+                    "actions": [],
+                    "breakProbability": 0.3,
+                    "conditions": [],
+                    "damage": 50,
+                    "enabled": true,
+                    "module": "Projectile",
+                    "projectilePrefab": "projectiles/arrow",
+                    "remainInWorld": true,
+                    "stickProbability": 0.5,
+                    "uid": "blgmd",
+                    "velocity": 40
+                }
+            ],
+            "name": "Wooden Arrow",
+            "shortname": "arrow_wooden",
+            "size": 50,
+            "stackable": 1000,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "fat_animal": {
+            "category": "Resources",
+            "created": "1408527156",
+            "description": "Fat from an animal",
+            "iconmain": "2884",
+            "itemid": "11954",
+            "name": "Animal Fat",
+            "shortname": "fat_animal",
+            "size": 25,
+            "stackable": 1000,
+            "version": 2,
+            "weight": 0.01
+        }
+    },
+    {
+        "c_railing": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364891",
+            "description": "A standard Floor",
+            "iconmain": "4040",
+            "itemid": "14036",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_railing",
+                    "uid": "atujm"
+                }
+            ],
+            "name": "Railing Plan",
+            "shortname": "c_railing",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "box_wooden_large": {
+            "category": "Items",
+            "created": "1408527264",
+            "description": "A large wooden box",
+            "iconmain": "3090",
+            "itemid": "11919",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Deploy",
+                    "prefab": "deployed_storage",
+                    "uid": "x67tc"
+                },
+                {
+                    "access_in_deployed": true,
+                    "access_in_world": true,
+                    "actions": [],
+                    "capacity": 10,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Container",
+                    "uid": "5ws2j"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Drop contents",
+                            "type": "DropContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "health": 500,
+                    "module": "TakeDamage",
+                    "uid": "4f3x4"
+                }
+            ],
+            "name": "Large Wood Storage",
+            "shortname": "box_wooden_large",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "humanmeat_cooked": {
+            "category": "Food",
+            "created": "1408524308",
+            "description": "Meat from a fellow human being. It's edible.. but should you eat it?",
+            "iconmain": "930",
+            "itemid": "13971",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": 0,
+                            "calories": 40,
+                            "health": 10,
+                            "poison": 0,
+                            "thirst": 10,
+                            "title": "Modify Metabolism",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 3,
+                    "module": "Option",
+                    "title": "Eat Human Meat",
+                    "title_token": "eat_human_meat",
+                    "uid": "ja5tj"
+                }
+            ],
+            "name": "Cooked Human Meat",
+            "shortname": "humanmeat_cooked",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "hammer": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 514
+                        }
+                    ],
+                    "time": 30,
+                    "title": "Hammer"
+                }
+            ],
+            "category": "Tool",
+            "created": "1408371643",
+            "description": "A hammer",
+            "iconmain": "4099",
+            "itemid": "13851",
+            "modules": [
+                {
+                    "enabled": true,
+                    "module": "Builder"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_hammer",
+                    "uid": "ted8k"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_hammer",
+                    "uid": "fd1f7"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "tcyom"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Burnable",
+                    "uid": "p2bzq"
+                }
+            ],
+            "name": "Hammer",
+            "shortname": "hammer",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "c_door_wood": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364878",
+            "description": "A wooden door.",
+            "iconmain": "4063",
+            "itemid": "14043",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_wooden_hinged_door",
+                    "uid": "o62ry"
+                }
+            ],
+            "name": "Wooden Door Plan",
+            "shortname": "c_door_wood",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "burlap_trousers": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 30,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Burlap Shirt"
+                }
+            ],
+            "category": "Attire",
+            "created": "1408632382",
+            "description": "Trousers made out of burlap.",
+            "iconmain": "4111",
+            "itemid": "14055",
+            "modules": [
+                {
+                    "actions": [],
+                    "attribute_legs": true,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Wearable",
+                    "part_name": "legs/burlap_trousers",
+                    "protected_bullet": 2,
+                    "protected_cold": 20,
+                    "protected_explosion": 2,
+                    "protected_heat": 5,
+                    "protected_melee": 5,
+                    "protected_radiation": 2,
+                    "remove": {
+                        "legs": true
+                    },
+                    "remove_legs": true,
+                    "remove_torso": false,
+                    "slots": {
+                        "bum": {
+                            "over": false,
+                            "under": true
+                        },
+                        "face": [],
+                        "groin": {
+                            "over": false,
+                            "under": true
+                        },
+                        "head_back": [],
+                        "head_top": [],
+                        "left_arm": [],
+                        "left_foot": [],
+                        "left_hand": [],
+                        "left_knee": {
+                            "over": false,
+                            "under": true
+                        },
+                        "left_leg": {
+                            "over": false,
+                            "under": true
+                        },
+                        "left_shoulder": [],
+                        "right_arm": [],
+                        "right_foot": [],
+                        "right_hand": [],
+                        "right_knee": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_leg": {
+                            "over": false,
+                            "under": true
+                        },
+                        "right_shoulder": [],
+                        "torso_back": [],
+                        "torso_front": []
+                    },
+                    "uid": "wjhjd"
+                }
+            ],
+            "name": "Burlap Trousers",
+            "shortname": "burlap_trousers",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "rock": {
+            "category": "Tool",
+            "created": "1408373691",
+            "description": "Rock on.",
+            "iconmain": "4101",
+            "itemid": "13844",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_rock",
+                    "uid": "sr3sc"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_rock",
+                    "uid": "m87hl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "damage": 30,
+                    "enabled": true,
+                    "gatherproficiency": 0.1,
+                    "maxdistance": 1.5,
+                    "module": "MeleeAttack",
+                    "uid": "ju69r"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "rock",
+                    "holdtype": "rock",
+                    "module": "HoldType",
+                    "uid": "m7blt"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "7p1i2"
+                },
+                {
+                    "actions": [],
+                    "automaticRepeat": true,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "MeleeControl",
+                    "repeatDelay": 0.6,
+                    "uid": "kvkjy"
+                }
+            ],
+            "name": "Rock",
+            "shortname": "rock",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "metal_fragments": {
+            "category": "Resources",
+            "created": "1408527131",
+            "description": "Metal Fragments Description",
+            "iconmain": "4026",
+            "itemid": "13995",
+            "name": "Metal Fragments",
+            "shortname": "metal_fragments",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "apple": {
+            "category": "Food",
+            "created": "1408534028",
+            "description": "A fruit.",
+            "iconmain": "4123",
+            "itemid": "10338",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "calories": 20,
+                            "health": 10,
+                            "poison": 0,
+                            "thirst": 5,
+                            "title": "Give Health",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "length": 2,
+                    "module": "Option",
+                    "title": "Eat Apple",
+                    "title_token": "eat_apple",
+                    "uid": "u4o1b"
+                }
+            ],
+            "name": "Apple",
+            "shortname": "apple",
+            "size": 3,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.1
+        }
+    },
+    {
+        "flare": {
+            "category": "Tool",
+            "created": "1408365195",
+            "description": "Light up the night sky with this brand new red flare!",
+            "iconmain": "3075",
+            "itemid": "11952",
+            "name": "Flare",
+            "shortname": "flare",
+            "size": 25,
+            "version": 2,
+            "weight": 0.2
+        }
+    },
+    {
+        "hatchet": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 50,
+                            "itemid": 13995
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Hatchet Blueprint"
+                }
+            ],
+            "category": "Tool",
+            "created": "1408370120",
+            "description": "Useful for harvesting resources",
+            "iconmain": "4078",
+            "itemid": "11975",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Viewmodel",
+                    "prefab": "vm_axe",
+                    "uid": "lqqii"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Worldmodel",
+                    "prefab": "wm_axe",
+                    "uid": "9iaf9"
+                },
+                {
+                    "enabled": true,
+                    "module": "Throwable",
+                    "uid": "1uxl3"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "hold type": "melee",
+                    "holdtype": "melee",
+                    "module": "HoldType",
+                    "uid": "znjc7"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "damage": 30,
+                    "enabled": true,
+                    "gatherproficiency": 0.3,
+                    "maxdistance": 1.5,
+                    "module": "MeleeAttack",
+                    "uid": "2dblf"
+                },
+                {
+                    "actions": [],
+                    "automaticRepeat": true,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "MeleeControl",
+                    "repeatDelay": 0.5,
+                    "uid": "2dbflf"
+                }
+            ],
+            "name": "Hatchet",
+            "shortname": "hatchet",
+            "size": 50,
+            "version": 2,
+            "weight": 0.6
+        }
+    },
+    {
+        "cloth": {
+            "category": "Resources",
+            "created": "1408365106",
+            "description": "Cloth. It's cloth.",
+            "iconmain": "2896",
+            "itemid": "6604",
+            "name": "Cloth",
+            "shortname": "cloth",
+            "size": 10,
+            "stackable": 1000,
+            "version": 2,
+            "weight": 0.01
+        }
+    },
+    {
+        "box_wooden": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 514
+                        }
+                    ],
+                    "time": 30,
+                    "title": "Wooden Storage Box"
+                }
+            ],
+            "category": "Items",
+            "created": "1408527254",
+            "description": "Keep your things in this wooden storage box. Store up to 6 small things!",
+            "iconmain": "4096",
+            "itemid": "11930",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Deploy",
+                    "prefab": "items/woodbox_deployed",
+                    "prefab_ghost": "items/woodbox_ghost",
+                    "uid": "7r295"
+                },
+                {
+                    "access_in_deployed": true,
+                    "access_in_world": true,
+                    "actions": [],
+                    "capacity": 6,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Container",
+                    "uid": "jjppk"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Drop Everything",
+                            "type": "DropContents",
+                            "velocity": 1
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "health": 50,
+                    "module": "TakeDamage",
+                    "uid": "08uol"
+                },
+                {
+                    "actions": [
+                        {
+                            "paneltype": "default",
+                            "title": "Open Box",
+                            "type": "ViewContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "in_inventory": true,
+                    "module": "Option",
+                    "title": "Open Box",
+                    "title_token": "open_box",
+                    "uid": "sa7wo"
+                }
+            ],
+            "name": "Wood Storage Box",
+            "shortname": "box_wooden",
+            "size": 50,
+            "stackable": 1,
+            "version": 2,
+            "weight": 2
+        }
+    },
+    {
+        "pistol_revolver": {
+            "category": "Weapon",
+            "created": "1408552331",
+            "description": "...",
+            "iconmain": "4135",
+            "itemid": "14103",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Worldmodel",
+                    "prefab": "wm_revolver",
+                    "uid": "29wyb"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Viewmodel",
+                    "prefab": "vm_revolver",
+                    "uid": "19c4e"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "holdtype": "pistol",
+                    "module": "HoldType",
+                    "uid": "2y5d8"
+                },
+                {
+                    "actions": [],
+                    "ammo": [
+                        {
+                            "itemid": 14101
+                        }
+                    ],
+                    "conditions": [],
+                    "damage": 50,
+                    "enabled": true,
+                    "module": "ProjectileAttack",
+                    "uid": "ymoxl"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "RifleControl",
+                    "timeBetweenShots": 1.3,
+                    "uid": "tc5lx"
+                },
+                {
+                    "actions": [],
+                    "bone": "",
+                    "clientside": true,
+                    "conditions": [],
+                    "effectPrefab": "weapons/eoka_pistol/attack",
+                    "enabled": true,
+                    "module": "SignalEffect",
+                    "serverside": true,
+                    "signalType": "Player_Attack",
+                    "uid": "h5a3k"
+                }
+            ],
+            "name": "Revolver",
+            "shortname": "pistol_revolver",
+            "size": 200,
+            "stackable": 1,
+            "version": 2,
+            "weight": 13
+        }
+    },
+    {
+        "ammo_rifle": {
+            "category": "Ammunition",
+            "created": "1408527221",
+            "description": "Ammunition for a Rifle",
+            "iconmain": "3979",
+            "itemid": "13987",
+            "modules": [
+                {
+                    "actions": [],
+                    "breakProbability": 0,
+                    "conditions": [],
+                    "damage": 80,
+                    "damageType": "Bullet",
+                    "enabled": true,
+                    "module": "Projectile",
+                    "projectilePrefab": "projectiles/riflebullet",
+                    "stickProbability": 0,
+                    "uid": "blgmd",
+                    "velocity": 300
+                }
+            ],
+            "name": "5.56 Rifle Cartridge",
+            "shortname": "ammo_rifle",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "bearmeat": {
+            "category": "Food",
+            "created": "1408364775",
+            "description": "Raw Bear Meat",
+            "iconmain": "930",
+            "itemid": "2821",
+            "name": "Bear Meat",
+            "shortname": "bearmeat",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "c_wall": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364884",
+            "description": "A wall.",
+            "iconmain": "4039",
+            "itemid": "13986",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_wall",
+                    "uid": "o62ry"
+                }
+            ],
+            "name": "Wall Plan",
+            "shortname": "c_wall",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "sulfur_ore": {
+            "category": "Resources",
+            "created": "1408527112",
+            "description": "A rock containing sulfur. The sulfur can be extracted using a furnace.",
+            "iconmain": "3079",
+            "itemid": "13993",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Become Sulfur",
+                            "type": "Replace"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "maximum": 2000,
+                            "minimum": 500,
+                            "title": "If In Furnace",
+                            "type": "Temperature"
+                        }
+                    ],
+                    "enabled": true,
+                    "end_value": 5,
+                    "failure_rate": 0,
+                    "module": "Count",
+                    "start_value": 0,
+                    "success_rate": 1,
+                    "title": "Smelt",
+                    "uid": "lt7o3"
+                }
+            ],
+            "name": "Sulfur Ore",
+            "shortname": "sulfur_ore",
+            "stackable": 1000,
+            "version": 2
+        }
+    },
+    {
+        "c_stairs": {
+            "blueprints": [],
+            "category": "Construction",
+            "created": "1408364888",
+            "description": "A stairs.",
+            "iconmain": "4064",
+            "itemid": "14029",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "frame_cost": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "ingredients": [
+                        {
+                            "amount": 10,
+                            "itemid": 514
+                        }
+                    ],
+                    "module": "Planner",
+                    "prefab": "generic_stairs",
+                    "uid": "o62ry"
+                }
+            ],
+            "name": "Stairs",
+            "shortname": "c_stairs",
+            "stackable": 0,
+            "version": 2
+        }
+    },
+    {
+        "furnace": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 10,
+                            "itemid": 11964
+                        },
+                        {
+                            "count": 20,
+                            "itemid": 514
+                        },
+                        {
+                            "count": 10,
+                            "itemid": 13985
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Furnace Blueprint"
+                }
+            ],
+            "category": "Items",
+            "created": "1408371388",
+            "description": "A furnace",
+            "iconmain": "4091",
+            "itemid": "11917",
+            "modules": [
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "model": [],
+                    "module": "Deploy",
+                    "prefab": "items/furnace_deployed",
+                    "prefab_ghost": "items/furnace_guide",
+                    "uid": "dxtkv"
+                },
+                {
+                    "actions": [],
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Oven",
+                    "temperature": 1000,
+                    "uid": "hl5qn"
+                },
+                {
+                    "actions": [
+                        {
+                            "title": "Drop contents",
+                            "type": "DropContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "health": 300,
+                    "module": "TakeDamage",
+                    "uid": "7lrwg"
+                },
+                {
+                    "actions": [
+                        {
+                            "paneltype": "furnace",
+                            "title": "View Contents",
+                            "type": "ViewContents"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "length": 0,
+                    "module": "Option",
+                    "title": "Open Furnace",
+                    "title_token": "open_furnace",
+                    "uid": "7j84i"
+                },
+                {
+                    "actions": [
+                        {
+                            "enable": true,
+                            "title": "Turn On",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "title": "Has Fuel",
+                            "type": "HasFuel"
+                        },
+                        {
+                            "reverse": true,
+                            "title": "Is Off",
+                            "type": "IsOn"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "length": 0,
+                    "module": "Option",
+                    "title": "Ignite Furnace",
+                    "title_token": "ignite_furnace",
+                    "uid": "2xivo"
+                },
+                {
+                    "actions": [
+                        {
+                            "enable": false,
+                            "title": "Turn Off",
+                            "type": "EnableDisable"
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "reverse": false,
+                            "title": "Is On",
+                            "type": "IsOn"
+                        }
+                    ],
+                    "enabled": true,
+                    "in_deployed": true,
+                    "module": "Option",
+                    "title": "Extinguish Furnace",
+                    "title_token": "extinguish_furnace",
+                    "uid": "v1pu2"
+                },
+                {
+                    "access_in_deployed": true,
+                    "access_in_world": false,
+                    "actions": [],
+                    "capacity": 6,
+                    "conditions": [],
+                    "enabled": true,
+                    "module": "Container",
+                    "uid": "5ab57"
+                }
+            ],
+            "name": "Furnace",
+            "shortname": "furnace",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "can_beans_empty": {
+            "category": "Resources",
+            "created": "1408533563",
+            "description": "A can of beans without any beans inside. Because someone ate them. A greedy guts maybe.",
+            "iconmain": "4122",
+            "itemid": "14092",
+            "name": "Empty Can Of Beans",
+            "shortname": "can_beans_empty",
+            "size": 25,
+            "stackable": 1,
+            "version": 2,
+            "weight": 0.2
+        }
+    },
+    {
+        "medkit": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 60,
+                    "title": "Small Medkit",
+                    "title_tag": ""
+                }
+            ],
+            "category": "Medical",
+            "created": "1408374302",
+            "description": "Small medkit",
+            "iconmain": "3085",
+            "itemid": "11951",
+            "name": "Small Medkit",
+            "shortname": "medkit",
+            "version": 2
+        }
+    },
+    {
+        "largemedit": {
+            "blueprints": [
+                {
+                    "ingredients": [
+                        {
+                            "count": 100,
+                            "itemid": 11955
+                        },
+                        {
+                            "count": 100,
+                            "itemid": 6604
+                        }
+                    ],
+                    "time": 30,
+                    "title": "Large Medkit"
+                }
+            ],
+            "category": "Medical",
+            "created": "1408365198",
+            "description": "A large medkit.",
+            "iconmain": "3091",
+            "itemid": "11950",
+            "modules": [
+                {
+                    "actions": [
+                        {
+                            "title": "Remove",
+                            "type": "Remove"
+                        },
+                        {
+                            "bleeding": -10,
+                            "calories": 0,
+                            "health": 100,
+                            "poison": -10,
+                            "thirst": 0,
+                            "title": "Heal",
+                            "type": "Metabolism"
+                        }
+                    ],
+                    "conditions": [],
+                    "enabled": true,
+                    "in_inventory": true,
+                    "in_world": true,
+                    "length": 5,
+                    "module": "Option",
+                    "title": "Use Medkit",
+                    "title_token": "use_medkit",
+                    "uid": "fr1ag"
+                }
+            ],
+            "name": "Large Medkit",
+            "shortname": "largemedit",
+            "stackable": 1,
+            "version": 2
+        }
+    },
+    {
+        "chicken_spoiled": {
+            "category": "Food",
+            "created": "1408531342",
+            "description": "This chicken hasn't been stored properly and has become inedible.",
+            "iconmain": "4109",
+            "itemid": "4",
+            "name": "Spoiled Chicken",
+            "shortname": "chicken_spoiled",
+            "version": 2
+        }
+    }
+]
