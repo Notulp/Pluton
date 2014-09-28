@@ -22,6 +22,12 @@ namespace Pluton.Patcher {
 			TypeDefinition serverInit = rustAssembly.MainModule.GetType("Bootstrap");
 			MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
 			MethodDefinition start = serverInit.GetMethod("Start");
+
+			// make sure it's not patched yet
+			if (start.Body.Instructions[0x04].ToString().Contains("Pluton.Bootstrap::AttachBootstrap")) {
+				throw new Exception("Assembly-CSharp is already patched!");
+			}
+
 			start.Body.GetILProcessor().InsertAfter(start.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
 		}
 
@@ -409,15 +415,6 @@ namespace Pluton.Patcher {
 			bool success = Patch();
 
 			try {
-				// TODO: fix, crashed the server
-				/*TypeReference type = AssemblyDefinition.ReadAssembly("mscorlib.dll").MainModule.GetType("System.String");
-				TypeDefinition item = new TypeDefinition("", "Pluton_Patched", TypeAttributes.AnsiClass | TypeAttributes.Public);
-				rustAssembly.MainModule.Types.Add(item);
-				TypeReference fieldType = rustAssembly.MainModule.Import(type);
-				FieldDefinition definition3 = new FieldDefinition("Version", FieldAttributes.CompilerControlled | FieldAttributes.FamANDAssem | FieldAttributes.Family, fieldType);
-				definition3.HasConstant = true;
-				definition3.Constant = version;
-				rustAssembly.MainModule.GetType("Pluton_Patched").Fields.Add(definition3);*/
 				if(success)
 					rustAssembly.Write("Assembly-CSharp.dll");
 			} catch(Exception ex) {
