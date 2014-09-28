@@ -42,16 +42,22 @@ namespace Pluton {
 			return _inv.GiveItem(itemID, amount, true);
 		}
 
-		public ItemContainer InnerBelt() {
-			return _inv.containerBelt;
+		public ItemContainer InnerBelt {
+			get {
+				return _inv.containerBelt;
+			}
 		}
 
-		public ItemContainer InnerMain() {
-			return _inv.containerMain;
+		public ItemContainer InnerMain {
+			get {
+				return _inv.containerMain;
+			}
 		}
 
-		public ItemContainer InnerWear() {
-			return _inv.containerWear;
+		public ItemContainer InnerWear {
+			get {
+				return _inv.containerWear;
+			}
 		}
 
 		public List<InvItem> AllItems() {
