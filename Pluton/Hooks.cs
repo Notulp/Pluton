@@ -83,6 +83,38 @@ namespace Pluton {
 
 			Command cmd = new Command(args);
 
+			if (cmd.cmd == "")
+				return;
+
+			if (Config.GetBoolValue("Commands", "enabled")) {
+				if (cmd.cmd == Config.GetValue("Commands", "ShowMyStats")) {
+					PlayerStats stats = player.Stats;
+					player.Message(String.Format("You have {0} kills and {1} deaths!", stats.Kills, stats.Deaths));
+					player.Message(String.Format("You have taken {0} dmg, and caused {1} in total!", stats.TotalDamageTaken, stats.TotalDamageDone));
+					return;
+				}
+				if (cmd.cmd == Config.GetValue("Commands", "ShowStatsOther")) {
+					Player pOther = Player.Find(String.Join(" ", cmd.args));
+					if (pOther != null) {
+						PlayerStats stats2 = pOther.Stats;
+						player.Message(String.Format("You have {0} kills and {1} deaths!", stats2.Kills, stats2.Deaths));
+						player.Message(String.Format("You have taken {0} dmg, and caused {1} in total!", stats2.TotalDamageTaken, stats2.TotalDamageDone));
+						return;
+					}
+					player.Message("Can't find player: " + String.Join(" ", cmd.args));
+					return;
+				}
+				if (cmd.cmd == Config.GetValue("Commands", "ShowLocation")) {
+					player.Message(player.Location.ToString ());
+					return;
+				}
+				if (cmd.cmd == Config.GetValue("Commands", "ShowOnlinePlayers")) {
+					string msg = Server.GetServer().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetServer().Players.Count) ;
+					player.Message(msg);
+					return;
+				}
+			}
+
 			if (cmd.cmd == "login" && cmd.args[0] == "12345") {
 				Debug.Log ("making you an admin");
 				DataStore.GetInstance().Add("auth", player.SteamID, true);
