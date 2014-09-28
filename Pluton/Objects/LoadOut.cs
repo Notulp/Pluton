@@ -10,7 +10,6 @@ namespace Pluton {
 		public readonly string Name;
 		public int itemCount;
 
-		public bool AdminUse;
 		public bool ModeratorUse;
 		public bool OwnerUse;
 		public bool NormalUse;
@@ -26,13 +25,11 @@ namespace Pluton {
 			Name = ini.Name;
 			if (!nu) {
 				itemCount = Int32.Parse(ini.GetSetting("Def", "itemCount"));
-				AdminUse = ini.GetBoolSetting("Def", "adminCanUse");
 				OwnerUse = ini.GetBoolSetting("Def", "ownerCanUse");
 				ModeratorUse = ini.GetBoolSetting("Def", "modCanUse");
 				NormalUse = ini.GetBoolSetting("Def", "normalCanUse");
 			} else {
 				itemCount = 0;
-				AdminUse = true;
 				OwnerUse = true;
 				NormalUse = true;
 				ModeratorUse = true;
@@ -105,7 +102,6 @@ namespace Pluton {
 		public void ToIni() {
 			var ini = new IniParser(path);
 			ini.AddSetting("Def", "itemCount", itemCount.ToString());
-			ini.AddSetting("Def", "adminCanUse", AdminUse.ToString());
 			ini.AddSetting("Def", "ownerCanUse", OwnerUse.ToString());
 			ini.AddSetting("Def", "modCanUse", ModeratorUse.ToString());
 			ini.AddSetting("Def", "normalCanUse", NormalUse.ToString());
@@ -120,8 +116,6 @@ namespace Pluton {
 			try {
 				bool perms = false;
 				if (NormalUse)
-					perms = true;
-				else if (AdminUse && inv.owner.Admin)
 					perms = true;
 				else if (ModeratorUse && inv.owner.Moderator)
 					perms = true;
