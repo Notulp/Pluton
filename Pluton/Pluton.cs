@@ -12,8 +12,7 @@ namespace Pluton {
 			pluton.enabled = true;
 		}
 
-		public pluton() {
-			base.\u002Ector();
+		public pluton() : base() {
 		}
 
 		[ConsoleSystem.Admin]
