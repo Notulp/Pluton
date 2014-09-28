@@ -388,7 +388,16 @@ namespace Pluton.Patcher {
 					Console.ReadKey();
 				}
 				return;
+			} catch(Exception ex) {
+				Console.WriteLine("An error occured while reading the assemblies :");
+				Console.WriteLine(ex.ToString());
+				if(!noInput) {
+					Console.WriteLine("Press any key to continue...");
+					Console.ReadKey();
+				}
+				return;
 			}
+
 
 			hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
 			bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
