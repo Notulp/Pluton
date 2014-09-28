@@ -7,13 +7,19 @@ namespace Pluton {
 
 		public Item _item;
 
+		public ContainerPreference containerPref;
+
+		public enum ContainerPreference { Belt, Main, Wear };
+
 		public InvItem(string name, int amount) {
 			var item = ItemManager.CreateByItemID(GetItemId(name), amount);
 			if (item == null) {
 				Logger.LogDebug(String.Format("[InvItem] Couldn't create item: {0}x{1}", amount, name));
 				_item = null;
-			} else
+			} else {
 				_item = item;
+				containerPref = GetContainerPreference(Category);
+			}
 		}
 
 		public InvItem(string name) {
@@ -21,16 +27,25 @@ namespace Pluton {
 			if (item == null) {
 				Logger.LogDebug(String.Format("[InvItem] Couldn't create item: {0}x{1}", 1, name));
 				_item = null;
-			} else
+			} else {
 				_item = item;
+				containerPref = GetContainerPreference(Category);
+			}
 		}
 
 		public InvItem(Item item) {
 			_item = item;
+			containerPref = GetContainerPreference(Category);
 		}
 
 		public bool CanStack(InvItem item){
 			return _item.CanStack(item._item);
+		}
+
+		public string Category {
+			get {
+				return _item.info.category;
+			}
 		}
 
 		public void Drop(Vector3 position, Vector3 offset) {
@@ -43,6 +58,12 @@ namespace Pluton {
 
 		public Entity Instantiate(Vector3 v3, Quaternion q) {
 			return new Entity(_item.CreateWorldObject(v3, q));
+		}
+
+		public int ItemID {
+			get {
+				return _item.info.itemid;
+			}
 		}
 
 		public string Name {
@@ -73,6 +94,14 @@ namespace Pluton {
 			return (from item in ItemManager.Instance.itemList
 					where item.displayname == itemName
 					select item.itemid).ElementAt<int>(0);
+		}
+
+		public static ContainerPreference GetContainerPreference(string category) {
+			if ("WeaponConstructionTool".Contains(category))
+				return ContainerPreference.Belt;
+			if (category == "Attire")
+				return ContainerPreference.Wear;
+			return ContainerPreference.Main;
 		}
 	}
 }

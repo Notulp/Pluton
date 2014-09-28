@@ -14,7 +14,20 @@ namespace Pluton {
 		}
 
 		public bool Add(InvItem item) {
-			return _inv.GiveItem(item._item);
+			ItemContainer con;
+			if (item.containerPref == InvItem.ContainerPreference.Belt)
+				con = InnerBelt;
+			else if (item.containerPref == InvItem.ContainerPreference.Wear)
+				con = InnerWear;
+			else
+				con = InnerMain;
+
+			bool flag = _inv.GiveItem(item._item, con);
+			if (!flag) {
+				flag = _inv.GiveItem(item._item);
+			}
+
+			return flag;
 		}
 
 		public bool Add(InvItem item, ItemContainer con) {
