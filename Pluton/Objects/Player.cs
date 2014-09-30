@@ -8,7 +8,12 @@ namespace Pluton {
 
 		public Player(BasePlayer player) {
 			basePlayer = player;
-			Stats = new PlayerStats(SteamID);
+			try {
+				Stats = new PlayerStats(SteamID);
+			} catch (Exception ex) {
+				Logger.LogDebug("[Player] Couldn't load stats!");
+				Logger.LogException(ex);
+			}
 		}
 
 		public static Player Find(string nameOrSteamidOrIP) {
