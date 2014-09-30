@@ -72,11 +72,11 @@ namespace Pluton {
 		}
 
 		public void Message(string msg) {
-			basePlayer.SendConsoleCommand("chat.add \"" + Server.server_message_name + "\" " + StringExtensions.QuoteSafe(msg));
+			basePlayer.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(Server.server_message_name) + " " + StringExtensions.QuoteSafe(msg));
 		}
 
 		public void MessageFrom(string from, string msg) {
-			basePlayer.SendConsoleCommand("chat.add \"" + from + "\" " + StringExtensions.QuoteSafe(msg));
+			basePlayer.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(from) + " " + StringExtensions.QuoteSafe(msg));
 		}
 
 		public bool Admin {
