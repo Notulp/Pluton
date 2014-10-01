@@ -16,6 +16,7 @@ namespace Pluton
         public ulong totalTimeOnline;
         public bool Admin;
 
+        // you shouldn't ever call this constructor manually
         public OfflinePlayer(Player player)
         {
             Name = player.Name;
