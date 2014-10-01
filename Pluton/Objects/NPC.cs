@@ -5,7 +5,7 @@ namespace Pluton
 {
     public class NPC
     {
-        private BaseAnimal baseAnimal;
+        public readonly BaseAnimal baseAnimal;
 
         public NPC(BaseAnimal animal)
         {

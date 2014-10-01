@@ -6,7 +6,7 @@ namespace Pluton
 {
     public class InvItem
     {
-        public Item _item;
+        public readonly Item _item;
 
         public ContainerPreference containerPref;
 
@@ -103,7 +103,7 @@ namespace Pluton
             }
         }
 
-        public static int GetItemId(string itemName)
+        public static int GetItemID(string itemName)
         {
             return (from item in ItemManager.Instance.itemList
                     where item.displayname == itemName

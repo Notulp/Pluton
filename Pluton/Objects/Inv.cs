@@ -7,7 +7,7 @@ namespace Pluton
     public class Inv
     {
 
-        private readonly PlayerInventory _inv;
+        public readonly PlayerInventory _inv;
         public readonly Player owner;
 
         public Inv(PlayerInventory inv)
