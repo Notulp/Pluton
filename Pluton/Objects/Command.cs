@@ -9,9 +9,11 @@ namespace Pluton
         public readonly string cmd;
         public readonly string[] args;
         public readonly string[] quotedArgs;
+        public readonly Player User;
 
-        public Command(string[] command)
+        public Command(Player player, string[] command)
         {
+            User = player;
             ReplyWith = String.Format("/{0} executed!", String.Join("", command));
             cmd = command[0];
             args = new string[command.Length - 1];

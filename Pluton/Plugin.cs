@@ -228,143 +228,139 @@
 
         #region hooks
 
-        public void OnBlueprintUse()
-        {
+        public void OnBlueprintUse() {
             throw new NotImplementedException("There is no OnBlueprintUse hook yet!");
         }
 
-        public void OnChat(Player player, ChatString arg)
-        {
-            this.Invoke("On_Chat", new object[] { player, arg });
+        public IDisposable OnChatHook;
+        public void OnChat(Chat arg) {
+            this.Invoke("On_Chat", arg);
         }
 
-        public void OnClientAuth(AuthEvent evt)
-        {
-            this.Invoke("On_ClientAuth", new object[] { evt });
+        public IDisposable OnClientAuthHook;
+        public void OnClientAuth(AuthEvent ae) {
+            this.Invoke("On_ClientAuth", ae);
         }
 
-        public void OnCommand(Player player, Command cmd)
-        {
-            this.Invoke("On_Command", new object[] { player, cmd });
+        public IDisposable OnCommandHook;
+        public void OnCommand(Command cmd) {
+            this.Invoke("On_Command", cmd);
         }
 
-        public void OnConsole(ref ConsoleSystem.Arg arg, bool external)
-        {
+        public void OnConsole(ref ConsoleSystem.Arg arg, bool external) {
             throw new NotImplementedException("There is no OnConsole hook yet!");
         }
 
-        public void OnCorpseDropped(BaseCorpse corpse, Entity parent)
-        {
-            this.Invoke("On_CorpseDropped", new object[] { corpse, parent });
+        public IDisposable OnCorpseDroppedHook;
+        public void OnCorpseDropped(CorpseInitEvent ie) {
+            this.Invoke("On_CorpseDropped", ie);
         }
 
-        public void OnCorpseAttacked(BaseCorpse corpse, HitInfo info)
-        {
-            this.Invoke("On_CorpseAttacked", new object[] { corpse, info });
+        public IDisposable OnCorpseAttackedHook;
+        public void OnCorpseAttacked(CorpseHurtEvent he) {
+            this.Invoke("On_CorpseAttacked", he);
         }
 
-        public void OnBuildingComplete(BuildingPart bp)
-        {
-            this.Invoke("On_BuildingComplete", new object[] { bp });
+        public IDisposable OnBuildingCompleteHook;
+        public void OnBuildingComplete(BuildingPart bp) {
+            this.Invoke("On_BuildingComplete", bp);
         }
 
-        public void OnBuildingUpdate(BuildingEvent evt)
-        {
-            this.Invoke("On_BuildingUpdate", new object[] { evt });
+        public IDisposable OnBuildingUpdateHook;
+        public void OnBuildingUpdate(BuildingEvent be) {
+            this.Invoke("On_BuildingUpdate", be);
         }
 
-        public void OnBuildingPartAttacked(BuildingPart bp, HitInfo info)
-        {
-            this.Invoke("On_BuildingPartAttacked", new object[] { bp, info });
+        public IDisposable OnBuildingPartAttackedHook;
+        public void OnBuildingPartAttacked(BuildingHurtEvent he) {
+            this.Invoke("On_BuildingPartAttacked", he);
         }
 
-        public void OnBuildingPartDestroyed(BuildingPart bp, HitInfo info)
-        {
-            this.Invoke("On_BuildingPartDestroyed", new object[] { bp, info });
+        public IDisposable OnBuildingPartDestroyedHook;
+        public void OnBuildingPartDestroyed(BuildingHurtEvent he) {
+            this.Invoke("On_BuildingPartDestroyed", he);
         }
 
-        public void OnDoorUse()
-        {
+        public void OnDoorUse() {
             throw new NotImplementedException("There is no OnDoorUse hook yet!");
         }
 
-        public void OnEntityDecay()
-        {
+        public void OnEntityDecay() {
             throw new NotImplementedException("There is no OnEntityDecay hook yet!");
         }
 
-        public void OnFrameDeployed(BuildingPart bp)
-        {
-            this.Invoke("On_FrameDeployed", new object[] { bp });
+        public IDisposable OnFrameDeployedHook;
+        public void OnFrameDeployed(BuildingPart bp) {
+            this.Invoke("On_FrameDeployed", bp);
         }
 
-        public void OnNPCHurt(NPCHurtEvent evt)
-        {
-            this.Invoke("On_NPCAttacked", new object[] { evt });
+        public IDisposable OnNPCHurtHook;
+        public void OnNPCHurt(NPCHurtEvent he) {
+            this.Invoke("On_NPCAttacked", he);
         }
 
-        public void OnNPCKilled(NPCDeathEvent evt)
-        {
-            this.Invoke("On_NPCKilled", new object[] { evt });
+        public IDisposable OnNPCKilledHook;
+        public void OnNPCKilled(NPCDeathEvent de) {
+            this.Invoke("On_NPCKilled", de);
         }
 
-        public void OnLootingEntity(EntityLootEvent evt)
-        {
-            this.Invoke("On_LootingEntity", new object[] { evt });
+        public IDisposable OnLootingEntityHook;
+        public void OnLootingEntity(EntityLootEvent le) {
+            this.Invoke("On_LootingEntity", le);
         }
 
-        public void OnLootingPlayer(PlayerLootEvent evt)
-        {
-            this.Invoke("On_LootingPlayer", new object[] { evt });
+        public IDisposable OnLootingPlayerHook;
+        public void OnLootingPlayer(PlayerLootEvent le) {
+            this.Invoke("On_LootingPlayer", le);
         }
 
-        public void OnLootingItem(ItemLootEvent evt)
-        {
-            this.Invoke("On_LootingItem", new object[] { evt });
+        public IDisposable OnLootingItemHook;
+        public void OnLootingItem(ItemLootEvent le) {
+            this.Invoke("On_LootingItem", le);
         }
 
-        public void OnPlayerConnected(Player player)
-        {
-            this.Invoke("On_PlayerConnected", new object []{ player });
+        public IDisposable OnPlayerConnectedHook;
+        public void OnPlayerConnected(Player player) {
+            this.Invoke("On_PlayerConnected", player);
         }
 
-        public void OnPlayerDisconnected(Player player)
-        {
-            this.Invoke("On_PlayerDisconnected", new object[] { player });
+        public IDisposable OnPlayerDisconnectedHook;
+        public void OnPlayerDisconnected(Player player) {
+            this.Invoke("On_PlayerDisconnected", player);
         }
 
-        public void OnPlayerGathering(GatherEvent evt)
-        {
-            this.Invoke("On_PlayerGathering", new object[] { evt });
+        public IDisposable OnPlayerGatheringHook;
+        public void OnPlayerGathering(GatherEvent ge) {
+            this.Invoke("On_PlayerGathering", ge);
         }
 
-        public void OnPlayerAttacked(PlayerHurtEvent evt)
-        {
-            this.Invoke("On_PlayerAttacked", new object[] { evt });
+        public IDisposable OnPlayerAttackedHook;
+        public void OnPlayerAttacked(PlayerHurtEvent he) {
+            this.Invoke("On_PlayerAttacked", he);
         }
 
-        public void OnPlayerDied(PlayerDeathEvent evt)
-        {
-            this.Invoke("On_PlayerDied", new object[] { evt });
+        public IDisposable OnPlayerDiedHook;
+        public void OnPlayerDied(PlayerDeathEvent de) {
+            this.Invoke("On_PlayerDied", de);
         }
 
-        public void OnPlayerTakeDamage(Player player, float dmgAmount, Rust.DamageType dmgType)
-        {
-            this.Invoke("On_PlayerTakeDamage", new object[] { player, dmgAmount, dmgType });
+        public IDisposable OnPlayerTakeDamageHook;
+        public void OnPlayerTakeDamage(PlayerTakedmgEvent de) {
+            this.Invoke("On_PlayerTakeDamage", de);
         }
 
-        public void OnPlayerTakeRadiation(Player player, float radAmount)
-        {
-            this.Invoke("On_PlayerTakeRadiation", new object[] { player, radAmount });
+        public IDisposable OnPlayerTakeRadiationHook;
+        public void OnPlayerTakeRadiation(PlayerTakeRadsEvent re) {
+            this.Invoke("On_PlayerTakeRadiation", re);
         }
 
-        public void OnServerInit()
-        {
+        public IDisposable OnServerInitHook;
+        public void OnServerInit() {
             throw new NotImplementedException("There is no OnServerInit hook yet!");
         }
 
-        public void OnServerShutdown()
-        {
+        public IDisposable OnServerShutdownHook;
+        public void OnServerShutdown(string s = "") {
             this.Invoke("On_ServerShutdown");
         }
 

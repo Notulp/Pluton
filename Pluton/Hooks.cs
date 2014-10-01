@@ -2,6 +2,11 @@
 using Network;
 using ProtoBuf;
 using UnityEngine;
+using Pluton.Events;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Disposables;
 
 namespace Pluton
 {
@@ -10,51 +15,51 @@ namespace Pluton
 
         #region Events
 
-        public static event BuildingPartAttackedDelegate OnBuildingPartAttacked;
+        public static Subject<BuildingHurtEvent> OnBuildingPartAttacked = new Subject<BuildingHurtEvent>();
 
-        public static event BuildingPartDestroyedDelegate OnBuildingPartDestroyed;
+        public static Subject<BuildingHurtEvent> OnBuildingPartDestroyed = new Subject<BuildingHurtEvent>();
 
-        public static event BuildingFrameDeployedDelegate OnBuildingFrameDeployed;
+        public static Subject<BuildingPart> OnBuildingFrameDeployed = new Subject<BuildingPart>();
 
-        public static event BuildingCompleteDelegate OnBuildingComplete;
+        public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
-        public static event BuildingUpdateDelegate OnBuildingUpdate;
+        public static Subject<BuildingEvent> OnBuildingUpdate = new Subject<BuildingEvent>();
 
-        public static event ChatDelegate OnChat;
+        public static Subject<Chat> OnChat = new Subject<Pluton.Chat>();
 
-        public static event ClientAuthDelegate OnClientAuth;
+        public static Subject<AuthEvent> OnClientAuth = new Subject<AuthEvent>();
 
-        public static event CommandDelegate OnCommand;
+        public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
 
-        public static event CorpseAttackedDelegate OnCorpseAttacked;
+        public static Subject<CorpseHurtEvent> OnCorpseAttacked = new Subject<CorpseHurtEvent>();
 
-        public static event CorpseDropDelegate OnCorpseDropped;
+        public static Subject<CorpseInitEvent> OnCorpseDropped = new Subject<CorpseInitEvent>();
 
-        public static event NPCDiedDelegate OnNPCDied;
+        public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
 
-        public static event NPCHurtDelegate OnNPCHurt;
+        public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
 
-        public static event PlayerConnectedDelegate OnPlayerConnected;
+        public static Subject<Player> OnPlayerConnected = new Subject<Player>();
 
-        public static event PlayerDisconnectedDelegate OnPlayerDisconnected;
+        public static Subject<Player> OnPlayerDisconnected = new Subject<Player>();
 
-        public static event PlayerDiedDelegate OnPlayerDied;
+        public static Subject<PlayerDeathEvent> OnPlayerDied = new Subject<PlayerDeathEvent>();
 
-        public static event PlayerHurtDelegate OnPlayerHurt;
+        public static Subject<PlayerHurtEvent> OnPlayerHurt = new Subject<PlayerHurtEvent>();
 
-        public static event PlayerTakeDamageDelegate OnPlayerTakeDamage;
+        public static Subject<PlayerTakedmgEvent> OnPlayerTakeDamage = new Subject<PlayerTakedmgEvent>();
 
-        public static event PlayerTakeRadsDelegate OnPlayerTakeRads;
+        public static Subject<PlayerTakeRadsEvent> OnPlayerTakeRads = new Subject<PlayerTakeRadsEvent>();
 
-        public static event GatheringDelegate OnGathering;
+        public static Subject<GatherEvent> OnGathering = new Subject<GatherEvent>();
 
-        public static event LootingEntityDelegate OnLootingEntity;
+        public static Subject<EntityLootEvent> OnLootingEntity = new Subject<EntityLootEvent>();
 
-        public static event LootingPlayerDelegate OnLootingPlayer;
+        public static Subject<PlayerLootEvent> OnLootingPlayer = new Subject<PlayerLootEvent>();
 
-        public static event LootingItemDelegate OnLootingItem;
+        public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
 
-        public static event ServerShutdownDelegate OnServerShutdown;
+        public static Subject<string> OnServerShutdown = new Subject<string>();
 
         #endregion
 
@@ -64,8 +69,8 @@ namespace Pluton
         public static void ClientAuth(ConnectionAuth ca, Connection connection)
         {
             var ae = new Events.AuthEvent(connection);
-            if (OnClientAuth != null)
-                OnClientAuth(ae);
+
+            OnClientAuth.OnNext(ae);
 
             ca.m_AuthConnection.Remove(connection);
             if (!ae.approved)
@@ -83,9 +88,9 @@ namespace Pluton
         {
 
             Player player = new Player(arg.Player());
-            string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{ " " }, StringSplitOptions.None);
+            string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
 
-            Command cmd = new Command(args);
+            Command cmd = new Command(player, args);
 
             if (cmd.cmd == "")
                 return;
@@ -109,28 +114,26 @@ namespace Pluton
                     return;
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "ShowLocation")) {
-                    player.Message(player.Location.ToString());
+                    player.Message(player.Location.ToString ());
                     return;
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "ShowOnlinePlayers")) {
-                    string msg = Server.GetServer().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetServer().Players.Count);
+                    string msg = Server.GetServer().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetServer().Players.Count) ;
                     player.Message(msg);
                     return;
                 }
             }
 
             if (cmd.cmd == "login" && cmd.args[0] == "12345") {
-                Debug.Log("making you an admin");
-                DataStore.GetInstance().Add("auth", player.SteamID, true);
+                Debug.Log ("making you an admin");
                 player.MakeModerator("Just cause!");
                 return;
             }
-            if ((cmd.cmd == "pluton.reload") && (bool)DataStore.GetInstance().Get("auth", player.SteamID)) {
+            if ((cmd.cmd == "pluton.reload") && player.Admin) {
                 PluginLoader.GetInstance().ReloadPlugins();
                 return;
             }
-            if (OnCommand != null)
-                OnCommand(player, cmd);
+            OnCommand.OnNext(cmd);
 
             if (cmd.ReplyWith != "")
                 arg.ReplyWith(cmd.ReplyWith);
@@ -152,11 +155,11 @@ namespace Pluton
                     return;
                 }
 
-                ChatString chatstring = new ChatString(arg);
-
                 BasePlayer basePlayer = ArgExtension.Player(arg);
-                if (!(bool)((UnityEngine.Object)basePlayer))
+                if (!(bool) ((UnityEngine.Object) basePlayer))
                     return;
+
+                Chat pChat = new Chat(new Player(basePlayer), arg);
 
                 string str = arg.GetString(0, "text");
 
@@ -166,15 +169,14 @@ namespace Pluton
                 if (chat.serverlog)
                     Debug.Log((object)(basePlayer.displayName + ": " + str));
 
-                if (OnChat != null)
-                    OnChat(new Player(basePlayer), chatstring);
+                OnChat.OnNext(pChat);
 
-                if (chatstring.FinalText != "") {
-                    ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(chatstring.BroadcastName) + " " + StringExtensions.QuoteSafe(chatstring.FinalText));
-                    arg.ReplyWith(chatstring.ReplyWith);
+                if (pChat.FinalText != "") {
+                    ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText));
+                    arg.ReplyWith(pChat.ReplyWith);
                 }
 
-                Logger.ChatLog(chatstring.BroadcastName, chatstring.FinalText);
+                Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
             }
         }
 
@@ -184,11 +186,10 @@ namespace Pluton
             if (!Realm.Server())
                 return;
 
-            if (OnGathering != null)
-                OnGathering(new Events.GatherEvent(res, info));
+            OnGathering.OnNext(new Events.GatherEvent(res, info));
 
             res.health -= info.damageAmount * info.resourceGatherProficiency;
-            if ((double)res.health <= 0.0)
+            if ((double) res.health <= 0.0)
                 res.Kill(ProtoBuf.EntityDestroy.Mode.None, 0, 0.0f, new Vector3());
             else
                 res.Invoke("UpdateNetworkStage", 0.1f);
@@ -210,11 +211,11 @@ namespace Pluton
             if (!Realm.Server() || (double)animal.myHealth <= 0.0)
                 return;
 
-            if ((animal.myHealth - info.damageAmount) > 0.0f && OnNPCHurt != null)
-                OnNPCHurt(new Events.NPCHurtEvent(npc, info));
+            if ((animal.myHealth - info.damageAmount) > 0.0f)
+                OnNPCHurt.OnNext(new Events.NPCHurtEvent(npc, info));
 
             animal.myHealth -= info.damageAmount;
-            if ((double)animal.myHealth > 0.0)
+            if ((double) animal.myHealth > 0.0)
                 return;
             animal.Die(info);
         }
@@ -230,8 +231,7 @@ namespace Pluton
             }
 
             var npc = new NPC(animal);
-            if (OnNPCDied != null)
-                OnNPCDied(new Events.NPCDeathEvent(npc, info));
+            OnNPCDied.OnNext(new Events.NPCDeathEvent(npc, info));
         }
 
         // BasePlayer.PlayerInit()
@@ -244,8 +244,7 @@ namespace Pluton
             if (!Server.GetServer().Players.ContainsKey(player.userID))
                 Server.GetServer().Players.Add(player.userID, p);
 
-            if (OnPlayerConnected != null)
-                OnPlayerConnected(p);
+            OnPlayerConnected.OnNext(p);
         }
 
         // BasePlayer.Die()
@@ -276,13 +275,11 @@ namespace Pluton
                 victim.Stats = statsV;
             }
 
-            if (OnPlayerDied != null) {
-                Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
-                OnPlayerDied(pde);
+            Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
+            OnPlayerDied.OnNext(pde);
 
-                if (!pde.dropLoot)
-                    player.inventory.Strip();
-            }
+            if (!pde.dropLoot)
+                player.inventory.Strip();
         }
 
         // BasePlayer.OnDisconnected()
@@ -303,8 +300,7 @@ namespace Pluton
             if (Server.GetServer().Players.ContainsKey(player.userID))
                 Server.GetServer().Players.Remove(player.userID);
 
-            if (OnPlayerDisconnected != null)
-                OnPlayerDisconnected(p);
+            OnPlayerDisconnected.OnNext(p);
         }
 
         // BasePlayer.OnAttacked()
@@ -339,8 +335,8 @@ namespace Pluton
             player.TakeDamageIndicator(info.damageAmount, player.transform.position - info.PointStart);
             player.CheckDeathCondition(info);
 
-            if (!player.IsDead() && OnPlayerHurt != null)
-                OnPlayerHurt(new Events.PlayerHurtEvent(p, info));
+            if (!player.IsDead())
+                OnPlayerHurt.OnNext(new Events.PlayerHurtEvent(p, info));
 
             player.SendEffect("takedamage_hit");
         }
@@ -349,8 +345,8 @@ namespace Pluton
         public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType)
         {
             // works?
-            if (OnPlayerTakeDamage != null)
-                OnPlayerTakeDamage(new Player(player), dmgAmount, dmgType);
+            var ptd = new PlayerTakedmgEvent(new Player(player), dmgAmount, dmgType);
+            OnPlayerTakeDamage.OnNext(ptd);
         }
 
         public static void PlayerTakeDamageOverload(BasePlayer player, float dmgAmount)
@@ -361,9 +357,8 @@ namespace Pluton
         // BasePlayer.TakeRadiation()
         public static void PlayerTakeRadiation(BasePlayer player, float dmgAmount)
         {
-            Debug.Log(player.displayName + " is taking: " + dmgAmount.ToString() + " RAD dmg");
-            if (OnPlayerTakeRads != null)
-                OnPlayerTakeRads(new Player(player), dmgAmount);
+            var ptr = new PlayerTakeRadsEvent(new Player (player), dmgAmount);
+            OnPlayerTakeRads.OnNext(ptr);
         }
 
         // BuildingBlock.OnAttacked()
@@ -378,20 +373,18 @@ namespace Pluton
             }
 
             var bp = new BuildingPart(bb);
-            new Events.BuildingHurtEvent(bp, info);
             // if entity will be destroyed call the method below
             if ((bb.health - info.damageAmount) <= 0.0f) {
                 BuildingPartDestroyed(bp, info);
-                return;
+                if ((bb.health - info.damageAmount) <= 0.0f)
+                    return;
             }
-            if (OnBuildingPartAttacked != null)
-                OnBuildingPartAttacked(bp, info);
+            OnBuildingPartAttacked.OnNext(new BuildingHurtEvent(bp, info));
         }
 
         public static void BuildingPartDestroyed(BuildingPart bp, HitInfo info)
         {
-            if (OnBuildingPartDestroyed != null)
-                OnBuildingPartDestroyed(bp, info);
+            OnBuildingPartDestroyed.OnNext(new BuildingHurtEvent(bp, info));
         }
 
         // BuildingBlock.BecomeFrame()
@@ -400,16 +393,14 @@ namespace Pluton
             // blockDefinition is null in this hook, but works
 
             var bp = new BuildingPart(bb);
-            if (OnBuildingFrameDeployed != null)
-                OnBuildingFrameDeployed(bp);
+            OnBuildingFrameDeployed.OnNext(bp);
         }
 
         // BuildingBlock.BecomeBuilt()
         public static void EntityBuilt(BuildingBlock bb)
         {
             var bp = new BuildingPart(bb);
-            if (OnBuildingComplete != null)
-                OnBuildingComplete(bp);
+            OnBuildingComplete.OnNext(bp);
         }
 
         // BuildingBlock.DoBuild()
@@ -424,17 +415,14 @@ namespace Pluton
             var bp = new BuildingPart(bb);
             var p = new Player(player);
             var ebe = new Events.BuildingEvent(bp, p, proficiency);
-            if (OnBuildingUpdate != null)
-                OnBuildingUpdate(ebe);
+            OnBuildingUpdate.OnNext(ebe);
         }
 
         // BaseCorpse.InitCorpse()
         public static void CorpseInit(BaseCorpse corpse, BaseEntity parent)
         {
             // works
-
-            if (OnCorpseDropped != null)
-                OnCorpseDropped(corpse, new Entity(parent));
+            OnCorpseDropped.OnNext(new CorpseInitEvent(corpse, parent));
         }
 
         // BaseCorpse.OnAttacked()
@@ -442,8 +430,8 @@ namespace Pluton
         {
             // works
 
-            if (OnCorpseAttacked != null)
-                OnCorpseAttacked(corpse, info);
+            CorpseHurtEvent che = new CorpseHurtEvent(corpse, info);
+            OnCorpseAttacked.OnNext(che);
         }
 
         // PlayerLoot.StartLootingEntity()
@@ -453,8 +441,7 @@ namespace Pluton
 
             var ele = new Events.EntityLootEvent(playerLoot, new Player(looter), new Entity(entity));
 
-            if (OnLootingEntity != null)
-                OnLootingEntity(ele);
+            OnLootingEntity.OnNext(ele);
         }
 
         // PlayerLoot.StartLootingPlayer()
@@ -464,8 +451,7 @@ namespace Pluton
 
             var ple = new Events.PlayerLootEvent(playerLoot, new Player(looter), new Player(looted));
 
-            if (OnLootingPlayer != null)
-                OnLootingPlayer(ple);
+            OnLootingPlayer.OnNext(ple);
         }
 
         // PlayerLoot.StartLootingItem()
@@ -475,14 +461,12 @@ namespace Pluton
 
             var ile = new Events.ItemLootEvent(playerLoot, new Player(looter), item);
 
-            if (OnLootingItem != null)
-                OnLootingItem(ile);
+            OnLootingItem.OnNext(ile);
         }
 
         public static void ServerShutdown()
         {
-            if (OnServerShutdown != null)
-                OnServerShutdown();
+            OnServerShutdown.OnNext("");
             Bootstrap.SaveAll();
         }
 
@@ -502,56 +486,6 @@ namespace Pluton
             player.inventory.GiveDefaultItems();
             player.SendFullSnapshot();
         }
-
-        #endregion
-
-        #region Delegates
-
-        public delegate void BuildingPartAttackedDelegate(BuildingPart bp, HitInfo info);
-
-        public delegate void BuildingPartDestroyedDelegate(BuildingPart bp, HitInfo info);
-
-        public delegate void BuildingFrameDeployedDelegate(BuildingPart bp);
-
-        public delegate void BuildingCompleteDelegate(BuildingPart bp);
-
-        public delegate void BuildingUpdateDelegate(Events.BuildingEvent be);
-
-        public delegate void ChatDelegate(Player player, ChatString arg);
-
-        public delegate void ClientAuthDelegate(Events.AuthEvent ae);
-
-        public delegate void CommandDelegate(Player player, Command cmd);
-
-        public delegate void CorpseDropDelegate(BaseCorpse corpse, Entity entity);
-
-        public delegate void CorpseAttackedDelegate(BaseCorpse corpse, HitInfo info);
-
-        public delegate void NPCDiedDelegate(Events.NPCDeathEvent de);
-
-        public delegate void NPCHurtDelegate(Events.NPCHurtEvent he);
-
-        public delegate void PlayerConnectedDelegate(Player player);
-
-        public delegate void PlayerDiedDelegate(Events.PlayerDeathEvent de);
-
-        public delegate void PlayerDisconnectedDelegate(Player player);
-
-        public delegate void PlayerHurtDelegate(Events.PlayerHurtEvent he);
-
-        public delegate void PlayerTakeDamageDelegate(Player player, float dmgAmount, Rust.DamageType dmgType);
-
-        public delegate void PlayerTakeRadsDelegate(Player player, float dmgAmount);
-
-        public delegate void GatheringDelegate(Events.GatherEvent ge);
-
-        public delegate void LootingEntityDelegate(Events.EntityLootEvent el);
-
-        public delegate void LootingPlayerDelegate(Events.PlayerLootEvent pl);
-
-        public delegate void LootingItemDelegate(Events.ItemLootEvent il);
-
-        public delegate void ServerShutdownDelegate();
 
         #endregion
 

@@ -10,6 +10,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,24 +32,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Facepunch">
-      <HintPath>..\ref\Facepunch.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="IronPython.Deps">
       <HintPath>ref\IronPython.Deps.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\ref\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Reactive">
       <HintPath>ref\System.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\origFiles\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch">
+      <HintPath>..\..\origFiles\Facepunch.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\origFiles\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -148,73 +148,73 @@
                 Logger.LogDebug("Found function: " + method);
                 switch (method) {
                 case "On_Chat":
-                    Hooks.OnChat += new Hooks.ChatDelegate(plugin.OnChat);
+                    plugin.OnChatHook = Hooks.OnChat.Subscribe(c => plugin.OnChat(c));
                     break;
                 case "On_ClientAuth":
-                    Hooks.OnClientAuth += new Hooks.ClientAuthDelegate(plugin.OnClientAuth);
+                    plugin.OnClientAuthHook = Hooks.OnClientAuth.Subscribe(a => plugin.OnClientAuth(a));
                     break;
                 case "On_Command":
-                    Hooks.OnCommand += new Hooks.CommandDelegate(plugin.OnCommand);
+                    plugin.OnCommandHook = Hooks.OnCommand.Subscribe(c => plugin.OnCommand(c));
                     break;
                 case "On_CorpseDropped":
-                    Hooks.OnCorpseDropped += new Hooks.CorpseDropDelegate(plugin.OnCorpseDropped);
+                    plugin.OnCorpseDroppedHook = Hooks.OnCorpseDropped.Subscribe(c => plugin.OnCorpseDropped(c));
                     break;
                 case "On_CorpseAttacked":
-                    Hooks.OnCorpseAttacked += new Hooks.CorpseAttackedDelegate(plugin.OnCorpseAttacked);
+                    plugin.OnCorpseAttackedHook = Hooks.OnCorpseAttacked.Subscribe(c => plugin.OnCorpseAttacked(c));
                     break;
                 case "On_BuildingComplete":
-                    Hooks.OnBuildingComplete += new Hooks.BuildingCompleteDelegate(plugin.OnBuildingComplete);
+                    plugin.OnBuildingCompleteHook = Hooks.OnBuildingComplete.Subscribe(b => plugin.OnBuildingComplete(b));
                     break;
                 case "On_BuildingUpdate":
-                    Hooks.OnBuildingUpdate += new Hooks.BuildingUpdateDelegate(plugin.OnBuildingUpdate);
+                    plugin.OnBuildingUpdateHook = Hooks.OnBuildingUpdate.Subscribe(b => plugin.OnBuildingUpdate(b));
                     break;
                 case "On_BuildingPartAttacked":
-                    Hooks.OnBuildingPartAttacked += new Hooks.BuildingPartAttackedDelegate(plugin.OnBuildingPartAttacked);
+                    plugin.OnBuildingPartAttackedHook = Hooks.OnBuildingPartAttacked.Subscribe(b => plugin.OnBuildingPartAttacked(b));
                     break;
                 case "On_BuildingPartDestroyed":
-                    Hooks.OnBuildingPartDestroyed += new Hooks.BuildingPartDestroyedDelegate(plugin.OnBuildingPartDestroyed);
+                    plugin.OnBuildingPartDestroyedHook = Hooks.OnBuildingPartDestroyed.Subscribe(b => plugin.OnBuildingPartDestroyed(b));
                     break;
                 case "On_FrameDeployed":
-                    Hooks.OnBuildingFrameDeployed += new Hooks.BuildingFrameDeployedDelegate(plugin.OnFrameDeployed);
+                    plugin.OnFrameDeployedHook = Hooks.OnBuildingFrameDeployed.Subscribe(f => plugin.OnFrameDeployed(f));
                     break;
                 case "On_NPCAttacked":
-                    Hooks.OnNPCHurt += new Hooks.NPCHurtDelegate(plugin.OnNPCHurt);
+                    plugin.OnNPCHurtHook = Hooks.OnNPCHurt.Subscribe(n => plugin.OnNPCHurt(n));
                     break;
                 case "On_NPCKilled":
-                    Hooks.OnNPCDied += new Hooks.NPCDiedDelegate(plugin.OnNPCKilled);
+                    plugin.OnNPCKilledHook = Hooks.OnNPCDied.Subscribe(n => plugin.OnNPCKilled(n));
                     break;
                 case "On_LootingEntity":
-                    Hooks.OnLootingEntity += new Hooks.LootingEntityDelegate(plugin.OnLootingEntity);
+                    plugin.OnLootingEntityHook = Hooks.OnLootingEntity.Subscribe(l => plugin.OnLootingEntity(l));
                     break;
                 case "On_LootingPlayer":
-                    Hooks.OnLootingPlayer += new Hooks.LootingPlayerDelegate(plugin.OnLootingPlayer);
+                    plugin.OnLootingPlayerHook = Hooks.OnLootingPlayer.Subscribe(l => plugin.OnLootingPlayer(l));
                     break;
                 case "On_LootingItem":
-                    Hooks.OnLootingItem += new Hooks.LootingItemDelegate(plugin.OnLootingItem);
+                    plugin.OnLootingItemHook = Hooks.OnLootingItem.Subscribe(l => plugin.OnLootingItem(l));
                     break;
                 case "On_PlayerConnected":
-                    Hooks.OnPlayerConnected += new Hooks.PlayerConnectedDelegate(plugin.OnPlayerConnected);
+                    plugin.OnPlayerConnectedHook = Hooks.OnPlayerConnected.Subscribe(p => plugin.OnPlayerConnected(p));
                     break;
                 case "On_PlayerDisconnected":
-                    Hooks.OnPlayerDisconnected += new Hooks.PlayerDisconnectedDelegate(plugin.OnPlayerDisconnected);
+                    plugin.OnPlayerDisconnectedHook = Hooks.OnPlayerDisconnected.Subscribe(p => plugin.OnPlayerDisconnected(p));
                     break;
                 case "On_PlayerGathering":
-                    Hooks.OnGathering += new Hooks.GatheringDelegate(plugin.OnPlayerGathering);
+                    plugin.OnPlayerGatheringHook = Hooks.OnGathering.Subscribe(g => plugin.OnPlayerGathering(g));
                     break;
                 case "On_PlayerAttacked":
-                    Hooks.OnPlayerHurt += new Hooks.PlayerHurtDelegate(plugin.OnPlayerAttacked);
+                    plugin.OnPlayerAttackedHook = Hooks.OnPlayerHurt.Subscribe(p => plugin.OnPlayerAttacked(p));
                     break;
                 case "On_PlayerDied":
-                    Hooks.OnPlayerDied += new Hooks.PlayerDiedDelegate(plugin.OnPlayerDied);
+                    plugin.OnPlayerDiedHook = Hooks.OnPlayerDied.Subscribe(p => plugin.OnPlayerDied(p));
                     break;
                 case "On_PlayerTakeDamage":
-                    Hooks.OnPlayerTakeDamage += new Hooks.PlayerTakeDamageDelegate(plugin.OnPlayerTakeDamage);
+                    plugin.OnPlayerTakeDamageHook = Hooks.OnPlayerTakeDamage.Subscribe(p => plugin.OnPlayerTakeDamage(p));
                     break;
                 case "On_PlayerTakeRadiation":
-                    Hooks.OnPlayerTakeRads += new Hooks.PlayerTakeRadsDelegate(plugin.OnPlayerTakeRadiation);
+                    plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                     break;
                 case "On_ServerShutdown":
-                    Hooks.OnServerShutdown += new Hooks.ServerShutdownDelegate(plugin.OnServerShutdown);
+                    plugin.OnServerShutdownHook = Hooks.OnServerShutdown.Subscribe(s => plugin.OnServerShutdown(s));
                     break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
@@ -232,73 +232,73 @@
                 Logger.LogDebug("Removing function: " + method);
                 switch (method) {
                 case "On_Chat":
-                    Hooks.OnChat -= new Hooks.ChatDelegate(plugin.OnChat);
+                    plugin.OnChatHook.Dispose();
                     break;
                 case "On_ClientAuth":
-                    Hooks.OnClientAuth -= new Hooks.ClientAuthDelegate(plugin.OnClientAuth);
+                    plugin.OnClientAuthHook.Dispose();
                     break;
                 case "On_Command":
-                    Hooks.OnCommand -= new Hooks.CommandDelegate(plugin.OnCommand);
+                    plugin.OnCommandHook.Dispose();
                     break;
                 case "On_CorpseDropped":
-                    Hooks.OnCorpseDropped -= new Hooks.CorpseDropDelegate(plugin.OnCorpseDropped);
+                    plugin.OnCorpseDroppedHook.Dispose();
                     break;
                 case "On_CorpseAttacked":
-                    Hooks.OnCorpseAttacked -= new Hooks.CorpseAttackedDelegate(plugin.OnCorpseAttacked);
+                    plugin.OnCorpseAttackedHook.Dispose();
                     break;
                 case "On_BuildingComplete":
-                    Hooks.OnBuildingComplete -= new Hooks.BuildingCompleteDelegate(plugin.OnBuildingComplete);
+                    plugin.OnBuildingCompleteHook.Dispose();
                     break;
                 case "On_BuildingUpdate":
-                    Hooks.OnBuildingUpdate -= new Hooks.BuildingUpdateDelegate(plugin.OnBuildingUpdate);
+                    plugin.OnBuildingUpdateHook.Dispose();
                     break;
                 case "On_BuildingPartAttacked":
-                    Hooks.OnBuildingPartAttacked -= new Hooks.BuildingPartAttackedDelegate(plugin.OnBuildingPartAttacked);
+                    plugin.OnBuildingPartAttackedHook.Dispose();
                     break;
                 case "On_BuildingPartDestroyed":
-                    Hooks.OnBuildingPartDestroyed -= new Hooks.BuildingPartDestroyedDelegate(plugin.OnBuildingPartDestroyed);
+                    plugin.OnBuildingPartDestroyedHook.Dispose();
                     break;
                 case "On_FrameDeployed":
-                    Hooks.OnBuildingFrameDeployed -= new Hooks.BuildingFrameDeployedDelegate(plugin.OnFrameDeployed);
+                    plugin.OnFrameDeployedHook.Dispose();
                     break;
                 case "On_NPCAttacked":
-                    Hooks.OnNPCHurt -= new Hooks.NPCHurtDelegate(plugin.OnNPCHurt);
+                    plugin.OnNPCHurtHook.Dispose();
                     break;
                 case "On_NPCKilled":
-                    Hooks.OnNPCDied -= new Hooks.NPCDiedDelegate(plugin.OnNPCKilled);
+                    plugin.OnNPCKilledHook.Dispose();
                     break;
                 case "On_LootingEntity":
-                    Hooks.OnLootingEntity -= new Hooks.LootingEntityDelegate(plugin.OnLootingEntity);
+                    plugin.OnLootingEntityHook.Dispose();
                     break;
                 case "On_LootingPlayer":
-                    Hooks.OnLootingPlayer -= new Hooks.LootingPlayerDelegate(plugin.OnLootingPlayer);
+                    plugin.OnLootingPlayerHook.Dispose();
                     break;
                 case "On_LootingItem":
-                    Hooks.OnLootingItem -= new Hooks.LootingItemDelegate(plugin.OnLootingItem);
+                    plugin.OnLootingItemHook.Dispose();
                     break;
                 case "On_PlayerConnected":
-                    Hooks.OnPlayerConnected -= new Hooks.PlayerConnectedDelegate(plugin.OnPlayerConnected);
+                    plugin.OnPlayerConnectedHook.Dispose();
                     break;
                 case "On_PlayerDisconnected":
-                    Hooks.OnPlayerDisconnected -= new Hooks.PlayerDisconnectedDelegate(plugin.OnPlayerDisconnected);
+                    plugin.OnPlayerDisconnectedHook.Dispose();
                     break;
                 case "On_PlayerGathering":
-                    Hooks.OnGathering -= new Hooks.GatheringDelegate(plugin.OnPlayerGathering);
+                    plugin.OnPlayerGatheringHook.Dispose();
                     break;
                 case "On_PlayerAttacked":
-                    Hooks.OnPlayerHurt -= new Hooks.PlayerHurtDelegate(plugin.OnPlayerAttacked);
+                    plugin.OnPlayerAttackedHook.Dispose();
                     break;
                 case "On_PlayerDied":
-                    Hooks.OnPlayerDied -= new Hooks.PlayerDiedDelegate(plugin.OnPlayerDied);
+                    plugin.OnPlayerDiedHook.Dispose();
                     break;
                 case "On_PlayerTakeDamage":
-                    Hooks.OnPlayerTakeDamage -= new Hooks.PlayerTakeDamageDelegate(plugin.OnPlayerTakeDamage);
+                    plugin.OnPlayerTakeDamageHook.Dispose();
                     break;
                 case "On_PlayerTakeRadiation":
-                    Hooks.OnPlayerTakeRads -= new Hooks.PlayerTakeRadsDelegate(plugin.OnPlayerTakeRadiation);
+                    plugin.OnPlayerTakeRadiationHook.Dispose();
                     break;
                 case "On_ServerShutdown":
-                    Hooks.OnServerShutdown -= new Hooks.ServerShutdownDelegate(plugin.OnServerShutdown);
+                    plugin.OnServerShutdownHook.Dispose();
                     break;
                 }
             }
