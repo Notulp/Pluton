@@ -377,19 +377,17 @@ namespace Pluton.Patcher {
 		}
 
 		public static void Main(string[] args) {
-			bool noInput = false;
-			foreach(var arg in args) {
-				if(arg == "--no-input") {
-					noInput = true;
-				}
-			}
-
+            bool interactive = true;			
+            if (args.Length > 0) 
+			    interactive = false;				
+			
+            Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", version));
 			try {
 				rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
 				plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
 			} catch(FileNotFoundException ex) {
 				Console.WriteLine("You are missing " + ex.FileName + " did you moved the patcher to the managed folder ?");
-				if(!noInput) {
+				if(interactive) {
 					Console.WriteLine("Press any key to continue...");
 					Console.ReadKey();
 				}
@@ -397,7 +395,7 @@ namespace Pluton.Patcher {
 			} catch(Exception ex) {
 				Console.WriteLine("An error occured while reading the assemblies :");
 				Console.WriteLine(ex.ToString());
-				if(!noInput) {
+				if(interactive) {
 					Console.WriteLine("Press any key to continue...");
 					Console.ReadKey();
 				}
@@ -425,13 +423,13 @@ namespace Pluton.Patcher {
 
 			if(success) {
 				Console.WriteLine("Successfully patched the dll");
-				if(!noInput) {
+				if(interactive) {
 					Console.WriteLine("Press any key to continue...");
 					Console.ReadKey();
 				}
 			} else {
 				Console.WriteLine("Darn!");
-				if(!noInput) {
+				if(interactive) {
 					Console.WriteLine("Press any key to continue...");
 					Console.ReadKey();
 				}
