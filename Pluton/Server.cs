@@ -10,8 +10,6 @@
     public class Server
     {
 
-        // private ItemsBlocks _items;
-        // public Pluton.Data data = new Pluton.Data();
         public Dictionary<ulong, Player> Players;
         public Dictionary<ulong, OfflinePlayer> OfflinePlayers;
         public Dictionary<string, LoadOut> LoadOuts;
@@ -62,22 +60,13 @@
         /*
 		public System.Collections.Generic.List<string> ChatHistoryMessages {
 			get {
-				return Fougerite.Data.GetData().chat_history;
+				return Pluton.Data.GetData().chat_history;
 			}
 		}
 
 		public System.Collections.Generic.List<string> ChatHistoryUsers {
 			get {
 				return Pluton.Data.GetData().chat_history_username;
-			}
-		}
-
-		public ItemsBlocks Items {
-			get {
-				return this._items;
-			}
-			set {
-				this._items = value;
 			}
 		}*/
 
