@@ -2,47 +2,52 @@
 using System.IO;
 using UnityEngine;
 
-namespace Pluton {
-	public class Bootstrap : MonoBehaviour {
+namespace Pluton
+{
+    public class Bootstrap : MonoBehaviour
+    {
 
-		public static string Version = "0.9.2";
+        public static string Version = "0.9.2";
 
-		public static void AttachBootstrap() {
-			try {
-				if (!pluton.enabled)
-					return;
+        public static void AttachBootstrap()
+        {
+            try {
+                if (!pluton.enabled)
+                    return;
 
-				Console.WriteLine("Pluton Loaded!");
-				Init();
-			} catch (Exception ex) {
-				Debug.LogException(ex);
-				Debug.Log("[Bootstarp] Error while loading Pluton!");
-			}
-		}
+                Console.WriteLine("Pluton Loaded!");
+                Init();
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+                Debug.Log("[Bootstarp] Error while loading Pluton!");
+            }
+        }
 
-		public static void SaveAll() {
-			try {
-				Server.GetServer().OnShutdown();
-				DataStore.GetInstance().Save();
-			} catch (Exception ex) {
-				Logger.LogException(ex);
-			}
-		}
+        public static void SaveAll()
+        {
+            try {
+                Server.GetServer().OnShutdown();
+                DataStore.GetInstance().Save();
+            } catch (Exception ex) {
+                Logger.LogException(ex);
+            }
+        }
 
-		public static void Init() {
-			if (Directory.Exists(Util.GetPublicFolder()))
-				Directory.CreateDirectory(Util.GetPublicFolder());
+        public static void Init()
+        {
+            if (Directory.Exists(Util.GetPublicFolder()))
+                Directory.CreateDirectory(Util.GetPublicFolder());
 
-			Config.Init();
-			Server.GetServer();
-			Logger.Init();
-			PluginLoader.GetInstance().Init();
+            Config.Init();
+            Server.GetServer();
+            Logger.Init();
+            PluginLoader.GetInstance().Init();
 
-			server.official = false;
+            server.official = false;
 
-			if (!server.hostname.ToLower().Contains("pluton"))
-				server.hostname = String.Format("{0} [Pluton v.{1}]", server.hostname, Version);
-		}
-	}
+            if (!server.hostname.ToLower().Contains("pluton"))
+                server.hostname = String.Format("{0} [Pluton v.{1}]", server.hostname, Version);
+        }
+    }
 }
 
