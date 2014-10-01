@@ -22,9 +22,9 @@ namespace Pluton.Events
             }
         }
 
-        public string DamageType {
+        public Rust.DamageType DamageType {
             get {
-                return _info.damageType.ToString();
+                return _info.damageType;
             }
         }
 
