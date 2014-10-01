@@ -6,12 +6,12 @@ namespace Pluton.Events
     {
 
 		public readonly BaseCorpse Corpse;
-		public readonly Entity Entity;
+		public readonly Entity Parent;
 
 		public CorpseInitEvent(BaseCorpse c, BaseEntity p)
         {
 			Corpse = c;
-			Entity = new Entity(p);
+            Parent = new Entity(p);
 		}
 	}
 }
