@@ -47,6 +47,9 @@
       <HintPath>..\ref\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Reactive">
+      <HintPath>ref\System.Reactive.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,7 +81,6 @@
     <Compile Include="Events\BuildingHurtEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
     <Compile Include="Objects\BuildingPart.cs" />
-    <Compile Include="Objects\ChatString.cs" />
     <Compile Include="Objects\Command.cs" />
     <Compile Include="Objects\Entity.cs" />
     <Compile Include="Objects\Inv.cs" />
@@ -90,6 +92,11 @@
     <Compile Include="Objects\LoadOutItem.cs" />
     <Compile Include="Objects\Stats.cs" />
     <Compile Include="Pluton.cs" />
+    <Compile Include="Events\CorpseHurtEvent.cs" />
+    <Compile Include="Events\CorpseInitEvent.cs" />
+    <Compile Include="Events\PlayerTakedmgEvent.cs" />
+    <Compile Include="Events\PlayerTakeRadsEvent.cs" />
+    <Compile Include="Objects\Chat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
