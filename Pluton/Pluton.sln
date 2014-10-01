@@ -17,8 +17,23 @@ Global
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Pluton.csproj
 		Policies = $0
-		$0.DotNetNamingPolicy = $1
-		$1.DirectoryNamespaceAssociation = None
-		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 120
+		$1.inheritsSet = VisualStudio
+		$1.inheritsScope = text/plain
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.BeforeMethodDeclarationParentheses = False
+		$2.BeforeMethodCallParentheses = False
+		$2.BeforeConstructorDeclarationParentheses = False
+		$2.BeforeIndexerDeclarationBracket = False
+		$2.BeforeDelegateDeclarationParentheses = False
+		$2.AfterDelegateDeclarationParameterComma = True
+		$2.NewParentheses = False
+		$2.SpacesBeforeBrackets = False
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/x-csharp
+		$2.scope = text/x-csharp
+		outputpath = build\bin
 	EndGlobalSection
 EndGlobal
