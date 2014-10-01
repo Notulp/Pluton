@@ -8,9 +8,10 @@ namespace Pluton.Patcher
 {
 	static class MethodDefinitionExtensions
 	{
-		public static MethodDefinition SetPublic (this MethodDefinition self, bool value) {
+		public static MethodDefinition SetPublic(this MethodDefinition self, bool value)
+		{
 			if (self == null) {
-				throw new ArgumentNullException ("self");
+				throw new ArgumentNullException("self");
 			}
 
 			self.IsPublic = value;
