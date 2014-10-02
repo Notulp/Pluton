@@ -189,7 +189,7 @@ namespace Pluton.Patcher
 
         private static void PlayerTakeRadiationPatch()
         {
-            MethodDefinition getRadiated = bPlayer.GetMethod("TakeRadiation");
+            MethodDefinition getRadiated = bPlayer.GetMethod("UpdateRadiation");
             MethodDefinition playerTakeRAD = hooksClass.GetMethod("PlayerTakeRadiation");
 
             CloneMethod(getRadiated);
