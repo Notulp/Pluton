@@ -40,13 +40,13 @@
       <HintPath>ref\System.Reactive.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\origFiles\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch">
-      <HintPath>..\..\origFiles\Facepunch.dll</HintPath>
+      <HintPath>..\ref\Facepunch.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\origFiles\UnityEngine.dll</HintPath>
+      <HintPath>..\ref\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
