@@ -107,6 +107,11 @@
             return Path.Combine(GetPublicFolder(), fileName);
         }
 
+        public static string GetIdentityFolder()
+        {
+            return Path.Combine(GetRootFolder(), Path.Combine("server", server.identity));
+        }
+
         public static string GetLoadoutFolder()
         {
             return Path.Combine(GetPublicFolder(), "LoadOuts");
@@ -114,7 +119,7 @@
 
         public static string GetPublicFolder()
         {
-            return Path.Combine(GetRootFolder(), "Save");
+            return Path.Combine(GetIdentityFolder(), "Pluton");
         }
 
         public static string GetRootFolder()
