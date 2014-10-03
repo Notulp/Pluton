@@ -359,50 +359,50 @@ namespace Pluton.Patcher
             return definition;
         }
 
-        private static bool Patch()
+        private static void Patch()
         {
-            try {
-                BootstrapAttachPatch();
-                ServerShutdownPatch();
+            BootstrapAttachPatch();
+            ServerShutdownPatch();
 
-                TeleportPatch();
+            TeleportPatch();
 
-                ClientAuthPatch();
+            ClientAuthPatch();
 
-                GatherPatch();
-                ChatPatch();
+            GatherPatch();
+            ChatPatch();
 
-                PlayerDisconnectedPatch();
-                PlayerConnectedPatch();
+            PlayerDisconnectedPatch();
+            PlayerConnectedPatch();
 
-                PlayerStartLootingPatch();
+            PlayerStartLootingPatch();
 
-                PlayerTakeRadiationPatch();
-                PlayerTakeDamageOLPatch();
-                PlayerTakeDamagePatch();
-                PlayerAttackedPatch();
-                PlayerDiedPatch();
+            PlayerTakeRadiationPatch();
+            PlayerTakeDamageOLPatch();
+            PlayerTakeDamagePatch();
+            PlayerAttackedPatch();
+            PlayerDiedPatch();
 
-                NPCDiedPatch();
-                NPCHurtPatch();
+            NPCDiedPatch();
+            NPCHurtPatch();
 
-                CorpseAttackedPatch();
-                CorpseInitPatch();
+            CorpseAttackedPatch();
+            CorpseInitPatch();
 
-                BuildingBlockFrameInitPatch();
-                BuildingBlockAttackedPatch();
-                BuildingBlockUpdatePatch();
-                BuildingBlockBuiltPatch();
-                return true;
-            } catch (Exception ex) {
-                Console.WriteLine(ex.Message.ToString());
-                Console.WriteLine();
-                Console.WriteLine(ex.StackTrace.ToString());
-                return false;
-            }
+            BuildingBlockFrameInitPatch();
+            BuildingBlockAttackedPatch();
+            BuildingBlockUpdatePatch();
+            BuildingBlockBuiltPatch();
         }
 
-        public static void Main(string[] args)
+        /*
+         * Return values :
+         * 10 : File not found
+         * 20 : Reading dll error
+         * 30 : Server already patched
+         * 40 : Generic patch exeption
+         * 50 : File write error
+         */
+        public static int Main(string[] args)
         {
             bool interactive = true;
             if (args.Length > 0)
@@ -418,7 +418,7 @@ namespace Pluton.Patcher
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
-                return;
+                return 10;
             } catch (Exception ex) {
                 Console.WriteLine("An error occured while reading the assemblies :");
                 Console.WriteLine(ex.ToString());
@@ -426,7 +426,7 @@ namespace Pluton.Patcher
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
-                return;
+                return 20;
             }
 
 
@@ -437,30 +437,56 @@ namespace Pluton.Patcher
             bBlock = rustAssembly.MainModule.GetType("BuildingBlock");
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
 
-            bool success = Patch();
+            //Try to Patch, return if fails
+            try {
+                Patch();
+            } catch (Exception ex) {
+                Console.WriteLine("An error occured while patching Assembly-CSharp :");
+                Console.WriteLine();
+                Console.WriteLine(ex.Message.ToString());
+
+                //Special case for some errors
+                if(ex.Message.ToString() == "Assembly-CSharp is already patched!") {
+                    if (interactive) {
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
+                    }
+                    return 30;
+                }
+
+                //Normal handle for the others
+                Console.WriteLine();
+                Console.WriteLine(ex.StackTrace.ToString());
+
+                if (interactive) {
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                }
+                return 40;
+            }
 
             try {
-                if (success)
-                    rustAssembly.Write("Assembly-CSharp.dll");
+                rustAssembly.Write("Assembly-CSharp.dll");
             } catch (Exception ex) {
+                Console.WriteLine("An error occured while writing the assembly :");
                 Console.WriteLine("Error at: " + ex.TargetSite.Name);
                 Console.WriteLine("Error msg: " + ex.Message);
-                success = false;
+
+                if (interactive) {
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                }
+
+                return 50;
             }
 
-            if (success) {
-                Console.WriteLine("Successfully patched the dll");
-                if (interactive) {
-                    Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
-                }
-            } else {
-                Console.WriteLine("Darn!");
-                if (interactive) {
-                    Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
-                }
+            //Successfully patched the server
+            Console.WriteLine("Successfully patched the dll");
+            if (interactive) {
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
             }
+            return 0;
         }
     }
 }
