@@ -470,10 +470,10 @@ namespace Pluton
             Bootstrap.SaveAll();
         }
 
-        public static void Teleport(BasePlayer player, bool newpos)
+        public static void Respawn(BasePlayer player, bool newPos)
         {
             ++ServerPerformance.spawns;
-            if (newpos) {
+            if (newPos) {
                 BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
                 player.transform.position = spawnPoint.pos;
                 player.transform.rotation = spawnPoint.rot;
@@ -481,6 +481,7 @@ namespace Pluton
             player.supressSnapshots = true;
             player.StopSpectating();
             player.UpdateNetworkGroup();
+            player.UpdatePlayerCollider(true, false);
             player.StartSleeping();
             player.metabolism.Reset();
             player.inventory.GiveDefaultItems();

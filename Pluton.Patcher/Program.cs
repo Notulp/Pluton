@@ -16,7 +16,7 @@ namespace Pluton.Patcher
         private static TypeDefinition bCorpse;
         private static TypeDefinition bBlock;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.0";
+        private static string version = "1.0.0.1";
 
         private static void BootstrapAttachPatch()
         {
@@ -27,11 +27,11 @@ namespace Pluton.Patcher
             MethodDefinition start = serverInit.GetMethod("Start");
 
             // make sure it's not patched yet
-            if (start.Body.Instructions[0x04].ToString().Contains("Pluton.Bootstrap::AttachBootstrap")) {
+            if (start.Body.Instructions[0x05].ToString().Contains("Pluton.Bootstrap::AttachBootstrap")) {
                 throw new Exception("Assembly-CSharp is already patched!");
             }
 
-            start.Body.GetILProcessor().InsertAfter(start.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            start.Body.GetILProcessor().InsertAfter(start.Body.Instructions[0x04], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void ClientAuthPatch()
@@ -327,12 +327,12 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(disable.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(shutdown)));
         }
 
-        private static void TeleportPatch()
+        private static void RespawnPatch()
         {
             MethodDefinition respawn = bPlayer.GetMethod("Respawn");
-            MethodDefinition tPort = hooksClass.GetMethod("Teleport");
+            MethodDefinition tPort = hooksClass.GetMethod("Respawn");
 
-            for (var l = 35; l >= 0; l--) {
+            for (var l = 39; l >= 0; l--) {
                 respawn.Body.Instructions.RemoveAt(l);
             }
 
@@ -364,7 +364,7 @@ namespace Pluton.Patcher
             BootstrapAttachPatch();
             ServerShutdownPatch();
 
-            TeleportPatch();
+            RespawnPatch();
 
             ClientAuthPatch();
 
