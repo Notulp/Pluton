@@ -12,23 +12,29 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
+                Config.Init();
                 if (!pluton.enabled)
+                {
+                    Debug.Log("[Bootstrap] Pluton is disabled!");
                     return;
+                }
 
-                Console.WriteLine("Pluton Loaded!");
                 Init();
+                Console.WriteLine("Pluton Loaded!");
             } catch (Exception ex) {
                 Debug.LogException(ex);
                 Debug.Log("[Bootstarp] Error while loading Pluton!");
             }
         }
 
-        public static void SaveAll()
+        public static void SaveAll(object x = null)
         {
             try {
                 Server.GetServer().OnShutdown();
                 DataStore.GetInstance().Save();
+                Logger.LogDebug("[Bootstrap] Server saved successfully!");
             } catch (Exception ex) {
+                Logger.LogDebug("[Bootstrap] Failed to save the server!");
                 Logger.LogException(ex);
             }
         }
@@ -38,7 +44,6 @@ namespace Pluton
             if (!Directory.Exists(Util.GetPublicFolder()))
                 Directory.CreateDirectory(Util.GetPublicFolder());
 
-            Config.Init();
             Logger.Init();
             Server.GetServer();
             PluginLoader.GetInstance().Init();

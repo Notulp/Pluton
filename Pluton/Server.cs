@@ -72,7 +72,12 @@
 
         public void LoadLoadouts()
         {
-            DirectoryInfo loadoutPath = new DirectoryInfo(Util.GetLoadoutFolder());
+            string path = Util.GetLoadoutFolder();
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            DirectoryInfo loadoutPath = new DirectoryInfo(path);
+
             foreach (FileInfo file in loadoutPath.GetFiles()) {
                 if (file.Extension == ".ini") {
                     new LoadOut(file.Name.Replace(".ini", ""));
