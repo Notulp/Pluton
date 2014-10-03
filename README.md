@@ -29,10 +29,15 @@ Q.A.
 ----
 
 Q: Where the plugins go?
+
 A: Into: %publicfolder%/Plugins/_Plugin'sName_/_Plugin'sName.py_
 
+
 Q: Which is the public folder?
+
 A: That's: %identityfolder%/Pluton.
 
+
 Q: Uhm, identityfolder?
+
 A: %serverroot%/server/_your_server's_identity_
