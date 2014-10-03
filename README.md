@@ -8,15 +8,17 @@ Get started:
 ------------
 1. Grab the files.
 2. Download the server files from steamcmd with:
-```
+
+  ```
   app_update 258550 validate
-```
+  ```
 3. Copy these files into the ref folder next to the 'Pluton' and 'Pluton.Patcher' folders
-```
+
+  ```
   Assembly-CSharp.dll
   Facepunch.dll
   UnityEngine.dll
-```
+  ```
 4. Compile Pluton and Pluton.Patcher
 5. Copy Pluton.Patcher and Mono.Cecil from Pluton.Patcher/bin/debug to the downloaded server's managed folder
 6. Copy Pluton.dll from Pluton/bin/debug to the downloaded server's managed folder
