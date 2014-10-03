@@ -35,12 +35,12 @@ namespace Pluton
 
         public static void Init()
         {
-            if (Directory.Exists(Util.GetPublicFolder()))
+            if (!Directory.Exists(Util.GetPublicFolder()))
                 Directory.CreateDirectory(Util.GetPublicFolder());
 
             Config.Init();
-            Server.GetServer();
             Logger.Init();
+            Server.GetServer();
             PluginLoader.GetInstance().Init();
 
             server.official = false;

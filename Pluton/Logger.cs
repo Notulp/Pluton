@@ -14,7 +14,7 @@ namespace Pluton
             public string DateTime;
         }
 
-        private static string LogsFolder = Path.Combine(Util.GetPublicFolder(), @"Logs\");
+        private static string LogsFolder;
         private static Writer LogWriter;
         private static Writer ChatWriter;
         private static bool showChat = false;
@@ -43,8 +43,11 @@ namespace Pluton
             }
 
             try {
-                Directory.CreateDirectory(LogsFolder);
-
+                Debug.Log("Public folder: " + Util.GetPublicFolder());
+                LogsFolder = Path.Combine(Util.GetPublicFolder(), "Logs");
+                if (!Directory.Exists(LogsFolder))
+                    Directory.CreateDirectory(LogsFolder);
+                
                 LogWriterInit();
                 ChatWriterInit();
             } catch (Exception ex) {
@@ -59,7 +62,7 @@ namespace Pluton
                     LogWriter.LogWriter.Close();
 
                 LogWriter.DateTime = DateTime.Now.ToString("dd_MM_yyyy");
-                LogWriter.LogWriter = new StreamWriter(LogsFolder + "Log " + LogWriter.DateTime + ".txt", true);
+                LogWriter.LogWriter = new StreamWriter(Path.Combine(LogsFolder, "Log " + LogWriter.DateTime + ".txt"), true);
                 LogWriter.LogWriter.AutoFlush = true;
             } catch (Exception ex) {
                 Debug.LogException(ex);
@@ -73,7 +76,7 @@ namespace Pluton
                     ChatWriter.LogWriter.Close();
 
                 ChatWriter.DateTime = DateTime.Now.ToString("dd_MM_yyyy");
-                ChatWriter.LogWriter = new StreamWriter(LogsFolder + "Chat " + ChatWriter.DateTime + ".txt", true);
+                ChatWriter.LogWriter = new StreamWriter(Path.Combine(LogsFolder, "Chat " + ChatWriter.DateTime + ".txt"), true);
                 ChatWriter.LogWriter.AutoFlush = true;
             } catch (Exception ex) {
                 Debug.LogException(ex);
