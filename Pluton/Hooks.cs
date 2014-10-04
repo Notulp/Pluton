@@ -245,6 +245,9 @@ namespace Pluton
                 Server.GetServer().Players.Add(player.userID, p);
 
             OnPlayerConnected.OnNext(p);
+            p.Message("Welcome " + p.Name + "!");
+            p.Message(String.Format("This server is powered by Pluton[v{0}]!", Bootstrap.Version));
+            p.Message("Visit fougerite.com for more information or to report bugs!");
         }
 
         // BasePlayer.Die()
