@@ -330,7 +330,7 @@ namespace Pluton.Patcher
         private static void RespawnPatch()
         {
             MethodDefinition respawn = bPlayer.GetMethod("Respawn");
-            MethodDefinition tPort = hooksClass.GetMethod("Respawn");
+            MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
 
             for (var l = 39; l >= 0; l--) {
                 respawn.Body.Instructions.RemoveAt(l);
@@ -340,7 +340,18 @@ namespace Pluton.Patcher
             ILProcessor iLProcessor = respawn.Body.GetILProcessor();
             iLProcessor.InsertBefore(respawn.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
             iLProcessor.InsertAfter(respawn.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(respawn.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(tPort)));
+            iLProcessor.InsertAfter(respawn.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
+        }
+
+        private static void SetModdedPatch()
+        {
+            TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
+            MethodDefinition servUpdate = servermgr.GetMethod("UpdateServerInformation");
+            MethodDefinition setModded = hooksClass.GetMethod("SetModded");
+
+            CloneMethod(servUpdate);
+            ILProcessor il = servUpdate.Body.GetILProcessor();
+            il.InsertAfter(servUpdate.Body.Instructions[36], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
         }
 
         // from fougerite.patcher
@@ -363,6 +374,7 @@ namespace Pluton.Patcher
         {
             BootstrapAttachPatch();
             ServerShutdownPatch();
+            SetModdedPatch();
 
             RespawnPatch();
 

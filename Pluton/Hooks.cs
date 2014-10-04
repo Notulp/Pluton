@@ -488,6 +488,19 @@ namespace Pluton
             player.SendFullSnapshot();
         }
 
+        public static void SetModded()
+        {
+            try {
+                if (pluton.enabled) {
+                    string pchGameTags = String.Format("mp{0},cp{1},v1140,modded", server.maxplayers, BasePlayer.activePlayerList.Count);
+                    Steamworks.SteamGameServer.SetGameTags(pchGameTags);
+                }
+            } catch (Exception ex) {
+                Debug.Log("error while loading shit");
+                Logger.LogException(ex);
+            }
+        }
+
         #endregion
 
         public Hooks()
