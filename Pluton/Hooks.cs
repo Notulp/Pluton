@@ -496,7 +496,7 @@ namespace Pluton
                     Steamworks.SteamGameServer.SetGameTags(pchGameTags);
                 }
             } catch (Exception ex) {
-                Debug.Log("error while loading shit");
+                Debug.Log("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
             }
         }
