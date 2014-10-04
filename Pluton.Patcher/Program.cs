@@ -16,7 +16,7 @@ namespace Pluton.Patcher
         private static TypeDefinition bCorpse;
         private static TypeDefinition bBlock;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.1";
+        private static string version = "1.0.0.2";
 
         private static void BootstrapAttachPatch()
         {
