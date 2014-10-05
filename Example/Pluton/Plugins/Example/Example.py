@@ -22,9 +22,9 @@ class Example:
 	def On_Command(self, cmd):
 		try:
 			if(cmd.cmd == "kit"):
-				if(Server.LoadOuts.ContainsKey(cmd.quotedArgs[0]))
-				loadout = Server.LoadOuts[cmd.quotedArgs[0]]
-				loadout.ToInv(cmd.User.Inventory)
+				if(Server.LoadOuts.ContainsKey(cmd.quotedArgs[0])):
+					loadout = Server.LoadOuts[cmd.quotedArgs[0]]
+					loadout.ToInv(cmd.User.Inventory)
 			if(cmd.cmd == "apple"):
 				cmd.User.Message("An apple a day keeps the doctor away!")
 				item = InvItem("Apple")
