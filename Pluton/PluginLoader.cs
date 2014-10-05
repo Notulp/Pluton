@@ -243,6 +243,9 @@
                 case "On_ServerShutdown":
                     plugin.OnServerShutdownHook = Hooks.OnServerShutdown.Subscribe(s => plugin.OnServerShutdown(s));
                     break;
+                case "On_Respawn":
+                    plugin.OnRespawnHook = Hooks.OnRespawn.Subscribe(r => plugin.OnRespawn(r));
+                    break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
@@ -326,6 +329,9 @@
                     break;
                 case "On_ServerShutdown":
                     plugin.OnServerShutdownHook.Dispose();
+                    break;
+                case "On_Respawn":
+                    plugin.OnRespawnHook.Dispose();
                     break;
                 }
             }

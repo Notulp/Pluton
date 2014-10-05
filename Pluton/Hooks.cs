@@ -61,6 +61,8 @@ namespace Pluton
 
         public static Subject<string> OnServerShutdown = new Subject<string>();
 
+        public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
+
         #endregion
 
         #region Handlers
@@ -133,7 +135,7 @@ namespace Pluton
         // chat.say()
         public static void Chat(ConsoleSystem.Arg arg)
         {
-            if (arg.ArgsStr.StartsWith("\"/")) {
+            if (arg.ArgsStr.StartsWith("\"/") && !arg.ArgsStr.StartsWith("\"/ ")) {
                 Command(arg);
                 return;
             }
@@ -162,11 +164,10 @@ namespace Pluton
                 OnChat.OnNext(pChat);
 
                 if (pChat.FinalText != "") {
+                    Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
                     ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText));
                     arg.ReplyWith(pChat.ReplyWith);
                 }
-
-                Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
             }
         }
 
@@ -465,11 +466,18 @@ namespace Pluton
 
         public static void Respawn(BasePlayer player, bool newPos)
         {
+            Player p = new Player(player);
+            RespawnEvent re = new RespawnEvent(p);
+            OnRespawn.OnNext(re);
+
             ++ServerPerformance.spawns;
             if (newPos) {
                 BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
                 player.transform.position = spawnPoint.pos;
                 player.transform.rotation = spawnPoint.rot;
+            }
+            if (re.ChangePos && re.SpawnPos != Vector3.zero) {
+                player.transform.position = re.SpawnPos;
             }
             player.supressSnapshots = true;
             player.StopSpectating();
@@ -477,7 +485,9 @@ namespace Pluton
             player.UpdatePlayerCollider(true, false);
             player.StartSleeping();
             player.metabolism.Reset();
-            player.inventory.GiveDefaultItems();
+            if (re.GiveDefault)
+                player.inventory.GiveDefaultItems();
+
             player.SendFullSnapshot();
         }
 

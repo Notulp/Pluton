@@ -393,6 +393,11 @@
             this.Invoke("On_ServerShutdown");
         }
 
+        public IDisposable OnRespawnHook;
+        public void OnRespawn(RespawnEvent re) {
+            this.Invoke("On_Respawn", re);
+        }
+
         // timer hooks
 
         public void OnTimerCB(string name)
