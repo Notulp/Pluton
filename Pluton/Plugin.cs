@@ -9,6 +9,10 @@
     using System.Collections;
     using System.IO;
     using Pluton.Events;
+    using Jint;
+    using Jint.Native;
+    using Jint.Parser;
+    using Jint.Parser.Ast;
     using Microsoft.Scripting.Hosting;
 
     public class Plugin
@@ -16,38 +20,63 @@
         public readonly string Name;
         public readonly string Code;
         public readonly object Class;
+        public readonly PluginType Type;
         public readonly DirectoryInfo RootDir;
-        public readonly ScriptEngine Engine;
+        public readonly ScriptEngine PyEngine;
+        public readonly Engine JSEngine;
         public readonly ScriptScope Scope;
         public readonly IList<string> Globals;
         public readonly Dictionary<string, TimedEvent> Timers;
+        public static string LibPath;
 
-        public Plugin(string name, string code, DirectoryInfo path)
+        public enum PluginType { Python, JS }
+
+        public Plugin(string name, string code, DirectoryInfo path, PluginType type)
         {
             Name = name;
             Code = code;
             RootDir = path;
+            Type = type;
             Timers = new Dictionary<string, TimedEvent>();
 
-            Engine = IronPython.Hosting.Python.CreateEngine();
-            Scope = Engine.CreateScope();
-            Scope.SetVariable("Plugin", this);
-            Scope.SetVariable("Server", Pluton.Server.GetServer());
-            Scope.SetVariable("DataStore", DataStore.GetInstance());
-            Scope.SetVariable("Util", Util.GetUtil());
-            Scope.SetVariable("World", World.GetWorld());
-            Engine.Execute(code, Scope);
-            Class = Engine.Operations.Invoke(Scope.GetVariable(name));
-            Globals = Engine.Operations.GetMemberNames(Class);
+            if (type == PluginType.Python) {
+                PyEngine = IronPython.Hosting.Python.CreateEngine();
+                Scope = PyEngine.CreateScope();
+                Scope.SetVariable("Plugin", this);
+                Scope.SetVariable("Server", Pluton.Server.GetServer());
+                Scope.SetVariable("DataStore", DataStore.GetInstance());
+                Scope.SetVariable("Util", Util.GetUtil());
+                Scope.SetVariable("World", World.GetWorld());
+                PyEngine.Execute(code, Scope);
+                Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
+                Globals = PyEngine.Operations.GetMemberNames(Class);
+            } else {
+                JSEngine = new Engine(cfg => cfg.AllowClr(typeof(UnityEngine.GameObject).Assembly,
+                    typeof(PlayerInventory).Assembly))
+                    .SetValue("Server", Server.GetServer())
+                    .SetValue("DataStore", DataStore.GetInstance())
+                    .SetValue("Util", Util.GetUtil())
+                    .SetValue("World", World.GetWorld())
+                    .SetValue("Plugin", this)
+                    .Execute(code);
+                JavaScriptParser parser = new JavaScriptParser();
+                Globals = (from function in parser.Parse(Code).FunctionDeclarations
+                           where (function.Id.Name.StartsWith("On_") || function.Id.Name.EndsWith("Callback"))
+                           select function.Id.Name).ToList<string>();
+            }
         }
 
         public void Invoke(string func, params object[] obj)
         {
             try {
-                if (Globals.Contains(func))
-                    Engine.Operations.InvokeMember(Class, func, obj);
-                else
+                if (Globals.Contains(func)) {
+                    if (Type == PluginType.Python)
+                        PyEngine.Operations.InvokeMember(Class, func, obj);
+                    else
+                        JSEngine.Invoke(func, obj);
+                } else {
                     Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);
+                }
             } catch (Exception ex) {
                 Logger.LogException(ex);
             }

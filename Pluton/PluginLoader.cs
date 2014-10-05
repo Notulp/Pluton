@@ -17,6 +17,7 @@
 
         public void Init()
         {
+            Plugin.LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
             pluginDirectory = new DirectoryInfo(Path.Combine(Util.GetPublicFolder(), "Plugins"));
             if (!Directory.Exists(pluginDirectory.FullName)) {
                 Directory.CreateDirectory(pluginDirectory.FullName);
@@ -32,7 +33,16 @@
             return instance;
         }
 
-        private IEnumerable<String> GetPluginNames()
+        private IEnumerable<String> GetJSPluginNames()
+        {
+            foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
+                string path = Path.Combine(dirInfo.FullName, dirInfo.Name + ".js");
+                if (File.Exists(path))
+                    yield return dirInfo.Name;
+            }
+        }
+
+        private IEnumerable<String> GetPyPluginNames()
         {
             foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
                 string path = Path.Combine(dirInfo.FullName, dirInfo.Name + ".py");
@@ -46,14 +56,26 @@
             return Path.Combine(pluginDirectory.FullName, name);
         }
 
-        private string GetPluginScriptPath(string name)
+        private string GetJSPluginScriptPath(string name)
+        {
+            return Path.Combine(GetPluginDirectoryPath(name), name + ".js");
+        }
+
+        private string GetPyPluginScriptPath(string name)
         {
             return Path.Combine(GetPluginDirectoryPath(name), name + ".py");
         }
 
-        private string GetPluginScriptText(string name)
+        private string GetPluginScriptText(string name, Plugin.PluginType type)
         {
-            string path = GetPluginScriptPath(name);
+            string path = "";
+            if (type == Plugin.PluginType.Python)
+                path = GetPyPluginScriptPath(name);
+            else
+                path = GetJSPluginScriptPath(name);
+
+            if (path == "") return null;
+
             return File.ReadAllText(path);
         }
 
@@ -61,9 +83,11 @@
 
         public void LoadPlugins()
         {
-            foreach (string name in GetPluginNames())
-                LoadPlugin(name);
+            foreach (string name in GetPyPluginNames())
+                LoadPlugin(name, Plugin.PluginType.Python);
 
+            //foreach (string name in GetJSPluginNames())
+            //   LoadPlugin(name, Plugin.PluginType.JS);
             //if(OnAllLoaded != null) OnAllLoaded();
         }
 
@@ -80,7 +104,7 @@
             LoadPlugins();
         }
 
-        public void LoadPlugin(string name)
+        public void LoadPlugin(string name, Plugin.PluginType type)
         {
             Logger.LogDebug("[PluginLoader] Loading plugin " + name + ".");
 
@@ -90,9 +114,9 @@
             }
 
             try {
-                string code = GetPluginScriptText(name);
+                string code = GetPluginScriptText(name, type);
                 DirectoryInfo path = new DirectoryInfo(Path.Combine(pluginDirectory.FullName, name));
-                Plugin plugin = new Plugin(name, code, path);
+                Plugin plugin = new Plugin(name, code, path, type);
 
                 InstallHooks(plugin);
                 plugins.Add(name, plugin);
@@ -126,13 +150,16 @@
         public void ReloadPlugin(Plugin plugin)
         {
             UnloadPlugin(plugin.Name);
-            LoadPlugin(plugin.Name);
+            LoadPlugin(plugin.Name, plugin.Type);
         }
 
         public void ReloadPlugin(string name)
         {
-            UnloadPlugin(name);
-            LoadPlugin(name);
+            if (plugins.ContainsKey(name)) {
+                Plugin plugin = plugins[name];
+                UnloadPlugin(plugin.Name);
+                LoadPlugin(plugin.Name, plugin.Type);
+            }
         }
 
         #endregion
