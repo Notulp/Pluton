@@ -119,7 +119,7 @@ namespace Pluton
             ini.Save();
         }
 
-        public void ToInv(Inv inv)
+        public void ToInv(Inv inv, bool notify = true)
         {
             try {
                 bool perms = false;
@@ -132,7 +132,11 @@ namespace Pluton
 
                 if (perms)
                     foreach (LoadOutItem item in items.Values)
+                    {
+                        if (notify)
+                            inv.Notice(item);
                         inv.Add(item.invItem);
+                    }
 				
             } catch (Exception ex) {
                 Logger.LogException(ex);

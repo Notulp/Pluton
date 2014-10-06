@@ -49,6 +49,23 @@ namespace Pluton
             return _inv.GiveItem(itemID, amount, true);
         }
 
+        public void Notice(LoadOutItem loItem)
+        {
+            string msg = String.Format("{0} {1}", InvItem.GetItemID(loItem.Name), loItem.Amount);
+            Notice(msg);
+        }
+
+        public void Notice(InvItem item)
+        {
+            string msg = String.Format("{0} {1}", item.ItemID, item.Quantity);
+            Notice(msg);
+        }
+
+        public void Notice(string msg)
+        {
+            owner.basePlayer.Command("note.inv " + msg);
+        }
+
         public ItemContainer InnerBelt {
             get {
                 return _inv.containerBelt;
