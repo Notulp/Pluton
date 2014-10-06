@@ -124,6 +124,10 @@ namespace Pluton
                     player.Message(msg);
                     return;
                 }
+                if (cmd.cmd == Config.GetValue("Commands", "Help")) {
+                    player.Message(Config.GetValue("HelpMessage", "help_string0"));
+                    player.Message(Config.GetValue("HelpMessage", "help_string1"));
+                }
             }
             OnCommand.OnNext(cmd);
 
@@ -495,9 +499,7 @@ namespace Pluton
         {
             try {
                 if (pluton.enabled) {
-                    string pchGameTags = String.Format("mp{0},cp{1},v{2},modded",
-                        new object[] { server.maxplayers, BasePlayer.activePlayerList.Count, Rust.Protocol.network });
-
+                    string pchGameTags = String.Format("mp{0},cp{1},v1140,modded", server.maxplayers, BasePlayer.activePlayerList.Count);
                     Steamworks.SteamGameServer.SetGameTags(pchGameTags);
                 }
             } catch (Exception ex) {
