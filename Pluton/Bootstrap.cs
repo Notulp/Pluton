@@ -8,7 +8,7 @@ namespace Pluton
     public class Bootstrap : MonoBehaviour
     {
 
-        public static string Version = "0.9.2";
+        public static string Version = "0.9.3";
 
         public static ServerTimers timers;
 
