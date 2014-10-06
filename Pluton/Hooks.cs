@@ -465,6 +465,7 @@ namespace Pluton
 
         public static void ServerShutdown()
         {
+            Bootstrap.timers.Dispose();
             OnServerShutdown.OnNext("");
             Bootstrap.SaveAll();
         }
@@ -512,6 +513,14 @@ namespace Pluton
         }
 
         #endregion
+
+        public static void Advertise()
+        {
+            foreach (string arg in Config.PlutonConfig.EnumSection("BroadcastMessages"))
+            {
+                Server.GetServer().Broadcast(Config.GetValue("BroadcastMessages", arg));
+            }
+        }
 
         public Hooks()
         {

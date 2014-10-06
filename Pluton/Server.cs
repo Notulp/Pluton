@@ -94,9 +94,17 @@
                     server.OfflinePlayers.Add(UInt64.Parse(entry.Key as string), entry.Value as OfflinePlayer);
                 }
             } else {
-                Logger.LogWarning("[Server] (GetTable(\"OfflinePalyers\") == null) ... wut?");
+                Logger.LogWarning("[Server] No OfflinePlayers found!");
             }
             Logger.Log("[Server] " + OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
+        }
+
+        public void Save()
+        {
+            OnShutdown();
+            foreach (Player p in Players.Values) {
+                OfflinePlayers.Remove(p.GameID);
+            }
         }
 
         public void OnShutdown()
