@@ -1,0 +1,309 @@
+## plugin hooks
+
+On_Chat(Chat msg)
+On_ClientAuth(AuthEvent ae)
+On_Command(Command c)
+On_CorpseDropped(CorpseInitEvent cie)
+On_CorpseAttacked(CorpseHurtEvent che)
+On_BuildingComplete(BuildingPart bp)
+On_BuildingUpdate(BuildingEvent be)
+On_BuildingPartAttacked(BuildingHurtEvent bhe)
+On_BuildingPartDestroyed(BuildingHurtEvent bhe)
+On_FrameDeployed(BuildingPart bp)
+On_NPCAttacked(NPCHurtEvent nhe)
+On_NPCKilled(NPCDeathEvent nde)
+On_LootingEntity(EntityLootEvent ele)
+On_LootingPlayer(PlayerLootEvent ple)
+On_LootingItem(ItemLootEvent ile)
+On_PlayerConnected(Player p)
+On_PlayerDisconnected(Player p)
+On_PlayerGathering(GatherEvent ge)
+On_PlayerAttacked(PlayerHurtEvent phe)
+On_PlayerDied(PlayerDeathEvent pde)
+On_PlayerTakeDamagePlayerTakedmgEvent ptd)
+On_PlayerTakeRadiation(PlayerTakeRadsEvent ptr)
+On_ServerShutdown()
+On_PluginInit()
+On_Respawn(Player p)
+
+## classes
+
+Pluton.BuildingPart(BuildingBlock bb)
+	.FindSocket(string name):Construction.Socket
+
+	.buildingBlock:BuildingBlock
+	.Health:float
+	.IsFrame:bool
+	.ItemIDBase:int
+	.Location:Vector3
+	.OwnerID:ulong
+	.OwnerName:string
+	.X .Y .Z :float
+
+Pluton.Chat(Pluton.Player player, ConsoleSystem.Arg args)
+	._arg:ConsoleSystem.Arg
+	.BroadcastName:string
+	.FinalText:string
+	.OriginalText:string
+	.ReplyWith:string
+	.User:Pluton.Player
+
+Pluton.Command(Pluton.Player player, string[] args)
+	.GetQuotedStringArr(string[] sArr):string[]
+
+	.args:string[]
+	.cmd:string
+	.ReplyWith:string
+	.quotedArgs:string[]
+	.User:Pluton.Player
+
+Pluton.Entity(BaseEntity entity)
+	.baseEntity:BaseEntity
+	.Location:Vector3
+	.Name:string
+	.X .Y .Z :float
+
+Pluton.Inv(PlayerInventory inv)
+	.Add(Pluton.InvItem item):bool
+	.Add(Pluton.InvItem item, ItemContainer con):bool
+	.Add(int itemID):bool
+	.Add(int itemID, int amoun):bool
+	.Notice(InvItem item):void
+	.Notice(LoadOutItem item):void
+	.Notice(string ItemdidSpaceQuantity):void // example: "13886 10"
+
+	.AllItems():List<Pluton.InvItem>
+	.BeltItems():List<Pluton.InvItem>
+	.MainItems():List<Pluton.InvItem>
+	.WearItems():List<Pluton.InvItem>
+
+	._inv:PlayerInventory
+	.InnerBelt:ItemContainer
+	.InnerMain:ItemContainer
+	.InnerWear:ItemContainer
+	.owner:Pluton.Player
+
+
+Pluton.InvItem(string Name, int Amount) (string Name) (Item item)
+	.CanStack(Pluton.InvItem item):bool
+	.Drop(Vector3 position, Vector3 offset):void
+	.GetContainerPreference(string category):enum
+	.GetItemID(string itemName):int
+	.Instantiate(Vector3 position):Pluton.Entity
+	.Instantiate(Vector3 position, Quaternion rotation):Pluton.Entity
+
+	._item:Item
+	.containerPref:enum
+	.Category:string
+	.ItemID:int
+	.Name:string
+	.Quantity:int
+	.Slot:int
+
+Pluton.LoadOut(string Name)
+	.Add(Pluton.InvItem item):bool
+	.Add(Pluton.LoadOutItem item):bool
+	.Remove(int Item):bool
+	.ToIni():void
+	.ToInv(Pluton.Inv inv):void
+
+	.itemCount:int
+	.items:Dictionary<int, Pluton.LoadOutItem>
+	.ModeratorUse:bool
+	.Name:string
+	.NormalUse:bool
+	.OwnerUse:bool
+	.path:string
+
+
+Pluton.LoadOutItem(string Name) (string Name, int Amount)
+	.Amount:int
+	.Name:string
+	.invItem:Pluton.InvItem
+
+Pluton.NPC(BaseAnimal animal)
+	.Kill():void
+
+	.Prefab:string
+	.ID:uint
+	.Health:float
+	.Location:Vector3
+	.X .Y .Z :float
+
+Pluton.OfflinePlayer(Pluton.Player player) // you shouldn't ever call this constructor manually
+	.Get(ulong steamid):Plutom.OfflinePlayer
+	.Get(string steamid):Pluton.OfflinePlayer
+
+	.Admin:bool
+	.IP:string
+	.Name:string
+	.OS:string
+	.totalTimeOnline:ulong
+	.X .Y .Z :float
+
+Pluton.Player(BasePlayer player)
+	.Find(string nameOrsteamidOrip):Pluton.Player
+	.FindByGameID(ulong steamid):Pluton.Player
+	.FindBySteamID(string steamid):Pluton.Player
+	.Ban(string reason*):void
+	.Kick(string reason*):void
+	.Reject(string reason*):void
+	.Kill():void
+	.MakeNone(string reason*):void
+	.MakeModerator(string reason*):void
+	.MakeOwner(string reason*):void
+	.Message(string msg):void
+	.MessageFrom(string nameFrom, string msg).void
+
+	.Admin:bool
+	.AuthStatus:string
+	.basePlayer:BasePlayer
+	.GameID:ulong
+	.Health:float
+	.Inventory:Pluton.Inv
+	.IP:string
+	.Location:Vector3
+	.Moderator:bool
+	.Name:string
+	.Owner:bool
+	.OS:string
+	.Ping:int
+	.Stats:Pluton.PlayerStats
+	.SteamID:string
+	.TimeOnline:float
+	.X .Y .Z :float
+
+Pluton.PlayerStats(string steamid)
+	.Kills			|
+	.Deaths			|
+	.PlayerKills	|
+	.PlayerDeaths	|
+	.NPCKills		|
+	.NPCDeaths		|:uint
+	.TotalDamageTaken	|
+	.TotalDamageDone	|
+	.DamageToPlayers	|
+	.DamageFromPlayers	|
+	.DamageToNPCs		|
+	.DamageFromNPCs		|
+	.DamageToEntities	|
+	.FallDamage			|:double
+
+Pluton.Server
+	.Broadcast(string msg):void
+	.Broadcast(string nameFrom, string msg):void
+	.FindPlayer(string something):Pluton.Player
+
+	.ActivePlayers:List<Pluton.Player>
+	.Players:Dictionary<ulong, Pluton.Player>
+	.SleepingPlayers:List<Pluton.Player>
+	.server_message_name:string
+
+Pluton.Util
+	.CreateLoadOut(string Name):LoadOut
+	.GetVectorsDistance(Vector3 p1, Vector3 p2):float
+	.Items():void
+	.IsNull(object obj):bool
+	.Log(string str):void
+	.Regex(string input, string match):Match
+	.RotateX(Quaternion q, float angle):Quaternion
+	.RotateY(Quaternion q, float angle):Quaternion
+	.RotateZ(Quaternion q, float angle):Quaternion
+	.TryFindType(string typeName, out System.Type t):bool
+	.TryFindReturnType(string typeName):System.Type
+
+## Events
+
+Pluton.Events.AuthEvent(Connection connection)
+	.Reject(string reason*):void
+
+	._reason:string
+	.approved:bool
+	.con:Connection
+	.GameID:ulong
+	.IP:string
+	.Name:string
+	.OS:string
+
+Pluton.Events.BuildingEvent(BuildingPart bp, Player, float prof)
+	._block:BuildingBlock
+	.BuildingPart:Pluton.BuildingPart
+	.Builder:Pluton.Player
+	.BlockFullName:string
+	.BlockName:string
+	.Proficiency:float
+	.Sockets:List<Construction.Socket>
+
+Pluton.Events.BuildingHurtEvent(BuildingPart bp, HitInfo info):HurtEvent
+	.Victim:Pluton.BuildingPart
+
+Pluton.Events.CorpseHurtEvent(BaseCorpse corpse, HitInfo info):HurtEvent
+	.corpse:BaseCorpse
+
+Pluton.Events.CorpseInitEvent(BaseCorpse corpse, BaseEntity parent)
+	.Corpse:BaseCorpse
+	.Parent:Pluton.Entity
+
+Pluton.Events.DeathEvent(HitInfo info)
+	._info:HitInfo
+	.dropLoot:bool
+	.DamageAmount:float
+	.DamageType:Rust.DamageType
+	.Attacker:BaseEntity
+
+Pluton.Events.EntityLootEvent(PlayerLoot pl, Player looter, Entity looted):LootEvent
+	.Target:Pluton.Entity
+
+Pluton.Events.GatherEvent(BaseResource res, HitInfo info)
+	.DamageAmount:float
+	.DamageType:Rust.DamageType
+	.Gatherer:Pluton.Player
+	.Health:float
+	.Prefab:string
+	.Proficiency:float
+	.Stage:int
+	.WeaponName:string
+
+Pluton.Events.HurEvent(HitInfo info)
+	.DamageAmount:float
+	.DamageType:Rust.DamageType
+
+Pluton.Events.ItemLootEvent(PlayerLoot pl, Pluton.Player player, Item looted):LootEvent
+	.Target:Item
+
+Pluton.Events.LootEvent(PlayerLoot pl, Pluton.Player player)
+	.Looter:Pluton.Player
+	.pLoot:PlayerLoot
+
+Pluton.Events.NPCDeathEventh(Pluton.NPC npc, HitInfo info):DeathEvent
+	.Victim:Pluton.NPC
+
+Pluton.Events.NPCHurtEvent(Pluton.NPC npc, HitInfo info):HurtEvent
+	.Victim:Pluton.NPC
+
+Pluton.Events.PlayerDeathEvent(Pluton.Player player, HitInfo info):DeathEvent
+	.Victim:Pluton.Player
+
+Pluton.Events.PlayerHurtEvent(Pluton.Player player, HitInfo info):HurtEvent
+	.Victim:Pluton.Player
+
+Pluton.Events.PlayerLootEvent(PlayerLoot pl, Pluton.Player player, Pluton.Player looted):LootEvent
+	.Target:Pluton.Player
+
+Pluton.Events.PlayerTakedmgEvent(Player p, float amount, Rust.DamageType type)
+	.Victim:Pluton.Player
+	.Amount:float
+	.Type:Rust.DamageType
+
+Pluton.Events.PlayerTakeRadsEvent(Player p, float amount)
+	.Victim:Pluton.Player
+	.Amount:float
+
+Pluton.Event.RespawnEvent(Player p)
+	.ChangePos:bool
+	.GiveDefault:bool
+	.Player:Player
+	.SpawnPos:Vector3
+
+
+* optional
