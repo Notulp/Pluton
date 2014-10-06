@@ -29,12 +29,12 @@ namespace Pluton
         public static void Init()
         {
             try {
-                logDebug = Config.GetBoolValue("Logging", "chatInLog");
+                logChat = Config.GetBoolValue("Logging", "chatInLog");
                 logDebug = Config.GetBoolValue("Logging", "debugInLog");
                 logErrors = Config.GetBoolValue("Logging", "errorInLog");
                 logException = Config.GetBoolValue("Logging", "exceptionInLog");
 
-                showDebug = Config.GetBoolValue("Logging", "chatInConsole");
+                showChat = Config.GetBoolValue("Logging", "chatInConsole");
                 showDebug = Config.GetBoolValue("Logging", "debugInConsole");
                 showErrors = Config.GetBoolValue("Logging", "errorInConsole");
                 showException = Config.GetBoolValue("Logging", "exceptionInConsole");
@@ -85,8 +85,7 @@ namespace Pluton
 
         private static string LogFormat(string Text)
         {
-            Text = "[" + DateTime.Now + "] " + Text;
-            return Text;
+            return String.Format("[{0}] {1}" , DateTime.Now, Text);
         }
 
         private static void WriteLog(string Message)
@@ -114,27 +113,27 @@ namespace Pluton
         // verbose?
         public static void Log(string Message, UnityEngine.Object Context = null)
         {
-            Debug.Log(Message, Context);
             Message = "[Console] " + Message;
+            Debug.Log(Message, Context);
             WriteLog(Message);
         }
 
         public static void LogWarning(string Message, UnityEngine.Object Context = null)
         {
-            Debug.LogWarning(Message, Context);
             Message = "[Warning] " + Message;
+            Debug.LogWarning(Message, Context);
             WriteLog(Message);
         }
 
         public static void LogError(string Message, UnityEngine.Object Context = null)
         {
+            Message = "[Error] " + Message;
             if (showErrors)
                 Debug.LogError(Message, Context);
 
             if (!logErrors)
                 return;
 
-            Message = "[Error] " + Message;
             WriteLog(Message);
         }
 
@@ -157,25 +156,24 @@ namespace Pluton
 
         public static void LogDebug(string Message, UnityEngine.Object Context = null)
         {
+            Message = "[Debug] " + Message;
             if (showDebug)
-                Debug.Log("[DEBUG] " + Message, Context);
+                Debug.Log(Message, Context);
 
             if (!logDebug)
                 return;
 
-            Message = "[Debug] " + Message;
             WriteLog(Message);
         }
 
         public static void ChatLog(string Sender, string Msg)
         {
+            Msg = "[CHAT] " + Sender + ": " + Msg;
             if (showChat)
                 Debug.Log(Msg);
-
             if (!logChat)
                 return;
 
-            Msg = "[CHAT] " + Sender + ": " + Msg;
             WriteChat(Msg);
         }
     }
