@@ -124,6 +124,11 @@ namespace Pluton
                     player.Message(msg);
                     return;
                 }
+				if (cmd.cmd == Config.GetValue("Commands", "Help")) {
+					foreach (string key in Config.PlutonConfig.EnumSection("HelpMessage")) {
+						player.Message(Config.GetValue("HelpMessage", key));
+					}
+				}
             }
             OnCommand.OnNext(cmd);
 
