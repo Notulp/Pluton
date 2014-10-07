@@ -138,10 +138,11 @@ namespace Pluton.Patcher
 
             CloneMethod(hurt);
             // clear out the method, we will recreate it in Pluton
-            ILProcessor iLProcessor = hurt.Body.GetILProcessor();
-            iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerHurt)));
+            hurt.Body.Instructions.Clear();
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerHurt)));
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void PlayerTakeDamagePatch()
