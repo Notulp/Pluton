@@ -39,6 +39,11 @@
             return new LoadOut(name);
         }
 
+        public PluginCommand CreateCommand(string cmd, string dsc, string usg)
+        {
+            return new PluginCommand(cmd, dsc, usg);
+        }
+
         public void DestroyObject(GameObject go)
         {
             // FIXME

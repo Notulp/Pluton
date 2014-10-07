@@ -47,6 +47,7 @@
                 Scope.SetVariable("DataStore", DataStore.GetInstance());
                 Scope.SetVariable("Util", Util.GetUtil());
                 Scope.SetVariable("World", World.GetWorld());
+                Scope.SetVariable("Commands", PluginCommands.GetInstance());
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
                 Globals = PyEngine.Operations.GetMemberNames(Class);
@@ -58,6 +59,7 @@
                     .SetValue("Util", Util.GetUtil())
                     .SetValue("World", World.GetWorld())
                     .SetValue("Plugin", this)
+                    .SetValue("Commands", PluginCommands.GetInstance())
                     .Execute(code);
                 JavaScriptParser parser = new JavaScriptParser();
                 Globals = (from function in parser.Parse(Code).FunctionDeclarations

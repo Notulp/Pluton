@@ -129,6 +129,10 @@ namespace Pluton
 						player.Message(Config.GetValue("HelpMessage", key));
 					}
 				}
+                if (cmd.cmd == Config.GetValue("Commands", "Commands")) {
+                    player.Message(String.Join(", ", PluginCommands.GetInstance().getCommands().ToArray()));
+                }
+                // TODO: command description, usage
             }
             OnCommand.OnNext(cmd);
 
