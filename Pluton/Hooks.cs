@@ -88,7 +88,6 @@ namespace Pluton
         // chat.say().Hooks.Chat()
         public static void Command(ConsoleSystem.Arg arg)
         {
-
             Player player = new Player(arg.Player());
             string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
 
@@ -198,7 +197,6 @@ namespace Pluton
         // BaseAnimal.OnAttacked()
         public static void NPCHurt(BaseAnimal animal, HitInfo info)
         {
-            // works
             var npc = new NPC(animal);
 
             if (info.Initiator != null) {
@@ -208,16 +206,18 @@ namespace Pluton
                 p.Stats = stats;
             }
 
-            if (!Realm.Server() || (double)animal.myHealth <= 0.0)
-                return;
+            if (Realm.Server()) {
+                if (animal.myHealth <= 0) {
+                    return;
+                }
 
-            if ((animal.myHealth - info.damageAmount) > 0.0f)
-                OnNPCHurt.OnNext(new Events.NPCHurtEvent(npc, info));
+                if ((animal.myHealth - info.damageAmount) > 0.0f)
+                    OnNPCHurt.OnNext(new Events.NPCHurtEvent(npc, info));
 
-            animal.myHealth -= info.damageAmount;
-            if ((double) animal.myHealth > 0.0)
-                return;
-            animal.Die(info);
+                animal.myHealth -= info.damageAmount;
+                if (animal.myHealth <= 0)
+                    animal.Die(info);
+            }
         }
 
         // BaseAnimal.Die()
@@ -253,7 +253,6 @@ namespace Pluton
         // BasePlayer.Die()
         public static void PlayerDied(BasePlayer player, HitInfo info)
         {
-            // works
             if (info == null) {
                 info = new HitInfo();
                 info.damageType = player.metabolism.lastDamage;
@@ -288,7 +287,6 @@ namespace Pluton
         // BasePlayer.OnDisconnected()
         public static void PlayerDisconnected(BasePlayer player)
         {
-            // works
             var p = new Player(player);
 
             if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", p.SteamID)) {
@@ -309,7 +307,6 @@ namespace Pluton
         // BasePlayer.OnAttacked()
         public static void PlayerHurt(BasePlayer player, HitInfo info)
         {
-            // not tested
             var p = new Player(player);
 
             if (info == null) { // it should never accour, but just in case
@@ -347,7 +344,6 @@ namespace Pluton
         // BasePlayer.TakeDamage()
         public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType)
         {
-            // works?
             var ptd = new PlayerTakedmgEvent(new Player(player), dmgAmount, dmgType);
             OnPlayerTakeDamage.OnNext(ptd);
         }
@@ -367,7 +363,6 @@ namespace Pluton
         // BuildingBlock.OnAttacked()
         public static void EntityAttacked(BuildingBlock bb, HitInfo info)
         {
-            // works, event needed
             if (info.Initiator != null) {
                 Player p = new Player(info.Initiator as BasePlayer);
                 PlayerStats stats = new PlayerStats(p.SteamID);
@@ -393,7 +388,7 @@ namespace Pluton
         // BuildingBlock.BecomeFrame()
         public static void EntityFrameDeployed(BuildingBlock bb)
         {
-            // blockDefinition is null in this hook, but works
+            // blockDefinition is null in this hook
 
             var bp = new BuildingPart(bb);
             OnBuildingFrameDeployed.OnNext(bp);
@@ -410,7 +405,6 @@ namespace Pluton
         public static void EntityBuildingUpdate(BuildingBlock bb, HitInfo info)
         {
             // hammer prof = 1
-            // works
             // called anytime you hit a building block with a constructor item (hammer)
             BasePlayer player = info.Initiator as BasePlayer;
             float proficiency = info.resourceGatherProficiency;
@@ -424,15 +418,12 @@ namespace Pluton
         // BaseCorpse.InitCorpse()
         public static void CorpseInit(BaseCorpse corpse, BaseEntity parent)
         {
-            // works
             OnCorpseDropped.OnNext(new CorpseInitEvent(corpse, parent));
         }
 
         // BaseCorpse.OnAttacked()
         public static void CorpseHit(BaseCorpse corpse, HitInfo info)
         {
-            // works
-
             CorpseHurtEvent che = new CorpseHurtEvent(corpse, info);
             OnCorpseAttacked.OnNext(che);
         }
@@ -440,8 +431,6 @@ namespace Pluton
         // PlayerLoot.StartLootingEntity()
         public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity)
         {
-            // not tested, what is a lootable entity anyway?
-
             var ele = new Events.EntityLootEvent(playerLoot, new Player(looter), new Entity(entity));
 
             OnLootingEntity.OnNext(ele);
@@ -460,8 +449,6 @@ namespace Pluton
         // PlayerLoot.StartLootingItem()
         public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item)
         {
-            // works, event needed
-
             var ile = new Events.ItemLootEvent(playerLoot, new Player(looter), item);
 
             OnLootingItem.OnNext(ile);
