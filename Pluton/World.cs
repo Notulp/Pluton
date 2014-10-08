@@ -42,6 +42,16 @@ namespace Pluton
         {
             return GetGround(v3.x, v3.z);
         }
+        
+        public void Spawn(string prefab, float x, float z) {
+            Spawn(prefab, x, GetGround(x, z), z);    
+        }
+        
+        public void Spawn(string prefab, float x, float y, float z) {
+                GameManager.CreateEntity("events/" + prefab, 
+                new UnityEngine.Vector3(x, y, z), 
+                new UnityEngine.Quaternion()).Spawn(true);
+        }
 
         public static World GetWorld()
         {
