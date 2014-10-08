@@ -127,6 +127,7 @@ namespace Pluton
             basePlayer.UpdateNetworkGroup();
             basePlayer.UpdatePlayerCollider(true, false);
             basePlayer.SendFullSnapshot();
+            basePlayer.inventory.SendSnapshot();
         }
 
         public bool Admin {
