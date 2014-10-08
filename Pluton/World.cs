@@ -10,7 +10,10 @@ namespace Pluton
 
         public void AirDrop()
         {
-            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", new Vector3(), new Quaternion());
+            // TODO: check to see if there is water or a building
+            System.Random rand = new System.Random();
+            Vector3 v3 = new Vector3(rand.Next(-1600, 1600), 0f, rand.Next(-1600, 1600));
+            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", v3, new Quaternion());
             if (!(bool)((UnityEngine.Object)entity))
                 return;
             entity.Spawn(true);
