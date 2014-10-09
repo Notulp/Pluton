@@ -115,7 +115,7 @@ namespace Pluton
                     return;
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "ShowLocation")) {
-                    player.Message(player.Location.ToString ());
+                    player.Message(player.Location.ToString());
                     return;
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "ShowOnlinePlayers")) {
