@@ -49,6 +49,7 @@ namespace Pluton
                 RegisterCommand(GetPlutonCommand("Help"), GetPlutonCommand("Help"), "Shows the basic help message(s).");
                 RegisterCommand(GetPlutonCommand("Commands"), GetPlutonCommand("Commands"), "Shows the list of commands.");
             }
+            PluginLoader.LoadCommands();
         }
 
         public string GetPlutonCommand(string c)
