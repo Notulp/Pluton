@@ -96,12 +96,12 @@ namespace Pluton
 
         public void GroundTeleport(float x, float y, float z)
         {
-            Teleport(x, World.GetWorld().GetGround(x, z) + 2, z);
+            Teleport(x, World.GetWorld().GetGround(x, z), z);
         }
         
         public void GroundTeleport(Vector3 v3)
         {
-            Teleport(v3.x, World.GetWorld().GetGround(v3.x, v3.z) + 2, v3.z);
+            Teleport(v3.x, World.GetWorld().GetGround(v3.x, v3.z), v3.z);
         }
 
         public void Teleport(Vector3 v3)
