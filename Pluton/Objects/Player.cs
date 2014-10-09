@@ -94,22 +94,14 @@ namespace Pluton
             basePlayer.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(from) + " " + StringExtensions.QuoteSafe(msg));
         }
 
-        public void SafeTeleport(Vector3 v3)
+        public void GroundTeleport(float x, float y, float z)
         {
-            SafeTeleport(v3.x, v3.y, v3.z);
+            Teleport(x, World.GetWorld().GetGround(x, z) + 2, z);
         }
-
-        public void SafeTeleport(float x, float y, float z)
+        
+        public void GroundTeleport(Vector3 v3)
         {
-            throw new NotImplementedException("SafeTeleport is not yet implemented.");
-            basePlayer.supressSnapshots = true;
-            basePlayer.transform.position = UnityEngine.Vector3.zero;
-            basePlayer.UpdateNetworkGroup();
-
-            basePlayer.transform.position = new UnityEngine.Vector3(x, y, z);
-            basePlayer.UpdateNetworkGroup();
-            basePlayer.UpdatePlayerCollider(true, false);
-            basePlayer.SendFullSnapshot();
+            Teleport(v3.x, World.GetWorld().GetGround(v3.x, v3.z) + 2, v3.z);
         }
 
         public void Teleport(Vector3 v3)
