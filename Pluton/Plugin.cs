@@ -400,6 +400,11 @@
             this.Invoke("On_Respawn", re);
         }
 
+        public IDisposable OnLoadCommandsHook;
+        public void OnLoadCommands(string s) {
+            this.Invoke("On_LoadingCommands");
+        }
+
         // timer hooks
 
         public void OnTimerCB(string name)

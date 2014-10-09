@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Reactive.Subjects;
     using System.Reflection;
 
     public class PluginLoader
@@ -14,6 +15,13 @@
 
         private DirectoryInfo pluginDirectory;
         private static PluginLoader instance;
+
+        private static Subject<string> OnLoadCommands = new Subject<string>();
+
+        public static void LoadCommands()
+        {
+            OnLoadCommands.OnNext("");
+        }
 
         public void Init()
         {
@@ -246,6 +254,9 @@
                 case "On_Respawn":
                     plugin.OnRespawnHook = Hooks.OnRespawn.Subscribe(r => plugin.OnRespawn(r));
                     break;
+                case "On_LoadingCommands":
+                    plugin.OnLoadCommandsHook = OnLoadCommands.Subscribe(n => plugin.OnLoadCommands(n));
+                    break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
@@ -332,6 +343,9 @@
                     break;
                 case "On_Respawn":
                     plugin.OnRespawnHook.Dispose();
+                    break;
+                case "On_LoadingCommands":
+                    plugin.OnLoadCommandsHook.Dispose();
                     break;
                 }
             }

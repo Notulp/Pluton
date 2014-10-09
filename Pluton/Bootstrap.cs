@@ -62,6 +62,7 @@ namespace Pluton
             Logger.Init();
             Server.GetServer();
             PluginLoader.GetInstance().Init();
+            PluginCommands.GetInstance().Init();
             ReloadTimers();
 
             server.official = false;

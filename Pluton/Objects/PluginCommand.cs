@@ -27,13 +27,41 @@ namespace Pluton
 
     public class PluginCommands
     {
-        public static PluginCommands instance;
+        private static PluginCommands instance;
 
         public static Dictionary<int, PluginCommand> Commands = new Dictionary<int, PluginCommand>();
 
         public static PluginCommands GetInstance()
         {
-            return (PluginCommands)instance;
+            if (instance == null)
+                new PluginCommands();
+            return instance;
+        }
+
+        public void Init()
+        {
+            Commands.Clear();
+            if (Config.GetBoolValue("Commands", "enabled")) {
+                RegisterCommand(GetPlutonCommand("ShowMyStats"), GetPlutonCommand("ShowMyStats"), "Shows your stat.");
+                RegisterCommand(GetPlutonCommand("ShowStatsOther"), GetPlutonCommand("ShowStatsOther") + " \"<playername>\"", "Shows another player's stat.");
+                RegisterCommand(GetPlutonCommand("ShowLocation"), GetPlutonCommand("ShowLocation"), "Shows where you are.");
+                RegisterCommand(GetPlutonCommand("ShowOnlinePlayers"), GetPlutonCommand("ShowOnlinePlayers"), "Shows how many ppl are online.");
+                RegisterCommand(GetPlutonCommand("Help"), GetPlutonCommand("Help"), "Shows the basic help message(s).");
+                RegisterCommand(GetPlutonCommand("Commands"), GetPlutonCommand("Commands"), "Shows the list of commands.");
+            }
+        }
+
+        public string GetPlutonCommand(string c)
+        {
+            if (String.IsNullOrEmpty(c))
+                return "";
+
+            string c2 = Config.GetValue("Commands", c);
+
+            if (c2 == null)
+                return "";
+
+            return c2;
         }
 
         public void RegisterCommand(string command, string usage, string description)
