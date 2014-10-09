@@ -107,8 +107,8 @@ namespace Pluton
                     Player pOther = Player.Find(String.Join(" ", cmd.args));
                     if (pOther != null) {
                         PlayerStats stats2 = pOther.Stats;
-                        player.Message(String.Format("You have {0} kills and {1} deaths!", stats2.Kills, stats2.Deaths));
-                        player.Message(String.Format("You have taken {0} dmg, and caused {1} in total!", stats2.TotalDamageTaken, stats2.TotalDamageDone));
+                        player.Message(String.Format(pOther.Name + " has {0} kills and {1} deaths!", stats2.Kills, stats2.Deaths));
+                        player.Message(String.Format(pOther.Name + " has taken {0} dmg, and caused {1} in total!", stats2.TotalDamageTaken, stats2.TotalDamageDone));
                         return;
                     }
                     player.Message("Can't find player: " + String.Join(" ", cmd.args));
