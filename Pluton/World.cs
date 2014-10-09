@@ -35,7 +35,7 @@ namespace Pluton
             if (Physics.Raycast(origin, Vector3.down, out hit, 8000, Physics.AllLayers)) {
                 ground = hit.point.y;
             }
-            return ground;
+            return ground + 2; // increase by 2, as prefabs/players will die without it.
         }
 
         public float GetGround(Vector3 v3)
