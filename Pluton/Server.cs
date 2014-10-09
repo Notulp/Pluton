@@ -107,6 +107,11 @@
             }
         }
 
+        public bool SendCommand(string command, bool wantsReply = true)
+        {
+            return ConsoleSystem.Run(command, wantsReply);
+        }
+
         public void OnShutdown()
         {
             foreach (Player player in Players.Values) {
