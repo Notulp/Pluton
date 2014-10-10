@@ -22,6 +22,12 @@ namespace Pluton.Events
                 return _info.damageType;
             }
         }
+
+        public BaseEntity Attacker {
+            get {
+                return _info.Initiator;
+            }
+        }
     }
 }
 
