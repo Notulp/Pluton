@@ -27,6 +27,7 @@
         public readonly ScriptScope Scope;
         public readonly IList<string> Globals;
         public readonly Dictionary<string, TimedEvent> Timers;
+        public readonly List<TimedEvent> ParallelTimers;
         public static string LibPath;
 
         public enum PluginType { Python, JS }
@@ -38,6 +39,7 @@
             RootDir = path;
             Type = type;
             Timers = new Dictionary<string, TimedEvent>();
+            ParallelTimers = new List<TimedEvent>();
 
             if (type == PluginType.Python) {
                 PyEngine = IronPython.Hosting.Python.CreateEngine();
@@ -405,19 +407,10 @@
             this.Invoke("On_LoadingCommands");
         }
 
-        // timer hooks
-
-        public void OnTimerCB(string name)
+        public void OnTimerCB(TimedEvent evt)
         {
-            if (Globals.Contains(name + "Callback")) {
-                Invoke(name + "Callback", new object[0]);
-            }
-        }
-
-        public void OnTimerCBArgs(string name, Dictionary<string, object> args)
-        {
-            if (Globals.Contains(name + "Callback")) {
-                Invoke(name + "Callback", args);
+            if (Globals.Contains(evt.Name + "Callback")) {
+                Invoke(evt.Name + "Callback", evt);
             }
         }
 
@@ -442,7 +435,7 @@
             if (timedEvent == null) {
                 timedEvent = new TimedEvent(name, (double)timeoutDelay);
                 timedEvent.Args = args;
-                timedEvent.OnFireArgs += new TimedEvent.TimedEventFireArgsDelegate(OnTimerCBArgs);
+                timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(OnTimerCB);
                 Timers.Add(name, timedEvent);
             }
             return timedEvent;
@@ -465,24 +458,55 @@
             if (timer != null)
                 return;
 
-            timer.Stop();
+            timer.Kill();
             Timers.Remove(name);
         }
 
         public void KillTimers()
         {
             foreach (TimedEvent current in Timers.Values) {
-                current.Stop();
+                current.Kill();
+            }
+            foreach (TimedEvent timer in ParallelTimers) {
+                timer.Kill();
             }
             Timers.Clear();
+            ParallelTimers.Clear();
         }
 
         #endregion
 
-        // temporarly, for my laziness
-        public Dictionary<string, object> CreateDict()
+        #region ParalellTimers
+
+        public TimedEvent CreateParallelTimer(string name, int timeoutDelay, Dictionary<string, object> args)
         {
-            return new Dictionary<string, object>();
+            TimedEvent timedEvent = new TimedEvent(name, (double)timeoutDelay);
+            timedEvent.Args = args;
+            timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(OnTimerCB);
+            ParallelTimers.Add(timedEvent);
+            return timedEvent;
+        }
+
+        public List<TimedEvent> GetParallelTimer(string name)
+        {
+            return (from timer in ParallelTimers
+                    where timer.Name == name
+                    select timer).ToList();
+        }
+
+        public void KillParallelTimer(string name)
+        {
+            foreach (TimedEvent timer in GetParallelTimer(name)) {
+                timer.Kill();
+                ParallelTimers.Remove(timer);
+            }
+        }
+
+        #endregion
+
+        public Dictionary<string, object> CreateDict(int cap = 10)
+        {
+            return new Dictionary<string, object>(cap);
         }
     }
 }
