@@ -75,7 +75,11 @@ namespace Pluton
                 new UnityEngine.Vector3(x, y, z), 
                 new UnityEngine.Quaternion()).SpawnAsMapEntity();
         }
-            
+
+        public void SetTime(float hour) {
+            TOD_Sky.Instance.Cycle.Hour = hour;
+        }
+
         public static World GetWorld()
         {
             if (instance == null)
