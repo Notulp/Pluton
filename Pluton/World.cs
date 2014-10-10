@@ -30,6 +30,14 @@ namespace Pluton
         {
             return GetGround(v3.x, v3.z);
         }
+
+        public void SpawnMapEntity(string evt, float x, float z) {
+            SpawnMapEntity(evt, x, GetGround(x, z), z);    
+        }
+
+        public void SpawnMapEntity(string evt, Vector3 loc) {
+            SpawnMapEntity(evt, loc.x, loc.x, loc.z);    
+        }
         
         public void SpawnAnimal(string name, float x, float z) {
             SpawnAnimal(name, x, GetGround(x, z), z);    
@@ -37,6 +45,21 @@ namespace Pluton
 
         public void SpawnAnimal(string name, Vector3 loc) {
             SpawnAnimal(name, loc.x, loc.x, loc.z);    
+        }
+            
+        public void SpawnEvent(string evt, float x, float z) {
+            SpawnEvent(evt, x, GetGround(x, z), z);    
+        }
+
+        public void SpawnEvent(string evt, Vector3 loc) {
+            SpawnEvent(evt, loc.x, loc.x, loc.z);    
+        }
+
+        // like an airdrop
+        public void SpawnEvent(string evt, float x, float y, float z) {
+            GameManager.CreateEntity("events/" + evt, 
+                new UnityEngine.Vector3(x, y, z), 
+                new UnityEngine.Quaternion()).Spawn(true);
         }
 
         //Animals: boar, bear, stag, wolf
@@ -46,21 +69,13 @@ namespace Pluton
                 new UnityEngine.Quaternion()).Spawn(true);
         }
 
-        public void SpawnEvent(string evt, float x, float z) {
-            SpawnEvent(evt, x, GetGround(x, z), z);    
-        }
-
-        public void SpawnEvent(string evt, Vector3 loc) {
-            SpawnEvent(evt, loc.x, loc.x, loc.z);    
-        }
-
-        public void SpawnEvent(string evt, float x, float y, float z) {
-            GameManager.CreateEntity("events/" + evt, 
+        //map entities, like a resource node, a tree of even a structure
+        public void SpawnMapEntity(string name, float x, float y, float z) {
+            GameManager.CreateEntity(name, 
                 new UnityEngine.Vector3(x, y, z), 
-                new UnityEngine.Quaternion()).Spawn(true);
+                new UnityEngine.Quaternion()).SpawnAsMapEntity();
         }
             
-
         public static World GetWorld()
         {
             if (instance == null)
@@ -68,14 +83,13 @@ namespace Pluton
             return instance;
         }
 
+        System.Collections.ArrayList list = new System.Collections.ArrayList();
         public void PrintPrefabs() {
-            System.Collections.ArrayList list = new System.Collections.ArrayList();
-            
-             BaseEntity[] objectsOfType = UnityEngine.Object.FindObjectsOfType<BaseEntity>();
-            foreach (BaseEntity baseEntity in objectsOfType) {
+            BaseEntity[] objectsOfType = UnityEngine.Object.FindObjectsOfType<BaseEntity>();
+            foreach (BaseEntity baseEntity in objectsOfType)
                 if (!list.Contains(baseEntity.sourcePrefab))
                     list.Add(baseEntity.sourcePrefab);
-            }
+            
             foreach (var s in list)
                 Debug.Log(s);
         }
