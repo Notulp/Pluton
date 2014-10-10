@@ -31,21 +31,53 @@ namespace Pluton
             return GetGround(v3.x, v3.z);
         }
         
-        public void Spawn(string prefab, float x, float z) {
-            Spawn(prefab, x, GetGround(x, z), z);    
+        public void SpawnAnimal(string name, float x, float z) {
+            SpawnAnimal(name, x, GetGround(x, z), z);    
         }
-        
-        public void Spawn(string prefab, float x, float y, float z) {
-                GameManager.CreateEntity("events/" + prefab, 
+
+        public void SpawnAnimal(string name, Vector3 loc) {
+            SpawnAnimal(name, loc.x, loc.x, loc.z);    
+        }
+
+        //Animals: boar, bear, stag, wolf
+        public void SpawnAnimal(string name, float x, float y, float z) {
+            GameManager.CreateEntity("autospawn/animals/" + name, 
                 new UnityEngine.Vector3(x, y, z), 
                 new UnityEngine.Quaternion()).Spawn(true);
         }
+
+        public void SpawnEvent(string evt, float x, float z) {
+            SpawnEvent(evt, x, GetGround(x, z), z);    
+        }
+
+        public void SpawnEvent(string evt, Vector3 loc) {
+            SpawnEvent(evt, loc.x, loc.x, loc.z);    
+        }
+
+        public void SpawnEvent(string evt, float x, float y, float z) {
+            GameManager.CreateEntity("events/" + evt, 
+                new UnityEngine.Vector3(x, y, z), 
+                new UnityEngine.Quaternion()).Spawn(true);
+        }
+            
 
         public static World GetWorld()
         {
             if (instance == null)
                 instance = new World();
             return instance;
+        }
+
+        public void PrintPrefabs() {
+            System.Collections.ArrayList list = new System.Collections.ArrayList();
+            
+             BaseEntity[] objectsOfType = UnityEngine.Object.FindObjectsOfType<BaseEntity>();
+            foreach (BaseEntity baseEntity in objectsOfType) {
+                if (!list.Contains(baseEntity.sourcePrefab))
+                    list.Add(baseEntity.sourcePrefab);
+            }
+            foreach (var s in list)
+                Debug.Log(s);
         }
     }
 }
