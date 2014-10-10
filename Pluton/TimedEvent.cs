@@ -10,7 +10,6 @@
     {
 
         private Dictionary<string, object> _args;
-        private readonly TimedEvent thisTimer;
         private readonly string _name;
         private readonly System.Timers.Timer _timer;
         private long lastTick;
@@ -22,7 +21,6 @@
 
         public TimedEvent(string name, double interval)
         {
-            this.thisTimer = this;
             this._name = name;
             this._timer = new System.Timers.Timer();
             this._timer.Interval = interval;
