@@ -68,20 +68,23 @@ namespace Pluton
             server.official = false;
 
             if (!server.hostname.ToLower().Contains("pluton"))
-                server.hostname = String.Format("{0} [Pluton v.{1}]", server.hostname, Version);
+                server.hostname = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
         }
 
         public class ServerTimers
         {
             public readonly Timer _savetimer;
             public readonly Timer _adstimer;
+            public readonly Timer _adstimer2;
 
             public ServerTimers(double save, double ads)
             {
                 _savetimer = new Timer(save);
                 _adstimer = new Timer(ads);
+                _adstimer = new Timer(10000);
                 _savetimer.Elapsed += new ElapsedEventHandler(this._savetimer_Elapsed);
                 _adstimer.Elapsed += new ElapsedEventHandler(this._adstimer_Elapsed);
+                _adstimer2.Elapsed += new ElapsedEventHandler(this._adstimer2_Elapsed);
             }
 
             public void Dispose()
@@ -89,18 +92,21 @@ namespace Pluton
                 Stop();
                 _savetimer.Dispose();
                 _adstimer.Dispose();
+                _adstimer2.Dispose();
             }
 
             public void Start()
             {
                 _savetimer.Start();
                 _adstimer.Start();
+                _adstimer2.Start();
             }
 
             public void Stop()
             {
                 _savetimer.Stop();
                 _adstimer.Stop();
+                _adstimer2.Start();
             }
 
             private void _adstimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -111,6 +117,12 @@ namespace Pluton
             private void _savetimer_Elapsed(object sender, ElapsedEventArgs e)
             {
                 Bootstrap.SaveAll();
+            }
+
+            private void _adstimer2_Elapsed(object sender, ElapsedEventArgs e)
+            {
+                if (!server.hostname.ToLower().Contains("pluton"))
+                    server.hostname = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
             }
         }
     }
