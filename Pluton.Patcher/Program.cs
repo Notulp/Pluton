@@ -15,8 +15,9 @@ namespace Pluton.Patcher
         private static TypeDefinition bPlayer;
         private static TypeDefinition bCorpse;
         private static TypeDefinition bBlock;
+        private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.2";
+        private static string version = "1.0.0.3";
 
         private static void BootstrapAttachPatch()
         {
@@ -102,6 +103,18 @@ namespace Pluton.Patcher
             npchurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
             npchurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(npcHurt)));
             npchurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
+        private static void CraftingTimePatch()
+        {
+            MethodDefinition ctInit = itemCrafter.GetMethod("Init");
+            MethodDefinition craftTime = hooksClass.GetMethod("CraftingTime");
+
+            CloneMethod(ctInit);
+            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
+
+            iLProcessor.InsertBefore(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftTime)));
         }
 
         private static void PlayerConnectedPatch()
@@ -405,6 +418,8 @@ namespace Pluton.Patcher
             BuildingBlockAttackedPatch();
             BuildingBlockUpdatePatch();
             BuildingBlockBuiltPatch();
+
+            CraftingTimePatch();
         }
 
         /*
@@ -449,6 +464,7 @@ namespace Pluton.Patcher
             bCorpse = rustAssembly.MainModule.GetType("BaseCorpse");
             bBlock = rustAssembly.MainModule.GetType("BuildingBlock");
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
+            itemCrafter = rustAssembly.MainModule.GetType("ItemBlueprint");
 
             //Try to Patch, return if fails
             try {

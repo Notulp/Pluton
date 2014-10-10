@@ -17,6 +17,8 @@
         private static Pluton.Server server;
         public static string server_message_name = "Pluton";
         public Util util = new Util();
+        private float craftTimeScale = 1f;
+        public List<ItemBlueprint> blueprints = new List<ItemBlueprint>();
 
         public void Broadcast(string arg)
         {
@@ -54,22 +56,29 @@
                 server.serverData.Load();
                 server.LoadOfflinePlayers();
                 server.LoadLoadouts();
+                server.ReloadBlueprints();
             }
             return server;
         }
-        /*
-		public System.Collections.Generic.List<string> ChatHistoryMessages {
-			get {
-				return Pluton.Data.GetData().chat_history;
-			}
-		}
 
-		public System.Collections.Generic.List<string> ChatHistoryUsers {
-			get {
-				return Pluton.Data.GetData().chat_history_username;
-			}
-		}*/
+        public float CraftingTimeScale {
+            get {
+                return craftTimeScale;
+            }
+            set {
+                Hooks.blueprintsLoaded = true; // used so reloading blueprints won't re-hook in an infinite loop!
+                craftTimeScale = value;
+                ReloadBlueprints();
+            }
+        }
 
+        public void ReloadBlueprints() {
+            foreach (ItemBlueprint p in blueprints) {
+                p.ingredients.Clear();
+                p.Init();
+                p.time = p.time / CraftingTimeScale;
+            }
+        }
         public void LoadLoadouts()
         {
             string path = Util.GetLoadoutFolder();

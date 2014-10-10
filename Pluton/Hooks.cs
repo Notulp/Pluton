@@ -85,6 +85,12 @@ namespace Pluton
             Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
         }
 
+        public static bool blueprintsLoaded = false;
+        public static void CraftingTime(ItemBlueprint ibp) {
+            if (!blueprintsLoaded)
+                Server.GetServer().blueprints.Add(ibp);
+        }
+
         // chat.say().Hooks.Chat()
         public static void Command(ConsoleSystem.Arg arg)
         {
@@ -223,6 +229,7 @@ namespace Pluton
         // BaseAnimal.Die()
         public static void NPCDied(BaseAnimal animal, HitInfo info)
         {
+           
             if (info.Initiator != null) {
                 Player p = new Player(info.Initiator as BasePlayer);
                 PlayerStats stats = new PlayerStats(p.SteamID);
