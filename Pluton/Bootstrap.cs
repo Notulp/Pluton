@@ -74,18 +74,22 @@ namespace Pluton
             nameChangeTimer = new Timer(60000);
             nameChangeTimer.Elapsed += new ElapsedEventHandler(nameChangeTimer_Elapsed);
             nameChangeTimer.Start();
-
-            if (!server.hostname.StartsWith("[Pluton v"))
-                server.hostname = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
         }
 
         private static void nameChangeTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            /*
+             *  PLEASE READ: This is only temporary until a 1.0 release version.
+             * 
+             *  It helps Pluton by getting the name out there, which in return
+             *  should bring in more plugin developers and users to pluton community.
+             *  
+             *  The below code will add [Pluton v0.9.x] to the start of your server name
+             *  We would really appreciate you not changing this temporary addition.
+             * */
             string start = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
             if (!server.hostname.StartsWith("[Pluton v")) {
-                Console.WriteLine("setting");
                 server.hostname = start;
-                Console.WriteLine("set: " + server.hostname);
             }
         }
 
