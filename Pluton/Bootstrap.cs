@@ -66,6 +66,7 @@ namespace Pluton
                 Directory.CreateDirectory(Util.GetPublicFolder());
 
             Logger.Init();
+            DataStore.GetInstance().Load();
             Server.GetServer();
             PluginLoader.GetInstance().Init();
             PluginCommands.GetInstance().Init();

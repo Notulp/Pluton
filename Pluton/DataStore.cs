@@ -197,15 +197,19 @@
 
         public void Load()
         {
-            if (File.Exists(PATH)) {
+            if (File.Exists(this.PATH)) {
                 try {
-                    Hashtable hashtable = Util.HashtableFromFile(PATH);
+                    Hashtable hashtable = Util.HashtableFromFile(this.PATH);
 
                     this.datastore.Clear();
-                    foreach (DictionaryEntry entry in hashtable)
+                    int count = 0;
+                    foreach (DictionaryEntry entry in hashtable) {
                         this.datastore[entry.Key] = entry.Value;
+                        count += (entry.Value as Hashtable).Count;
+                    }
 
-                    Debug.Log("DataStore Loaded from " + PATH);
+                    Debug.Log("DataStore Loaded from " + this.PATH);
+                    Debug.Log(String.Format("Tables: {0}! Keys: {1}", datastore.Count, count));
                 } catch (Exception ex) {
                     Logger.LogException(ex);
                 }
@@ -226,8 +230,8 @@
         public void Save()
         {
             if (this.datastore.Count != 0) {
-                Util.HashtableToFile(this.datastore, PATH);
-                Debug.Log("DataStore saved to " + PATH);
+                Util.HashtableToFile(this.datastore, this.PATH);
+                Debug.Log("DataStore saved to " + this.PATH);
             }
         }
 
@@ -248,7 +252,8 @@
         {
             path = RemoveChars(path);
             datastore = new Hashtable();
-            PATH = Path.Combine(Util.GetPublicFolder(), path);
+            this.PATH = Path.Combine(Util.GetPublicFolder(), path);
+            Debug.Log("New DataStore instance: " + this.PATH);
         }
     }
 }
