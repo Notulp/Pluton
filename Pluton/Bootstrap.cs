@@ -11,6 +11,8 @@ namespace Pluton
         public static string Version = "0.9.4";
 
         public static ServerTimers timers;
+        public static Timer nameChangeTimer;
+
 
         public static void AttachBootstrap()
         {
@@ -18,7 +20,7 @@ namespace Pluton
                 Config.Init();
                 if (!pluton.enabled)
                 {
-                    Debug.Log("[Bootstrap] Pluton is disabled!");
+                    Debug.Log("[Bootstrap] Pluton is disabled\t!");
                     return;
                 }
 
@@ -47,44 +49,59 @@ namespace Pluton
             if (timers != null)
                 timers.Dispose();
 
-            double save = Double.Parse(Config.GetValue("Config", "saveInterval"));
-            double ads = Double.Parse(Config.GetValue("Config", "broadcastInterval"));
+            var saver = Config.GetValue("Config", "saveInterval");
+            var broadcast = Config.GetValue("Config", "broadcastInterval");
+            if(saver != null && broadcast != null) {
+                double save = Double.Parse(saver);
+                double ads = Double.Parse(Config.GetValue("Config", "broadcastInterval"));
 
-            timers = new ServerTimers(save, ads);
-            timers.Start();
+                timers = new ServerTimers(save, ads);
+                timers.Start();
+            }
         }
 
         public static void Init()
         {
             if (!Directory.Exists(Util.GetPublicFolder()))
                 Directory.CreateDirectory(Util.GetPublicFolder());
-            
+
             Logger.Init();
             Server.GetServer();
             PluginLoader.GetInstance().Init();
             PluginCommands.GetInstance().Init();
             ReloadTimers();
-
             server.official = false;
+            nameChangeTimer = new Timer(60000);
+            nameChangeTimer.Elapsed += new ElapsedEventHandler(nameChangeTimer_Elapsed);
+            nameChangeTimer.Start();
 
-            if (!server.hostname.ToLower().Contains("pluton"))
+            if (!server.hostname.StartsWith("[Pluton v"))
                 server.hostname = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
+        }
+
+        private static void nameChangeTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            string start = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
+            if (!server.hostname.StartsWith("[Pluton v")) {
+                Console.WriteLine("setting");
+                server.hostname = start;
+                Console.WriteLine("set: " + server.hostname);
+            }
         }
 
         public class ServerTimers
         {
             public readonly Timer _savetimer;
             public readonly Timer _adstimer;
-            public readonly Timer _adstimer2;
 
             public ServerTimers(double save, double ads)
             {
                 _savetimer = new Timer(save);
                 _adstimer = new Timer(ads);
-                _adstimer = new Timer(10000);
+               
+                Debug.Log("Server timers started!");
                 _savetimer.Elapsed += new ElapsedEventHandler(this._savetimer_Elapsed);
                 _adstimer.Elapsed += new ElapsedEventHandler(this._adstimer_Elapsed);
-                _adstimer2.Elapsed += new ElapsedEventHandler(this._adstimer2_Elapsed);
             }
 
             public void Dispose()
@@ -92,21 +109,18 @@ namespace Pluton
                 Stop();
                 _savetimer.Dispose();
                 _adstimer.Dispose();
-                _adstimer2.Dispose();
             }
 
             public void Start()
             {
                 _savetimer.Start();
                 _adstimer.Start();
-                _adstimer2.Start();
             }
 
             public void Stop()
             {
                 _savetimer.Stop();
                 _adstimer.Stop();
-                _adstimer2.Start();
             }
 
             private void _adstimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -118,12 +132,7 @@ namespace Pluton
             {
                 Bootstrap.SaveAll();
             }
-
-            private void _adstimer2_Elapsed(object sender, ElapsedEventArgs e)
-            {
-                if (!server.hostname.ToLower().Contains("pluton"))
-                    server.hostname = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
-            }
+                
         }
     }
 }
