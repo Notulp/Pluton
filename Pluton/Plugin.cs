@@ -49,6 +49,7 @@
                 Scope.SetVariable("DataStore", DataStore.GetInstance());
                 Scope.SetVariable("Util", Util.GetUtil());
                 Scope.SetVariable("World", World.GetWorld());
+                Scope.SetVariable("Web", new Web());
                 Scope.SetVariable("Commands", PluginCommands.GetInstance());
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
@@ -60,6 +61,7 @@
                     .SetValue("DataStore", DataStore.GetInstance())
                     .SetValue("Util", Util.GetUtil())
                     .SetValue("World", World.GetWorld())
+                    .SetValue("Web", new Web())
                     .SetValue("Plugin", this)
                     .SetValue("Commands", PluginCommands.GetInstance())
                     .Execute(code);
