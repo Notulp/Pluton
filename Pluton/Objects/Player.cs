@@ -46,6 +46,7 @@ namespace Pluton
         {
             ServerUsers.Set(GameID, ServerUsers.UserGroup.Banned, Name, reason);
             ServerUsers.Save();
+            Kick("Banned!");
         }
 
         public void Kick(string reason = "no reason")
@@ -69,18 +70,21 @@ namespace Pluton
         public void MakeNone(string reason = "no reason")
         {
             ServerUsers.Set(GameID, ServerUsers.UserGroup.None, Name, reason);
+            basePlayer.net.connection.authLevel = 0;
             ServerUsers.Save();
         }
 
         public void MakeModerator(string reason = "no reason")
         {
             ServerUsers.Set(GameID, ServerUsers.UserGroup.Moderator, Name, reason);
+            basePlayer.net.connection.authLevel = 1;
             ServerUsers.Save();
         }
 
         public void MakeOwner(string reason = "no reason")
         {
             ServerUsers.Set(GameID, ServerUsers.UserGroup.Owner, Name, reason);
+            basePlayer.net.connection.authLevel = 2;
             ServerUsers.Save();
         }
 
