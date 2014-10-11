@@ -29,15 +29,15 @@ namespace Pluton
         public static void Init()
         {
             try {
-                logChat = Config.GetBoolValue("Logging", "chatInLog");
-                logDebug = Config.GetBoolValue("Logging", "debugInLog");
-                logErrors = Config.GetBoolValue("Logging", "errorInLog");
-                logException = Config.GetBoolValue("Logging", "exceptionInLog");
+                logChat = Config.GetBoolValue("Logging", "chatInLog", true);
+                logDebug = Config.GetBoolValue("Logging", "debugInLog", true);
+                logErrors = Config.GetBoolValue("Logging", "errorInLog", true);
+                logException = Config.GetBoolValue("Logging", "exceptionInLog", true);
 
-                showChat = Config.GetBoolValue("Logging", "chatInConsole");
-                showDebug = Config.GetBoolValue("Logging", "debugInConsole");
-                showErrors = Config.GetBoolValue("Logging", "errorInConsole");
-                showException = Config.GetBoolValue("Logging", "exceptionInConsole");
+                showChat = Config.GetBoolValue("Logging", "chatInConsole", true);
+                showDebug = Config.GetBoolValue("Logging", "debugInConsole", true);
+                showErrors = Config.GetBoolValue("Logging", "errorInConsole", true);
+                showException = Config.GetBoolValue("Logging", "exceptionInConsole", true);
             } catch (Exception ex) {
                 Debug.LogException(ex);
             }

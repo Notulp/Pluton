@@ -102,14 +102,14 @@ namespace Pluton
             if (cmd.cmd == "")
                 return;
 
-            if (Config.GetBoolValue("Commands", "enabled")) {
-                if (cmd.cmd == Config.GetValue("Commands", "ShowMyStats")) {
+            if (Config.GetBoolValue("Commands", "enabled", true)) {
+                if (cmd.cmd == Config.GetValue("Commands", "ShowMyStats", "mystats")) {
                     PlayerStats stats = player.Stats;
                     player.Message(String.Format("You have {0} kills and {1} deaths!", stats.Kills, stats.Deaths));
                     player.Message(String.Format("You have taken {0} dmg, and caused {1} in total!", stats.TotalDamageTaken, stats.TotalDamageDone));
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "ShowStatsOther")) {
+                if (cmd.cmd == Config.GetValue("Commands", "ShowStatsOther", "statsof")) {
                     Player pOther = Player.Find(String.Join(" ", cmd.args));
                     if (pOther != null) {
                         PlayerStats stats2 = pOther.Stats;
@@ -120,21 +120,21 @@ namespace Pluton
                     player.Message("Can't find player: " + String.Join(" ", cmd.args));
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "ShowLocation")) {
+                if (cmd.cmd == Config.GetValue("Commands", "ShowLocation", "whereami")) {
                     player.Message(player.Location.ToString());
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "ShowOnlinePlayers")) {
+                if (cmd.cmd == Config.GetValue("Commands", "ShowOnlinePlayers", "players")) {
                     string msg = Server.GetServer().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetServer().Players.Count) ;
                     player.Message(msg);
                     return;
                 }
-				if (cmd.cmd == Config.GetValue("Commands", "Help")) {
+				if (cmd.cmd == Config.GetValue("Commands", "Help", "help")) {
 					foreach (string key in Config.PlutonConfig.EnumSection("HelpMessage")) {
 						player.Message(Config.GetValue("HelpMessage", key));
 					}
 				}
-                if (cmd.cmd == Config.GetValue("Commands", "Commands")) {
+                if (cmd.cmd == Config.GetValue("Commands", "Commands", "commands")) {
                     player.Message(String.Join(", ", PluginCommands.GetInstance().getCommands().ToArray()));
                 }
                 // TODO: command description, usage

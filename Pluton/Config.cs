@@ -18,7 +18,7 @@ namespace Pluton
             if (File.Exists(ConfigPath)) {
                 PlutonConfig = new IniParser(ConfigPath);
                 Debug.Log("Config " + ConfigPath + " loaded!");
-                pluton.enabled = GetBoolValue("Config", "enabled");
+                pluton.enabled = GetBoolValue("Config", "enabled", true);
             } else {
                 Debug.Log("Config " + ConfigPath + " NOT loaded!");
                 Debug.Log("Disabling pluton!");
@@ -26,15 +26,14 @@ namespace Pluton
             }
         }
 
-        public static string GetValue(string Section, string Setting)
+        public static string GetValue(string Section, string Setting, string defaultValue = "")
         {
-            return PlutonConfig.GetSetting(Section, Setting);
+            return PlutonConfig.GetSetting(Section, Setting, defaultValue);
         }
 
-        public static bool GetBoolValue(string Section, string Setting)
+        public static bool GetBoolValue(string Section, string Setting, bool defaultValue = false)
         {
-            var val = PlutonConfig.GetSetting(Section, Setting);
-            return val != null && val.ToLower() == "true";
+            return PlutonConfig.GetBoolSetting(Section, Setting, defaultValue);
         }
     }
 }

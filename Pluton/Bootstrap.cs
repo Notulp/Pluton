@@ -49,11 +49,11 @@ namespace Pluton
             if (timers != null)
                 timers.Dispose();
 
-            var saver = Config.GetValue("Config", "saveInterval");
-            var broadcast = Config.GetValue("Config", "broadcastInterval");
+            var saver = Config.GetValue("Config", "saveInterval", "180000");
+            var broadcast = Config.GetValue("Config", "broadcastInterval", "600000");
             if(saver != null && broadcast != null) {
                 double save = Double.Parse(saver);
-                double ads = Double.Parse(Config.GetValue("Config", "broadcastInterval"));
+                double ads = Double.Parse(broadcast);
 
                 timers = new ServerTimers(save, ads);
                 timers.Start();

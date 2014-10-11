@@ -41,23 +41,23 @@ namespace Pluton
         public void Init()
         {
             Commands.Clear();
-            if (Config.GetBoolValue("Commands", "enabled")) {
-                RegisterCommand(GetPlutonCommand("ShowMyStats"), GetPlutonCommand("ShowMyStats"), "Shows your stat.");
-                RegisterCommand(GetPlutonCommand("ShowStatsOther"), GetPlutonCommand("ShowStatsOther") + " \"<playername>\"", "Shows another player's stat.");
-                RegisterCommand(GetPlutonCommand("ShowLocation"), GetPlutonCommand("ShowLocation"), "Shows where you are.");
-                RegisterCommand(GetPlutonCommand("ShowOnlinePlayers"), GetPlutonCommand("ShowOnlinePlayers"), "Shows how many ppl are online.");
-                RegisterCommand(GetPlutonCommand("Help"), GetPlutonCommand("Help"), "Shows the basic help message(s).");
-                RegisterCommand(GetPlutonCommand("Commands"), GetPlutonCommand("Commands"), "Shows the list of commands.");
+            if (Config.GetBoolValue("Commands", "enabled", true)) {
+                RegisterCommand(GetPlutonCommand("ShowMyStats", "mystats"), GetPlutonCommand("ShowMyStats", "mystats"), "Shows your stat.");
+                RegisterCommand(GetPlutonCommand("ShowStatsOther", "statsof"), GetPlutonCommand("ShowStatsOther", "statsof") + " \"<playername>\"", "Shows another player's stat.");
+                RegisterCommand(GetPlutonCommand("ShowLocation", "whereami"), GetPlutonCommand("ShowLocation", "whereami"), "Shows where you are.");
+                RegisterCommand(GetPlutonCommand("ShowOnlinePlayers", "players"), GetPlutonCommand("ShowOnlinePlayers", "players"), "Shows how many ppl are online.");
+                RegisterCommand(GetPlutonCommand("Help", "help"), GetPlutonCommand("Help", "help"), "Shows the basic help message(s).");
+                RegisterCommand(GetPlutonCommand("Commands", "commands"), GetPlutonCommand("Commands", "commands"), "Shows the list of commands.");
             }
             PluginLoader.LoadCommands();
         }
 
-        public string GetPlutonCommand(string c)
+        public string GetPlutonCommand(string c, string defaultValue)
         {
             if (String.IsNullOrEmpty(c))
                 return "";
 
-            string c2 = Config.GetValue("Commands", c);
+            string c2 = Config.GetValue("Commands", c, defaultValue);
 
             if (c2 == null)
                 return "";

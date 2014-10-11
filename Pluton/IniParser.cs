@@ -112,17 +112,22 @@ public class IniParser
         }
     }
 
-    public string GetSetting(string sectionName, string settingName)
+    public string GetSetting(string sectionName, string settingName, string defaultValue = "")
     {
         SectionPair pair;
         pair.Section = sectionName;
         pair.Key = settingName;
+        if(!this.keyPairs.ContainsKey(pair))
+            return defaultValue;
         return (string)this.keyPairs[pair];
     }
 
-    public bool GetBoolSetting(string sectionName, string settingName)
+    public bool GetBoolSetting(string sectionName, string settingName, bool defaultValue = false)
     {
-        return (GetSetting(sectionName, settingName).ToLower() == "true");
+        if(defaultValue)
+            return (GetSetting(sectionName, settingName).ToLower() != "false");
+        else
+            return (GetSetting(sectionName, settingName).ToLower() == "true");
     }
 
     public bool isCommandOn(string cmdName)
