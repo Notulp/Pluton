@@ -164,7 +164,7 @@
         public static DataStore GetInstance()
         {
             if (instance == null) {
-                instance = new DataStore("PlutonDatastore.ds");
+                instance = new DataStore("ServerData.ds");
             }
             return instance;
         }
