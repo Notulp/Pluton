@@ -166,12 +166,19 @@ namespace Pluton
                 frozenTime = Time;
                 freezeTimeTimer = new Timer(10000);
                 freezeTimeTimer.Elapsed += new ElapsedEventHandler(this.Freeze);
-                freezeTimeTimer.Start();
             }
+            freezeTimeTimer.Start();
         }
 
         private void Freeze(object sender, ElapsedEventArgs e)  {         
-            Time = frozenTime;
+            if (frozenTime != -1)
+                Time = frozenTime;
+            else
+                freezeTimeTimer.Stop();
+        }
+
+        public void UnFreezeTime() {
+            frozenTime = -1;
         }
 
         public static World GetWorld()
