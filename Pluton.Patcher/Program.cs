@@ -10,6 +10,7 @@ namespace Pluton.Patcher
 
         private static AssemblyDefinition plutonAssembly;
         private static AssemblyDefinition rustAssembly;
+        private static AssemblyDefinition facepunchAssembly;
         private static TypeDefinition hooksClass;
         private static TypeDefinition bAnimal;
         private static TypeDefinition bPlayer;
@@ -25,12 +26,7 @@ namespace Pluton.Patcher
             TypeDefinition plutonBootstrap = plutonAssembly.MainModule.GetType("Pluton.Bootstrap");
             TypeDefinition serverInit = rustAssembly.MainModule.GetType("Bootstrap");
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
-            MethodDefinition start = serverInit.GetMethod("Start");
-
-            // make sure it's not patched yet
-            if (start.Body.Instructions[0x05].ToString().Contains("Pluton.Bootstrap::AttachBootstrap")) {
-                throw new Exception("Assembly-CSharp is already patched!");
-            }
+            MethodDefinition start = serverInit.GetMethod("Start");           
 
             start.Body.GetILProcessor().InsertAfter(start.Body.Instructions[0x04], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
@@ -62,6 +58,22 @@ namespace Pluton.Patcher
             say.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
             say.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
             say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
+        private static void ConsoleCommandPatch()
+        {
+            TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
+            MethodDefinition onClientCmd = consoleSystem.GetMethod("OnClientCommand");
+            MethodDefinition onConsole = hooksClass.GetMethod("ConsoleCommand");
+
+            ILProcessor iLProcessor = onClientCmd.Body.GetILProcessor();
+
+            for (int i = 22; i >= 18; i--)
+                iLProcessor.Body.Instructions.RemoveAt(i);
+
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[17], Instruction.Create(OpCodes.Ldloc_2));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[18], Instruction.Create(OpCodes.Ldloc_1));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onConsole)));            
         }
 
         private static void GatherPatch()
@@ -419,7 +431,7 @@ namespace Pluton.Patcher
             return definition;
         }
 
-        private static void Patch()
+        private static void PatchASMCSharp()
         {
             BootstrapAttachPatch();
             ServerShutdownPatch();
@@ -459,6 +471,17 @@ namespace Pluton.Patcher
             ResourceGatherMultiplierPatch();
 
             CargoPlaneBehaviourPatch();
+
+            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
+            rustAssembly.MainModule.Types.Add(plutonClass);
+        }
+
+        private static void PatchFacepunch()
+        {
+            ConsoleCommandPatch();
+
+            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, facepunchAssembly.MainModule.Import(typeof(Object)));
+            facepunchAssembly.MainModule.Types.Add(plutonClass);
         }
 
         /*
@@ -479,6 +502,7 @@ namespace Pluton.Patcher
             try {
                 rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
                 plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
+                facepunchAssembly = AssemblyDefinition.ReadAssembly("Facepunch.dll");
             } catch (FileNotFoundException ex) {
                 Console.WriteLine("You are missing " + ex.FileName + " did you moved the patcher to the managed folder ?");
                 if (interactive) {
@@ -495,8 +519,7 @@ namespace Pluton.Patcher
                 }
                 return 20;
             }
-
-
+            
             hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
             bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
             bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
@@ -505,36 +528,58 @@ namespace Pluton.Patcher
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
             itemCrafter = rustAssembly.MainModule.GetType("ItemBlueprint");
 
-            //Try to Patch, return if fails
-            try {
-                Patch();
-            } catch (Exception ex) {
-                Console.WriteLine("An error occured while patching Assembly-CSharp :");
-                Console.WriteLine();
-                Console.WriteLine(ex.Message.ToString());
-
-                //Special case for some errors
-                if(ex.Message.ToString() == "Assembly-CSharp is already patched!") {
-                    if (interactive) {
-                        Console.WriteLine("Press any key to continue...");
-                        Console.ReadKey();
-                    }
-                    return 30;
+            //Check if patching is required
+            TypeDefinition plutonClass = rustAssembly.MainModule.GetType("Pluton");
+            if (plutonClass == null)
+            {
+                try
+                {
+                    PatchASMCSharp();
+                    Console.WriteLine("Patched Assembly-CSharp !");
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occured while patching Assembly-CSharp :");
+                    Console.WriteLine();
+                    Console.WriteLine(ex.Message.ToString());
 
-                //Normal handle for the others
-                Console.WriteLine();
-                Console.WriteLine(ex.StackTrace.ToString());
-
-                if (interactive) {
-                    Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
+                    //Normal handle for the others
+                    Console.WriteLine();
+                    Console.WriteLine(ex.StackTrace.ToString());
+                    Console.WriteLine();
                 }
-                return 40;
             }
+            else
+                Console.WriteLine("Assembly-CSharp is already patched!");               
+            
+
+            plutonClass = facepunchAssembly.MainModule.GetType("Pluton");
+            if (plutonClass == null)
+            {
+                try
+                {
+                    PatchFacepunch();
+                    Console.WriteLine("Patched Facepunch !");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occured while patching Facepunch :");
+                    Console.WriteLine();
+                    Console.WriteLine(ex.Message.ToString());
+
+                    //Normal handle for the others
+                    Console.WriteLine();
+                    Console.WriteLine(ex.StackTrace.ToString());
+                    Console.WriteLine();
+                }
+            }
+            else
+                Console.WriteLine("Facepunch is already patched!");
+                  
 
             try {
                 rustAssembly.Write("Assembly-CSharp.dll");
+                facepunchAssembly.Write("Facepunch.dll");
             } catch (Exception ex) {
                 Console.WriteLine("An error occured while writing the assembly :");
                 Console.WriteLine("Error at: " + ex.TargetSite.Name);
@@ -549,7 +594,7 @@ namespace Pluton.Patcher
             }
 
             //Successfully patched the server
-            Console.WriteLine("Successfully patched the dll");
+            Console.WriteLine("Completed !");
             if (interactive) {
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
