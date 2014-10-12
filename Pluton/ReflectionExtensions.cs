@@ -8,6 +8,7 @@ namespace Pluton
 {   
     public static class ReflectionExtensions
     {  
+        //Instanced
         public static void CallMethod(this object obj, string methodName, params object[] args)
         {
             var metInf = GetMethodInfo(obj, methodName);
@@ -38,14 +39,12 @@ namespace Pluton
             throw new Exception();
         }
 
-        public static object SetFieldValue(this object obj, string fieldName, object newValue)
+        public static void SetFieldValue(this object obj, string fieldName, object newValue)
         {
             var memInf = GetFieldInfo(obj, fieldName);
             
             if (memInf == null)
                 throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));
-
-            var oldValue = obj.GetFieldValue(fieldName);
 
             if (memInf is System.Reflection.PropertyInfo)
                 memInf.As<System.Reflection.PropertyInfo>().SetValue(obj, newValue, null);
@@ -53,24 +52,25 @@ namespace Pluton
                 memInf.As<System.Reflection.FieldInfo>().SetValue(obj, newValue);
             else
                 throw new System.Exception();
-
-            return oldValue;
         }
-
-        private static System.Reflection.MethodInfo GetMethodInfo(object obj, string methodName)
+       
+        private static MethodInfo GetMethodInfo(Type classType, string methodName)
         {
-            return obj.GetType().GetMethod(methodName,
-                                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance |
-                                            System.Reflection.BindingFlags.FlattenHierarchy);
+            return classType.GetMethod(methodName,
+                                           BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static );
         }
 
-        private static System.Reflection.MemberInfo GetFieldInfo(object obj, string fieldName)
+        private static MethodInfo GetMethodInfo(object obj, string methodName)
+        {
+            return GetMethodInfo(obj.GetType(), methodName);
+        }
+
+        private static MemberInfo GetFieldInfo(Type objType, string fieldName)        
         {
             var prps = new List<System.Reflection.PropertyInfo>();
 
-            prps.Add(obj.GetType().GetProperty(fieldName,
-                                               System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance |
-                                               System.Reflection.BindingFlags.FlattenHierarchy));
+            prps.Add(objType.GetProperty(fieldName,
+                                               BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static ));
 
             prps = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(prps, i => !ReferenceEquals(i, null)));
 
@@ -79,9 +79,8 @@ namespace Pluton
 
             var flds = new System.Collections.Generic.List<System.Reflection.FieldInfo>();
 
-            flds.Add(obj.GetType().GetField(fieldName,
-                                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance |
-                                            System.Reflection.BindingFlags.FlattenHierarchy));          
+            flds.Add(objType.GetField(fieldName,
+                                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static ));          
 
             flds = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(flds, i => !ReferenceEquals(i, null)));
 
@@ -89,6 +88,57 @@ namespace Pluton
                 return flds[0];
 
             return null;
+        }
+
+        private static MemberInfo GetFieldInfo(object obj, string fieldName)
+        {
+            return GetFieldInfo(obj.GetType(), fieldName);
+        }
+
+        //Static
+        public static void CallStaticMethod(Type classType, string methodName, params object[] args)
+        {
+            var metInf = GetMethodInfo(classType, methodName);
+
+            if (metInf == null)
+                throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
+
+            if (metInf is MethodInfo)
+            {
+                MethodInfo meta = metInf.As<MethodInfo>();
+                meta.Invoke(null, args);
+            }
+        }
+
+        public static object GetStaticFieldValue(Type classType, string fieldName)
+        {
+            var memInf = GetFieldInfo(classType, fieldName);
+
+            if (memInf == null)
+                throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));
+
+            if (memInf is System.Reflection.PropertyInfo)
+                return memInf.As<System.Reflection.PropertyInfo>().GetValue(null, null);
+
+            if (memInf is System.Reflection.FieldInfo)
+                return memInf.As<System.Reflection.FieldInfo>().GetValue(null);
+
+            throw new Exception();
+        }
+
+        public static void SetFieldValueValue(Type classType, string fieldName, object newValue)
+        {
+            var memInf = GetFieldInfo(classType, fieldName);
+
+            if (memInf == null)
+                throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));           
+
+            if (memInf is System.Reflection.PropertyInfo)
+                memInf.As<System.Reflection.PropertyInfo>().SetValue(null, newValue, null);
+            else if (memInf is System.Reflection.FieldInfo)
+                memInf.As<System.Reflection.FieldInfo>().SetValue(null, newValue);
+            else
+                throw new System.Exception();
         }
 
         [System.Diagnostics.DebuggerHidden]
