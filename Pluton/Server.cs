@@ -54,9 +54,9 @@
                 server.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
                 server.serverData = new DataStore("ServerData.ds");
                 server.serverData.Load();
-                server.LoadOfflinePlayers();
                 server.LoadLoadouts();
                 server.ReloadBlueprints();
+                server.LoadOfflinePlayers();
             }
             return server;
         }
@@ -105,7 +105,7 @@
             } else {
                 Logger.LogWarning("[Server] No OfflinePlayers found!");
             }
-            Logger.Log("[Server] " + OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
+            Logger.Log("[Server] " + server.OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
         }
 
         public void Save()

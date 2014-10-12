@@ -66,10 +66,24 @@ namespace Pluton
         #endregion
 
         #region Handlers
-
+        public static bool loaded = false;
         // ConnectionAuth.Approve()
         public static void ClientAuth(ConnectionAuth ca, Connection connection)
         {
+            if (!loaded) {
+                double resource = double.Parse(Config.PlutonConfig.GetSetting("Config", "resourceGatherMultiplier").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+                World.GetWorld().ResourceGatherMultiplier = resource;
+            
+                Console.WriteLine("Svr Timescale:  " + Server.GetServer().CraftingTimeScale);
+                float time = float.Parse(Config.PlutonConfig.GetSetting("Config", "permanentTime").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+                if (time != -1) {
+                    World.GetWorld().Time = time;
+                    World.GetWorld().FreezeTime();
+                } else {
+                    World.GetWorld().Timescale = float.Parse(Config.PlutonConfig.GetSetting("Config", "timescale").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+                }
+                loaded = true;
+            }
             var ae = new Events.AuthEvent(connection);
 
             OnClientAuth.OnNext(ae);

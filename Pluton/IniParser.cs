@@ -119,7 +119,7 @@ public class IniParser
         pair.Key = settingName;
         if(!this.keyPairs.ContainsKey(pair))
             return defaultValue;
-        return (string)this.keyPairs[pair];
+        return ((string)this.keyPairs[pair]).Trim();
     }
 
     public bool GetBoolSetting(string sectionName, string settingName, bool defaultValue = false)

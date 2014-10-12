@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Globalization;
 using UnityEngine;
 
 namespace Pluton
@@ -19,6 +20,7 @@ namespace Pluton
                 PlutonConfig = new IniParser(ConfigPath);
                 Debug.Log("Config " + ConfigPath + " loaded!");
                 pluton.enabled = GetBoolValue("Config", "enabled", true);
+               
             } else {
                 Debug.Log("Config " + ConfigPath + " NOT loaded!");
                 Debug.Log("Disabling pluton!");
@@ -35,6 +37,7 @@ namespace Pluton
         {
             return PlutonConfig.GetBoolSetting(Section, Setting, defaultValue);
         }
+            
     }
 }
 
