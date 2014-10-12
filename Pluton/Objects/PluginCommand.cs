@@ -90,21 +90,21 @@ namespace Pluton
         public List<string> getCommands()
         {
             return (from c in Commands.Values
-                    select c._command).ToList();
+                select c._command).ToList<string>();
         }
 
-        public List<string> getDescriptions(string command)
+        public string[] getDescriptions(string command)
         {
             return (from c in Commands.Values
                 where c._command == command
-                select c._description).ToList();
+                select c._description).ToArray<string>();
         }
 
-        public List<string> getUsages(string command)
+        public string[] getUsages(string command)
         {
             return (from c in Commands.Values
                 where c._command == command
-                select c._usage).ToList();
+                select c._usage).ToArray<string>();
         }
     }
 }
