@@ -491,12 +491,12 @@ namespace Pluton
             World.GetWorld().ResourceGatherMultiplier = resource;
 
             Console.WriteLine("Svr Timescale:  " + Server.GetServer().CraftingTimeScale);
-            float time = float.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float time = float.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
                 World.GetWorld().Time = time;
                 World.GetWorld().FreezeTime();
             } else {
-                World.GetWorld().Timescale = float.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+                World.GetWorld().Timescale = float.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             }
             OnServerInit.OnNext("");
         }
