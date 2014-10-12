@@ -51,12 +51,12 @@ namespace Pluton
 
         public void AirDropAt(float x, float y, float z, float speed = 50f, float height = 400f)
         {
-            AirDropAt(new Vector3(x, y, z));
+            AirDropAt(new Vector3(x, y, z), speed, height);
         }
 
         public void AirDropAtPlayer(Player player, float speed = 50f, float height = 400f)
         {
-            AirDropAt(player.Location);
+            AirDropAt(player.Location, speed, height);
         }
 
         public float GetGround(float x, float z)
