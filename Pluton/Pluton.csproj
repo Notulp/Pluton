@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -54,12 +54,13 @@
       <HintPath>ref\Jint.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup>    
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Hooks.cs" />
     <Compile Include="Events\GatherEvent.cs" />
     <Compile Include="Events\DeathEvent.cs" />
+    <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="World.cs" />
     <Compile Include="Events\HurtEvent.cs" />
     <Compile Include="Events\PlayerHurtEvent.cs" />
@@ -105,10 +106,7 @@
     <Compile Include="Web.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Events\" />
-    <Folder Include="Objects\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Pluton.cfg" />
   </ItemGroup>

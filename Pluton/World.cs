@@ -8,11 +8,50 @@ namespace Pluton
 
         private static World instance;
 
-        public void AirDrop()
+        public void AirDrop(float speed = 50f, float height = 400f)
         {
-            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", Vector3.zero, Quaternion.identity);
-            if (entity != null)
-                entity.Spawn(true);
+            Vector3 endPos = Vector3Ex.Range(-1f, 1f);
+            endPos.y = 0f;
+            endPos.Normalize();
+            endPos = endPos * 4096f;
+
+            AirDropAt(endPos, speed, height);
+        }
+
+        public void AirDropAt(Vector3 position, float speed = 50f, float height = 400f)
+        {
+            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", new Vector3(), new Quaternion());
+            CargoPlane cp = entity.GetComponent<CargoPlane>();
+
+            Vector3 startPos, endPos;
+            float secsToTake;
+
+            startPos = Vector3Ex.Range(-1f, 1f);
+            startPos.y = 0f;
+            startPos.Normalize();
+            startPos = startPos * 4096f;
+            startPos.y = height;
+            endPos = position + (position - startPos);
+            endPos.y = height;
+            secsToTake = Vector3.Distance(startPos, endPos) / speed;
+
+            cp.SetFieldValue("startPos", startPos);
+            cp.SetFieldValue("endPos", endPos);
+            cp.SetFieldValue("secondsToTake", secsToTake);
+            cp.SetFieldValue("secondsTaken", 0f);
+            cp.transform.rotation = Quaternion.LookRotation(endPos - startPos);
+            
+            entity.Spawn(true);
+        }
+
+        public void AirDropAt(float x, float y, float z, float speed = 50f, float height = 400f)
+        {
+            AirDropAt(new Vector3(x, y, z));
+        }
+
+        public void AirDropAtPlayer(Player player, float speed = 50f, float height = 400f)
+        {
+            AirDropAt(player.Location);
         }
 
         public float GetGround(float x, float z)

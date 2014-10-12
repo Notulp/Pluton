@@ -368,6 +368,15 @@ namespace Pluton.Patcher
             il.InsertAfter(servUpdate.Body.Instructions[36], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
         }
 
+        private static void CargoPlaneBehaviourPatch()
+        {
+            TypeDefinition cargoPlane = rustAssembly.MainModule.GetType("CargoPlane");
+            MethodDefinition startMtd = cargoPlane.GetMethod("Start");
+
+            startMtd.Body.Instructions.Clear();
+            startMtd.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
         // from fougerite.patcher
         private static MethodDefinition CloneMethod(MethodDefinition orig)
         {
@@ -420,6 +429,8 @@ namespace Pluton.Patcher
             BuildingBlockBuiltPatch();
 
             CraftingTimePatch();
+
+            CargoPlaneBehaviourPatch();
         }
 
         /*
