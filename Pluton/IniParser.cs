@@ -180,7 +180,16 @@ public class IniParser
         pair.Key = settingName;
         if (this.keyPairs.ContainsKey(pair)) {
             this.keyPairs[pair] = value;
+        } else {
+            AddSetting(sectionName, settingName, value);
         }
+    }
+
+    public bool ContainsSetting(string sectionName, string settingName) {
+        SectionPair pair;
+        pair.Section = sectionName;
+        pair.Key = settingName;
+        return this.keyPairs.Contains(pair);
     }
 
     [StructLayout(LayoutKind.Sequential)]

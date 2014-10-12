@@ -478,16 +478,16 @@ namespace Pluton
 
         public static void ServerInit()
         {
-            double resource = double.Parse(Config.PlutonConfig.GetSetting("Config", "resourceGatherMultiplier").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            double resource = double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             World.GetWorld().ResourceGatherMultiplier = resource;
 
             Console.WriteLine("Svr Timescale:  " + Server.GetServer().CraftingTimeScale);
-            float time = float.Parse(Config.PlutonConfig.GetSetting("Config", "permanentTime").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float time = float.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             if (time != -1) {
                 World.GetWorld().Time = time;
                 World.GetWorld().FreezeTime();
             } else {
-                World.GetWorld().Timescale = float.Parse(Config.PlutonConfig.GetSetting("Config", "timescale").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+                World.GetWorld().Timescale = float.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             }
             OnServerInit.OnNext("");
         }
