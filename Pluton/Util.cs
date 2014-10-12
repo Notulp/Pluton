@@ -18,17 +18,16 @@
 
         public void ConsoleLog(string str, bool adminOnly = false)
         {
-            try {
-                // FIXME
-                /*foreach (Player player in Server.GetServer().Players) {
-
-					if (!adminOnly) {
-						ConsoleNetworker.singleton.networkView.RPC<string>("CL_ConsoleMessage", player.PlayerClient.netPlayer, str);
-					} else if (player.Admin) {
-						ConsoleNetworker.singleton.networkView.RPC<string>("CL_ConsoleMessage", player.PlayerClient.netPlayer, str);
-					}
-				}*/
-            } catch (Exception ex) {
+            try
+            {
+                foreach (Player player in Server.GetServer().Players.Values)
+                {
+                    if (!adminOnly || (adminOnly && player.Admin))
+                        player.ConsoleMessage(str);
+                }
+            }
+            catch (Exception ex)
+            {
                 Logger.LogDebug("ConsoleLog ex");
                 Logger.LogException(ex);
             }
@@ -46,8 +45,7 @@
 
         public void DestroyObject(GameObject go)
         {
-            // FIXME
-            /*	NetCull.Destroy(go);*/
+            UnityEngine.Object.DestroyImmediate(go);
         }
 
         // Dumper methods
@@ -167,11 +165,10 @@
             }
         }
 
-        // FIXME
-        /*
-		public Vector3 Infront(Player p, float length) {
-			return (p.Location + ((Vector3)(forward * length)));
-		}*/
+        public Vector3 Infront(Player p, float length)
+        {
+            return (p.Location + ((Vector3)(Vector3.forward * length)));
+        }
 
         public void Items()
         {
@@ -218,29 +215,7 @@
         {
             return (q *= Quaternion.Euler(0f, 0f, angle));
         }
-
-        // FIXUS
-        /*
-		public static void say(uLink.NetworkPlayer player, string playername, string arg) {
-			ConsoleNetworker.SendClientCommand(player, "chat.add " + playername + " " + arg);
-		}
-
-		public static void sayAll(string customName, string arg) {
-			ConsoleNetworker.Broadcast("chat.add " + Facepunch.Utility.String.QuoteSafe(customName) + " " + Facepunch.Utility.String.QuoteSafe(arg));
-		}
-
-		public static void sayAll(string arg) {
-			ConsoleNetworker.Broadcast("chat.add " + Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer().server_message_name) + " " + Facepunch.Utility.String.QuoteSafe(arg));
-		}
-
-		public static void sayUser(uLink.NetworkPlayer player, string arg) {
-			ConsoleNetworker.SendClientCommand(player, "chat.add " + Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer().server_message_name) + " " + Facepunch.Utility.String.QuoteSafe(arg));
-		}
-
-		public static void sayUser(uLink.NetworkPlayer player, string customName, string arg) {
-			ConsoleNetworker.SendClientCommand(player, "chat.add " + Facepunch.Utility.String.QuoteSafe(customName) + " " + Facepunch.Utility.String.QuoteSafe(arg));
-		}*/
-
+                
         public bool TryFindType(string typeName, out System.Type t)
         {
             lock (this.typeCache) {

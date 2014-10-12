@@ -4,12 +4,11 @@ using UnityEngine;
 namespace Pluton
 {
     public class Player
-    {
-
+    {     
         public readonly BasePlayer basePlayer;
 
         public Player(BasePlayer player)
-        {
+        {        
             basePlayer = player;
             try {
                 Stats = new PlayerStats(SteamID);
@@ -96,6 +95,16 @@ namespace Pluton
         public void MessageFrom(string from, string msg)
         {
             basePlayer.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(from) + " " + StringExtensions.QuoteSafe(msg));
+        }
+
+        public void ConsoleMessage(string msg)
+        {
+            SendConsoleCommand("echo " + msg);
+        }
+
+        public void SendConsoleCommand(string cmd)
+        {
+            basePlayer.SendConsoleCommand(StringExtensions.QuoteSafe(cmd));
         }
 
         public void GroundTeleport(float x, float y, float z)
