@@ -191,6 +191,9 @@
                 case "On_Command":
                     plugin.OnCommandHook = Hooks.OnCommand.Subscribe(c => plugin.OnCommand(c));
                     break;
+                case "On_Console":
+                    plugin.OnConsoleHook = Hooks.OnConsole.Subscribe(c => plugin.OnConsole(c));
+                    break;
                 case "On_CorpseDropped":
                     plugin.OnCorpseDroppedHook = Hooks.OnCorpseDropped.Subscribe(c => plugin.OnCorpseDropped(c));
                     break;

@@ -282,8 +282,9 @@
             this.Invoke("On_Command", cmd);
         }
 
-        public void OnConsole(ref ConsoleSystem.Arg arg, bool external) {
-            throw new NotImplementedException("There is no OnConsole hook yet!");
+        public IDisposable OnConsoleHook;
+        public void OnConsole(ConsoleEvent ce) {
+            this.Invoke("On_Console", ce);
         }
 
         public IDisposable OnCorpseDroppedHook;

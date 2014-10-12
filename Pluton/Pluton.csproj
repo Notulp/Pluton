@@ -54,7 +54,8 @@
       <HintPath>ref\Jint.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>    
+  <ItemGroup>
+    <Compile Include="Events\ConsoleEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Hooks.cs" />

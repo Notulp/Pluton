@@ -31,6 +31,8 @@ namespace Pluton
 
         public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
 
+        public static Subject<ConsoleEvent> OnConsole = new Subject<ConsoleEvent>();
+
         public static Subject<CorpseHurtEvent> OnCorpseAttacked = new Subject<CorpseHurtEvent>();
 
         public static Subject<CorpseInitEvent> OnCorpseDropped = new Subject<CorpseInitEvent>();
@@ -191,6 +193,13 @@ namespace Pluton
                     arg.ReplyWith(pChat.ReplyWith);
                 }
             }
+        }
+
+        //FacePunch.ConsoleSystem.OnClientCommand
+        public static void ConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
+        {
+            if (arg.connection != null)
+                OnConsole.OnNext(new ConsoleEvent(arg, rconCmd));               
         }
 
         // In future create an Event, allow people to adjust certain resources to give certain amounts!
