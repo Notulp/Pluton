@@ -122,10 +122,24 @@ namespace Pluton
             Teleport(v3.x, v3.y, v3.z);
         }
 
+        public static Vector3[] firstLocations = new Vector3[]{
+            new Vector3(2000, 0, 2000),
+            new Vector3(-2000, 0, 2000),
+            new Vector3(2000, 0, -2000),
+            new Vector3(-2000, 0, -2000)
+        };
+
         public void Teleport(float x, float y, float z)
-        {
+        {  
+            Vector3 firstloc = Vector3.zero;
+            foreach (Vector3 v3 in firstLocations) {
+                if (Vector3.Distance(Location, v3) > 1000f && Vector3.Distance(new Vector3(x, y, z), v3) > 1000f) {
+                    firstloc = v3;
+                }
+            }
+
             basePlayer.supressSnapshots = true;
-            basePlayer.transform.position = UnityEngine.Vector3.zero;
+            basePlayer.transform.position = firstloc;
             basePlayer.UpdateNetworkGroup();
 
             basePlayer.transform.position = new UnityEngine.Vector3(x, y, z);
