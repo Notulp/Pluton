@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Timers;
 
 namespace Pluton
 {
@@ -9,6 +10,8 @@ namespace Pluton
         private static World instance;
 
         public double ResourceGatherMultiplier = 1.0;
+        public Timer freezeTimeTimer;
+        private float frozenTime = -1;
 
         public void AirDrop(float speed = 50f, float height = 400f)
         {
@@ -137,6 +140,19 @@ namespace Pluton
                 var time = comp.GetComponent<TOD_Time>();
                 time.DayLengthInMinutes = value;
             }
+        }
+
+        public void FreezeTime() {
+            if (freezeTimeTimer == null) {
+                frozenTime = Time;
+                freezeTimeTimer = new Timer(10000);
+                freezeTimeTimer.Elapsed += new ElapsedEventHandler(this.Freeze);
+                freezeTimeTimer.Start();
+            }
+        }
+
+        private void Freeze(object sender, ElapsedEventArgs e)  {         
+            Time = frozenTime;
         }
 
         public static World GetWorld()
