@@ -84,7 +84,11 @@ namespace Pluton.Patcher
 
             CloneMethod(gather);
             // clear out the method, we will recreate it in Pluton
-
+            gather.Body.Instructions.Clear();
+            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
+            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void ResourceGatherMultiplierPatch()
