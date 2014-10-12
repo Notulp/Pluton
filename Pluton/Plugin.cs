@@ -390,8 +390,8 @@
         }
 
         public IDisposable OnServerInitHook;
-        public void OnServerInit() {
-            throw new NotImplementedException("There is no OnServerInit hook yet!");
+        public void OnServerInit(string s = "") {
+            this.Invoke("On_ServerInit");
         }
 
         public IDisposable OnServerShutdownHook;

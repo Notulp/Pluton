@@ -372,6 +372,17 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(respawn.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
         }
 
+        private static void ServerInitPatch()
+        {
+            TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
+            MethodDefinition serverInit = servermgr.GetMethod("Initialize");
+            MethodDefinition onServerInit = hooksClass.GetMethod("ServerInit");
+
+            CloneMethod(serverInit);
+            ILProcessor il = serverInit.Body.GetILProcessor();
+            il.InsertBefore(serverInit.Body.Instructions[101], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
+        }
+
         private static void SetModdedPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -412,6 +423,7 @@ namespace Pluton.Patcher
         {
             BootstrapAttachPatch();
             ServerShutdownPatch();
+            ServerInitPatch();
             SetModdedPatch();
 
             RespawnPatch();

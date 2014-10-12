@@ -59,6 +59,8 @@ namespace Pluton
 
         public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
 
+        public static Subject<string> OnServerInit = new Subject<string>();
+
         public static Subject<string> OnServerShutdown = new Subject<string>();
 
         public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
@@ -66,24 +68,9 @@ namespace Pluton
         #endregion
 
         #region Handlers
-        public static bool loaded = false;
         // ConnectionAuth.Approve()
         public static void ClientAuth(ConnectionAuth ca, Connection connection)
         {
-            if (!loaded) {
-                double resource = double.Parse(Config.PlutonConfig.GetSetting("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
-                World.GetWorld().ResourceGatherMultiplier = resource;
-            
-                Console.WriteLine("Svr Timescale:  " + Server.GetServer().CraftingTimeScale);
-                float time = float.Parse(Config.PlutonConfig.GetSetting("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
-                if (time != -1) {
-                    World.GetWorld().Time = time;
-                    World.GetWorld().FreezeTime();
-                } else {
-                    World.GetWorld().Timescale = float.Parse(Config.PlutonConfig.GetSetting("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
-                }
-                loaded = true;
-            }
             var ae = new Events.AuthEvent(connection);
 
             OnClientAuth.OnNext(ae);
@@ -480,6 +467,22 @@ namespace Pluton
             var ile = new Events.ItemLootEvent(playerLoot, new Player(looter), item);
 
             OnLootingItem.OnNext(ile);
+        }
+
+        public static void ServerInit()
+        {
+            double resource = double.Parse(Config.PlutonConfig.GetSetting("Config", "resourceGatherMultiplier").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            World.GetWorld().ResourceGatherMultiplier = resource;
+
+            Console.WriteLine("Svr Timescale:  " + Server.GetServer().CraftingTimeScale);
+            float time = float.Parse(Config.PlutonConfig.GetSetting("Config", "permanentTime").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            if (time != -1) {
+                World.GetWorld().Time = time;
+                World.GetWorld().FreezeTime();
+            } else {
+                World.GetWorld().Timescale = float.Parse(Config.PlutonConfig.GetSetting("Config", "timescale").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            }
+            OnServerInit.OnNext("");
         }
 
         public static void ServerShutdown()
