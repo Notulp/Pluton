@@ -287,6 +287,9 @@
                 case "On_Command":
                     plugin.OnCommandHook.Dispose();
                     break;
+                case "On_Console":
+                    plugin.OnConsoleHook.Dispose();
+                    break;
                 case "On_CorpseDropped":
                     plugin.OnCorpseDroppedHook.Dispose();
                     break;
