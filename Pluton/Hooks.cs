@@ -136,13 +136,13 @@ namespace Pluton
 					}
 				}
                 PluginCommands pc = PluginCommands.GetInstance();
-                if (cmd.cmd == Config.GetValue("Commands", "Commands")) {
+                if (cmd.cmd == Config.GetValue("Commands", "Commands", "commands")) {
                     player.Message(String.Join(", ", pc.getCommands().ToArray()));
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Description") && pc.getCommands().Contains(cmd.args[0])) {
+                if (cmd.cmd == Config.GetValue("Commands", "Description", "whatis") && pc.getCommands().Contains(cmd.args[0])) {
                     player.Message(String.Join("\r\n", pc.getDescriptions(cmd.args[0])));
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Usage") && pc.getCommands().Contains(cmd.args[0])) {
+                if (cmd.cmd == Config.GetValue("Commands", "Usage", "howto") && pc.getCommands().Contains(cmd.args[0])) {
                     for (var i = 0; i < pc.getUsages(cmd.args[0]).Length; i++)
                         player.Message(String.Format("/{0} {1}", cmd.args[0], pc.getUsages(cmd.args[0])[i]));
                 }
