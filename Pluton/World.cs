@@ -75,49 +75,55 @@ namespace Pluton
             return GetGround(v3.x, v3.z);
         }
 
-        public void SpawnMapEntity(string evt, float x, float z) {
-            SpawnMapEntity(evt, x, GetGround(x, z), z);    
+        public BaseEntity SpawnMapEntity(string evt, float x, float z) {
+            return SpawnMapEntity(evt, x, GetGround(x, z), z);    
         }
 
-        public void SpawnMapEntity(string evt, Vector3 loc) {
-            SpawnMapEntity(evt, loc.x, loc.x, loc.z);    
+        public BaseEntity SpawnMapEntity(string evt, Vector3 loc) {
+            return SpawnMapEntity(evt, loc.x, loc.x, loc.z);    
         }
         
-        public void SpawnAnimal(string name, float x, float z) {
-            SpawnAnimal(name, x, GetGround(x, z), z);    
+        public BaseEntity SpawnAnimal(string name, float x, float z) {
+            return SpawnAnimal(name, x, GetGround(x, z), z);    
         }
 
-        public void SpawnAnimal(string name, Vector3 loc) {
-            SpawnAnimal(name, loc.x, loc.x, loc.z);    
+        public BaseEntity SpawnAnimal(string name, Vector3 loc) {
+            return SpawnAnimal(name, loc.x, loc.x, loc.z);    
         }
             
-        public void SpawnEvent(string evt, float x, float z) {
-            SpawnEvent(evt, x, GetGround(x, z), z);    
+        public BaseEntity SpawnEvent(string evt, float x, float z) {
+            return SpawnEvent(evt, x, GetGround(x, z), z);    
         }
 
-        public void SpawnEvent(string evt, Vector3 loc) {
-            SpawnEvent(evt, loc.x, loc.x, loc.z);    
+        public BaseEntity SpawnEvent(string evt, Vector3 loc) {
+            return SpawnEvent(evt, loc.x, loc.x, loc.z);    
         }
 
         // like an airdrop
-        public void SpawnEvent(string evt, float x, float y, float z) {
-            GameManager.CreateEntity("events/" + evt, 
+        public BaseEntity SpawnEvent(string evt, float x, float y, float z) {
+            BaseEntity ent = GameManager.CreateEntity("events/" + evt, 
                 new UnityEngine.Vector3(x, y, z), 
-                new UnityEngine.Quaternion()).Spawn(true);
+                new UnityEngine.Quaternion());
+            ent.Spawn(true);
+            return ent;
         }
 
         //Animals: boar, bear, stag, wolf
-        public void SpawnAnimal(string name, float x, float y, float z) {
-            GameManager.CreateEntity("autospawn/animals/" + name, 
+        public BaseEntity SpawnAnimal(string name, float x, float y, float z) {
+            BaseEntity ent = GameManager.CreateEntity("autospawn/animals/" + name, 
                 new UnityEngine.Vector3(x, y, z), 
-                new UnityEngine.Quaternion()).Spawn(true);
+                new UnityEngine.Quaternion());
+            ent.Spawn(true);
+            return ent;
         }
 
         //map entities, like a resource node, a tree of even a structure
-        public void SpawnMapEntity(string name, float x, float y, float z) {
-            GameManager.CreateEntity(name, 
+        public BaseEntity SpawnMapEntity(string name, float x, float y, float z) {
+            BaseEntity ent = GameManager.CreateEntity(name, 
                 new UnityEngine.Vector3(x, y, z), 
-                new UnityEngine.Quaternion()).SpawnAsMapEntity();
+                new UnityEngine.Quaternion());
+            ent.SpawnAsMapEntity();
+            return ent;
         }
             
         public float Time {
