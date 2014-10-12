@@ -72,11 +72,26 @@ namespace Pluton.Patcher
 
             CloneMethod(gather);
             // clear out the method, we will recreate it in Pluton
-            gather.Body.Instructions.Clear();
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+        }
+
+        private static void ResourceGatherMultiplierPatch()
+        {
+            TypeDefinition bRes = rustAssembly.MainModule.GetType("ResourceDispenser");
+            MethodDefinition ctInit = bRes.GetMethod("GivePlayerResourceFromItem");
+            MethodDefinition gathering = hooksClass.GetMethod("ResourceGatherMultiplier");
+            CloneMethod(ctInit);
+            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
+
+            iLProcessor.InsertBefore(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldloc_2));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[53], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[54], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
+
+            for (int i = 0; i < 8; i++) {
+                iLProcessor.Body.Instructions[44 + i] = Instruction.Create(OpCodes.Nop);
+            }
+          
         }
 
         private static void NPCDiedPatch()
@@ -429,6 +444,7 @@ namespace Pluton.Patcher
             BuildingBlockBuiltPatch();
 
             CraftingTimePatch();
+            ResourceGatherMultiplierPatch();
 
             CargoPlaneBehaviourPatch();
         }

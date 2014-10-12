@@ -185,6 +185,13 @@ namespace Pluton
             }
         }
 
+        // In future create an Event, allow people to adjust certain resources to give certain amounts!
+        public static void ResourceGatherMultiplier(int amount, BasePlayer player, ItemAmount itemAmt)
+        {
+            int newAmt = (int)((double)amount * World.GetWorld().ResourceGatherMultiplier);
+            player.inventory.GiveItem(itemAmt.itemid, newAmt, true);
+        }
+
         // BaseResource.OnAttacked()
         public static void Gathering(BaseResource res, HitInfo info)
         {

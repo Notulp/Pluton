@@ -8,6 +8,8 @@ namespace Pluton
 
         private static World instance;
 
+        public double ResourceGatherMultiplier = 1.0;
+
         public void AirDrop(float speed = 50f, float height = 400f)
         {
             Vector3 endPos = Vector3Ex.Range(-1f, 1f);
