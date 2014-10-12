@@ -3,6 +3,7 @@
 On_Chat(Chat msg)
 On_ClientAuth(AuthEvent ae)
 On_Command(Command c)
+On_Console(ConsoleEvent ce)
 On_CorpseDropped(CorpseInitEvent cie)
 On_CorpseAttacked(CorpseHurtEvent che)
 On_BuildingComplete(BuildingPart bp)
@@ -212,6 +213,30 @@ Pluton.Util
 	.TryFindType(string typeName, out System.Type t):bool
 	.TryFindReturnType(string typeName):System.Type
 
+Pluton.World
+	.AirDrop():void
+	.AirDrop(float speed, float height* = 400):void
+	.AirDropAt(Vector3 position, float speed* = 50f, float height* = 400f)
+	.AirDropAt(float x, float y, float z, float speed* = 50f, float height* = 400f)
+	.AirDropAtPlayer(Player player, float speed* = 50f, float height* = 400f)
+	.GetGround(float x, float z)
+	.GetGround(Vector3 worldpos)
+	.FreezeTime()
+	.UnFreezeTime()
+	.SpawnMapEntity(string evt, float x, float z)
+	.SpawnMapEntity(string evt, Vector3 loc)
+	.SpawnAnimal(string name, float x, float z)
+	.SpawnAnimal(string name, Vector3 loc)
+	.SpawnEvent(string evt, float x, float z)
+	.SpawnEvent(string evt, Vector3 loc)
+	.SpawnEvent(string evt, float x, float y, float z)
+	.SpawnAnimal(string name, float x, float y, float z)
+	.SpawnMapEntity(string name, float x, float y, float z)
+	.ResourceGatherMultiplier
+	.Time
+	.Timescale
+
+
 ## Events
 
 Pluton.Events.AuthEvent(Connection connection)
@@ -236,6 +261,12 @@ Pluton.Events.BuildingEvent(BuildingPart bp, Player, float prof)
 
 Pluton.Events.BuildingHurtEvent(BuildingPart bp, HitInfo info):HurtEvent
 	.Victim:Pluton.BuildingPart
+
+Pluton.Events.ConsoleEvent(ConsoleSystem.Arg arg, string rconCmd)
+	.Args:List<string>
+	.Command:string
+	.Internal:ConsoleSystem.Arg
+	.User:Player
 
 Pluton.Events.CorpseHurtEvent(BaseCorpse corpse, HitInfo info):HurtEvent
 	.corpse:BaseCorpse
