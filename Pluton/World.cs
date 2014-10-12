@@ -13,7 +13,20 @@ namespace Pluton
         public Timer freezeTimeTimer;
         private float frozenTime = -1;
 
-        public void AirDrop(float speed = 50f, float height = 400f)
+        public void AirDrop()
+        {
+            float speed = UnityEngine.Random.Range(40f, 60f);
+            float height = UnityEngine.Random.Range(350f, 500f);
+
+            Vector3 endPos = Vector3Ex.Range(-1f, 1f);
+            endPos.y = 0f;
+            endPos.Normalize();
+            endPos = endPos * 4096f;
+
+            AirDropAt(endPos, speed, height);
+        }
+
+        public void AirDrop(float speed, float height = 400f)
         {
             Vector3 endPos = Vector3Ex.Range(-1f, 1f);
             endPos.y = 0f;
