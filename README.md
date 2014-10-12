@@ -50,3 +50,9 @@ Our sponsor:
 ------------
 
 www.streamline-servers.com
+
+Links:
+------
+(in progress)
+
+[Forum](http://pluton-team.org), [Wiki](http://wiki.pluton-team.org)
