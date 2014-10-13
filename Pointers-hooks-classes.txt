@@ -27,6 +27,7 @@ On_ServerInit()
 On_ServerShutdown()
 On_PluginInit()
 On_Respawn(Player p)
+<timer_name>Callback(TimedEvent timer)
 
 ## classes
 
@@ -191,6 +192,39 @@ Pluton.PlayerStats(string steamid)
 	.DamageToEntities	|
 	.FallDamage			|:double
 
+Pluton.Plugin(string name, string code, DirectoryInfo path, PluginType type)
+	.CreateDict(int num* = 10):Dictionary<string, object>
+	.CreateDir(string foldername):bool
+	.CreateIni(string path):IniParser
+	.DeleteLog(string pathtoLog):void
+	.GetDate():string
+	.GetIni(string path):IniParser
+	.GetIni(string path):List<IniParser>
+	.GetPlugin(string pluginname):Pluton.Plugin
+	.GetTick():int
+	.GetTime():string
+	.GetTimestamp():ulong
+	.IniExists(string path):bool
+	.Invoke(string functionName, params object[] obj):object
+	.Log(string path, string text):void
+	.RotateLog(string logfile, int max* = 6):void
+
+	// timers
+	.CreateParallelTimer(string name, int interval, Dictionary<string, object> args):TimedEvent
+	.CreateTimer(string name, int interval):TimedEvent
+	.CreateTimer(string name, int interval, Dictionary<string, object> args):TimedEvent
+	.GetParralleTimer(string name):List<TimedEvent>
+	.GetTimer(string name):TimedEvent
+	.KillParallelTimer(string name):void
+	.KillTimer(string name):void
+	.KillTimers():void
+
+	// web
+	.GET(string url):string
+	.POST(string url, string data):string
+	.POSTJSON(string url, string json):string
+
+
 Pluton.Server
 	.Broadcast(string msg):void
 	.Broadcast(string nameFrom, string msg):void
@@ -214,28 +248,39 @@ Pluton.Util
 	.TryFindType(string typeName, out System.Type t):bool
 	.TryFindReturnType(string typeName):System.Type
 
+Pluton.TimedEvent(string name, double interval, Dictionary<string, object> args) : this(string name, double interval)
+	.Kill():void
+	.Start():void
+	.Stop():void
+	.Args:Dictionary<string, object>
+	.ElapsedCount:int
+	.Interval:double
+	.Name:string
+	.TimeLeft:double
+
+
 Pluton.World
 	.AirDrop():void
 	.AirDrop(float speed, float height* = 400):void
-	.AirDropAt(Vector3 position, float speed* = 50f, float height* = 400f)
-	.AirDropAt(float x, float y, float z, float speed* = 50f, float height* = 400f)
-	.AirDropAtPlayer(Player player, float speed* = 50f, float height* = 400f)
-	.GetGround(float x, float z)
-	.GetGround(Vector3 worldpos)
-	.FreezeTime()
-	.UnFreezeTime()
-	.SpawnMapEntity(string evt, float x, float z)
-	.SpawnMapEntity(string evt, Vector3 loc)
-	.SpawnAnimal(string name, float x, float z)
-	.SpawnAnimal(string name, Vector3 loc)
-	.SpawnEvent(string evt, float x, float z)
-	.SpawnEvent(string evt, Vector3 loc)
-	.SpawnEvent(string evt, float x, float y, float z)
-	.SpawnAnimal(string name, float x, float y, float z)
-	.SpawnMapEntity(string name, float x, float y, float z)
-	.ResourceGatherMultiplier
-	.Time
-	.Timescale
+	.AirDropAt(Vector3 position, float speed* = 50f, float height* = 400f):void
+	.AirDropAt(float x, float y, float z, float speed* = 50f, float height* = 400f):void
+	.AirDropAtPlayer(Player player, float speed* = 50f, float height* = 400f):void
+	.GetGround(float x, float z):float
+	.GetGround(Vector3 worldpos):float
+	.FreezeTime():void
+	.UnFreezeTime():void
+	.SpawnMapEntity(string evt, float x, float z):BaseEntity
+	.SpawnMapEntity(string evt, Vector3 loc):BaseEntity
+	.SpawnAnimal(string name, float x, float z):BaseEntity
+	.SpawnAnimal(string name, Vector3 loc):BaseEntity
+	.SpawnEvent(string evt, float x, float z):BaseEntity
+	.SpawnEvent(string evt, Vector3 loc):BaseEntity
+	.SpawnEvent(string evt, float x, float y, float z):BaseEntity
+	.SpawnAnimal(string name, float x, float y, float z):BaseEntity
+	.SpawnMapEntity(string name, float x, float y, float z):BaseEntity
+	.ResourceGatherMultiplier:double
+	.Time:float
+	.Timescale:float
 
 
 ## Events
