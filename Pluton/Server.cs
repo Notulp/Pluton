@@ -66,7 +66,8 @@
                 return craftTimeScale;
             }
             set {
-                Hooks.blueprintsLoaded = true; // used so reloading blueprints won't re-hook in an infinite loop!
+                if(blueprints.Count > 0)
+                     Hooks.blueprintsLoaded = true; // used so reloading blueprints won't re-hook in an infinite loop!
                 craftTimeScale = value;
                 ReloadBlueprints();
             }

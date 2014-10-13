@@ -90,8 +90,10 @@ namespace Pluton
 
         public static bool blueprintsLoaded = false;
         public static void CraftingTime(ItemBlueprint ibp) {
-            if (!blueprintsLoaded)
+            if (!blueprintsLoaded) {
+                ibp.ingredients.Clear();
                 Server.GetServer().blueprints.Add(ibp);
+            }
         }
 
         // chat.say().Hooks.Chat()
@@ -487,10 +489,10 @@ namespace Pluton
 
         public static void ServerInit()
         {
+            float craft = float.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            Server.GetServer().CraftingTimeScale = craft;
             double resource = double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             World.GetWorld().ResourceGatherMultiplier = resource;
-
-            Console.WriteLine("Svr Timescale:  " + Server.GetServer().CraftingTimeScale);
             float time = float.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
                 World.GetWorld().Time = time;
