@@ -18,7 +18,7 @@ namespace Pluton.Patcher
         private static TypeDefinition bBlock;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.3";
+        private static string version = "1.0.0.4";
 
         private static void BootstrapAttachPatch()
         {
