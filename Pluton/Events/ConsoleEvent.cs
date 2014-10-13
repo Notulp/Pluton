@@ -9,6 +9,7 @@ namespace Pluton.Events
         public readonly Player User;
         public readonly String Command;
         public readonly List<String> Args;
+        public String Reply;
 
         public ConsoleEvent(ConsoleSystem.Arg arg, String rconCmd)
         {
@@ -21,11 +22,13 @@ namespace Pluton.Events
             
             this.Command = Args[0];
             Args.RemoveAt(0);
+
+            Reply = String.Format("{0} was executed from console!", rconCmd);
         }
 
-        public void Reply(String msg)
+        public void ReplyWith(String msg)
         {
-            ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem), "SendClientReply", Internal.connection, msg);
+            Reply = msg;
         }
     }
 }

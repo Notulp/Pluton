@@ -5,7 +5,7 @@ namespace Pluton
 {
     public class Command
     {
-        public string ReplyWith;
+        public string Reply;
         public readonly string cmd;
         public readonly string[] args;
         public readonly string[] quotedArgs;
@@ -14,7 +14,7 @@ namespace Pluton
         public Command(Player player, string[] command)
         {
             User = player;
-            ReplyWith = String.Format("/{0} executed!", String.Join("", command));
+            Reply = String.Format("/{0} executed!", String.Join(" ", command));
             cmd = command[0];
             args = new string[command.Length - 1];
             Array.Copy(command, 1, args, 0, command.Length - 1);
@@ -52,6 +52,11 @@ namespace Pluton
                 }
             }
             return final;
+        }
+
+        public void ReplyWith(string msg)
+        {
+            Reply = msg;
         }
     }
 }

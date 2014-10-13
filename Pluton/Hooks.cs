@@ -153,8 +153,8 @@ namespace Pluton
             }
             OnCommand.OnNext(cmd);
 
-            if (cmd.ReplyWith != "")
-                arg.ReplyWith(cmd.ReplyWith);
+            if (cmd.Reply != "")
+                arg.ReplyWith(cmd.Reply);
 
         }
 
@@ -192,7 +192,7 @@ namespace Pluton
                 if (pChat.FinalText != "") {
                     Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
                     ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText));
-                    arg.ReplyWith(pChat.ReplyWith);
+                    arg.ReplyWith(pChat.Reply);
                 }
             }
         }
@@ -200,8 +200,12 @@ namespace Pluton
         //FacePunch.ConsoleSystem.OnClientCommand
         public static void ConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
         {
-            if (arg.connection != null)
-                OnConsole.OnNext(new ConsoleEvent(arg, rconCmd));               
+            ConsoleEvent ce = null;
+            if (arg.connection != null) {
+                OnConsole.OnNext(ce);
+
+                ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem), "SendClientReply", arg.connection, ce.Reply);
+            }
         }
 
         // In future create an Event, allow people to adjust certain resources to give certain amounts!

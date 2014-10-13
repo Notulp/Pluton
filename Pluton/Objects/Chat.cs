@@ -10,7 +10,7 @@ namespace Pluton
 		public readonly Player User;
 		public string BroadcastName;
 		public string FinalText;
-		public string ReplyWith;
+		public string Reply;
 
 		public Chat(Player player, ConsoleSystem.Arg args)
         {
@@ -22,8 +22,13 @@ namespace Pluton
 				BroadcastName = Server.server_message_name;
 			OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
 			FinalText = OriginalText;
-			ReplyWith = "chat.say was executed";
+			Reply = "chat.say was executed";
 		}
+
+        public void ReplyWith(string msg)
+        {
+            Reply = msg;
+        }
 	}
 }
 
