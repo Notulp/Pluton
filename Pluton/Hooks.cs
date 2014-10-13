@@ -439,12 +439,9 @@ namespace Pluton
         {
             // hammer prof = 1
             // called anytime you hit a building block with a constructor item (hammer)
-            BasePlayer player = info.Initiator as BasePlayer;
-            float proficiency = info.resourceGatherProficiency;
+            BuildingPart bp = new BuildingPart(bb);
 
-            var bp = new BuildingPart(bb);
-            var p = new Player(player);
-            var ebe = new Events.BuildingEvent(bp, p, proficiency);
+            BuildingEvent ebe = new Events.BuildingEvent(bp, info);
             OnBuildingUpdate.OnNext(ebe);
         }
 

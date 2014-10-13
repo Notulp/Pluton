@@ -12,13 +12,18 @@ namespace Pluton.Events
         public string BlockFullName;
         public float Proficiency;
         public string BlockName;
+        public InvItem Tool;
 
-        public BuildingEvent(BuildingPart bp, Player player, float prof)
+        public BuildingEvent(BuildingPart bp, HitInfo info)
         {
+
+            BasePlayer player = info.Initiator as BasePlayer;
+            var p = new Player(player);
+            Tool = new InvItem(info.Weapon);
             _block = bp.buildingBlock;
-            Proficiency = prof;
+            Proficiency = info.resourceGatherProficiency;
             BuildingPart = bp;
-            Builder = player;
+            Builder = p;
 
             if (_block.blockDefinition != null) {
                 BlockName = _block.blockDefinition.name;
