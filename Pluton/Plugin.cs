@@ -15,6 +15,9 @@
     using Jint.Parser.Ast;
     using Microsoft.Scripting.Hosting;
 
+    using System.Net;
+    using System.Text;
+
     public class Plugin
     {
         public readonly string Name;
@@ -49,7 +52,6 @@
                 Scope.SetVariable("DataStore", DataStore.GetInstance());
                 Scope.SetVariable("Util", Util.GetUtil());
                 Scope.SetVariable("World", World.GetWorld());
-                Scope.SetVariable("Web", new Web());
                 Scope.SetVariable("Commands", PluginCommands.GetInstance());
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
@@ -61,7 +63,6 @@
                     .SetValue("DataStore", DataStore.GetInstance())
                     .SetValue("Util", Util.GetUtil())
                     .SetValue("World", World.GetWorld())
-                    .SetValue("Web", new Web())
                     .SetValue("Plugin", this)
                     .SetValue("Commands", PluginCommands.GetInstance())
                     .Execute(code);
@@ -72,19 +73,21 @@
             }
         }
 
-        public void Invoke(string func, params object[] obj)
+        public object Invoke(string func, params object[] obj)
         {
             try {
                 if (Globals.Contains(func)) {
                     if (Type == PluginType.Python)
-                        PyEngine.Operations.InvokeMember(Class, func, obj);
+                        return PyEngine.Operations.InvokeMember(Class, func, obj);
                     else
-                        JSEngine.Invoke(func, obj);
+                        return JSEngine.Invoke(func, obj);
                 } else {
                     Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);
+                    return null;
                 }
             } catch (Exception ex) {
                 Logger.LogException(ex);
+                return null;
             }
         }
 
@@ -502,6 +505,38 @@
             foreach (TimedEvent timer in GetParallelTimer(name)) {
                 timer.Kill();
                 ParallelTimers.Remove(timer);
+            }
+        }
+
+        #endregion
+
+        #region WEB
+
+        public string GET(string url)
+        {
+            using (System.Net.WebClient client = new System.Net.WebClient())
+            {
+                return client.DownloadString(url);
+            }
+        }
+
+        public string POST(string url, string data)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                byte[] bytes = client.UploadData(url, "POST", Encoding.ASCII.GetBytes(data));
+                return Encoding.ASCII.GetString(bytes);
+            }
+        }
+
+        public string POSTJSON(string url, string json)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                byte[] bytes = client.UploadData(url, "POST", Encoding.UTF8.GetBytes(json));
+                return Encoding.UTF8.GetString(bytes);
             }
         }
 

@@ -104,7 +104,6 @@
     <Compile Include="Objects\Chat.cs" />
     <Compile Include="Events\RespawnEvent.cs" />
     <Compile Include="Objects\PluginCommand.cs" />
-    <Compile Include="Web.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
