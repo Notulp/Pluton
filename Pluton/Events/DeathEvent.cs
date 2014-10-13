@@ -29,6 +29,12 @@ namespace Pluton.Events
                 return _info.Initiator;
             }
         }
+
+        public InvItem Weapon {
+            get {
+                return new InvItem(_info.Weapon);
+            }
+        }
     }
 }
 
