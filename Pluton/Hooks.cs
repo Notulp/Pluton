@@ -83,7 +83,7 @@ namespace Pluton
 
             Approval instance = new Approval();
             instance.level = Application.loadedLevelName;
-            instance.levelSeed = TerrainGenerator.Seed;
+            instance.levelSeed = Seed.Value;
             instance.hostname = server.hostname;
             Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
         }

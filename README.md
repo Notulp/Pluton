@@ -3,7 +3,7 @@ Pluton
 
 Pluton is a mod for the active development branch of the survival sandbox game Rust
 
-######Compatible server version: <b>1309, 1370, 1394</b>
+######Compatible server version: <b>1452</b>
 
 Get started:
 ------------
