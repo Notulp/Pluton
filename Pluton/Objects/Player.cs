@@ -58,6 +58,16 @@ namespace Pluton
             ConnectionAuth.Reject(basePlayer.net.connection, reason);
         }
 
+        public Vector3 GetLookPoint(float maxDist = 500f)
+        {
+            RaycastHit hit;
+            Ray orig = basePlayer.eyes.Ray;
+            if (Physics.Raycast(orig, out hit, maxDist, Physics.AllLayers)) {
+                return hit.point;
+            }
+            return null;
+        }
+
         public void Kill()
         {
             var info = new HitInfo();
