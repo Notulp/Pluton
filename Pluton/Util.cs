@@ -43,6 +43,16 @@
             return new PluginCommand(cmd, dsc, usg);
         }
 
+        public void DestroyEntity(BaseEntity ent)
+        {
+            ent.GetComponent<BaseNetworkable>().Kill();
+        }
+
+        public void DestroyEntityGib(BaseEntity ent)
+        {
+            ent.GetComponent<BaseNetworkable>().Kill(ProtoBuf.EntityDestroy.Mode.Gib);
+        }
+
         public void DestroyObject(GameObject go)
         {
             UnityEngine.Object.DestroyImmediate(go);
