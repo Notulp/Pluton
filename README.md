@@ -55,4 +55,4 @@ Links:
 ------
 (in progress)
 
-[Forum](http://pluton-team.org), [Wiki](http://wiki.pluton-team.org)
+[Forum](http://pluton-team.org), [Wiki](http://wiki.pluton-team.org), [Jenkins](http://jenkins.pluton-team.org)
