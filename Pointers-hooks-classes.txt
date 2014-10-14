@@ -21,7 +21,7 @@ On_PlayerDisconnected(Player p)
 On_PlayerGathering(GatherEvent ge)
 On_PlayerAttacked(PlayerHurtEvent phe)
 On_PlayerDied(PlayerDeathEvent pde)
-On_PlayerTakeDamagePlayerTakedmgEvent ptd)
+On_PlayerTakeDamagePlayer(TakedmgEvent ptd)
 On_PlayerTakeRadiation(PlayerTakeRadsEvent ptr)
 On_ServerInit()
 On_ServerShutdown()
@@ -33,7 +33,6 @@ On_Respawn(Player p)
 
 Pluton.BuildingPart(BuildingBlock bb)
 	.FindSocket(string name):Construction.Socket
-
 	.buildingBlock:BuildingBlock
 	.Health:float
 	.IsFrame:bool
@@ -53,7 +52,6 @@ Pluton.Chat(Pluton.Player player, ConsoleSystem.Arg args)
 
 Pluton.Command(Pluton.Player player, string[] args)
 	.GetQuotedStringArr(string[] sArr):string[]
-
 	.args:string[]
 	.cmd:string
 	.ReplyWith:string
@@ -74,18 +72,15 @@ Pluton.Inv(PlayerInventory inv)
 	.Notice(InvItem item):void
 	.Notice(LoadOutItem item):void
 	.Notice(string ItemdidSpaceQuantity):void // example: "13886 10"
-
 	.AllItems():List<Pluton.InvItem>
 	.BeltItems():List<Pluton.InvItem>
 	.MainItems():List<Pluton.InvItem>
 	.WearItems():List<Pluton.InvItem>
-
 	._inv:PlayerInventory
 	.InnerBelt:ItemContainer
 	.InnerMain:ItemContainer
 	.InnerWear:ItemContainer
 	.owner:Pluton.Player
-
 
 Pluton.InvItem(string Name, int Amount) (string Name) (Item item)
 	.CanStack(Pluton.InvItem item):bool
@@ -94,7 +89,6 @@ Pluton.InvItem(string Name, int Amount) (string Name) (Item item)
 	.GetItemID(string itemName):int
 	.Instantiate(Vector3 position):Pluton.Entity
 	.Instantiate(Vector3 position, Quaternion rotation):Pluton.Entity
-
 	._item:Item
 	.containerPref:enum
 	.Category:string
@@ -109,7 +103,6 @@ Pluton.LoadOut(string Name)
 	.Remove(int Item):bool
 	.ToIni():void
 	.ToInv(Pluton.Inv inv):void
-
 	.itemCount:int
 	.items:Dictionary<int, Pluton.LoadOutItem>
 	.ModeratorUse:bool
@@ -118,7 +111,6 @@ Pluton.LoadOut(string Name)
 	.OwnerUse:bool
 	.path:string
 
-
 Pluton.LoadOutItem(string Name) (string Name, int Amount)
 	.Amount:int
 	.Name:string
@@ -126,7 +118,6 @@ Pluton.LoadOutItem(string Name) (string Name, int Amount)
 
 Pluton.NPC(BaseAnimal animal)
 	.Kill():void
-
 	.Prefab:string
 	.ID:uint
 	.Health:float
@@ -136,7 +127,6 @@ Pluton.NPC(BaseAnimal animal)
 Pluton.OfflinePlayer(Pluton.Player player) // you shouldn't ever call this constructor manually
 	.Get(ulong steamid):Plutom.OfflinePlayer
 	.Get(string steamid):Pluton.OfflinePlayer
-
 	.Admin:bool
 	.IP:string
 	.Name:string
@@ -157,7 +147,6 @@ Pluton.Player(BasePlayer player)
 	.MakeOwner(string reason*):void
 	.Message(string msg):void
 	.MessageFrom(string nameFrom, string msg).void
-
 	.Admin:bool
 	.AuthStatus:string
 	.basePlayer:BasePlayer
@@ -179,8 +168,8 @@ Pluton.Player(BasePlayer player)
 Pluton.PlayerStats(string steamid)
 	.Kills			|
 	.Deaths			|
-	.PlayerKills	|
-	.PlayerDeaths	|
+	.PlayerKills		|
+	.PlayerDeaths		|
 	.NPCKills		|
 	.NPCDeaths		|:uint
 	.TotalDamageTaken	|
@@ -190,7 +179,7 @@ Pluton.PlayerStats(string steamid)
 	.DamageToNPCs		|
 	.DamageFromNPCs		|
 	.DamageToEntities	|
-	.FallDamage			|:double
+	.FallDamage		|:double
 
 Pluton.Plugin(string name, string code, DirectoryInfo path, PluginType type)
 	.CreateDict(int num* = 10):Dictionary<string, object>
@@ -229,7 +218,6 @@ Pluton.Server
 	.Broadcast(string msg):void
 	.Broadcast(string nameFrom, string msg):void
 	.FindPlayer(string something):Pluton.Player
-
 	.ActivePlayers:List<Pluton.Player>
 	.Players:Dictionary<ulong, Pluton.Player>
 	.SleepingPlayers:List<Pluton.Player>
@@ -247,6 +235,7 @@ Pluton.Util
 	.RotateZ(Quaternion q, float angle):Quaternion
 	.TryFindType(string typeName, out System.Type t):bool
 	.TryFindReturnType(string typeName):System.Type
+	.DestroyObject(GameObject):void
 
 Pluton.TimedEvent(string name, double interval, Dictionary<string, object> args) : this(string name, double interval)
 	.Kill():void
@@ -287,7 +276,6 @@ Pluton.World
 
 Pluton.Events.AuthEvent(Connection connection)
 	.Reject(string reason*):void
-
 	._reason:string
 	.approved:bool
 	.con:Connection
@@ -341,7 +329,7 @@ Pluton.Events.GatherEvent(BaseResource res, HitInfo info)
 	.Stage:int
 	.WeaponName:string
 
-Pluton.Events.HurEvent(HitInfo info)
+Pluton.Events.HurtEvent(HitInfo info)
 	.DamageAmount:float
 	.DamageType:Rust.DamageType
 
