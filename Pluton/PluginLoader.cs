@@ -94,8 +94,8 @@
             foreach (string name in GetPyPluginNames())
                 LoadPlugin(name, Plugin.PluginType.Python);
 
-            //foreach (string name in GetJSPluginNames())
-            //   LoadPlugin(name, Plugin.PluginType.JS);
+            foreach (string name in GetJSPluginNames())
+               LoadPlugin(name, Plugin.PluginType.JS);
             //if(OnAllLoaded != null) OnAllLoaded();
         }
 
