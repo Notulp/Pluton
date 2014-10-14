@@ -61,11 +61,11 @@ namespace Pluton
         public Vector3 GetLookPoint(float maxDist = 500f)
         {
             RaycastHit hit;
-            Ray orig = basePlayer.eyes.Ray;
+            Ray orig = basePlayer.eyes.Ray();
             if (Physics.Raycast(orig, out hit, maxDist, Physics.AllLayers)) {
                 return hit.point;
             }
-            return null;
+            return Vector3.zero;
         }
 
         public void Kill()
