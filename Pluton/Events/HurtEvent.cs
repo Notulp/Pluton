@@ -4,7 +4,7 @@ namespace Pluton.Events
 {
     public class HurtEvent
     {
-        private HitInfo _info;
+        public readonly HitInfo _info;
 
         public HurtEvent(HitInfo info)
         {
@@ -14,6 +14,9 @@ namespace Pluton.Events
         public float DamageAmount {
             get {
                 return _info.damageAmount;
+            }
+            set {
+                _info.damageAmount = value;
             }
         }
 
