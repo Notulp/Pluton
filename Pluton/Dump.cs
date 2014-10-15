@@ -9,10 +9,17 @@
 
     public class DumpSettings
     {
-        public int MaxItems = 50;
+        public int MaxItems = 30;
         public bool DisplayPrivate = false;
-        public int MaxDepth = 5;
+        public int MaxDepth = 3;
         public bool UseFullClassNames = false;
+
+        public DumpSettings() {}
+
+        public DumpSettings(int maxItem, int maxDepth, bool disPrivate, bool useFullClassName) {
+            MaxItems = maxItem;
+
+        }
     }
 
     public class Dump
@@ -430,6 +437,8 @@
                     _out.AppendLine(p.Name + ": " + "(" + GetFriendlyTypeName(p.PropertyType) + ") *** indexed property ignored");
                 }
             } catch (Exception e) {
+                if (e is NotSupportedException)
+                    return;
                 _out.Append(new string(' ', level * 2));
                 _out.AppendLine(p.Name + ": " + "??? thrown " + e.GetType().FullName);
             }
@@ -442,6 +451,8 @@
                 process2(p.Name, (obj == null) ? p.FieldType : obj.GetType(), obj, level);
                 _out.AppendLine();
             } catch (Exception e) {
+                if (e is NotSupportedException)
+                    return;
                 _out.Append(new string(' ', level * 2));
                 _out.AppendLine(p.Name + ": " + "??? thrown " + e.GetType().FullName);
             }
