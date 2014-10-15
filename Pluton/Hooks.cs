@@ -353,6 +353,9 @@ namespace Pluton
                 info.Initiator = player as BaseEntity;
             }
 
+            if (!player.IsDead())
+                OnPlayerHurt.OnNext(new Events.PlayerHurtEvent(p, info));
+
             bool fromPlayer = (info.Initiator is BasePlayer);
             PlayerStats statV = p.Stats;
             statV.AddDamageFrom(info.damageAmount, fromPlayer, !fromPlayer, false);
@@ -371,9 +374,6 @@ namespace Pluton
             player.metabolism.SubtractHealth(info.damageAmount);
             player.TakeDamageIndicator(info.damageAmount, player.transform.position - info.PointStart);
             player.CheckDeathCondition(info);
-
-            if (!player.IsDead())
-                OnPlayerHurt.OnNext(new Events.PlayerHurtEvent(p, info));
 
             player.SendEffect("takedamage_hit");
         }
