@@ -12,6 +12,7 @@ namespace Pluton.Patcher
         private static AssemblyDefinition rustAssembly;
         private static AssemblyDefinition facepunchAssembly;
         private static TypeDefinition hooksClass;
+        private static TypeDefinition worldClass;
         private static TypeDefinition bAnimal;
         private static TypeDefinition bPlayer;
         private static TypeDefinition bCorpse;
@@ -419,6 +420,29 @@ namespace Pluton.Patcher
             startMtd.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
+        private static void SwapAirdropPatch()
+        {
+            TypeDefinition eventcmd = rustAssembly.MainModule.GetType("EventCmd");
+            TypeDefinition eventPref = rustAssembly.MainModule.GetType("TriggeredEventPrefab");
+            MethodDefinition run = eventcmd.GetMethod("run");
+            MethodDefinition runEvent = eventPref.GetMethod("RunEvent");
+
+            MethodDefinition getWorld = worldClass.GetMethod("GetWorld");
+            MethodDefinition airDrop = worldClass.GetMethod("AirDrop");
+
+            run.Body.Instructions.Clear();
+            runEvent.Body.Instructions.Clear();
+
+            run.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(getWorld)));
+            run.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(airDrop)));
+            run.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+            runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(getWorld)));
+            runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(airDrop)));
+            runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+        }
+
         // from fougerite.patcher
         private static MethodDefinition CloneMethod(MethodDefinition orig)
         {
@@ -437,6 +461,8 @@ namespace Pluton.Patcher
 
         private static void PatchASMCSharp()
         {
+            SwapAirdropPatch();
+
             BootstrapAttachPatch();
             ServerShutdownPatch();
             ServerInitPatch();
@@ -525,6 +551,7 @@ namespace Pluton.Patcher
             }
             
             hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
+            worldClass = plutonAssembly.MainModule.GetType("Pluton.World");
             bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
             bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
             bCorpse = rustAssembly.MainModule.GetType("BaseCorpse");
