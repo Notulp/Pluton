@@ -26,7 +26,7 @@ On_PlayerTakeRadiation(PlayerTakeRadsEvent ptr)
 On_ServerInit()
 On_ServerShutdown()
 On_PluginInit()
-On_Respawn(Player p)
+On_Respawn(RespawnEvent re)
 <timer_name>Callback(TimedEvent timer)
 
 ## classes
@@ -315,6 +315,7 @@ Pluton.Events.DeathEvent(HitInfo info)
 	.DamageAmount:float
 	.DamageType:Rust.DamageType
 	.Attacker:BaseEntity
+	.Weapon:InvItem
 
 Pluton.Events.EntityLootEvent(PlayerLoot pl, Player looter, Entity looted):LootEvent
 	.Target:Pluton.Entity
@@ -327,11 +328,13 @@ Pluton.Events.GatherEvent(BaseResource res, HitInfo info)
 	.Prefab:string
 	.Proficiency:float
 	.Stage:int
-	.WeaponName:string
+	.Weapon:InvItem
 
 Pluton.Events.HurtEvent(HitInfo info)
+	.Attacker:BaseEntity
 	.DamageAmount:float
 	.DamageType:Rust.DamageType
+	.Weapon:InvItem
 
 Pluton.Events.ItemLootEvent(PlayerLoot pl, Pluton.Player player, Item looted):LootEvent
 	.Target:Item
