@@ -4,7 +4,7 @@ namespace Pluton.Events
 {
     public class GatherEvent
     {
-        private HitInfo _info;
+        public readonly HitInfo _info;
         private BaseResource _res;
 
         public GatherEvent(BaseResource res, HitInfo info)
@@ -64,9 +64,11 @@ namespace Pluton.Events
             }
         }
 
-        public string WeaponName {
+        public InvItem Weapon {
             get {
-                return _info.Weapon.info.displayname;
+                if (_info.Weapon == null)
+                    return null;
+                return new InvItem(_info.Weapon);
             }
         }
     }
