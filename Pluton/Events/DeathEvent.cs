@@ -32,6 +32,8 @@ namespace Pluton.Events
 
         public InvItem Weapon {
             get {
+                if (_info.Weapon == null)
+                    return null;
                 return new InvItem(_info.Weapon);
             }
         }
