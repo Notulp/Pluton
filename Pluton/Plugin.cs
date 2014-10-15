@@ -68,7 +68,6 @@
                     .Execute(code);
                 JavaScriptParser parser = new JavaScriptParser();
                 Globals = (from function in parser.Parse(Code).FunctionDeclarations
-                           where (function.Id.Name.StartsWith("On_") || function.Id.Name.EndsWith("Callback"))
                            select function.Id.Name).ToList<string>();
             }
         }
