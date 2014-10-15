@@ -13,6 +13,19 @@ namespace Pluton
         public Timer freezeTimeTimer;
         private float frozenTime = -1;
 
+        public BaseEntity AttachParachute(Player p) {
+            return AttachParachute(p.basePlayer);
+        }
+
+        public BaseEntity AttachParachute(BaseEntity e) {
+            BaseEntity parachute = GameManager.CreateEntity("parachute", default(Vector3), default(Quaternion));
+            if (parachute) {
+                parachute.SetParent(e, "parachute_attach");
+                parachute.Spawn(true);
+            }
+            return parachute;
+        }
+
         public void AirDrop()
         {
             float speed = UnityEngine.Random.Range(40f, 60f);
