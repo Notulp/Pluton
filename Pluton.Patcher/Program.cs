@@ -524,9 +524,7 @@ namespace Pluton.Patcher
          */
         public static int Main(string[] args)
         {
-            bool interactive = true;
-            if (args.Length > 0)
-                interactive = false;
+            bool interactive = false;
             
             Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", version));
             try {
@@ -570,6 +568,7 @@ namespace Pluton.Patcher
                 }
                 catch (Exception ex)
                 {
+                    interactive = true;
                     Console.WriteLine("An error occured while patching Assembly-CSharp :");
                     Console.WriteLine();
                     Console.WriteLine(ex.Message.ToString());
@@ -594,6 +593,7 @@ namespace Pluton.Patcher
                 }
                 catch (Exception ex)
                 {
+                    interactive = true;
                     Console.WriteLine("An error occured while patching Facepunch :");
                     Console.WriteLine();
                     Console.WriteLine(ex.Message.ToString());
@@ -630,7 +630,9 @@ namespace Pluton.Patcher
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
             }
-            return 0;
+
+            Environment.Exit(0);
+            return -1;
         }
     }
 }
