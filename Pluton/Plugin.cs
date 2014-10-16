@@ -460,7 +460,7 @@
         public void KillTimer(string name)
         {
             TimedEvent timer = GetTimer(name);
-            if (timer != null)
+            if (timer == null)
                 return;
 
             timer.Kill();
