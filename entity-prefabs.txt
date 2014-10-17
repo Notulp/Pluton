@@ -63,7 +63,6 @@ player/player_corpse
 npc/animals/bear_corpse
 npc/animals/wolf_corpse
 npc/animals/stag_corpse
-?????autospawn/animals/boar_corpse????
 npc/animals/boar_corpse
 
 ###Not-working/blank###
