@@ -23,6 +23,15 @@ namespace Pluton
             get {
                 return buildingBlock.health;
             }
+            set {
+                buildingBlock.health = value;
+            }
+        }
+        
+        public float MaxHealth {
+            get {
+                return buildingBlock.MaxHealth();
+            }
         }
 
         public bool IsFrame {
@@ -43,18 +52,6 @@ namespace Pluton
             }
             set {
                 buildingBlock.transform.position.Set(value.x, value.y, value.z);
-            }
-        }
-
-        public ulong OwnerID {
-            get {
-                return buildingBlock.deployerUserID;
-            }
-        }
-
-        public string OwnerName {
-            get {
-                return buildingBlock.deployerUserName;
             }
         }
 
