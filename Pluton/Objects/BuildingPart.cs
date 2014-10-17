@@ -30,7 +30,7 @@ namespace Pluton
         
         public float MaxHealth {
             get {
-                return buildingBlock.MaxHealth
+                return buildingBlock.MaxHealth();
             }
         }
 
