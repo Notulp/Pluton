@@ -27,9 +27,9 @@ namespace Pluton.Patcher
             TypeDefinition plutonBootstrap = plutonAssembly.MainModule.GetType("Pluton.Bootstrap");
             TypeDefinition serverInit = rustAssembly.MainModule.GetType("Bootstrap");
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
-            MethodDefinition start = serverInit.GetMethod("Start");           
+            MethodDefinition init = serverInit.GetMethod("Initialization");
 
-            start.Body.GetILProcessor().InsertAfter(start.Body.Instructions[0x04], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            init.Body.GetILProcessor().InsertAfter(init.Body.Instructions[init.Body.Instructions.Count - 2], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void ClientAuthPatch()
