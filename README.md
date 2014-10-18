@@ -3,7 +3,7 @@ Pluton
 
 Pluton is a mod for the active development branch of the survival sandbox game Rust
 
-######Compatible server version: <b>1452</b>
+######Compatible server version: <b>v45,v47</b>
 
 Get started:
 ------------
@@ -49,10 +49,12 @@ A: %serverroot%/server/_your_server's_identity_
 Our sponsor:
 ------------
 
-www.streamline-servers.com
+[Streamlines Servers](www.streamline-servers.com)
+[Revolt Servers](revoltservers.com)
+[FPS Players](fpsplayers.com)
 
 Links:
 ------
 (in progress)
 
-[Forum](http://pluton-team.org), [Wiki](http://wiki.pluton-team.org), [Jenkins](http://jenkins.pluton-team.org)
+[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://wiki.pluton-team.org), [Jenkins](http://jenkins.pluton-team.org), [IRC](http://chat.mibbit.com/?channel=%23pluton&server=irc.freenode.net)
