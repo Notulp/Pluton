@@ -88,8 +88,8 @@ namespace Pluton
              *  The below code will add [Pluton v0.9.x] to the start of your server name
              *  We would really appreciate you not changing this temporary addition.
              * */
-            string start = String.Format("[Pluton v.{1}] {0}", server.hostname, Version);
-            if (!server.hostname.StartsWith("[Pluton v")) {
+            string start = String.Format("[pluton-team.org] {0}", server.hostname);
+            if (!server.hostname.StartsWith("[pluton-team.org")) {
                 server.hostname = start;
             }
         }
