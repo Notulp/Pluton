@@ -50,7 +50,9 @@ Our sponsor:
 ------------
 
 [Streamlines Servers](www.streamline-servers.com)
+
 [Revolt Servers](revoltservers.com)
+
 [FPS Players](fpsplayers.com)
 
 Links:
