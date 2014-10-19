@@ -11,6 +11,15 @@ namespace Pluton.Events
         {
             Victim = bp;
         }
+
+        public float[] Proficiency {
+            get {
+                return _info.demolishProficiency;
+            }
+            set {
+                _info.demolishProficiency = value;
+            }
+        }
     }
 }
 
