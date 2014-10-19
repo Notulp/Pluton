@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -519,12 +519,15 @@ namespace Pluton.Patcher
          * 10 : File not found
          * 20 : Reading dll error
          * 30 : Server already patched
-         * 40 : Generic patch exeption
+         * 40 : Generic patch exeption Assembly-CSharp
+         * 41 : Generic patch exeption Facepunch
          * 50 : File write error
          */
         public static int Main(string[] args)
         {
-            bool interactive = false;
+            bool interactive = true;
+            if (args.Length > 0)
+                interactive = false;
             
             Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", version));
             try {
@@ -577,6 +580,12 @@ namespace Pluton.Patcher
                     Console.WriteLine();
                     Console.WriteLine(ex.StackTrace.ToString());
                     Console.WriteLine();
+
+                    if (interactive) {
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
+                    }
+                    return 40;
                 }
             }
             else
@@ -598,10 +607,15 @@ namespace Pluton.Patcher
                     Console.WriteLine();
                     Console.WriteLine(ex.Message.ToString());
 
-                    //Normal handle for the others
                     Console.WriteLine();
                     Console.WriteLine(ex.StackTrace.ToString());
                     Console.WriteLine();
+
+                    if (interactive) {
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
+                    }
+                    return 41;
                 }
             }
             else
@@ -626,10 +640,6 @@ namespace Pluton.Patcher
 
             //Successfully patched the server
             Console.WriteLine("Completed !");
-            if (interactive) {
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-            }
 
             Environment.Exit(0);
             return -1;
