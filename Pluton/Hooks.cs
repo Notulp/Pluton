@@ -31,7 +31,7 @@ namespace Pluton
 
         public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
 
-        public static Subject<ConsoleEvent> OnConsole = new Subject<ConsoleEvent>();
+        public static Subject<ClientConsoleEvent> OnClientConsole = new Subject<ClientConsoleEvent>();
 
         public static Subject<CorpseHurtEvent> OnCorpseAttacked = new Subject<CorpseHurtEvent>();
 
@@ -198,11 +198,13 @@ namespace Pluton
         }
 
         //FacePunch.ConsoleSystem.OnClientCommand
-        public static void ConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
+        public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
         {
-            ConsoleEvent ce = null;
+            ClientConsoleEvent ce = null;
+            //tmp fix for error thrown
+            return;
             if (arg.connection != null) {
-                OnConsole.OnNext(ce);
+                OnClientConsole.OnNext(ce);
 
                 ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem), "SendClientReply", arg.connection, ce.Reply);
             }

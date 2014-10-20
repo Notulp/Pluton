@@ -188,11 +188,11 @@
                 case "On_ClientAuth":
                     plugin.OnClientAuthHook = Hooks.OnClientAuth.Subscribe(a => plugin.OnClientAuth(a));
                     break;
+                case "On_ClientConsole":
+                    plugin.OnClientConsoleHook = Hooks.OnClientConsole.Subscribe(c => plugin.OnClientConsole(c));
+                    break;
                 case "On_Command":
                     plugin.OnCommandHook = Hooks.OnCommand.Subscribe(c => plugin.OnCommand(c));
-                    break;
-                case "On_Console":
-                    plugin.OnConsoleHook = Hooks.OnConsole.Subscribe(c => plugin.OnConsole(c));
                     break;
                 case "On_CorpseDropped":
                     plugin.OnCorpseDroppedHook = Hooks.OnCorpseDropped.Subscribe(c => plugin.OnCorpseDropped(c));
@@ -284,11 +284,11 @@
                 case "On_ClientAuth":
                     plugin.OnClientAuthHook.Dispose();
                     break;
+                case "On_ClientConsole":
+                    plugin.OnClientConsoleHook.Dispose();
+                    break;
                 case "On_Command":
                     plugin.OnCommandHook.Dispose();
-                    break;
-                case "On_Console":
-                    plugin.OnConsoleHook.Dispose();
                     break;
                 case "On_CorpseDropped":
                     plugin.OnCorpseDroppedHook.Dispose();

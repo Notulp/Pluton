@@ -284,8 +284,8 @@
             this.Invoke("On_Command", cmd);
         }
 
-        public IDisposable OnConsoleHook;
-        public void OnConsole(ConsoleEvent ce) {
+        public IDisposable OnClientConsoleHook;
+        public void OnClientConsole(ClientConsoleEvent ce) {
             this.Invoke("On_Console", ce);
         }
 

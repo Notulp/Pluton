@@ -61,11 +61,11 @@ namespace Pluton.Patcher
             say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void ConsoleCommandPatch()
+        private static void ClientConsoleCommandPatch()
         {
             TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
             MethodDefinition onClientCmd = consoleSystem.GetMethod("OnClientCommand");
-            MethodDefinition onConsole = hooksClass.GetMethod("ConsoleCommand");
+            MethodDefinition onClientConsole = hooksClass.GetMethod("ClientConsoleCommand");
 
             ILProcessor iLProcessor = onClientCmd.Body.GetILProcessor();
 
@@ -74,7 +74,7 @@ namespace Pluton.Patcher
 
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[17], Instruction.Create(OpCodes.Ldloc_2));
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[18], Instruction.Create(OpCodes.Ldloc_1));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onConsole)));            
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onClientConsole)));            
         }
 
         private static void GatherPatch()
@@ -508,7 +508,7 @@ namespace Pluton.Patcher
 
         private static void PatchFacepunch()
         {
-            ConsoleCommandPatch();
+            ClientConsoleCommandPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, facepunchAssembly.MainModule.Import(typeof(Object)));
             facepunchAssembly.MainModule.Types.Add(plutonClass);
