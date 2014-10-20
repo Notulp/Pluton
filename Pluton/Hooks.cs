@@ -535,6 +535,9 @@ namespace Pluton
             if (re.GiveDefault)
                 player.inventory.GiveDefaultItems();
 
+            if (re.WakeUp)
+                player.EndSleeping();
+
             player.SendFullSnapshot();
         }
 
