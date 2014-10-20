@@ -200,13 +200,11 @@ namespace Pluton
         //FacePunch.ConsoleSystem.OnClientCommand
         public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
         {
-            ClientConsoleEvent ce = null;
-            //tmp fix for error thrown
-            return;
+            ClientConsoleEvent ce = new ClientConsoleEvent(arg, rconCmd);
             if (arg.connection != null) {
                 OnClientConsole.OnNext(ce);
 
-                ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem), "SendClientReply", arg.connection, ce.Reply);
+                arg.ReplyWith(ce.Reply);
             }
         }
 

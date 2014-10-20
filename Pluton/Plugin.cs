@@ -286,7 +286,7 @@
 
         public IDisposable OnClientConsoleHook;
         public void OnClientConsole(ClientConsoleEvent ce) {
-            this.Invoke("On_Console", ce);
+            this.Invoke("On_ClientConsole", ce);
         }
 
         public IDisposable OnCorpseDroppedHook;
