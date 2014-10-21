@@ -58,4 +58,4 @@ Our sponsor:
 Links:
 ------
 
-[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [Jenkins](http://jenkins.pluton-team.org), [IRC](http://chat.mibbit.com/?channel=%23pluton&server=irc.freenode.net)
+[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [Jenkins](http://jenkins.pluton-team.org), [IRC](http://webchat.freenode.net?channels=%23pluton)
