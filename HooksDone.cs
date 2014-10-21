@@ -42,11 +42,17 @@ public static void EntityFrameDeployed(BuildingBlock bb)
 public static void EntityBuildingUpdate(BuildingBlock bb, BasePlayer player, float proficiency)
 // hooked as you progress with a building (when you hit it with hammer, even if it is built already)
 
+public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
+// when a player enter a command in the F1 console
+
 public static void CorpseInit(BaseCorpse corpse, BaseEntity parent)
 // when a player or an animal dies and a ragdoll is instantiated
 
 public static void CorpseHit(BaseCorpse corpse, HitInfo info)
 // when you hit a dead body
+
+public static void ServerConsoleCommand(String rconCmd, bool wantFeedback)
+// when you enter text in the server console
 
 public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity)
 // selfexplanatory
