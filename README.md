@@ -3,7 +3,7 @@ Pluton
 
 Pluton is a mod for the active branch of the survival sandbox game Rust
 
-######Compatible server version: <b>v45,v47</b>
+######Compatible server version: <b>v45,v47,v55</b>
 
 Get started:
 ------------
@@ -33,7 +33,7 @@ Q.A.
 
 Q: Where the plugins go?
 
-A: Into: %publicfolder%/Plugins/_Plugin'sName_/_Plugin'sName.py_
+A: Into: %publicfolder%/Plugins/_Plugin'sName_/_Plugin'sName.**_ (** is the plugin's extenison, .py for python, .js for javascript)
 
 
 Q: Which is the public folder?
@@ -57,6 +57,5 @@ Our sponsor:
 
 Links:
 ------
-(in progress)
 
-[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://wiki.pluton-team.org), [Jenkins](http://jenkins.pluton-team.org), [IRC](http://chat.mibbit.com/?channel=%23pluton&server=irc.freenode.net)
+[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [Jenkins](http://jenkins.pluton-team.org), [IRC](http://chat.mibbit.com/?channel=%23pluton&server=irc.freenode.net)
