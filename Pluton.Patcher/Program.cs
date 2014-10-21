@@ -77,6 +77,23 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onClientConsole)));            
         }
 
+        private static void ServerConsoleCommandPatch()
+        {
+            TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
+            MethodDefinition onServerCmd = consoleSystem.GetMethod("Run");
+            //TODO add the function
+            MethodDefinition onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
+
+            ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
+
+            for (int i = 9; i >= 6; i--)
+                iLProcessor.Body.Instructions.RemoveAt(i);
+
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[6], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[7], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));            
+        }
+
         private static void GatherPatch()
         {
             TypeDefinition bRes = rustAssembly.MainModule.GetType("BaseResource");
@@ -509,6 +526,7 @@ namespace Pluton.Patcher
         private static void PatchFacepunch()
         {
             ClientConsoleCommandPatch();
+            ServerConsoleCommandPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, facepunchAssembly.MainModule.Import(typeof(Object)));
             facepunchAssembly.MainModule.Types.Add(plutonClass);

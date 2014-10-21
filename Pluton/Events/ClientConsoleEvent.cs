@@ -17,13 +17,16 @@ namespace Pluton.Events
             this.User = Player.FindByGameID((arg.connection.player as BasePlayer).userID);
             this.Args = new List<String>();
 
+            Reply = String.Format("{0} was executed from console!", rconCmd);
+
+            if(String.IsNullOrEmpty(rconCmd))
+                return;
+
             foreach (String str in rconCmd.Split(' '))
                 Args.Add(str);
             
             this.cmd = Args[0];
             Args.RemoveAt(0);
-
-            Reply = String.Format("{0} was executed from console!", rconCmd);
         }
 
         public void ReplyWith(String msg)

@@ -251,6 +251,9 @@
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                     break;
+                case "On_ServerConsole":
+                    plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
+                    break;
                 case "On_ServerInit":
                     plugin.OnServerInitHook = Hooks.OnServerInit.Subscribe(s => plugin.OnServerInit(s));
                     break;
@@ -346,6 +349,9 @@
                     break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook.Dispose();
+                    break;
+                case "On_ServerConsole":
+                    plugin.OnServerConsoleHook.Dispose();
                     break;
                 case "On_ServerInit":
                     plugin.OnServerInitHook.Dispose();

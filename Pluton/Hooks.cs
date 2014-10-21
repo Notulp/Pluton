@@ -29,9 +29,9 @@ namespace Pluton
 
         public static Subject<AuthEvent> OnClientAuth = new Subject<AuthEvent>();
 
-        public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
-
         public static Subject<ClientConsoleEvent> OnClientConsole = new Subject<ClientConsoleEvent>();
+
+        public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
 
         public static Subject<CorpseHurtEvent> OnCorpseAttacked = new Subject<CorpseHurtEvent>();
 
@@ -60,6 +60,8 @@ namespace Pluton
         public static Subject<PlayerLootEvent> OnLootingPlayer = new Subject<PlayerLootEvent>();
 
         public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
+
+        public static Subject<ServerConsoleEvent> OnServerConsole = new Subject<ServerConsoleEvent>();
 
         public static Subject<string> OnServerInit = new Subject<string>();
 
@@ -205,6 +207,19 @@ namespace Pluton
                 OnClientConsole.OnNext(ce);
 
                 arg.ReplyWith(ce.Reply);
+            }
+        }
+
+        //FacePunch.ConsoleSystem.Run
+        public static void ServerConsoleCommand(String rconCmd, bool wantFeedback)
+        {
+            if (!String.IsNullOrEmpty(rconCmd)) {
+                ServerConsoleEvent ce = new ServerConsoleEvent(rconCmd, wantFeedback);
+
+                OnServerConsole.OnNext(ce);
+
+                if(wantFeedback)
+                    Debug.Log(String.Format("{0} was executed from console!", rconCmd));
             }
         }
 

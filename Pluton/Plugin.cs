@@ -392,6 +392,11 @@
             this.Invoke("On_PlayerTakeRadiation", re);
         }
 
+        public IDisposable OnServerConsoleHook;
+        public void OnServerConsole(ServerConsoleEvent ce) {
+            this.Invoke("On_ServerConsole", ce);
+        }
+
         public IDisposable OnServerInitHook;
         public void OnServerInit(string s = "") {
             this.Invoke("On_ServerInit");
