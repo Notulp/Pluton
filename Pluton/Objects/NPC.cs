@@ -28,8 +28,12 @@ namespace Pluton
 
         public float Health {
             get {
-                return baseAnimal.myHealth; 
+                return baseAnimal.myHealth;
             }
+            set {
+                baseAnimal.myHealth = value;
+            }
+
         }
 
         public Vector3 Location {

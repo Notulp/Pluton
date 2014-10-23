@@ -23,6 +23,9 @@ namespace Pluton
             get {
                 return buildingBlock.health;
             }
+            set {
+                buildingBlock.health = value;
+            }
         }
 
         public bool IsFrame {

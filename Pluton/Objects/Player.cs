@@ -179,7 +179,10 @@ namespace Pluton
 
         public float Health {
             get {
-                return basePlayer.Health();
+                return basePlayer.metabolism.health.value;
+            }
+            set {
+                basePlayer.metabolism.health.Add(value);
             }
         }
 
