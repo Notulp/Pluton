@@ -55,7 +55,7 @@ public class IniParser
 
     public void AddSetting(string sectionName, string settingName)
     {
-        this.AddSetting(sectionName, settingName, null);
+        this.AddSetting(sectionName, settingName, String.Empty);
     }
 
     public void AddSetting(string sectionName, string settingName, string settingValue)
@@ -117,17 +117,19 @@ public class IniParser
         SectionPair pair;
         pair.Section = sectionName;
         pair.Key = settingName;
-        if(!this.keyPairs.ContainsKey(pair))
+        if (!this.keyPairs.ContainsKey(pair)) {
+            AddSetting(sectionName, settingName, defaultValue);
             return defaultValue;
+        }
         return ((string)this.keyPairs[pair]).Trim();
     }
 
     public bool GetBoolSetting(string sectionName, string settingName, bool defaultValue = false)
     {
-        if(defaultValue)
-            return (GetSetting(sectionName, settingName).ToLower() != "false");
+        if (defaultValue)
+            return (GetSetting(sectionName, settingName, "true").ToLower() != "false");
         else
-            return (GetSetting(sectionName, settingName).ToLower() == "true");
+            return (GetSetting(sectionName, settingName, "false").ToLower() == "true");
     }
 
     public bool isCommandOn(string cmdName)
