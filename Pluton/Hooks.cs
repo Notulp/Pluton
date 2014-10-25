@@ -376,6 +376,9 @@ namespace Pluton
             if (!player.IsDead())
                 OnPlayerHurt.OnNext(new Events.PlayerHurtEvent(p, info));
 
+            if (info.damageAmount <= 0.0f)
+                return;
+
             bool fromPlayer = (info.Initiator is BasePlayer);
             PlayerStats statV = p.Stats;
             statV.AddDamageFrom(info.damageAmount, fromPlayer, !fromPlayer, false);
