@@ -3,7 +3,7 @@
 namespace Pluton
 {
     [Serializable]
-    public class PlayerStats
+    public class PlayerStats : CountedInstance
     {
 
         public uint Kills;

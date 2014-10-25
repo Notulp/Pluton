@@ -18,7 +18,7 @@
     using System.Net;
     using System.Text;
 
-    public class Plugin
+    public class Plugin : CountedInstance
     {
         public readonly string Name;
         public readonly string Code;

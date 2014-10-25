@@ -2,7 +2,7 @@
 
 namespace Pluton
 {
-    public class LoadOutItem
+    public class LoadOutItem : CountedInstance
     {
         public readonly int Amount;
         public readonly string Name;

@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-    public class RespawnEvent
+    public class RespawnEvent : CountedInstance
     {
         public bool GiveDefault;
         public bool ChangePos;

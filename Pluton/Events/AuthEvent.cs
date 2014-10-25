@@ -3,7 +3,7 @@ using Network;
 
 namespace Pluton.Events
 {
-    public class AuthEvent
+    public class AuthEvent : CountedInstance
     {
         public bool approved;
         public string _reason;

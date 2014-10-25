@@ -105,6 +105,7 @@
     <Compile Include="Events\ClientConsoleEvent.cs" />
     <Compile Include="Events\ServerConsoleEvent.cs" />
     <Compile Include="Events\FrameDeployedEvent.cs" />
+    <Compile Include="CountedInstance.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

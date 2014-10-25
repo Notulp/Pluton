@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pluton.Events
 {
-    public class BuildingEvent
+    public class BuildingEvent : CountedInstance
     {
         public List<Construction.Socket> Sockets;
         public readonly BuildingBlock _block;

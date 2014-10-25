@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-    public class GatherEvent
+    public class GatherEvent : CountedInstance
     {
         public readonly HitInfo _info;
         private BaseResource _res;

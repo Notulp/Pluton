@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-    public class DeathEvent
+    public class DeathEvent : CountedInstance
     {
         public readonly HitInfo _info;
         public bool dropLoot = true;

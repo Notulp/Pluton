@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Pluton
 {
-    public class LoadOut
+    public class LoadOut : CountedInstance
     {
         public Dictionary<int, LoadOutItem> items;
         public readonly string path;

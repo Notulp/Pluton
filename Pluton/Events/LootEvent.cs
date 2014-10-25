@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-    public class LootEvent
+    public class LootEvent : CountedInstance
     {
         public readonly Player Looter;
         public readonly PlayerLoot pLoot;

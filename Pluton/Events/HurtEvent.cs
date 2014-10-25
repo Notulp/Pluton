@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-    public class HurtEvent
+    public class HurtEvent : CountedInstance
     {
         public readonly HitInfo _info;
 

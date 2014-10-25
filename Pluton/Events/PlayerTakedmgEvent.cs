@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-	public class PlayerTakedmgEvent
+    public class PlayerTakedmgEvent : CountedInstance
     {
 
 		public readonly Player Victim;

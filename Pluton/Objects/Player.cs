@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class Player
+    public class Player : CountedInstance
     {     
         public readonly BasePlayer basePlayer;
 

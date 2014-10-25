@@ -93,6 +93,14 @@ namespace Pluton
             Bootstrap.SaveAll();
             arg.ReplyWith("Everything saved!");
         }
+
+        [ConsoleSystem.Admin]
+        [ConsoleSystem.Help("Prints some data to the server console.", "")]
+        public static void status(ConsoleSystem.Arg arg)
+        {
+            UnityEngine.Debug.Log(CountedInstance.InstanceReportText());
+            arg.ReplyWith("Finished report!");
+        }
     }
 }
 

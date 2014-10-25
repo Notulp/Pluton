@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class BuildingPart
+    public class BuildingPart : CountedInstance
     {
 
         public readonly BuildingBlock buildingBlock;

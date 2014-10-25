@@ -2,7 +2,7 @@
 
 namespace Pluton.Events
 {
-	public class CorpseInitEvent
+    public class CorpseInitEvent : CountedInstance
     {
 
 		public readonly BaseCorpse Corpse;

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class NPC
+    public class NPC : CountedInstance
     {
         public readonly BaseAnimal baseAnimal;
 

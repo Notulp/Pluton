@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class FrameDeployedEvent
+    public class FrameDeployedEvent : CountedInstance
     {
         public readonly Player Deployer;
         public readonly Item.Modules.Planner _planner;

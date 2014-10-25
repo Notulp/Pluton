@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pluton.Events
 {
-    public class ClientConsoleEvent
+    public class ClientConsoleEvent : CountedInstance
     {
         public readonly ConsoleSystem.Arg Internal;
         public readonly Player User;

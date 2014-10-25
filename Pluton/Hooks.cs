@@ -101,7 +101,7 @@ namespace Pluton
         // chat.say().Hooks.Chat()
         public static void Command(ConsoleSystem.Arg arg)
         {
-            Player player = new Player(arg.Player());
+            Player player = Server.GetServer().Players[arg.Player().userID];
             string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
 
             Command cmd = new Command(player, args);
@@ -179,7 +179,7 @@ namespace Pluton
                 if (!(bool) ((UnityEngine.Object) basePlayer))
                     return;
 
-                Chat pChat = new Chat(new Player(basePlayer), arg);
+                Chat pChat = new Chat(Server.GetServer().Players[basePlayer.userID], arg);
 
                 string str = arg.GetString(0, "text");
 
@@ -251,7 +251,7 @@ namespace Pluton
             var npc = new NPC(animal);
 
             if (info.Initiator != null) {
-                Player p = new Player(info.Initiator as BasePlayer);
+                Player p = Server.GetServer().Players[(info.Initiator as BasePlayer).userID];
                 PlayerStats stats = new PlayerStats(p.SteamID);
                 stats.AddDamageTo(info.damageAmount, false, true, false);
                 p.Stats = stats;

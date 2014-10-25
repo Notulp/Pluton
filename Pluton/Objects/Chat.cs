@@ -2,7 +2,7 @@
 
 namespace Pluton
 {
-	public class Chat
+    public class Chat : CountedInstance
     {
 
 		public readonly ConsoleSystem.Arg _arg;

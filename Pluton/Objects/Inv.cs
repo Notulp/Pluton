@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Pluton
 {
-    public class Inv
+    public class Inv : CountedInstance
     {
 
         public readonly PlayerInventory _inv;

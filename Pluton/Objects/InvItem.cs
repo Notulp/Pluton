@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class InvItem
+    public class InvItem : CountedInstance
     {
         public readonly Item _item;
 

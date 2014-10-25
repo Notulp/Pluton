@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Pluton
 {
     [Serializable]
-    public class OfflinePlayer
+    public class OfflinePlayer : CountedInstance
     {
         public string Name;
         public string SteamID;
