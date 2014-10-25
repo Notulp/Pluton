@@ -370,6 +370,9 @@ namespace Pluton
                 info.Initiator = player as BaseEntity;
             }
 
+            if (!player.TestAttack(info) || !Realm.Server() || (info.damageAmount <= 0.0f))
+                return;
+
             if (!player.IsDead())
                 OnPlayerHurt.OnNext(new Events.PlayerHurtEvent(p, info));
 
@@ -385,8 +388,6 @@ namespace Pluton
                 Server.GetServer().serverData.Add("PlayerStats", sid, statA);
             }
 
-            if (!player.TestAttack(info) || !Realm.Server() || (info.damageAmount <= 0.0f))
-                return;
             player.metabolism.bleeding.Add(Mathf.InverseLerp(0.0f, 100f, info.damageAmount));
             player.metabolism.SubtractHealth(info.damageAmount);
             player.TakeDamageIndicator(info.damageAmount, player.transform.position - info.PointStart);
