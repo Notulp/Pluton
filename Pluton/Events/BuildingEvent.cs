@@ -42,9 +42,3 @@ namespace Pluton.Events
         }
     }
 }
-
-/*
- * possible properties:
- * player.basePlayer.svActiveItem as (constructor item)
- * 
- */

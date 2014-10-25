@@ -28,13 +28,6 @@ namespace Pluton
             Z = player.Z;
             totalTimeOnline = (ulong)player.TimeOnline;
             Admin = player.Admin;
-            /*
-			 * last online
-			 * kills?
-			 * other stats?
-			 * anything else?
-			 * 
-			 */
         }
 
         public static OfflinePlayer Get(ulong steamID)
