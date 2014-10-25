@@ -19,7 +19,7 @@ namespace Pluton
 
         public static Subject<BuildingHurtEvent> OnBuildingPartDestroyed = new Subject<BuildingHurtEvent>();
 
-        public static Subject<BuildingPart> OnBuildingFrameDeployed = new Subject<BuildingPart>();
+        public static Subject<FrameDeployedEvent> OnBuildingFrameDeployed = new Subject<FrameDeployedEvent>();
 
         public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
@@ -444,12 +444,12 @@ namespace Pluton
         }
 
         // BuildingBlock.BecomeFrame()
-        public static void EntityFrameDeployed(BuildingBlock bb)
+        public static void EntityFrameDeployed(Item.Modules.Planner planner, Item item, BasePlayer p, GameObject obj)
         {
             // blockDefinition is null in this hook
 
-            var bp = new BuildingPart(bb);
-            OnBuildingFrameDeployed.OnNext(bp);
+            FrameDeployedEvent fde = new FrameDeployedEvent(planner, item, p, obj);
+            OnBuildingFrameDeployed.OnNext(fde);
         }
 
         // BuildingBlock.BecomeBuilt()

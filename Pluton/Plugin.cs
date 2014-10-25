@@ -328,8 +328,8 @@
         }
 
         public IDisposable OnFrameDeployedHook;
-        public void OnFrameDeployed(BuildingPart bp) {
-            this.Invoke("On_FrameDeployed", bp);
+        public void OnFrameDeployed(FrameDeployedEvent fde) {
+            this.Invoke("On_FrameDeployed", fde);
         }
 
         public IDisposable OnNPCHurtHook;

@@ -18,8 +18,10 @@ namespace Pluton.Patcher
         private static TypeDefinition bCorpse;
         private static TypeDefinition bBlock;
         private static TypeDefinition itemCrafter;
+        private static TypeDefinition itemModules;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.5";
+        private static TypeDefinition item;
+        private static string version = "1.0.0.6";
 
         private static void BootstrapAttachPatch()
         {
@@ -287,13 +289,18 @@ namespace Pluton.Patcher
 
         private static void BuildingBlockFrameInitPatch()
         {
-            MethodDefinition bbFrameInit = bBlock.GetMethod("InitializeAsFrame");
+            TypeDefinition planner = itemModules.GetNestedType("Planner");
+            MethodDefinition onBuild = planner.GetMethod("OnBuild");
             MethodDefinition entDeployed = hooksClass.GetMethod("EntityFrameDeployed");
 
-            CloneMethod(bbFrameInit);
-            ILProcessor iLProcessor = bbFrameInit.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bbFrameInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bbFrameInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entDeployed)));
+            CloneMethod(onBuild);
+            ILProcessor iLProcessor = onBuild.Body.GetILProcessor();
+            int count = onBuild.Body.Instructions.Count - 18; // after "GameObject gO = this.DoPlacement(placement);"
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_0)); // planner
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_1)); // item
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_2)); // player
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldloc_3)); // gO (placement)
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entDeployed)));
         }
 
         private static void BuildingBlockBuiltPatch()
@@ -577,6 +584,8 @@ namespace Pluton.Patcher
             bBlock = rustAssembly.MainModule.GetType("BuildingBlock");
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
             itemCrafter = rustAssembly.MainModule.GetType("ItemBlueprint");
+            item = rustAssembly.MainModule.GetType("Item");
+            itemModules = item.GetNestedType("Modules");
 
             //Check if patching is required
             TypeDefinition plutonClass = rustAssembly.MainModule.GetType("Pluton");
