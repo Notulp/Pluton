@@ -6,7 +6,7 @@
     using System.Threading;
     using System.Timers;
 
-    public class TimedEvent
+    public class TimedEvent : CountedInstance
     {
 
         private Dictionary<string, object> _args;
