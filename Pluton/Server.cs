@@ -45,6 +45,27 @@
             return null;
         }
 
+        public Player FindPlayer(ulong steamid)
+        {
+            if (Players.ContainsKey(steamid))
+                return Players[steamid];
+            return FindPlayer(steamid.ToString());
+        }
+
+        public static Player GetPlayer(BasePlayer bp)
+        {
+            try {
+                Player p = server.FindPlayer(bp.userID);
+                if (p != null)
+                    return p;
+                return new Player(bp);
+            } catch (Exception ex) {
+                Logger.LogDebug("[Server] GetPlayer: " + ex.Message);
+                Logger.LogException(ex);
+                return null;
+            }
+        }
+
         public static Pluton.Server GetServer()
         {
             if (server == null) {
@@ -143,14 +164,14 @@
         public List<Player> ActivePlayers {
             get {
                 return (from player in BasePlayer.activePlayerList
-                        select new Player(player)).ToList();
+                        select GetPlayer(player)).ToList();
             }
         }
 
         public List<Player> SleepingPlayers {
             get {
                 return (from player in BasePlayer.sleepingPlayerList
-                        select new Player(player)).ToList();
+                        select GetPlayer(player)).ToList();
             }
         }
     }

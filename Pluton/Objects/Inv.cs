@@ -13,7 +13,7 @@ namespace Pluton
         public Inv(PlayerInventory inv)
         {
             _inv = inv;
-            owner = new Player(inv.GetComponent<BasePlayer>());
+            owner = Server.GetPlayer(inv.GetComponent<BasePlayer>());
         }
 
         public bool Add(InvItem item)

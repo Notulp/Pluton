@@ -101,7 +101,7 @@ namespace Pluton
         // chat.say().Hooks.Chat()
         public static void Command(ConsoleSystem.Arg arg)
         {
-            Player player = Server.GetServer().Players[arg.Player().userID];
+            Player player = Server.GetPlayer(arg.Player());
             string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
 
             Command cmd = new Command(player, args);
@@ -251,10 +251,8 @@ namespace Pluton
             var npc = new NPC(animal);
 
             if (info.Initiator != null) {
-                Player p = Server.GetServer().Players[(info.Initiator as BasePlayer).userID];
-                PlayerStats stats = new PlayerStats(p.SteamID);
-                stats.AddDamageTo(info.damageAmount, false, true, false);
-                p.Stats = stats;
+                Server.GetPlayer(info.Initiator as BasePlayer)
+                    .Stats.AddDamageTo(info.damageAmount, false, true, false);
             }
 
             if (Realm.Server()) {
@@ -274,12 +272,9 @@ namespace Pluton
         // BaseAnimal.Die()
         public static void NPCDied(BaseAnimal animal, HitInfo info)
         {
-           
+
             if (info.Initiator != null) {
-                Player p = new Player(info.Initiator as BasePlayer);
-                PlayerStats stats = new PlayerStats(p.SteamID);
-                stats.AddKill(false, true);
-                p.Stats = stats;
+                Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(false, true);
             }
 
             var npc = new NPC(animal);
@@ -313,22 +308,18 @@ namespace Pluton
                 info.Initiator = player as BaseEntity;
             }
 
-            Player victim = new Player(player);
+            Player victim = Server.GetPlayer(player);
 
             if (info.Initiator != null) {
-                PlayerStats statsV = new PlayerStats(victim.SteamID);
+                PlayerStats statsV = victim.Stats;
 
                 if (info.Initiator is BasePlayer) {
-                    Player p = new Player(info.Initiator as BasePlayer);
-                    PlayerStats stats = new PlayerStats(p.SteamID);
-                    stats.AddKill(true, false);
-                    p.Stats = stats;
+                    Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
 
-                    statsV.AddDeath(true, false);
+                    victim.Stats.AddDeath(true, false);
                 } else if (info.Initiator is BaseAnimal) {
-                    statsV.AddDeath(false, true);
+                    victim.Stats.AddDeath(false, true);
                 }
-                victim.Stats = statsV;
             }
 
             Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
@@ -341,7 +332,7 @@ namespace Pluton
         // BasePlayer.OnDisconnected()
         public static void PlayerDisconnected(BasePlayer player)
         {
-            var p = new Player(player);
+            var p = Server.GetPlayer(player);
 
             if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", p.SteamID)) {
                 OfflinePlayer op = (Server.GetServer().serverData.Get("OfflinePlayers", p.SteamID) as OfflinePlayer);
@@ -361,7 +352,7 @@ namespace Pluton
         // BasePlayer.OnAttacked()
         public static void PlayerHurt(BasePlayer player, HitInfo info)
         {
-            var p = new Player(player);
+            var p = Server.GetPlayer(player);
 
             if (info == null) { // it should never accour, but just in case
                 info = new HitInfo();
@@ -402,7 +393,7 @@ namespace Pluton
         // BasePlayer.TakeDamage()
         public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType)
         {
-            var ptd = new PlayerTakedmgEvent(new Player(player), dmgAmount, dmgType);
+            var ptd = new PlayerTakedmgEvent(Server.GetPlayer(player), dmgAmount, dmgType);
             OnPlayerTakeDamage.OnNext(ptd);
         }
 
@@ -414,7 +405,7 @@ namespace Pluton
         // BasePlayer.TakeRadiation()
         public static void PlayerTakeRadiation(BasePlayer player, float dmgAmount)
         {
-            var ptr = new PlayerTakeRadsEvent(new Player (player), dmgAmount);
+            var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), dmgAmount);
             OnPlayerTakeRads.OnNext(ptr);
         }
 
@@ -422,10 +413,8 @@ namespace Pluton
         public static void EntityAttacked(BuildingBlock bb, HitInfo info)
         {
             if (info.Initiator != null) {
-                Player p = new Player(info.Initiator as BasePlayer);
-                PlayerStats stats = new PlayerStats(p.SteamID);
-                stats.AddDamageTo(info.damageAmount, false, false, true);
-                p.Stats = stats;
+                Server.GetPlayer(info.Initiator as BasePlayer)
+                    .Stats.AddDamageTo(info.damageAmount, false, false, true);
             }
 
             var bp = new BuildingPart(bb);
@@ -486,41 +475,36 @@ namespace Pluton
         // PlayerLoot.StartLootingEntity()
         public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity)
         {
-            var ele = new Events.EntityLootEvent(playerLoot, new Player(looter), new Entity(entity));
-
+            var ele = new Events.EntityLootEvent(playerLoot, Server.GetPlayer(looter), new Entity(entity));
             OnLootingEntity.OnNext(ele);
         }
 
         // PlayerLoot.StartLootingPlayer()
         public static void StartLootingPlayer(PlayerLoot playerLoot, BasePlayer looter, BasePlayer looted)
         {
-            // not tested
-
-            var ple = new Events.PlayerLootEvent(playerLoot, new Player(looter), new Player(looted));
-
+            var ple = new Events.PlayerLootEvent(playerLoot, Server.GetPlayer(looter), Server.GetPlayer(looted));
             OnLootingPlayer.OnNext(ple);
         }
 
         // PlayerLoot.StartLootingItem()
         public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item)
         {
-            var ile = new Events.ItemLootEvent(playerLoot, new Player(looter), item);
-
+            var ile = new Events.ItemLootEvent(playerLoot, Server.GetPlayer(looter), item);
             OnLootingItem.OnNext(ile);
         }
 
         public static void ServerInit()
         {
-            float craft = float.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float craft = Single.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             Server.GetServer().CraftingTimeScale = craft;
-            double resource = double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            double resource = Double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             World.GetWorld().ResourceGatherMultiplier = resource;
-            float time = float.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            float time = Single.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
                 World.GetWorld().Time = time;
                 World.GetWorld().FreezeTime();
             } else {
-                World.GetWorld().Timescale = float.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+                World.GetWorld().Timescale = Single.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             }
             OnServerInit.OnNext("");
         }
@@ -534,7 +518,7 @@ namespace Pluton
 
         public static void Respawn(BasePlayer player, bool newPos)
         {
-            Player p = new Player(player);
+            Player p = Server.GetPlayer(player);
             RespawnEvent re = new RespawnEvent(p);
             OnRespawn.OnNext(re);
 

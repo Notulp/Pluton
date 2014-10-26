@@ -22,7 +22,7 @@ namespace Pluton
         {
             BasePlayer player = BasePlayer.Find(nameOrSteamidOrIP);
             if (player != null)
-                return new Player(player);
+                return Server.GetPlayer(player);
             Logger.LogDebug("[Player] Couldn't find player!");
             return null;
         }
@@ -31,7 +31,7 @@ namespace Pluton
         {
             BasePlayer player = BasePlayer.FindByID(steamID);
             if (player != null)
-                return new Player(player);
+                return Server.GetPlayer(player);
             Logger.LogDebug("[Player] Couldn't find player!");
             return null;
         }

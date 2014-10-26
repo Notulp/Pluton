@@ -54,7 +54,7 @@ namespace Pluton.Events
 
         public Player Gatherer {
             get {
-                return new Player(_info.Initiator as BasePlayer);
+                return Server.GetPlayer(_info.Initiator as BasePlayer);
             }
         }
 
