@@ -78,6 +78,7 @@ namespace Pluton
                 arg.ReplyWith(String.Format("{0} plugin reloaded!", arg.ArgsStr));
             } else if (arg.ArgsStr == "") {
                 PluginLoader.GetInstance().ReloadPlugins();
+                Config.Reload();
                 Server.GetServer().LoadLoadouts();
                 PluginCommands.GetInstance().Init();
                 arg.ReplyWith("Pluton reloaded!");

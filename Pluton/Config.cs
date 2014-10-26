@@ -46,7 +46,14 @@ namespace Pluton
             }
             return PlutonConfig.GetBoolSetting(Section, Setting, defaultValue);
         }
-            
+
+        public static void Reload()
+        {
+            string ConfigPath = Path.Combine(Util.GetPublicFolder(), "Pluton.cfg");
+             
+            if (File.Exists(ConfigPath))
+                PlutonConfig = new IniParser(ConfigPath);
+        }
     }
 }
 
