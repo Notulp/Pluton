@@ -39,15 +39,12 @@
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Facepunch">
       <HintPath>..\ref\Facepunch.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ref\UnityEngine.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Jint">
       <HintPath>ref\Jint.dll</HintPath>
@@ -101,11 +98,12 @@
     <Compile Include="Events\PlayerTakeRadsEvent.cs" />
     <Compile Include="Objects\Chat.cs" />
     <Compile Include="Events\RespawnEvent.cs" />
-    <Compile Include="Objects\PluginCommand.cs" />
     <Compile Include="Events\ClientConsoleEvent.cs" />
     <Compile Include="Events\ServerConsoleEvent.cs" />
     <Compile Include="Events\FrameDeployedEvent.cs" />
     <Compile Include="CountedInstance.cs" />
+    <Compile Include="Objects\ChatCommands.cs" />
+    <Compile Include="Objects\ConsoleCommands.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

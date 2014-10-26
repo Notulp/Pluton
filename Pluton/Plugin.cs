@@ -33,6 +33,9 @@
         public readonly List<TimedEvent> ParallelTimers;
         public static string LibPath;
 
+        public ConsoleCommands consoleCommands;
+        public ChatCommands chatCommands;
+
         public enum PluginType { Python, JS }
 
         public Plugin(string name, string code, DirectoryInfo path, PluginType type)
@@ -43,6 +46,8 @@
             Type = type;
             Timers = new Dictionary<string, TimedEvent>();
             ParallelTimers = new List<TimedEvent>();
+            consoleCommands = new ConsoleCommands(this);
+            chatCommands = new ChatCommands(this);
 
             if (type == PluginType.Python) {
                 PyEngine = IronPython.Hosting.Python.CreateEngine();
@@ -52,7 +57,8 @@
                 Scope.SetVariable("DataStore", DataStore.GetInstance());
                 Scope.SetVariable("Util", Util.GetUtil());
                 Scope.SetVariable("World", World.GetWorld());
-                Scope.SetVariable("Commands", PluginCommands.GetInstance());
+                Scope.SetVariable("Commands", chatCommands);
+                Scope.SetVariable("ServerConsoleCommands", consoleCommands);
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
                 Globals = PyEngine.Operations.GetMemberNames(Class);
@@ -63,8 +69,8 @@
                     .SetValue("DataStore", DataStore.GetInstance())
                     .SetValue("Util", Util.GetUtil())
                     .SetValue("World", World.GetWorld())
-                    .SetValue("Plugin", this)
-                    .SetValue("Commands", PluginCommands.GetInstance())
+                    .SetValue("Commands", chatCommands)
+                    .SetValue("ServerConsoleCommands", consoleCommands)
                     .Execute(code);
                 JavaScriptParser parser = new JavaScriptParser();
                 Globals = (from function in parser.Parse(Code).FunctionDeclarations

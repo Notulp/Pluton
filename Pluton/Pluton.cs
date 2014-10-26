@@ -80,7 +80,6 @@ namespace Pluton
                 PluginLoader.GetInstance().ReloadPlugins();
                 Config.Reload();
                 Server.GetServer().LoadLoadouts();
-                PluginCommands.GetInstance().Init();
                 arg.ReplyWith("Pluton reloaded!");
             } else {
                 arg.ReplyWith(String.Format("Couldn't find plugin: {0}!", arg.ArgsStr));

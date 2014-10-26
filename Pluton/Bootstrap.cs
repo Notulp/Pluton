@@ -69,7 +69,6 @@ namespace Pluton
             DataStore.GetInstance().Load();
             Server.GetServer();
             PluginLoader.GetInstance().Init();
-            PluginCommands.GetInstance().Init();
             ReloadTimers();
             server.official = false;
             nameChangeTimer = new Timer(60000);

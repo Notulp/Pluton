@@ -6,6 +6,7 @@ using Pluton.Events;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Collections.Generic;
 using System.Reactive.Disposables;
 
 namespace Pluton
@@ -109,6 +110,15 @@ namespace Pluton
             if (cmd.cmd == "")
                 return;
 
+            foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+                ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.cmd);
+                foreach (ChatCommand chatCmd in commands) {
+                    if (chatCmd.callback == null)
+                        continue;
+                    chatCmd.callback(cmd.args, player);
+                }
+            }
+
             if (Config.GetBoolValue("Commands", "enabled", true)) {
                 if (cmd.cmd == Config.GetValue("Commands", "ShowMyStats", "mystats")) {
                     PlayerStats stats = player.Stats;
@@ -140,17 +150,35 @@ namespace Pluton
 					foreach (string key in Config.PlutonConfig.EnumSection("HelpMessage")) {
 						player.Message(Config.GetValue("HelpMessage", key));
 					}
-				}
-                PluginCommands pc = PluginCommands.GetInstance();
+                }
+
+                List<ChatCommands> cc = new List<ChatCommands>();
+                foreach (KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+                    cc.Add(pl.Value.chatCommands);
+                }
                 if (cmd.cmd == Config.GetValue("Commands", "Commands", "commands")) {
-                    player.Message(String.Join(", ", pc.getCommands().ToArray()));
+                    List<string> list = new List<string>();
+                    foreach (ChatCommands cm in cc) {
+                        list.AddRange(cm.getCommands());
+                    }
+                    player.Message(String.Join(", ", list.ToArray()));
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Description", "whatis") && pc.getCommands().Contains(cmd.args[0])) {
-                    player.Message(String.Join("\r\n", pc.getDescriptions(cmd.args[0])));
+                if (cmd.cmd == Config.GetValue("Commands", "Description", "whatis")) {
+                    List<string> list = new List<string>();
+                    foreach (ChatCommands cm in cc) {
+                        list.AddRange(cm.getDescriptions(cmd.args[0]));
+                    }
+                    if(list.Count > 0)
+                        player.Message(String.Join("\r\n", list.ToArray()));
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Usage", "howto") && pc.getCommands().Contains(cmd.args[0])) {
-                    for (var i = 0; i < pc.getUsages(cmd.args[0]).Length; i++)
-                        player.Message(String.Format("/{0} {1}", cmd.args[0], pc.getUsages(cmd.args[0])[i]));
+                if (cmd.cmd == Config.GetValue("Commands", "Usage", "howto")) {
+                    List<string> list = new List<string>();
+                    foreach (ChatCommands cm in cc) {
+                        list.AddRange(cm.getUsages(cmd.args[0]));
+                    }
+                    foreach (var item in list) {
+                        player.Message(String.Format("/{0} {1}", cmd.args[0], item));
+                    }
                 }
             }
             OnCommand.OnNext(cmd);
@@ -215,6 +243,15 @@ namespace Pluton
         {
             if (!String.IsNullOrEmpty(rconCmd)) {
                 ServerConsoleEvent ce = new ServerConsoleEvent(rconCmd, wantFeedback);
+
+                foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ce.cmd);
+                    foreach (ConsoleCommand cmd in commands) {
+                        if (cmd.callback == null)
+                            continue;
+                        cmd.callback(ce.Args.ToArray());
+                    }
+                }
 
                 OnServerConsole.OnNext(ce);
 
