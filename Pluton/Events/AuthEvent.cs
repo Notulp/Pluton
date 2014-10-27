@@ -15,6 +15,12 @@ namespace Pluton.Events
             approved = true;
         }
 
+        public Connection Connection {
+            get {
+                return con;
+            }
+        }
+
         public ulong GameID {
             get {
                 return con.userid;
