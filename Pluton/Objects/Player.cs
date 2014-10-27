@@ -188,7 +188,7 @@ namespace Pluton
 
         public bool Admin {
             get {
-                return basePlayer.IsAdmin();
+                return Moderator || Owner;
             }
         }
 
