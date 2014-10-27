@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-public class IniParser
+public class IniParser : InstanceCounted
 {
     private readonly string iniFilePath;
     private readonly Hashtable keyPairs = new Hashtable();
