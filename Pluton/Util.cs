@@ -154,6 +154,39 @@
             return Vector3.Distance(v1, v2);
         }
 
+        public string[] GetQuotedArgs(string[] sArr)
+        {
+            bool inQuote = false;
+            string current = "";
+            var final = new string[20]; // should be enough
+            int Count = 0;
+
+            foreach (string str in sArr) {
+                if (str.StartsWith("\""))
+                    inQuote = true;
+
+                if (str.EndsWith("\""))
+                    inQuote = false;
+
+                if (inQuote) {
+                    if (current != "")
+                        current += " " + str;
+                    if (current == "")
+                        current = str;
+                }
+
+                if (!inQuote) {
+                    if (current != "")
+                        final[Count] = (current + " " + str).Replace("\"", "");
+                    if (current == "")
+                        final[Count] = (str).Replace("\"", "");
+                    Count += 1;
+                    current = "";
+                }
+            }
+            return final;
+        }
+
         public static Hashtable HashtableFromFile(string path)
         {
             using (FileStream stream = new FileStream(path, FileMode.Open)) {

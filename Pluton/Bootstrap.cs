@@ -20,7 +20,7 @@ namespace Pluton
                 Config.Init();
                 if (!pluton.enabled)
                 {
-                    Debug.Log("[Bootstrap] Pluton is disabled\t!");
+                    Debug.Log("[Bootstrap] Pluton is disabled!");
                     return;
                 }
 
