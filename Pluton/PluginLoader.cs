@@ -173,7 +173,7 @@
                 if (!method.StartsWith("On_") && !method.EndsWith("Callback"))
                     continue;
 
-                Logger.LogDebug("Found function: " + method);
+                bool foundHook = true;
                 switch (method) {
                 case "On_Chat":
                     plugin.OnChatHook = Hooks.OnChat.Subscribe(c => plugin.OnChat(c));
@@ -259,7 +259,12 @@
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
+                default:
+                    foundHook = false;
+                    break;
                 }
+                if(foundHook)
+                    Logger.LogDebug("Found hook: " + method);
             }
         }
 
@@ -269,7 +274,7 @@
                 if (!method.StartsWith("On_") && !method.EndsWith("Callback"))
                     continue;
 
-                Logger.LogDebug("Removing function: " + method);
+                bool foundHook = true;
                 switch (method) {
                 case "On_Chat":
                     plugin.OnChatHook.Dispose();
@@ -352,7 +357,12 @@
                 case "On_Respawn":
                     plugin.OnRespawnHook.Dispose();
                     break;
+                default:
+                    foundHook = false;
+                    break;
                 }
+                if(foundHook)
+                    Logger.LogDebug("Removed hook: " + method);
             }
         }
 
