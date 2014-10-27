@@ -19,6 +19,20 @@ namespace Pluton
             return buildingBlock.FindSocket(name);
         }
 
+        public void ChangeOwner(Player player)
+        {
+            if (player == null)
+                return;
+
+            OwnerID = player.GameID;
+            OwnerName = player.Name;
+        }
+
+        public void Destroy()
+        {
+            buildingBlock.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, buildingBlock.transform.position);
+        }
+
         public float Health {
             get {
                 return buildingBlock.health;
@@ -53,11 +67,17 @@ namespace Pluton
             get {
                 return buildingBlock.deployerUserID;
             }
+            set {
+                buildingBlock.deployerUserID = value;
+            }
         }
 
         public string OwnerName {
             get {
                 return buildingBlock.deployerUserName;
+            }
+            set {
+                buildingBlock.deployerUserName = value;
             }
         }
 
