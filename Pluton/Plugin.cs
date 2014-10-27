@@ -69,6 +69,7 @@
                     .SetValue("DataStore", DataStore.GetInstance())
                     .SetValue("Util", Util.GetUtil())
                     .SetValue("World", World.GetWorld())
+                    .SetValue("Plugin", this)
                     .SetValue("Commands", chatCommands)
                     .SetValue("ServerConsoleCommands", consoleCommands)
                     .Execute(code);
