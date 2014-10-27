@@ -23,6 +23,8 @@ namespace Pluton.Patcher
         private static TypeDefinition item;
         private static string version = "1.0.0.6";
 
+        #region patches
+
         private static void BootstrapAttachPatch()
         {
             // Call our AttachBootstrap from their, Bootstrap.Start()
@@ -32,6 +34,80 @@ namespace Pluton.Patcher
             MethodDefinition init = serverInit.GetMethod("Initialization");
 
             init.Body.GetILProcessor().InsertAfter(init.Body.Instructions[init.Body.Instructions.Count - 2], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+        }
+
+        private static void BuildingBlockAttackedPatch()
+        {
+            MethodDefinition bbAttacked = bBlock.GetMethod("OnAttacked_Destroy");
+            MethodDefinition entAttacked = hooksClass.GetMethod("EntityAttacked");
+
+            CloneMethod(bbAttacked);
+            ILProcessor iLProcessor = bbAttacked.Body.GetILProcessor();
+            iLProcessor.InsertBefore(bbAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(bbAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(bbAttacked.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entAttacked)));
+        }
+
+        private static void BuildingBlockBuiltPatch()
+        {
+            MethodDefinition bbBuilt = bBlock.GetMethod("StopBeingAFrame");
+            MethodDefinition entBuilt = hooksClass.GetMethod("EntityBuilt");
+
+            CloneMethod(bbBuilt);
+            ILProcessor iLProcessor = bbBuilt.Body.GetILProcessor();
+            iLProcessor.InsertBefore(bbBuilt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(bbBuilt.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuilt)));
+        }
+
+        private static void BuildingBlockFrameInitPatch()
+        {
+            TypeDefinition planner = itemModules.GetNestedType("Planner");
+            MethodDefinition onBuild = planner.GetMethod("OnBuild");
+            MethodDefinition entDeployed = hooksClass.GetMethod("EntityFrameDeployed");
+
+            CloneMethod(onBuild);
+            ILProcessor iLProcessor = onBuild.Body.GetILProcessor();
+            int count = onBuild.Body.Instructions.Count - 18; // after "GameObject gO = this.DoPlacement(placement);"
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_0)); // planner
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_1)); // item
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_2)); // player
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldloc_3)); // gO (placement)
+            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entDeployed)));
+        }
+
+        private static void BuildingBlockUpdatePatch()
+        {
+            MethodDefinition bbBuild = bBlock.GetMethod("OnAttacked_Build");
+            MethodDefinition entBuild = hooksClass.GetMethod("EntityBuildingUpdate");
+
+            CloneMethod(bbBuild);
+            ILProcessor iLProcessor = bbBuild.Body.GetILProcessor();
+            iLProcessor.InsertAfter(bbBuild.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(bbBuild.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(bbBuild.Body.Instructions[6], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));
+        }
+
+        private static void CargoPlaneBehaviourPatch()
+        {
+            TypeDefinition cargoPlane = rustAssembly.MainModule.GetType("CargoPlane");
+            MethodDefinition startMtd = cargoPlane.GetMethod("Start");
+
+            startMtd.Body.Instructions.Clear();
+            startMtd.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
+        private static void ChatPatch()
+        {
+            TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
+            MethodDefinition say = chat.GetMethod("say");
+            MethodDefinition onchat = hooksClass.GetMethod("Chat");
+
+            CloneMethod(say);
+            // clear out the method, we will recreate it in Pluton
+            say.Body.Instructions.Clear();
+            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            say.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
+            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void ClientAuthPatch()
@@ -47,20 +123,6 @@ namespace Pluton.Patcher
             approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
             approve.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(cAuth)));
             approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-        }
-
-        private static void ChatPatch()
-        {
-            TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
-            MethodDefinition say = chat.GetMethod("say");
-            MethodDefinition onchat = hooksClass.GetMethod("Chat");
-
-            CloneMethod(say);
-            // clear out the method, we will recreate it in Pluton
-            say.Body.Instructions.Clear();
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void ClientConsoleCommandPatch()
@@ -79,21 +141,40 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onClientConsole)));            
         }
 
-        private static void ServerConsoleCommandPatch()
+        private static void CorpseAttackedPatch()
         {
-            TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
-            MethodDefinition onServerCmd = consoleSystem.GetMethod("Run");
-            //TODO add the function
-            MethodDefinition onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
+            MethodDefinition bcAttacked = bCorpse.GetMethod("OnAttacked");
+            MethodDefinition corpseHit = hooksClass.GetMethod("CorpseHit");
 
-            ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
+            CloneMethod(bcAttacked);
+            ILProcessor iLProcessor = bcAttacked.Body.GetILProcessor();
+            iLProcessor.InsertBefore(bcAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(bcAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(bcAttacked.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(corpseHit)));
+        }
 
-            for (int i = 9; i >= 6; i--)
-                iLProcessor.Body.Instructions.RemoveAt(i);
+        private static void CorpseInitPatch()
+        {
+            MethodDefinition bcInit = bCorpse.GetMethod("InitCorpse");
+            MethodDefinition corpseInit = hooksClass.GetMethod("CorpseInit");
 
-            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[6], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[7], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));            
+            CloneMethod(bcInit);
+            ILProcessor iLProcessor = bcInit.Body.GetILProcessor();
+            iLProcessor.InsertBefore(bcInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(bcInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(bcInit.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(corpseInit)));
+        }
+
+        private static void CraftingTimePatch()
+        {
+            MethodDefinition ctInit = itemCrafter.GetMethod("Init");
+            MethodDefinition craftTime = hooksClass.GetMethod("CraftingTime");
+
+            CloneMethod(ctInit);
+            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
+
+            iLProcessor.InsertBefore(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftTime)));
         }
 
         private static void GatherPatch()
@@ -109,25 +190,6 @@ namespace Pluton.Patcher
             gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
             gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
             gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-        }
-
-        private static void ResourceGatherMultiplierPatch()
-        {
-            TypeDefinition bRes = rustAssembly.MainModule.GetType("ResourceDispenser");
-            MethodDefinition ctInit = bRes.GetMethod("GivePlayerResourceFromItem");
-            MethodDefinition gathering = hooksClass.GetMethod("ResourceGatherMultiplier");
-            CloneMethod(ctInit);
-            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
-
-            iLProcessor.InsertBefore(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldloc_2));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[53], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[54], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
-
-            for (int i = 0; i < 8; i++) {
-                iLProcessor.Body.Instructions[44 + i] = Instruction.Create(OpCodes.Nop);
-            }
-          
         }
 
         private static void NPCDiedPatch()
@@ -156,16 +218,18 @@ namespace Pluton.Patcher
             npchurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void CraftingTimePatch()
+        private static void PlayerAttackedPatch()
         {
-            MethodDefinition ctInit = itemCrafter.GetMethod("Init");
-            MethodDefinition craftTime = hooksClass.GetMethod("CraftingTime");
+            MethodDefinition hurt = bPlayer.GetMethod("OnAttacked");
+            MethodDefinition playerHurt = hooksClass.GetMethod("PlayerHurt");
 
-            CloneMethod(ctInit);
-            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
-
-            iLProcessor.InsertBefore(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftTime)));
+            CloneMethod(hurt);
+            // clear out the method, we will recreate it in Pluton
+            hurt.Body.Instructions.Clear();
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerHurt)));
+            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void PlayerConnectedPatch()
@@ -195,18 +259,36 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(die.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied)));
         }
 
-        private static void PlayerAttackedPatch()
+        private static void PlayerDisconnectedPatch()
         {
-            MethodDefinition hurt = bPlayer.GetMethod("OnAttacked");
-            MethodDefinition playerHurt = hooksClass.GetMethod("PlayerHurt");
+            MethodDefinition bpDisconnected = bPlayer.GetMethod("OnDisconnected");
+            MethodDefinition playerDisconnected = hooksClass.GetMethod("PlayerDisconnected");
+
+            CloneMethod(bpDisconnected);
+            ILProcessor iLProcessor = bpDisconnected.Body.GetILProcessor();
+            iLProcessor.InsertBefore(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDisconnected)));
+        }
+
+        private static void PlayerTakeDamageOLPatch()
+        {
+            MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
+            MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamageOverload");
+
+            foreach (var method in bPlayer.GetMethods()) {
+                if (method.Name == "TakeDamage") {
+                    if (method.Parameters.Count == 1) {
+                        hurt = method;
+                        break;
+                    }
+                }
+            }
 
             CloneMethod(hurt);
-            // clear out the method, we will recreate it in Pluton
-            hurt.Body.Instructions.Clear();
-            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerHurt)));
-            hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            ILProcessor iLProcessor = hurt.Body.GetILProcessor();
+            iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
         }
 
         private static void PlayerTakeDamagePatch()
@@ -231,27 +313,6 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(hurt.Body.Instructions[0x02], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
         }
 
-        private static void PlayerTakeDamageOLPatch()
-        {
-            MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
-            MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamageOverload");
-
-            foreach (var method in bPlayer.GetMethods()) {
-                if (method.Name == "TakeDamage") {
-                    if (method.Parameters.Count == 1) {
-                        hurt = method;
-                        break;
-                    }
-                }
-            }
-
-            CloneMethod(hurt);
-            ILProcessor iLProcessor = hurt.Body.GetILProcessor();
-            iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
-        }
-
         private static void PlayerTakeRadiationPatch()
         {
             MethodDefinition getRadiated = bPlayer.GetMethod("UpdateRadiation");
@@ -262,92 +323,6 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(getRadiated.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
             iLProcessor.InsertAfter(getRadiated.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
             iLProcessor.InsertAfter(getRadiated.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeRAD)));
-        }
-
-        private static void PlayerDisconnectedPatch()
-        {
-            MethodDefinition bpDisconnected = bPlayer.GetMethod("OnDisconnected");
-            MethodDefinition playerDisconnected = hooksClass.GetMethod("PlayerDisconnected");
-
-            CloneMethod(bpDisconnected);
-            ILProcessor iLProcessor = bpDisconnected.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDisconnected)));
-        }
-
-        private static void BuildingBlockAttackedPatch()
-        {
-            MethodDefinition bbAttacked = bBlock.GetMethod("OnAttacked_Destroy");
-            MethodDefinition entAttacked = hooksClass.GetMethod("EntityAttacked");
-
-            CloneMethod(bbAttacked);
-            ILProcessor iLProcessor = bbAttacked.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bbAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bbAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bbAttacked.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entAttacked)));
-        }
-
-        private static void BuildingBlockFrameInitPatch()
-        {
-            TypeDefinition planner = itemModules.GetNestedType("Planner");
-            MethodDefinition onBuild = planner.GetMethod("OnBuild");
-            MethodDefinition entDeployed = hooksClass.GetMethod("EntityFrameDeployed");
-
-            CloneMethod(onBuild);
-            ILProcessor iLProcessor = onBuild.Body.GetILProcessor();
-            int count = onBuild.Body.Instructions.Count - 18; // after "GameObject gO = this.DoPlacement(placement);"
-            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_0)); // planner
-            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_1)); // item
-            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldarg_2)); // player
-            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Ldloc_3)); // gO (placement)
-            iLProcessor.InsertAfter(onBuild.Body.Instructions[count++], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entDeployed)));
-        }
-
-        private static void BuildingBlockBuiltPatch()
-        {
-            MethodDefinition bbBuilt = bBlock.GetMethod("StopBeingAFrame");
-            MethodDefinition entBuilt = hooksClass.GetMethod("EntityBuilt");
-
-            CloneMethod(bbBuilt);
-            ILProcessor iLProcessor = bbBuilt.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bbBuilt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bbBuilt.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuilt)));
-        }
-
-        private static void BuildingBlockUpdatePatch()
-        {
-            MethodDefinition bbBuild = bBlock.GetMethod("OnAttacked_Build");
-            MethodDefinition entBuild = hooksClass.GetMethod("EntityBuildingUpdate");
-
-            CloneMethod(bbBuild);
-            ILProcessor iLProcessor = bbBuild.Body.GetILProcessor();
-            iLProcessor.InsertAfter(bbBuild.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bbBuild.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bbBuild.Body.Instructions[6], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));
-        }
-
-        private static void CorpseInitPatch()
-        {
-            MethodDefinition bcInit = bCorpse.GetMethod("InitCorpse");
-            MethodDefinition corpseInit = hooksClass.GetMethod("CorpseInit");
-
-            CloneMethod(bcInit);
-            ILProcessor iLProcessor = bcInit.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bcInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bcInit.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bcInit.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(corpseInit)));
-        }
-
-        private static void CorpseAttackedPatch()
-        {
-            MethodDefinition bcAttacked = bCorpse.GetMethod("OnAttacked");
-            MethodDefinition corpseHit = hooksClass.GetMethod("CorpseHit");
-
-            CloneMethod(bcAttacked);
-            ILProcessor iLProcessor = bcAttacked.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bcAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bcAttacked.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bcAttacked.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(corpseHit)));
         }
 
         private static void PlayerStartLootingPatch()
@@ -386,15 +361,23 @@ namespace Pluton.Patcher
             iiLProcessor.InsertAfter(plItem.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
         }
 
-        private static void ServerShutdownPatch()
+        private static void ResourceGatherMultiplierPatch()
         {
-            TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
-            MethodDefinition disable = serverMGR.GetMethod("OnDisable");
-            MethodDefinition shutdown = hooksClass.GetMethod("ServerShutdown");
+            TypeDefinition bRes = rustAssembly.MainModule.GetType("ResourceDispenser");
+            MethodDefinition ctInit = bRes.GetMethod("GivePlayerResourceFromItem");
+            MethodDefinition gathering = hooksClass.GetMethod("ResourceGatherMultiplier");
+            CloneMethod(ctInit);
+            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
 
-            CloneMethod(disable);
-            ILProcessor iLProcessor = disable.Body.GetILProcessor();
-            iLProcessor.InsertBefore(disable.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(shutdown)));
+            iLProcessor.InsertBefore(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldloc_2));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[53], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[54], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
+
+            for (int i = 0; i < 8; i++) {
+                iLProcessor.Body.Instructions[44 + i] = Instruction.Create(OpCodes.Nop);
+            }
+
         }
 
         private static void RespawnPatch()
@@ -413,6 +396,23 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(respawn.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
         }
 
+        private static void ServerConsoleCommandPatch()
+        {
+            TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
+            MethodDefinition onServerCmd = consoleSystem.GetMethod("Run");
+            //TODO add the function
+            MethodDefinition onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
+
+            ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
+
+            for (int i = 9; i >= 6; i--)
+                iLProcessor.Body.Instructions.RemoveAt(i);
+
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[6], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[7], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));            
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -424,6 +424,17 @@ namespace Pluton.Patcher
             il.InsertBefore(serverInit.Body.Instructions[101], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
         }
 
+        private static void ServerShutdownPatch()
+        {
+            TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
+            MethodDefinition disable = serverMGR.GetMethod("OnDisable");
+            MethodDefinition shutdown = hooksClass.GetMethod("ServerShutdown");
+
+            CloneMethod(disable);
+            ILProcessor iLProcessor = disable.Body.GetILProcessor();
+            iLProcessor.InsertBefore(disable.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(shutdown)));
+        }
+
         private static void SetModdedPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -433,15 +444,6 @@ namespace Pluton.Patcher
             CloneMethod(servUpdate);
             ILProcessor il = servUpdate.Body.GetILProcessor();
             il.InsertAfter(servUpdate.Body.Instructions[36], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
-        }
-
-        private static void CargoPlaneBehaviourPatch()
-        {
-            TypeDefinition cargoPlane = rustAssembly.MainModule.GetType("CargoPlane");
-            MethodDefinition startMtd = cargoPlane.GetMethod("Start");
-
-            startMtd.Body.Instructions.Clear();
-            startMtd.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void SwapAirdropPatch()
@@ -466,6 +468,8 @@ namespace Pluton.Patcher
             runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
 
         }
+
+        #endregion
 
         // from fougerite.patcher
         private static MethodDefinition CloneMethod(MethodDefinition orig)
