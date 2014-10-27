@@ -472,7 +472,8 @@ namespace Pluton
         // BuildingBlock.BecomeFrame()
         public static void EntityFrameDeployed(Item.Modules.Planner planner, Item item, BasePlayer p, GameObject obj)
         {
-            // blockDefinition is null in this hook
+            if (obj == null)
+                return;
 
             FrameDeployedEvent fde = new FrameDeployedEvent(planner, item, p, obj);
             OnBuildingFrameDeployed.OnNext(fde);
