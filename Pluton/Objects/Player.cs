@@ -60,12 +60,39 @@ namespace Pluton
 
         public Vector3 GetLookPoint(float maxDist = 500f)
         {
+            return GetLookHit(maxDist).point;
+        }
+
+        public RaycastHit GetLookHit(float maxDist = 500f)
+        {
             RaycastHit hit;
             Ray orig = basePlayer.eyes.Ray();
-            if (Physics.Raycast(orig, out hit, maxDist, Physics.AllLayers)) {
-                return hit.point;
+            Physics.Raycast(orig, out hit, maxDist, Physics.AllLayers);
+            return hit;
+        }
+
+        public Player GetLookPlayer(float maxDist = 500f)
+        {
+            RaycastHit hit = GetLookHit(maxDist);
+            if (hit.collider != null) {
+                BasePlayer basePlayer = hit.collider.GetComponent<BasePlayer>();
+                if (basePlayer != null) {
+                    return Server.GetPlayer(basePlayer);
+                }
             }
-            return Vector3.zero;
+            return null;
+        }
+
+        public BuildingPart GetLookBuildingPart(float maxDist = 500f)
+        {
+            RaycastHit hit = GetLookHit(maxDist);
+            if (hit.collider != null) {
+                BuildingBlock buildingBlock = hit.collider.GetComponent<BuildingBlock>();
+                if (buildingBlock != null) {
+                    return new BuildingPart(buildingBlock);
+                }
+            }
+            return null;
         }
 
         public void Kill()
