@@ -2,31 +2,31 @@
 
 On_Chat(Chat msg)
 On_ClientAuth(AuthEvent ae)
-On_Command(Command c)
+On_Command(Command cmd)
 On_Console(ConsoleEvent ce)
 On_CorpseDropped(CorpseInitEvent cie)
 On_CorpseAttacked(CorpseHurtEvent che)
 On_BuildingComplete(BuildingPart bp)
-On_BuildingUpdate(BuildingEvent be)
 On_BuildingPartAttacked(BuildingHurtEvent bhe)
 On_BuildingPartDestroyed(BuildingHurtEvent bhe)
+On_BuildingUpdate(BuildingEvent be)
 On_FrameDeployed(BuildingPart bp)
+On_LootingEntity(EntityLootEvent ele)
+On_LootingItem(ItemLootEvent ile)
+On_LootingPlayer(PlayerLootEvent ple)
 On_NPCAttacked(NPCHurtEvent nhe)
 On_NPCKilled(NPCDeathEvent nde)
-On_LootingEntity(EntityLootEvent ele)
-On_LootingPlayer(PlayerLootEvent ple)
-On_LootingItem(ItemLootEvent ile)
+On_PlayerAttacked(PlayerHurtEvent phe)
 On_PlayerConnected(Player p)
+On_PlayerDied(PlayerDeathEvent pde)
 On_PlayerDisconnected(Player p)
 On_PlayerGathering(GatherEvent ge)
-On_PlayerAttacked(PlayerHurtEvent phe)
-On_PlayerDied(PlayerDeathEvent pde)
-On_PlayerTakeDamagePlayer(TakedmgEvent ptd)
+On_PlayerTakeDamagePlayer(TakeDmgEvent ptd)
 On_PlayerTakeRadiation(PlayerTakeRadsEvent ptr)
-On_ServerInit()
-On_ServerShutdown()
 On_PluginInit()
 On_Respawn(RespawnEvent re)
+On_ServerInit()
+On_ServerShutdown()
 <timer_name>Callback(TimedEvent timer)
 
 ## classes
@@ -42,7 +42,7 @@ Pluton.BuildingPart(BuildingBlock bb)
 	.OwnerName:string
 	.X .Y .Z :float
 
-Pluton.Chat(Pluton.Player player, ConsoleSystem.Arg args)
+Pluton.Chat(Player p, ConsoleSystem.Arg args)
 	._arg:ConsoleSystem.Arg
 	.BroadcastName:string
 	.FinalText:string
@@ -50,7 +50,7 @@ Pluton.Chat(Pluton.Player player, ConsoleSystem.Arg args)
 	.ReplyWith:string
 	.User:Pluton.Player
 
-Pluton.Command(Pluton.Player player, string[] args)
+Pluton.Command(Player p, string[] args)
 	.GetQuotedStringArr(string[] sArr):string[]
 	.args:string[]
 	.cmd:string
@@ -343,7 +343,7 @@ Pluton.Events.LootEvent(PlayerLoot pl, Pluton.Player player)
 	.Looter:Pluton.Player
 	.pLoot:PlayerLoot
 
-Pluton.Events.NPCDeathEventh(Pluton.NPC npc, HitInfo info):DeathEvent
+Pluton.Events.NPCDeathEvent(Pluton.NPC npc, HitInfo info):DeathEvent
 	.Victim:Pluton.NPC
 
 Pluton.Events.NPCHurtEvent(Pluton.NPC npc, HitInfo info):HurtEvent
@@ -358,7 +358,7 @@ Pluton.Events.PlayerHurtEvent(Pluton.Player player, HitInfo info):HurtEvent
 Pluton.Events.PlayerLootEvent(PlayerLoot pl, Pluton.Player player, Pluton.Player looted):LootEvent
 	.Target:Pluton.Player
 
-Pluton.Events.PlayerTakedmgEvent(Player p, float amount, Rust.DamageType type)
+Pluton.Events.PlayerTakeDmgEvent(Player p, float amount, Rust.DamageType type)
 	.Victim:Pluton.Player
 	.Amount:float
 	.Type:Rust.DamageType
