@@ -284,44 +284,9 @@
             throw new NotImplementedException("There is no OnBlueprintUse hook yet!");
         }
 
-        public IDisposable OnChatHook;
-        public void OnChat(Chat arg) {
-            this.Invoke("On_Chat", arg);
-        }
-
-        public IDisposable OnClientAuthHook;
-        public void OnClientAuth(AuthEvent ae) {
-            this.Invoke("On_ClientAuth", ae);
-        }
-
-        public IDisposable OnCommandHook;
-        public void OnCommand(Command cmd) {
-            this.Invoke("On_Command", cmd);
-        }
-
-        public IDisposable OnClientConsoleHook;
-        public void OnClientConsole(ClientConsoleEvent ce) {
-            this.Invoke("On_ClientConsole", ce);
-        }
-
-        public IDisposable OnCorpseDroppedHook;
-        public void OnCorpseDropped(CorpseInitEvent ie) {
-            this.Invoke("On_CorpseDropped", ie);
-        }
-
-        public IDisposable OnCorpseAttackedHook;
-        public void OnCorpseAttacked(CorpseHurtEvent he) {
-            this.Invoke("On_CorpseAttacked", he);
-        }
-
         public IDisposable OnBuildingCompleteHook;
         public void OnBuildingComplete(BuildingPart bp) {
             this.Invoke("On_BuildingComplete", bp);
-        }
-
-        public IDisposable OnBuildingUpdateHook;
-        public void OnBuildingUpdate(BuildingEvent be) {
-            this.Invoke("On_BuildingUpdate", be);
         }
 
         public IDisposable OnBuildingPartAttackedHook;
@@ -332,6 +297,41 @@
         public IDisposable OnBuildingPartDestroyedHook;
         public void OnBuildingPartDestroyed(BuildingHurtEvent he) {
             this.Invoke("On_BuildingPartDestroyed", he);
+        }
+
+        public IDisposable OnBuildingUpdateHook;
+        public void OnBuildingUpdate(BuildingEvent be) {
+            this.Invoke("On_BuildingUpdate", be);
+        }
+
+        public IDisposable OnChatHook;
+        public void OnChat(Chat arg) {
+            this.Invoke("On_Chat", arg);
+        }
+
+        public IDisposable OnClientAuthHook;
+        public void OnClientAuth(AuthEvent ae) {
+            this.Invoke("On_ClientAuth", ae);
+        }
+
+        public IDisposable OnClientConsoleHook;
+        public void OnClientConsole(ClientConsoleEvent ce) {
+            this.Invoke("On_ClientConsole", ce);
+        }
+
+        public IDisposable OnCommandHook;
+        public void OnCommand(Command cmd) {
+            this.Invoke("On_Command", cmd);
+        }
+
+        public IDisposable OnCorpseDroppedHook;
+        public void OnCorpseDropped(CorpseInitEvent ie) {
+            this.Invoke("On_CorpseDropped", ie);
+        }
+
+        public IDisposable OnCorpseAttackedHook;
+        public void OnCorpseAttacked(CorpseHurtEvent he) {
+            this.Invoke("On_CorpseAttacked", he);
         }
 
         public void OnDoorUse() {
@@ -347,6 +347,21 @@
             this.Invoke("On_FrameDeployed", fde);
         }
 
+        public IDisposable OnLootingEntityHook;
+        public void OnLootingEntity(EntityLootEvent le) {
+            this.Invoke("On_LootingEntity", le);
+        }
+
+        public IDisposable OnLootingItemHook;
+        public void OnLootingItem(ItemLootEvent le) {
+            this.Invoke("On_LootingItem", le);
+        }
+
+        public IDisposable OnLootingPlayerHook;
+        public void OnLootingPlayer(PlayerLootEvent le) {
+            this.Invoke("On_LootingPlayer", le);
+        }
+
         public IDisposable OnNPCHurtHook;
         public void OnNPCHurt(NPCHurtEvent he) {
             this.Invoke("On_NPCAttacked", he);
@@ -357,24 +372,19 @@
             this.Invoke("On_NPCKilled", de);
         }
 
-        public IDisposable OnLootingEntityHook;
-        public void OnLootingEntity(EntityLootEvent le) {
-            this.Invoke("On_LootingEntity", le);
-        }
-
-        public IDisposable OnLootingPlayerHook;
-        public void OnLootingPlayer(PlayerLootEvent le) {
-            this.Invoke("On_LootingPlayer", le);
-        }
-
-        public IDisposable OnLootingItemHook;
-        public void OnLootingItem(ItemLootEvent le) {
-            this.Invoke("On_LootingItem", le);
+        public IDisposable OnPlayerAttackedHook;
+        public void OnPlayerAttacked(PlayerHurtEvent he) {
+            this.Invoke("On_PlayerAttacked", he);
         }
 
         public IDisposable OnPlayerConnectedHook;
         public void OnPlayerConnected(Player player) {
             this.Invoke("On_PlayerConnected", player);
+        }
+
+        public IDisposable OnPlayerDiedHook;
+        public void OnPlayerDied(PlayerDeathEvent de) {
+            this.Invoke("On_PlayerDied", de);
         }
 
         public IDisposable OnPlayerDisconnectedHook;
@@ -387,16 +397,6 @@
             this.Invoke("On_PlayerGathering", ge);
         }
 
-        public IDisposable OnPlayerAttackedHook;
-        public void OnPlayerAttacked(PlayerHurtEvent he) {
-            this.Invoke("On_PlayerAttacked", he);
-        }
-
-        public IDisposable OnPlayerDiedHook;
-        public void OnPlayerDied(PlayerDeathEvent de) {
-            this.Invoke("On_PlayerDied", de);
-        }
-
         public IDisposable OnPlayerTakeDamageHook;
         public void OnPlayerTakeDamage(PlayerTakedmgEvent de) {
             this.Invoke("On_PlayerTakeDamage", de);
@@ -405,6 +405,11 @@
         public IDisposable OnPlayerTakeRadiationHook;
         public void OnPlayerTakeRadiation(PlayerTakeRadsEvent re) {
             this.Invoke("On_PlayerTakeRadiation", re);
+        }
+
+        public IDisposable OnRespawnHook;
+        public void OnRespawn(RespawnEvent re) {
+            this.Invoke("On_Respawn", re);
         }
 
         public IDisposable OnServerConsoleHook;
@@ -420,16 +425,6 @@
         public IDisposable OnServerShutdownHook;
         public void OnServerShutdown(string s = "") {
             this.Invoke("On_ServerShutdown");
-        }
-
-        public IDisposable OnRespawnHook;
-        public void OnRespawn(RespawnEvent re) {
-            this.Invoke("On_Respawn", re);
-        }
-
-        public IDisposable OnLoadCommandsHook;
-        public void OnLoadCommands(string s) {
-            this.Invoke("On_LoadingCommands");
         }
 
         public void OnTimerCB(TimedEvent evt)
