@@ -92,9 +92,17 @@
                     return null;
                 }
             } catch (Exception ex) {
-                Logger.LogException(ex);
+                Logger.LogError(FormatExeption(ex));
                 return null;
             }
+        }
+
+        public string FormatExeption(Exception ex)
+        {
+            if(Type == PluginType.Python)
+                return PyEngine.GetService<ExceptionOperations>().FormatException(ex);
+            else
+                return ex.ToString();
         }
 
         #region file operations

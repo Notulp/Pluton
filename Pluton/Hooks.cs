@@ -118,7 +118,7 @@ namespace Pluton
                     try {
                         chatCmd.callback(cmd.args, player);
                     } catch (Exception ex) {
-                        Logger.LogException(ex);
+                        Logger.LogError(chatCmd.plugin.FormatExeption(ex));
                     }
                 }
             }
@@ -168,20 +168,28 @@ namespace Pluton
                     player.Message(String.Join(", ", list.ToArray()));
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "Description", "whatis")) {
-                    List<string> list = new List<string>();
-                    foreach (ChatCommands cm in cc) {
-                        list.AddRange(cm.getDescriptions(cmd.args[0]));
+                    if (cmd.args.Length < 1)
+                        player.Message("You must provide a command name");
+                    else {
+                        List<string> list = new List<string>();
+                        foreach (ChatCommands cm in cc) {
+                            list.AddRange(cm.getDescriptions(cmd.args[0]));
+                        }
+                        if(list.Count > 0)
+                            player.Message(String.Join("\r\n", list.ToArray()));
                     }
-                    if(list.Count > 0)
-                        player.Message(String.Join("\r\n", list.ToArray()));
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "Usage", "howto")) {
-                    List<string> list = new List<string>();
-                    foreach (ChatCommands cm in cc) {
-                        list.AddRange(cm.getUsages(cmd.args[0]));
-                    }
-                    foreach (var item in list) {
-                        player.Message(String.Format("/{0} {1}", cmd.args[0], item));
+                    if (cmd.args.Length < 1)
+                        player.Message("You must provide a command name");
+                    else {
+                        List<string> list = new List<string>();
+                        foreach (ChatCommands cm in cc) {
+                            list.AddRange(cm.getUsages(cmd.args[0]));
+                        }
+                        foreach (var item in list) {
+                            player.Message(String.Format("/{0} {1}", cmd.args[0], item));
+                        }
                     }
                 }
             }
@@ -253,7 +261,11 @@ namespace Pluton
                     foreach (ConsoleCommand cmd in commands) {
                         if (cmd.callback == null)
                             continue;
-                        cmd.callback(ce.Args.ToArray());
+                        try {
+                            cmd.callback(ce.Args.ToArray());
+                        } catch (Exception ex) {
+                            Logger.LogError(cmd.plugin.FormatExeption(ex));
+                        }
                     }
                 }
 
