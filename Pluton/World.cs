@@ -106,7 +106,7 @@ namespace Pluton
         }
 
         public BaseEntity SpawnMapEntity(string evt, Vector3 loc) {
-            return SpawnMapEntity(evt, loc.x, loc.x, loc.z);    
+            return SpawnMapEntity(evt, loc.x, loc.y, loc.z);    
         }
         
         public BaseEntity SpawnAnimal(string name, float x, float z) {
