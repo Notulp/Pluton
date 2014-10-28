@@ -42,7 +42,7 @@ Pluton.BuildingPart(BuildingBlock bb)
 	.OwnerName:string
 	.X .Y .Z :float
 
-Pluton.Chat(Chat msg, ConsoleSystem.Arg args)
+Pluton.Chat(Player p, ConsoleSystem.Arg args)
 	._arg:ConsoleSystem.Arg
 	.BroadcastName:string
 	.FinalText:string
@@ -50,7 +50,7 @@ Pluton.Chat(Chat msg, ConsoleSystem.Arg args)
 	.ReplyWith:string
 	.User:Pluton.Player
 
-Pluton.Command(Command cmd, string[] args)
+Pluton.Command(Player p, string[] args)
 	.GetQuotedStringArr(string[] sArr):string[]
 	.args:string[]
 	.cmd:string
