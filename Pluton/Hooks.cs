@@ -115,7 +115,11 @@ namespace Pluton
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
                         continue;
-                    chatCmd.callback(cmd.args, player);
+                    try {
+                        chatCmd.callback(cmd.args, player);
+                    } catch (Exception ex) {
+                        Logger.LogException(ex);
+                    }
                 }
             }
 
