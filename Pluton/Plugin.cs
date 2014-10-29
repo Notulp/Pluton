@@ -27,6 +27,7 @@
         public readonly DirectoryInfo RootDir;
         public readonly ScriptEngine PyEngine;
         public readonly Engine JSEngine;
+        public readonly CSharpPlugin CSharpEngine;
         public readonly ScriptScope Scope;
         public readonly IList<string> Globals;
         public readonly Dictionary<string, TimedEvent> Timers;
@@ -36,7 +37,7 @@
         public ConsoleCommands consoleCommands;
         public ChatCommands chatCommands;
 
-        public enum PluginType { Python, JS }
+        public enum PluginType { Python, JS, CSharp }
 
         public Plugin(string name, string code, DirectoryInfo path, PluginType type)
         {
@@ -62,7 +63,7 @@
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
                 Globals = PyEngine.Operations.GetMemberNames(Class);
-            } else {
+            } else if(type == PluginType.JS) {
                 JSEngine = new Engine(cfg => cfg.AllowClr(typeof(UnityEngine.GameObject).Assembly,
                     typeof(PlayerInventory).Assembly))
                     .SetValue("Server", Server.GetServer())
@@ -74,8 +75,26 @@
                     .SetValue("ServerConsoleCommands", consoleCommands)
                     .Execute(code);
                 JavaScriptParser parser = new JavaScriptParser();
-                Globals = (from function in parser.Parse(Code).FunctionDeclarations
+                Globals = (from function in parser.Parse(code).FunctionDeclarations
                            select function.Id.Name).ToList<string>();
+            } else if(type == PluginType.CSharp) {
+                //For C# plugins code is the dll path
+                Assembly assembly = Assembly.Load(File.ReadAllBytes(code));
+                Type classType = assembly.GetType(name + "." + name);
+                if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
+                    throw new NotSupportedException("Main module class not found:" + Name);
+                CSharpEngine = (CSharpPlugin)Activator.CreateInstance(classType);
+
+                CSharpEngine.Server = Server.GetServer();
+                CSharpEngine.DataStore = DataStore.GetInstance();
+                CSharpEngine.Util = Util.GetUtil();
+                CSharpEngine.World = World.GetWorld();
+                CSharpEngine.Plugin = this;
+                CSharpEngine.Commands = chatCommands;
+                CSharpEngine.ServerConsoleCommands = consoleCommands;
+
+                Globals = (from method in classType.GetMethods()
+                    select method.Name).ToList<string>();
             }
         }
 
@@ -85,8 +104,11 @@
                 if (Globals.Contains(func)) {
                     if (Type == PluginType.Python)
                         return PyEngine.Operations.InvokeMember(Class, func, obj);
-                    else
+                    else if (Type == PluginType.JS)
                         return JSEngine.Invoke(func, obj);
+                    else if (Type == PluginType.CSharp)
+                        return CSharpEngine.CallMethod(func, obj);
+                    return (object)null;
                 } else {
                     Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);
                     return null;

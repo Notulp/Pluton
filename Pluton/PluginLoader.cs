@@ -34,6 +34,15 @@
             return instance;
         }
 
+        private IEnumerable<String> GetCSharpPluginNames()
+        {
+            foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
+                string path = Path.Combine(dirInfo.FullName, dirInfo.Name + ".dll");
+                if (File.Exists(path))
+                    yield return dirInfo.Name;
+            }
+        }
+
         private IEnumerable<String> GetJSPluginNames()
         {
             foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
@@ -67,13 +76,20 @@
             return Path.Combine(GetPluginDirectoryPath(name), name + ".py");
         }
 
+        private string GetCSharpPluginScriptPath(string name)
+        {
+            return Path.Combine(GetPluginDirectoryPath(name), name + ".dll");
+        }
+
         private string GetPluginScriptText(string name, Plugin.PluginType type)
         {
             string path = "";
             if (type == Plugin.PluginType.Python)
                 path = GetPyPluginScriptPath(name);
-            else
+            else if (type == Plugin.PluginType.JS)
                 path = GetJSPluginScriptPath(name);
+            else if (type == Plugin.PluginType.CSharp)
+                return GetCSharpPluginScriptPath(name);
 
             if (path == "") return null;
 
@@ -88,7 +104,11 @@
                 LoadPlugin(name, Plugin.PluginType.Python);
 
             foreach (string name in GetJSPluginNames())
-               LoadPlugin(name, Plugin.PluginType.JS);
+                LoadPlugin(name, Plugin.PluginType.JS);
+
+            //C# plugins currently disabled
+            //foreach (string name in GetCSharpPluginNames())
+            //    LoadPlugin(name, Plugin.PluginType.CSharp);
             //if(OnAllLoaded != null) OnAllLoaded();
         }
 

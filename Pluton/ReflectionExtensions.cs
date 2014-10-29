@@ -9,7 +9,7 @@ namespace Pluton
     public static class ReflectionExtensions
     {  
         //Instanced
-        public static void CallMethod(this object obj, string methodName, params object[] args)
+        public static object CallMethod(this object obj, string methodName, params object[] args)
         {
             var metInf = GetMethodInfo(obj, methodName);
 
@@ -19,8 +19,9 @@ namespace Pluton
             if (metInf is MethodInfo)
             {
                 MethodInfo meta = metInf.As<MethodInfo>();
-                meta.Invoke(obj, args);
+                return meta.Invoke(obj, args);
             }
+            return (object)null;
         }
 
         public static object GetFieldValue(this object obj, string fieldName)

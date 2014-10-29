@@ -107,6 +107,7 @@
     <Compile Include="CountedInstance.cs" />
     <Compile Include="Objects\ChatCommands.cs" />
     <Compile Include="Objects\ConsoleCommands.cs" />
+    <Compile Include="CSharpPlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
