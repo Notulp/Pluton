@@ -45,7 +45,7 @@
 
         public void DestroyEntityGib(BaseEntity ent)
         {
-            ent.GetComponent<BaseNetworkable>().Kill(ProtoBuf.EntityDestroy.Mode.Gib);
+            ent.GetComponent<BaseNetworkable>().Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 1, ent.transform.position);
         }
 
         public void DestroyObject(GameObject go)
