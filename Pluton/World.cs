@@ -101,12 +101,21 @@ namespace Pluton
             return GetGround(v3.x, v3.z);
         }
 
-        public BaseEntity SpawnMapEntity(string evt, float x, float z) {
-            return SpawnMapEntity(evt, x, GetGround(x, z), z);    
+        public BaseEntity SpawnMapEntity(string name, float x, float z) {
+            return SpawnMapEntity(name, x, GetGround(x, z), z);    
         }
 
-        public BaseEntity SpawnMapEntity(string evt, Vector3 loc) {
-            return SpawnMapEntity(evt, loc.x, loc.y, loc.z);    
+        public BaseEntity SpawnMapEntity(string name, Vector3 loc) {
+            return SpawnMapEntity(name, loc.x, loc.y, loc.z);    
+        }
+
+        public BaseEntity SpawnMapEntity(string name, Vector3 loc, Quaternion q) {
+            return SpawnMapEntity(name, loc.x, loc.y, loc.z, q);    
+        }
+
+        public BaseEntity SpawnMapEntity(string name, float x, float y, float z)
+        {
+            return SpawnMapEntity(name, x, y, z, Quaternion.identity);
         }
         
         public BaseEntity SpawnAnimal(string name, float x, float z) {
@@ -144,10 +153,10 @@ namespace Pluton
         }
 
         //map entities, like a resource node, a tree of even a structure
-        public BaseEntity SpawnMapEntity(string name, float x, float y, float z) {
+        public BaseEntity SpawnMapEntity(string name, float x, float y, float z, Quaternion q) {
             BaseEntity ent = GameManager.CreateEntity(name, 
                 new UnityEngine.Vector3(x, y, z), 
-                new UnityEngine.Quaternion());
+                q);
             ent.SpawnAsMapEntity();
             return ent;
         }
