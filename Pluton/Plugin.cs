@@ -114,7 +114,8 @@
                     return null;
                 }
             } catch (Exception ex) {
-                Logger.LogError(FormatExeption(ex));
+                string fileinfo = (String.Format("Plugin: {0} [{1}]! Method: {2}!", Name, Type, func) + Environment.NewLine);
+                Logger.LogError(fileinfo + FormatExeption(ex));
                 return null;
             }
         }
