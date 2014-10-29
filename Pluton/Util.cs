@@ -38,6 +38,11 @@
             return new LoadOut(name);
         }
 
+        public StructureRecorder.Structure CreateStructure(string name)
+        {
+            return new Pluton.StructureRecorder.Structure(name);
+        }
+
         public void DestroyEntity(BaseEntity ent)
         {
             ent.GetComponent<BaseNetworkable>().Kill();
@@ -138,6 +143,11 @@
         public static string GetServerFolder()
         {
             return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))), "RustDedicated_Data");
+        }
+
+        public static string GetStructuresFolder()
+        {
+            return Path.Combine(GetPublicFolder(), "Structures");
         }
 
         public static Util GetUtil()
