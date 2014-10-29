@@ -136,7 +136,7 @@
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
-        private string ValidateRelativePath(string path)
+        public string ValidateRelativePath(string path)
         {
             string normalizedPath = NormalizePath(Path.Combine(RootDir.FullName, path));
             string rootDirNormalizedPath = NormalizePath(RootDir.FullName);
