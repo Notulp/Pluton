@@ -377,6 +377,9 @@
                 case "On_Respawn":
                     plugin.OnRespawnHook.Dispose();
                     break;
+                case "On_PluginUnload":
+                    plugin.Invoke("On_PluginUnload");
+                    break;
                 default:
                     foundHook = false;
                     break;
