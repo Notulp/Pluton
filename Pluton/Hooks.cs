@@ -34,6 +34,8 @@ namespace Pluton
 
         public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
 
+        public static Subject<Pluton.CommandPermissionEvent> OnCommandPermission = new Subject<Pluton.CommandPermissionEvent>();
+
         public static Subject<CorpseHurtEvent> OnCorpseAttacked = new Subject<CorpseHurtEvent>();
 
         public static Subject<CorpseInitEvent> OnCorpseDropped = new Subject<CorpseInitEvent>();
@@ -115,6 +117,14 @@ namespace Pluton
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
                         continue;
+
+                    CommandPermissionEvent permission = new CommandPermissionEvent(player, args, chatCmd);
+                    OnCommandPermission.OnNext(permission);
+                    if(permission.blocked) {
+                        player.Message(permission.Reply);
+                        continue;
+                    }
+
                     try {
                         chatCmd.callback(cmd.args, player);
                     } catch (Exception ex) {

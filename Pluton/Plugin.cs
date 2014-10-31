@@ -347,6 +347,11 @@
             this.Invoke("On_Command", cmd);
         }
 
+        public IDisposable OnCommandPermissionHook;
+        public void OnCommandPermission(CommandPermissionEvent perm) {
+            this.Invoke("On_CommandPermission", perm);
+        }
+
         public IDisposable OnCorpseDroppedHook;
         public void OnCorpseDropped(CorpseInitEvent ie) {
             this.Invoke("On_CorpseDropped", ie);
