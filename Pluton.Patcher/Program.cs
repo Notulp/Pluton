@@ -21,7 +21,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemModules;
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
-        private static string version = "1.0.0.6";
+        private static string version = "1.0.0.7";
 
         #region patches
 
@@ -385,7 +385,7 @@ namespace Pluton.Patcher
             MethodDefinition respawn = bPlayer.GetMethod("Respawn");
             MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
 
-            for (var l = 39; l >= 0; l--) {
+            for (var l = 37; l >= 0; l--) {
                 respawn.Body.Instructions.RemoveAt(l);
             }
 
@@ -421,7 +421,7 @@ namespace Pluton.Patcher
 
             CloneMethod(serverInit);
             ILProcessor il = serverInit.Body.GetILProcessor();
-            il.InsertBefore(serverInit.Body.Instructions[101], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
+            il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 2], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
         }
 
         private static void ServerShutdownPatch()

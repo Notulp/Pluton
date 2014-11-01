@@ -7,10 +7,19 @@ namespace Pluton
     {
 
         public readonly BaseEntity baseEntity;
+        public readonly string Prefab;
+        public readonly uint PrefabID;
 
         public Entity(BaseEntity ent)
         {
             baseEntity = ent;
+            Prefab = baseEntity.LookupPrefabName();
+            PrefabID = baseEntity.prefabID;
+        }
+
+        public void Kill()
+        {
+            baseEntity.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, baseEntity.transform.position);
         }
 
         public Vector3 Location {
@@ -19,12 +28,6 @@ namespace Pluton
             }
             set {
                 baseEntity.transform.position.Set(value.x, value.y, value.z);
-            }
-        }
-
-        public string Name {
-            get {
-                return baseEntity.sourcePrefab;
             }
         }
 

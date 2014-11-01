@@ -14,8 +14,6 @@ namespace Pluton
         {
             Deployer = Server.GetServer().Players[p.userID];
             BuildingBlock bb = obj.GetComponent<BuildingBlock>();
-            bb.deployerUserID = p.userID;
-            bb.deployerUserName = p.displayName;
             BuildingPart = new BuildingPart(bb);
             invItem = new InvItem(item);
             _planner = planner;

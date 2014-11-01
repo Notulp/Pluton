@@ -26,7 +26,7 @@ namespace Pluton.StructureRecorder
                 origo = new Origo(new SerializedVector3(bp.Location), new SerializedQuaternion(bp.buildingBlock.transform.rotation));
             SerializedVector3 v3 = new SerializedVector3(bp.Location - origo.Position.ToVector3());
             SerializedQuaternion q = new SerializedQuaternion(bp.buildingBlock.transform.rotation);
-            StructureComponent component = new StructureComponent(bp.buildingBlock.sourcePrefab, v3, q, (int)Math.Floor((double)(bp.Health / 85)));
+            StructureComponent component = new StructureComponent(bp.buildingBlock.LookupPrefabName(), v3, q, (int)Math.Floor((double)(bp.Health / 85)));
 
             if (component == null) {
                 Logger.LogDebug("[Structure] Component is null!");
@@ -65,7 +65,7 @@ namespace Pluton.StructureRecorder
         {
             SerializedVector3 v3 = new SerializedVector3(bp.Location - origo.Position.ToVector3());
             SerializedQuaternion q = new SerializedQuaternion(bp.buildingBlock.transform.rotation);
-            StructureComponent component = new StructureComponent(bp.buildingBlock.sourcePrefab, v3, q, (int)Math.Floor((double)(bp.Health / 85)));
+            StructureComponent component = new StructureComponent(bp.buildingBlock.LookupPrefabName(), v3, q, (int)Math.Floor((double)(bp.Health / 85)));
             if (Components.ContainsKey(component.ToString()))
                 Components.Remove(component.ToString());
         }

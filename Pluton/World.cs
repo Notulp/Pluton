@@ -214,8 +214,8 @@ namespace Pluton
         public void PrintPrefabs() {
             BaseEntity[] objectsOfType = UnityEngine.Object.FindObjectsOfType<BaseEntity>();
             foreach (BaseEntity baseEntity in objectsOfType)
-                if (!list.Contains(baseEntity.sourcePrefab))
-                    list.Add(baseEntity.sourcePrefab);
+                if (!list.Contains(baseEntity.LookupPrefabName()))
+                    list.Add(baseEntity.LookupPrefabName());
             
             foreach (var s in list)
                 Debug.Log(s);

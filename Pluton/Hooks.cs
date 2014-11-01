@@ -606,8 +606,6 @@ namespace Pluton
 
             if (re.WakeUp)
                 player.EndSleeping();
-
-            player.SendFullSnapshot();
         }
 
         public static void SetModded()
