@@ -303,6 +303,11 @@
 
         #region hooks
 
+        public IDisposable OnAllPluginsLoadedHook;
+        public void OnAllPluginsLoaded(string s = "") {
+            this.Invoke("On_AllPluginsLoaded");
+        }
+
         public void OnBlueprintUse() {
             throw new NotImplementedException("There is no OnBlueprintUse hook yet!");
         }

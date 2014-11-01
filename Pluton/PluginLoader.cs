@@ -16,6 +16,8 @@
         private DirectoryInfo pluginDirectory;
         private static PluginLoader instance;
 
+        public static Subject<string> OnAllLoaded = new Subject<string>();
+
         public void Init()
         {
             Plugin.LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
@@ -109,7 +111,7 @@
             //C# plugins currently disabled
             //foreach (string name in GetCSharpPluginNames())
             //    LoadPlugin(name, Plugin.PluginType.CSharp);
-            //if(OnAllLoaded != null) OnAllLoaded();
+            OnAllLoaded.OnNext("");
         }
 
         public void UnloadPlugins()
@@ -195,6 +197,9 @@
 
                 bool foundHook = true;
                 switch (method) {
+                case "On_AllPluginsLoaded":
+                    plugin.OnAllPluginsLoadedHook = OnAllLoaded.Subscribe(s => plugin.OnAllPluginsLoaded(""));
+                    break;
                 case "On_Chat":
                     plugin.OnChatHook = Hooks.OnChat.Subscribe(c => plugin.OnChat(c));
                     break;
@@ -299,6 +304,9 @@
 
                 bool foundHook = true;
                 switch (method) {
+                case "On_AllPluginsLoaded":
+                    plugin.OnAllPluginsLoadedHook.Dispose();
+                    break;
                 case "On_Chat":
                     plugin.OnChatHook.Dispose();
                     break;
