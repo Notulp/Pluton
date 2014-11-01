@@ -577,6 +577,9 @@ namespace Pluton
         {
             Bootstrap.timers.Dispose();
             OnServerShutdown.OnNext("");
+
+            PluginLoader.GetInstance().UnloadPlugins();
+
             Bootstrap.SaveAll();
         }
 
