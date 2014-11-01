@@ -24,7 +24,7 @@ namespace Pluton
                 File.Create(ConfigPath).Close();
                 PlutonConfig = new IniParser(ConfigPath);
                 Debug.Log("Config " + ConfigPath + " Created!");
-                Debug.Log("Teh config will be filled with the default values.");
+                Debug.Log("The config will be filled with the default values.");
             }
             pluton.enabled = GetBoolValue("Config", "enabled", true);
         }

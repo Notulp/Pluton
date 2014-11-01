@@ -9,7 +9,7 @@
     public class PluginLoader
     {
 
-        private static Dictionary<string, Plugin> plugins;
+        private static Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
 
         public static Dictionary<string, Plugin> Plugins { get { return plugins; } }
 
@@ -25,7 +25,6 @@
             if (!Directory.Exists(pluginDirectory.FullName)) {
                 Directory.CreateDirectory(pluginDirectory.FullName);
             }
-            plugins = new Dictionary<string, Plugin>();
             ReloadPlugins();
         }
 
