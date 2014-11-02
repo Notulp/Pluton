@@ -15,6 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition worldClass;
         private static TypeDefinition bAnimal;
         private static TypeDefinition bPlayer;
+        private static TypeDefinition bPlayerMetabolism;
         private static TypeDefinition bCorpse;
         private static TypeDefinition bBlock;
         private static TypeDefinition itemCrafter;
@@ -290,7 +291,28 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
             iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
         }
+        private static void RunMetabolismPatch()
+        {
+            
+            MethodDefinition runMetabolism = bPlayerMetabolism.GetMethod("RunMetabolism");
+            MethodDefinition metabolismRunHook = hooksClass.GetMethod("RunMetabolism");
 
+
+            FieldDefinition owner = bPlayerMetabolism.GetField("Owner");
+            FieldReference ownerFieldRef = owner as FieldReference;
+
+
+            CloneMethod(runMetabolism);
+            // clear out the method, we will recreate it in Pluton
+            runMetabolism.Body.Instructions.Clear();
+            runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
+            runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(metabolismRunHook)));
+            runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            
+        }
         private static void PlayerTakeDamagePatch()
         {
             MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
@@ -514,6 +536,8 @@ namespace Pluton.Patcher
             PlayerAttackedPatch();
             PlayerDiedPatch();
 
+            RunMetabolismPatch();
+
             NPCDiedPatch();
             NPCHurtPatch();
 
@@ -584,6 +608,7 @@ namespace Pluton.Patcher
             worldClass = plutonAssembly.MainModule.GetType("Pluton.World");
             bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
             bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
+            bPlayerMetabolism = rustAssembly.MainModule.GetType("PlayerMetabolism");
             bCorpse = rustAssembly.MainModule.GetType("BaseCorpse");
             bBlock = rustAssembly.MainModule.GetType("BuildingBlock");
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");

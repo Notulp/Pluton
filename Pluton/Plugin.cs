@@ -440,6 +440,17 @@
             this.Invoke("On_PlayerTakeRadiation", re);
         }
 
+        public IDisposable OnMetabolismTickHook;
+        public void OnMetabolismTick(MetabolismTickEvent re)
+        {
+            this.Invoke("On_MetabolismTick", re);
+        }
+        public IDisposable OnMetabolismDamageHook;
+        public void OnMetabolismDamage(MetabolismDamageEvent re)
+        {
+            this.Invoke("On_MetabolismDamage", re);
+        }
+
         public IDisposable OnRespawnHook;
         public void OnRespawn(RespawnEvent re) {
             this.Invoke("On_Respawn", re);
