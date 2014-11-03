@@ -6,10 +6,13 @@ namespace Pluton.Events
     {
         public readonly HitInfo _info;
         public bool dropLoot = true;
+        public readonly string HitBone;
 
         public DeathEvent(HitInfo info)
         {
             _info = info;
+            string bonename = StringPool.Get(info.HitBone);
+            HitBone = bonename==""?"unknown":bonename;
         }
 
         public float DamageAmount {

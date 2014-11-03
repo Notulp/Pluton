@@ -5,10 +5,13 @@ namespace Pluton.Events
     public class HurtEvent : CountedInstance
     {
         public readonly HitInfo _info;
+        public readonly string HitBone;
 
         public HurtEvent(HitInfo info)
         {
             _info = info;
+            string bonename = StringPool.Get(info.HitBone);
+            HitBone = bonename==""?"unknown":bonename;
         }
 
         public float DamageAmount {
