@@ -114,6 +114,8 @@
     <Compile Include="StructureRecorder\Origo.cs" />
     <Compile Include="CSharpPlugin.cs" />
     <Compile Include="Events\CommandPermissionEvent.cs" />
+    <Compile Include="Events\MetabolismDamageEvent.cs" />
+    <Compile Include="Events\MetabolismTickEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
