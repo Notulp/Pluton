@@ -271,6 +271,12 @@
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                     break;
+                case "On_MetabolismTick":
+                    plugin.OnMetabolismTickHook = Hooks.OnMetTick.Subscribe(p => plugin.OnMetabolismTick(p));
+                    break;
+                case "On_MetabolismDamage":
+                    plugin.OnMetabolismDamageHook = Hooks.OnMetDamage.Subscribe(p => plugin.OnMetabolismDamage(p));
+                    break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
                     break;
@@ -377,6 +383,12 @@
                     break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook.Dispose();
+                    break;
+                case "On_MetabolismTick":
+                    plugin.OnMetabolismTickHook.Dispose();
+                    break;
+                case "On_MetabolismDamage":
+                    plugin.OnMetabolismDamageHook.Dispose();
                     break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook.Dispose();
