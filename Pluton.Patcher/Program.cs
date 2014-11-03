@@ -22,7 +22,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemModules;
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
-        private static string version = "1.0.0.7";
+        private static string version = "1.0.0.8";
 
         #region patches
 
