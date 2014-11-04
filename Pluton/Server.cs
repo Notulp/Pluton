@@ -10,7 +10,7 @@
 
     public class Server
     {
-
+        public bool Loaded = false;
         public Dictionary<ulong, Player> Players;
         public Dictionary<ulong, OfflinePlayer> OfflinePlayers;
         public Dictionary<string, StructureRecorder.Structure> Structures;

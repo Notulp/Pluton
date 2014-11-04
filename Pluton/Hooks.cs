@@ -736,6 +736,7 @@ namespace Pluton
             } else {
                 World.GetWorld().Timescale = Single.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             }
+            Server.GetServer().Loaded = true;
             OnServerInit.OnNext("");
         }
 
