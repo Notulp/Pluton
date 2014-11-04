@@ -26,15 +26,15 @@ namespace Pluton
 
         public static Subject<BuildingEvent> OnBuildingUpdate = new Subject<BuildingEvent>();
 
-        public static Subject<Chat> OnChat = new Subject<Pluton.Chat>();
+        public static Subject<ChatEvent> OnChat = new Subject<ChatEvent>();
 
         public static Subject<AuthEvent> OnClientAuth = new Subject<AuthEvent>();
 
         public static Subject<ClientConsoleEvent> OnClientConsole = new Subject<ClientConsoleEvent>();
 
-        public static Subject<Pluton.Command> OnCommand = new Subject<Pluton.Command>();
+        public static Subject<CommandEvent> OnCommand = new Subject<CommandEvent>();
 
-        public static Subject<Pluton.CommandPermissionEvent> OnCommandPermission = new Subject<Pluton.CommandPermissionEvent>();
+        public static Subject<CommandPermissionEvent> OnCommandPermission = new Subject<CommandPermissionEvent>();
 
         public static Subject<CorpseHurtEvent> OnCorpseAttacked = new Subject<CorpseHurtEvent>();
 
@@ -113,7 +113,7 @@ namespace Pluton
             Player player = Server.GetPlayer(arg.Player());
             string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
 
-            Command cmd = new Command(player, args);
+            CommandEvent cmd = new CommandEvent(player, args);
 
             if (cmd.cmd == "")
                 return;
@@ -235,7 +235,7 @@ namespace Pluton
                 if (!(bool) ((UnityEngine.Object) basePlayer))
                     return;
 
-                Chat pChat = new Chat(Server.GetServer().Players[basePlayer.userID], arg);
+                ChatEvent pChat = new ChatEvent(Server.GetServer().Players[basePlayer.userID], arg);
 
                 string str = arg.GetString(0, "text");
 

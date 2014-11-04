@@ -333,7 +333,7 @@
         }
 
         public IDisposable OnChatHook;
-        public void OnChat(Chat arg) {
+        public void OnChat(ChatEvent arg) {
             this.Invoke("On_Chat", arg);
         }
 
@@ -348,7 +348,7 @@
         }
 
         public IDisposable OnCommandHook;
-        public void OnCommand(Command cmd) {
+        public void OnCommand(CommandEvent cmd) {
             this.Invoke("On_Command", cmd);
         }
 

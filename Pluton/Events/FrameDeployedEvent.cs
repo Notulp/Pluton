@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Pluton
+namespace Pluton.Events
 {
     public class FrameDeployedEvent : CountedInstance
     {

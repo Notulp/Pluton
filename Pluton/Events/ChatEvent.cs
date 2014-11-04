@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Pluton
+namespace Pluton.Events
 {
-    public class Chat : CountedInstance
+    public class ChatEvent : CountedInstance
     {
 
 		public readonly ConsoleSystem.Arg _arg;
@@ -12,7 +12,7 @@ namespace Pluton
 		public string FinalText;
 		public string Reply;
 
-		public Chat(Player player, ConsoleSystem.Arg args)
+		public ChatEvent(Player player, ConsoleSystem.Arg args)
         {
 			User = player;
 			_arg = args;

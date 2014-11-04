@@ -84,7 +84,6 @@
     <Compile Include="Events\BuildingHurtEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
     <Compile Include="Objects\BuildingPart.cs" />
-    <Compile Include="Objects\Command.cs" />
     <Compile Include="Objects\Entity.cs" />
     <Compile Include="Objects\Inv.cs" />
     <Compile Include="Objects\InvItem.cs" />
@@ -99,7 +98,6 @@
     <Compile Include="Events\CorpseInitEvent.cs" />
     <Compile Include="Events\PlayerTakedmgEvent.cs" />
     <Compile Include="Events\PlayerTakeRadsEvent.cs" />
-    <Compile Include="Objects\Chat.cs" />
     <Compile Include="Events\RespawnEvent.cs" />
     <Compile Include="Events\ClientConsoleEvent.cs" />
     <Compile Include="Events\ServerConsoleEvent.cs" />
@@ -116,6 +114,8 @@
     <Compile Include="Events\CommandPermissionEvent.cs" />
     <Compile Include="Events\MetabolismDamageEvent.cs" />
     <Compile Include="Events\MetabolismTickEvent.cs" />
+    <Compile Include="Events\ChatEvent.cs" />
+    <Compile Include="Events\CommandEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
