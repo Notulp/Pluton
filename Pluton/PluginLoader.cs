@@ -101,15 +101,24 @@
 
         public void LoadPlugins()
         {
-            foreach (string name in GetPyPluginNames())
-                LoadPlugin(name, Plugin.PluginType.Python);
+            if (CoreConfig.GetBoolValue("python", "enabled"))
+                foreach (string name in GetPyPluginNames())
+                    LoadPlugin(name, Plugin.PluginType.Python);
+            else
+                Logger.LogDebug("[PluginLoader] Python plugins are disabled in Core.cfg.");
 
-            foreach (string name in GetJSPluginNames())
-                LoadPlugin(name, Plugin.PluginType.JS);
+            if (CoreConfig.GetBoolValue("javascript", "enabled"))
+                foreach (string name in GetJSPluginNames())
+                    LoadPlugin(name, Plugin.PluginType.JS);
+            else
+                Logger.LogDebug("[PluginLoader] Javascript plugins are disabled in Core.cfg.");
 
-            //C# plugins currently disabled
-            //foreach (string name in GetCSharpPluginNames())
-            //    LoadPlugin(name, Plugin.PluginType.CSharp);
+            if (CoreConfig.GetBoolValue("csharp", "enabled"))
+                foreach (string name in GetCSharpPluginNames())
+                    LoadPlugin(name, Plugin.PluginType.CSharp);
+            else
+                Logger.LogDebug("[PluginLoader] CSharp plugins are disabled in Core.cfg.");
+
             OnAllLoaded.OnNext("");
         }
 
@@ -190,6 +199,9 @@
 
         private void InstallHooks(Plugin plugin)
         {
+            if (plugin.State != Plugin.PluginState.Loaded)
+                return;
+
             foreach (string method in plugin.Globals) {
                 if (!method.StartsWith("On_") && !method.EndsWith("Callback"))
                     continue;
@@ -303,6 +315,9 @@
 
         private void RemoveHooks(Plugin plugin)
         {
+            if (plugin.State != Plugin.PluginState.Loaded)
+                return;
+
             foreach (string method in plugin.Globals) {
                 if (!method.StartsWith("On_") && !method.EndsWith("Callback"))
                     continue;

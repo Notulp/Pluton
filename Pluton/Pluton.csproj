@@ -116,6 +116,9 @@
     <Compile Include="Events\MetabolismTickEvent.cs" />
     <Compile Include="Events\ChatEvent.cs" />
     <Compile Include="Events\CommandEvent.cs" />
+    <Compile Include="CryptoExtensions.cs" />
+    <Compile Include="CoreConfig.cs" />
+    <Compile Include="DirectoryConfig.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
