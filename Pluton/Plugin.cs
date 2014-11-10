@@ -23,6 +23,7 @@
         public readonly string Name;
         public readonly string Code;
         public readonly object Class;
+        public readonly PluginState State = PluginState.NotLoaded;
         public readonly PluginType Type;
         public readonly DirectoryInfo RootDir;
         public readonly ScriptEngine PyEngine;
@@ -37,6 +38,7 @@
         public ConsoleCommands consoleCommands;
         public ChatCommands chatCommands;
 
+        public enum PluginState { NotLoaded, Loaded, HashNotFound }
         public enum PluginType { Python, JS, CSharp }
 
         public Plugin(string name, string code, DirectoryInfo path, PluginType type)
@@ -45,12 +47,18 @@
             Code = code;
             RootDir = path;
             Type = type;
+            State = PluginState.NotLoaded;
             Timers = new Dictionary<string, TimedEvent>();
             ParallelTimers = new List<TimedEvent>();
             consoleCommands = new ConsoleCommands(this);
             chatCommands = new ChatCommands(this);
 
             if (type == PluginType.Python) {
+                if (CoreConfig.GetBoolValue("python", "checkHash") && !code.VerifyMD5Hash()) {
+                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, type));
+                    State = PluginState.HashNotFound;
+                    return;
+                }
                 PyEngine = IronPython.Hosting.Python.CreateEngine();
                 Scope = PyEngine.CreateScope();
                 Scope.SetVariable("Plugin", this);
@@ -63,7 +71,13 @@
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
                 Globals = PyEngine.Operations.GetMemberNames(Class);
-            } else if(type == PluginType.JS) {
+            } else if (type == PluginType.JS) {
+                if (CoreConfig.GetBoolValue("javascript", "checkHash") && !code.VerifyMD5Hash()) {
+                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, type));
+                    State = PluginState.HashNotFound;
+                    return;
+                }
+
                 JSEngine = new Engine(cfg => cfg.AllowClr(typeof(UnityEngine.GameObject).Assembly,
                     typeof(PlayerInventory).Assembly))
                     .SetValue("Server", Server.GetServer())
@@ -77,9 +91,16 @@
                 JavaScriptParser parser = new JavaScriptParser();
                 Globals = (from function in parser.Parse(code).FunctionDeclarations
                            select function.Id.Name).ToList<string>();
-            } else if(type == PluginType.CSharp) {
+            } else if (type == PluginType.CSharp) {
                 //For C# plugins code is the dll path
-                Assembly assembly = Assembly.Load(File.ReadAllBytes(code));
+                byte[] bin = File.ReadAllBytes(code);
+                if (CoreConfig.GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
+                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, type));
+                    State = PluginState.HashNotFound;
+                    return;
+                }
+
+                Assembly assembly = Assembly.Load(bin);
                 Type classType = assembly.GetType(name + "." + name);
                 if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
                     throw new NotSupportedException("Main module class not found:" + Name);
@@ -96,12 +117,13 @@
                 Globals = (from method in classType.GetMethods()
                     select method.Name).ToList<string>();
             }
+            State = PluginState.Loaded;
         }
 
         public object Invoke(string func, params object[] obj)
         {
             try {
-                if (Globals.Contains(func)) {
+                if (State == PluginState.Loaded && Globals.Contains(func)) {
                     if (Type == PluginType.Python)
                         return PyEngine.Operations.InvokeMember(Class, func, obj);
                     else if (Type == PluginType.JS)

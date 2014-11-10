@@ -17,7 +17,10 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
+                DirectoryConfig.Init();
+                CoreConfig.Init();
                 Config.Init();
+
                 if (!pluton.enabled)
                 {
                     Debug.Log("[Bootstrap] Pluton is disabled!");
@@ -66,6 +69,7 @@ namespace Pluton
                 Directory.CreateDirectory(Util.GetPublicFolder());
 
             Logger.Init();
+            CryptoExtensions.Init();
             DataStore.GetInstance().Load();
             Server.GetServer();
             PluginLoader.GetInstance().Init();
