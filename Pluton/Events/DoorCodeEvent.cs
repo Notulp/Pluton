@@ -24,7 +24,7 @@ namespace Pluton
                 msg.dataString = "0000";
         }
 
-        public string CodeEntered {
+        public string Code {
             get {
                 return msg.dataString;
             }
