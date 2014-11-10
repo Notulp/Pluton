@@ -22,6 +22,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemModules;
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
+        private static TypeDefinition codeLock;
         private static string version = "1.0.0.8";
 
         #region patches
@@ -176,6 +177,19 @@ namespace Pluton.Patcher
 
             iLProcessor.InsertBefore(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Ldarg_0));
             iLProcessor.InsertAfter(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftTime)));
+        }
+
+        private static void DoorCodePatch()
+        {
+            MethodDefinition codeUnlock = codeLock.GetMethod("UnlockWithCode");
+            MethodDefinition doorCode = hooksClass.GetMethod("DoorCode");
+
+            CloneMethod(codeUnlock);
+            ILProcessor iLProcessor = codeUnlock.Body.GetILProcessor();
+
+            iLProcessor.InsertBefore(codeUnlock.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(codeUnlock.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(codeUnlock.Body.Instructions[1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
         }
 
         private static void GatherPatch()
@@ -552,6 +566,8 @@ namespace Pluton.Patcher
             CraftingTimePatch();
             ResourceGatherMultiplierPatch();
 
+            DoorCodePatch();
+
             CargoPlaneBehaviourPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
@@ -614,6 +630,7 @@ namespace Pluton.Patcher
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
             itemCrafter = rustAssembly.MainModule.GetType("ItemBlueprint");
             item = rustAssembly.MainModule.GetType("Item");
+            codeLock = rustAssembly.MainModule.GetType("CodeLock");
             itemModules = item.GetNestedType("Modules");
 
             //Check if patching is required

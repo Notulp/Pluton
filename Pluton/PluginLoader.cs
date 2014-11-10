@@ -232,6 +232,9 @@
                 case "On_BuildingPartDestroyed":
                     plugin.OnBuildingPartDestroyedHook = Hooks.OnBuildingPartDestroyed.Subscribe(b => plugin.OnBuildingPartDestroyed(b));
                     break;
+                case "On_DoorCode":
+                    plugin.OnDoorCodeHook = Hooks.OnDoorCode.Subscribe(b => plugin.OnDoorCode(b));
+                    break;
                 case "On_FrameDeployed":
                     plugin.OnFrameDeployedHook = Hooks.OnBuildingFrameDeployed.Subscribe(f => plugin.OnFrameDeployed(f));
                     break;
@@ -344,6 +347,9 @@
                     break;
                 case "On_BuildingPartDestroyed":
                     plugin.OnBuildingPartDestroyedHook.Dispose();
+                    break;
+                case "On_DoorCode":
+                    plugin.OnDoorCodeHook.Dispose();
                     break;
                 case "On_FrameDeployed":
                     plugin.OnFrameDeployedHook.Dispose();

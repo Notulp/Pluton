@@ -40,6 +40,8 @@ namespace Pluton
 
         public static Subject<CorpseInitEvent> OnCorpseDropped = new Subject<CorpseInitEvent>();
 
+        public static Subject<DoorCodeEvent> OnDoorCode = new Subject<DoorCodeEvent>();
+
         public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
 
         public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
@@ -264,6 +266,15 @@ namespace Pluton
 
                 arg.ReplyWith(ce.Reply);
             }
+        }
+
+        public static void DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
+        {
+            if (!doorLock.IsLocked())
+                return;
+
+            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc);
+            OnDoorCode.OnNext(dc);
         }
 
         //FacePunch.ConsoleSystem.Run

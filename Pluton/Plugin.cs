@@ -367,6 +367,11 @@
             this.Invoke("On_CorpseAttacked", he);
         }
 
+        public IDisposable OnDoorCodeHook;
+        public void OnDoorCode(DoorCodeEvent dc) {
+            this.Invoke("On_DoorCode", dc);
+        }
+
         public void OnDoorUse() {
             throw new NotImplementedException("There is no OnDoorUse hook yet!");
         }

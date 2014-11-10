@@ -116,6 +116,7 @@
     <Compile Include="Events\MetabolismTickEvent.cs" />
     <Compile Include="Events\ChatEvent.cs" />
     <Compile Include="Events\CommandEvent.cs" />
+    <Compile Include="Events\DoorCodeEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
