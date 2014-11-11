@@ -15,13 +15,12 @@ namespace Pluton
         {
             TrustedHashes = new List<string>();
             string path = DirectoryConfig.GetConfigPath("Hashes");
+            if (!File.Exists(path))
+                File.AppendAllText(path, "// empty");
+
             TrustedHashes = (from line in File.ReadAllLines(path)
                              where !String.IsNullOrEmpty(line) && !line.StartsWith("//")
                              select line).ToList<string>();
-            foreach (string hash in TrustedHashes) {
-                Console.WriteLine("HASH: " + hash);
-            }
-
         }
 
         public static string GetMD5Hash(MD5 md5Hash, string input)
@@ -51,10 +50,6 @@ namespace Pluton
         public static bool VerifyMD5Hash(this byte[] input)
         {
             using (MD5 md5Hash = MD5.Create()) {
-                foreach (string hash in TrustedHashes) {
-                    Console.WriteLine("HASH: " + hash + " : " + GetMD5Hash(md5Hash, input));
-                }
-
                 return TrustedHashes.Contains(GetMD5Hash(md5Hash, input));
             }
         }
