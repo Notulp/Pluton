@@ -33,6 +33,12 @@ namespace Pluton
             }
         }
 
+        public Player Player {
+            get {
+                return Server.GetPlayer(msg.player);
+            }
+        }
+
         public bool IsCorrect()
         {
             return msg.dataString == doorCode;
