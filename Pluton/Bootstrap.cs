@@ -11,7 +11,6 @@ namespace Pluton
         public static string Version = "0.9.8";
 
         public static ServerTimers timers;
-        public static Timer nameChangeTimer;
 
 
         public static void AttachBootstrap()
@@ -75,26 +74,6 @@ namespace Pluton
             PluginLoader.GetInstance().Init();
             ReloadTimers();
             server.official = false;
-            nameChangeTimer = new Timer(60000);
-            nameChangeTimer.Elapsed += new ElapsedEventHandler(nameChangeTimer_Elapsed);
-            nameChangeTimer.Start();
-        }
-
-        private static void nameChangeTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            /*
-             *  PLEASE READ: This is only temporary until a 1.0 release version.
-             * 
-             *  It helps Pluton by getting the name out there, which in return
-             *  should bring in more plugin developers and users to pluton community.
-             *  
-             *  The below code will add [Pluton v0.9.x] to the start of your server name
-             *  We would really appreciate you not changing this temporary addition.
-             * */
-            string start = String.Format("[pluton-team.org] {0}", server.hostname);
-            if (!server.hostname.StartsWith("[pluton-team.org")) {
-                server.hostname = start;
-            }
         }
 
         public class ServerTimers
