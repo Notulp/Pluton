@@ -10,6 +10,7 @@ On_BuildingComplete(BuildingPart bp)
 On_BuildingPartAttacked(BuildingHurtEvent bhe)
 On_BuildingPartDestroyed(BuildingHurtEvent bhe)
 On_BuildingUpdate(BuildingEvent be)
+On_DoorCode(DoorCodeEvent dce)
 On_FrameDeployed(BuildingPart bp)
 On_LootingEntity(EntityLootEvent ele)
 On_LootingItem(ItemLootEvent ile)
@@ -83,15 +84,15 @@ Pluton.Inv(PlayerInventory inv)
 	.owner:Pluton.Player
 
 Pluton.InvItem(string Name, int Amount) (string Name) (Item item)
+	._item:Item
 	.CanStack(Pluton.InvItem item):bool
+	.containerPref:enum
+	.Category:string
 	.Drop(Vector3 position, Vector3 offset):void
 	.GetContainerPreference(string category):enum
 	.GetItemID(string itemName):int
 	.Instantiate(Vector3 position):Pluton.Entity
 	.Instantiate(Vector3 position, Quaternion rotation):Pluton.Entity
-	._item:Item
-	.containerPref:enum
-	.Category:string
 	.ItemID:int
 	.Name:string
 	.Quantity:int
@@ -100,9 +101,6 @@ Pluton.InvItem(string Name, int Amount) (string Name) (Item item)
 Pluton.LoadOut(string Name)
 	.Add(Pluton.InvItem item):bool
 	.Add(Pluton.LoadOutItem item):bool
-	.Remove(int Item):bool
-	.ToIni():void
-	.ToInv(Pluton.Inv inv):void
 	.itemCount:int
 	.items:Dictionary<int, Pluton.LoadOutItem>
 	.ModeratorUse:bool
@@ -110,24 +108,28 @@ Pluton.LoadOut(string Name)
 	.NormalUse:bool
 	.OwnerUse:bool
 	.path:string
+	.Remove(int Item):bool
+	.ToIni():void
+	.ToInv(Pluton.Inv inv):void
 
 Pluton.LoadOutItem(string Name) (string Name, int Amount)
 	.Amount:int
-	.Name:string
 	.invItem:Pluton.InvItem
+	.Name:string
+	
 
 Pluton.NPC(BaseAnimal animal)
-	.Kill():void
-	.Prefab:string
-	.ID:uint
 	.Health:float
+	.ID:uint
+	.Kill():void
 	.Location:Vector3
+	.Prefab:string
 	.X .Y .Z :float
 
 Pluton.OfflinePlayer(Pluton.Player player) // you shouldn't ever call this constructor manually
+	.Admin:bool
 	.Get(ulong steamid):Plutom.OfflinePlayer
 	.Get(string steamid):Pluton.OfflinePlayer
-	.Admin:bool
 	.IP:string
 	.Name:string
 	.OS:string
@@ -135,31 +137,31 @@ Pluton.OfflinePlayer(Pluton.Player player) // you shouldn't ever call this const
 	.X .Y .Z :float
 
 Pluton.Player(BasePlayer player)
+	.Admin:bool
+	.AuthStatus:string
+	.Ban(string reason*):void
+	.basePlayer:BasePlayer
 	.Find(string nameOrsteamidOrip):Pluton.Player
 	.FindByGameID(ulong steamid):Pluton.Player
 	.FindBySteamID(string steamid):Pluton.Player
-	.Ban(string reason*):void
+	.GameID:ulong
+	.Health:float
+	.Inventory:Pluton.Inv
+	.IP:string
 	.Kick(string reason*):void
-	.Reject(string reason*):void
 	.Kill():void
+	.Location:Vector3
 	.MakeNone(string reason*):void
 	.MakeModerator(string reason*):void
 	.MakeOwner(string reason*):void
 	.Message(string msg):void
 	.MessageFrom(string nameFrom, string msg).void
-	.Admin:bool
-	.AuthStatus:string
-	.basePlayer:BasePlayer
-	.GameID:ulong
-	.Health:float
-	.Inventory:Pluton.Inv
-	.IP:string
-	.Location:Vector3
 	.Moderator:bool
 	.Name:string
 	.Owner:bool
 	.OS:string
 	.Ping:int
+	.Reject(string reason*):void
 	.Stats:Pluton.PlayerStats
 	.SteamID:string
 	.TimeOnline:float
@@ -225,7 +227,15 @@ Pluton.Server
 
 Pluton.Util
 	.CreateLoadOut(string Name):LoadOut
+	.CreateStructure(string name):StructureRecorder.Structure
+	.ConsoleLog(string str, bool adminOnly = false):void
+	.DestroyEntity(BaseEntity ent):void
+	.DestroyEntityGib(BaseEntity ent):void
+	.DestroyObject(GameObject):void
+	.DumpObjToFile(string path, object obj, int depth, int maxItems, bool disPrivate, bool fullClassName, string prefix = ""):bool
+	.GetQuotedArgs(string[] sArr):string[]
 	.GetVectorsDistance(Vector3 p1, Vector3 p2):float
+	.Infront(Player p, float length):Vector3
 	.Items():void
 	.IsNull(object obj):bool
 	.Log(string str):void
@@ -235,16 +245,16 @@ Pluton.Util
 	.RotateZ(Quaternion q, float angle):Quaternion
 	.TryFindType(string typeName, out System.Type t):bool
 	.TryFindReturnType(string typeName):System.Type
-	.DestroyObject(GameObject):void
+	
 
 Pluton.TimedEvent(string name, double interval, Dictionary<string, object> args) : this(string name, double interval)
-	.Kill():void
-	.Start():void
-	.Stop():void
 	.Args:Dictionary<string, object>
 	.ElapsedCount:int
 	.Interval:double
+	.Kill():void
 	.Name:string
+	.Start():void
+	.Stop():void
 	.TimeLeft:double
 
 
@@ -254,6 +264,7 @@ Pluton.World
 	.AirDropAt(Vector3 position, float speed* = 50f, float height* = 400f):void
 	.AirDropAt(float x, float y, float z, float speed* = 50f, float height* = 400f):void
 	.AirDropAtPlayer(Player player, float speed* = 50f, float height* = 400f):void
+	.AttachParachute(Player player):void
 	.GetGround(float x, float z):float
 	.GetGround(Vector3 worldpos):float
 	.FreezeTime():void
@@ -275,7 +286,6 @@ Pluton.World
 ## Events
 
 Pluton.Events.AuthEvent(Connection connection)
-	.Reject(string reason*):void
 	._reason:string
 	.approved:bool
 	.con:Connection
@@ -283,6 +293,8 @@ Pluton.Events.AuthEvent(Connection connection)
 	.IP:string
 	.Name:string
 	.OS:string
+	.Reject(string reason*):void
+
 
 Pluton.Events.BuildingEvent(BuildingPart bp, Player, float prof)
 	._block:BuildingBlock
@@ -311,11 +323,20 @@ Pluton.Events.CorpseInitEvent(BaseCorpse corpse, BaseEntity parent)
 
 Pluton.Events.DeathEvent(HitInfo info)
 	._info:HitInfo
-	.dropLoot:bool
+	.Attacker:BaseEntity
 	.DamageAmount:float
 	.DamageType:Rust.DamageType
-	.Attacker:BaseEntity
+	.dropLoot:bool
 	.Weapon:InvItem
+
+Pluton.Events.DoorCodeEvent(CodeLock codeLock)
+	.Code:string
+	.Deny():void
+	.doorCode:string
+	.IsCorrect():bool
+	.msg:BaseEntity.RPCMessage
+	.Player:Pluton.Player
+	
 
 Pluton.Events.EntityLootEvent(PlayerLoot pl, Player looter, Entity looted):LootEvent
 	.Target:Pluton.Entity
