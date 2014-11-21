@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-public class IniParser : InstanceCounted
+public class IniParser : Pluton.CountedInstance
 {
     private readonly string iniFilePath;
     private readonly Hashtable keyPairs = new Hashtable();

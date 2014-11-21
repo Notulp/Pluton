@@ -5,7 +5,7 @@ namespace Pluton.Events
 {
     public class BuildingEvent : CountedInstance
     {
-        public List<Construction.Socket> Sockets;
+        public Construction.Socket[] Sockets;
         public readonly BuildingBlock _block;
         public BuildingPart BuildingPart;
         public readonly Player Builder;
@@ -28,16 +28,6 @@ namespace Pluton.Events
                 BlockName = _block.blockDefinition.name;
                 Sockets = _block.blockDefinition.sockets;
                 BlockFullName = _block.blockDefinition.fullname;
-            }
-        }
-
-
-        public float[] Proficiency {
-            get {
-                return _info.buildProficiency;
-            }
-            set {
-                _info.buildProficiency = value;
             }
         }
     }

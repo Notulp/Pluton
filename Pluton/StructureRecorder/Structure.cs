@@ -45,9 +45,7 @@ namespace Pluton.StructureRecorder
                 Vector3 v3 = (component.LocalPosition.ToVector3() + spawnAt);
                 BaseEntity ent = World.GetWorld().SpawnMapEntity(component.Prefab, v3, component.LocalRotation.ToQuaternion());
                 BuildingBlock bb = ent.GetComponent<BuildingBlock>();
-                bb.health = component.Health;
-                bb.StopBeingAFrame();
-                bb.ClampToNearestStage();
+                bb.blockHealth = component.Health;
                 bb.SendNetworkUpdateImmediate();
             }
         }

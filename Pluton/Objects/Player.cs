@@ -8,7 +8,7 @@ namespace Pluton
         public readonly BasePlayer basePlayer;
 
         public Player(BasePlayer player)
-        {        
+        {
             basePlayer = player;
             try {
                 Stats = new PlayerStats(SteamID);

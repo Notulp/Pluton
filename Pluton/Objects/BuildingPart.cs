@@ -8,14 +8,12 @@ namespace Pluton
     {
 
         public readonly BuildingBlock buildingBlock;
-        public readonly bool IsFrame;
         public readonly string Prefab;
         public readonly uint PrefabID;
 
         public BuildingPart(BuildingBlock bb)
         {
             buildingBlock = bb;
-            IsFrame = buildingBlock.IsFrame();
             Prefab = buildingBlock.LookupPrefabName();
             PrefabID = buildingBlock.prefabID;
         }
@@ -32,10 +30,10 @@ namespace Pluton
 
         public float Health {
             get {
-                return buildingBlock.health;
+                return buildingBlock.blockHealth;
             }
             set {
-                buildingBlock.health = value;
+                buildingBlock.blockHealth = value;
             }
         }
 

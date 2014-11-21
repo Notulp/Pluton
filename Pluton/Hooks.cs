@@ -96,7 +96,8 @@ namespace Pluton
 
             Approval instance = new Approval();
             instance.level = Application.loadedLevelName;
-            instance.levelSeed = Seed.Value;
+            instance.levelSeed = global::World.Seed;
+            instance.levelSize = global::World.Size;
             instance.hostname = server.hostname;
             Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
         }
@@ -233,11 +234,12 @@ namespace Pluton
                     return;
                 }
 
-                BasePlayer basePlayer = ArgExtension.Player(arg);
-                if (!(bool) ((UnityEngine.Object) basePlayer))
+                BasePlayer basePlayer = arg.Player ();
+                if (!basePlayer) {
                     return;
+                }
 
-                ChatEvent pChat = new ChatEvent(Server.GetServer().Players[basePlayer.userID], arg);
+                ChatEvent pChat = new ChatEvent(Server.GetPlayer(basePlayer), arg);
 
                 string str = arg.GetString(0, "text");
 
@@ -245,14 +247,27 @@ namespace Pluton
                     str = str.Substring(0, 128);
 
                 if (chat.serverlog)
-                    Debug.Log((object)(basePlayer.displayName + ": " + str));
+                    Debug.Log(basePlayer.displayName + ": " + str);
 
                 OnChat.OnNext(pChat);
 
                 if (pChat.FinalText != "") {
                     Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
-                    ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText));
                     arg.ReplyWith(pChat.Reply);
+
+                    if (server.globalchat) {
+                        ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText) + " 1.0");
+                    } else {
+                        float num = Mathf.Pow(50, 2);
+                        foreach (Connection current in Net.sv.connections) {
+                            if (!(current.player == null)) {
+                                float sqrMagnitude = (current.player.transform.position - basePlayer.transform.position).sqrMagnitude;
+                                if (sqrMagnitude <= num) {
+                                    ConsoleSystem.SendClientCommand(current, "chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText) + " " + Mathf.Clamp01(num - sqrMagnitude + 0.2f).ToString("F").Replace(',', '.'));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -657,9 +672,9 @@ namespace Pluton
 
             var bp = new BuildingPart(bb);
             // if entity will be destroyed call the method below
-            if ((bb.health - info.damageAmount) <= 0.0f) {
+            if ((bb.blockHealth - info.damageAmount) <= 0.0f) {
                 BuildingPartDestroyed(bp, info);
-                if ((bb.health - info.damageAmount) <= 0.0f)
+                if ((bb.blockHealth - info.damageAmount) <= 0.0f)
                     return;
             }
             OnBuildingPartAttacked.OnNext(new BuildingHurtEvent(bp, info));

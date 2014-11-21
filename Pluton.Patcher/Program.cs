@@ -23,7 +23,7 @@ namespace Pluton.Patcher
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
         private static TypeDefinition codeLock;
-        private static string version = "1.0.0.8";
+        private static string version = "1.0.0.9";
 
         #region patches
 
@@ -79,14 +79,16 @@ namespace Pluton.Patcher
 
         private static void BuildingBlockUpdatePatch()
         {
-            MethodDefinition bbBuild = bBlock.GetMethod("OnAttacked_Build");
+            // FIXME: OnHammered ?
+
+           /*MethodDefinition bbBuild = bBlock.GetMethod("OnAttacked_Build");
             MethodDefinition entBuild = hooksClass.GetMethod("EntityBuildingUpdate");
 
             CloneMethod(bbBuild);
             ILProcessor iLProcessor = bbBuild.Body.GetILProcessor();
             iLProcessor.InsertAfter(bbBuild.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
             iLProcessor.InsertAfter(bbBuild.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bbBuild.Body.Instructions[6], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));
+            iLProcessor.InsertAfter(bbBuild.Body.Instructions[6], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(entBuild)));*/
         }
 
         private static void CargoPlaneBehaviourPatch()
@@ -100,16 +102,18 @@ namespace Pluton.Patcher
 
         private static void ChatPatch()
         {
-            TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
+            // FIXME: what the...?
+
+        /*    TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
             MethodDefinition say = chat.GetMethod("say");
             MethodDefinition onchat = hooksClass.GetMethod("Chat");
 
-            CloneMethod(say);
+            //CloneMethod(say);
             // clear out the method, we will recreate it in Pluton
             say.Body.Instructions.Clear();
             say.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
             say.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));*/
         }
 
         private static void ClientAuthPatch()
@@ -258,8 +262,8 @@ namespace Pluton.Patcher
             // Op.Codes.Ldarg_0 would be 'this', the actuall BasePlayer object, but Connection is maybe better for us
             // OpCodes.Ldarg_1 = first(only) parameter of BasePlayer.PlayerInit(Connnection c)
             // 32 = end of the method
-            iLProcessor.InsertBefore(bpInit.Body.Instructions[32], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bpInit.Body.Instructions[32], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
+            iLProcessor.InsertBefore(bpInit.Body.Instructions[82], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(bpInit.Body.Instructions[82], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
         }
 
         private static void PlayerDiedPatch()
@@ -558,10 +562,10 @@ namespace Pluton.Patcher
             CorpseAttackedPatch();
             CorpseInitPatch();
 
-            BuildingBlockFrameInitPatch();
+            //BuildingBlockFrameInitPatch();
             BuildingBlockAttackedPatch();
-            BuildingBlockUpdatePatch();
-            BuildingBlockBuiltPatch();
+            //BuildingBlockUpdatePatch();
+            //BuildingBlockBuiltPatch();
 
             CraftingTimePatch();
             ResourceGatherMultiplierPatch();
