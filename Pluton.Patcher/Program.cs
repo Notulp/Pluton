@@ -104,16 +104,17 @@ namespace Pluton.Patcher
         {
             // FIXME: what the...?
 
-        /*    TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
+            TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
             MethodDefinition say = chat.GetMethod("say");
             MethodDefinition onchat = hooksClass.GetMethod("Chat");
 
-            //CloneMethod(say);
+            CloneMethod(say);
             // clear out the method, we will recreate it in Pluton
-            say.Body.Instructions.Clear();
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
-            say.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));*/
+            //say.Body.Instructions.Clear();
+            ILProcessor il = say.Body.GetILProcessor();
+            il.InsertBefore(say.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+            il.InsertBefore(say.Body.Instructions[1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
+            il.InsertBefore(say.Body.Instructions[2], Instruction.Create(OpCodes.Ret));
         }
 
         private static void ClientAuthPatch()
@@ -717,7 +718,7 @@ namespace Pluton.Patcher
 
             //Successfully patched the server
             Console.WriteLine("Completed !");
-
+            System.Threading.Thread.Sleep(250);
             Environment.Exit(0);
             return -1;
         }
