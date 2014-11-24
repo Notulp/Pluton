@@ -17,6 +17,16 @@ namespace Pluton
             z = v3.z;
         }
 
+        public bool Equals(Vector3 v3)
+        {
+            return v3.Equals(ToVector3());
+        }
+
+        public bool Equals(SerializedVector3 v3)
+        {
+            return v3.ToVector3().Equals(ToVector3());
+        }
+
         public Vector3 ToVector3()
         {
             return new Vector3(x, y, z);

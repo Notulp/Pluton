@@ -19,6 +19,16 @@ namespace Pluton
             w = q.w;
         }
 
+        public bool Equals(Quaternion q)
+        {
+            return q.Equals(ToQuaternion());
+        }
+
+        public bool Equals(SerializedQuaternion q)
+        {
+            return q.ToQuaternion().Equals(ToQuaternion());
+        }
+
         public Quaternion ToQuaternion()
         {
             return new Quaternion(x, y, z, w);
