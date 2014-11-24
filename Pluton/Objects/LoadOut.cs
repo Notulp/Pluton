@@ -42,7 +42,9 @@ namespace Pluton
                 LoadOutItem current;
                 for (var i = 0; i < itemCount; i++) {
                     string namee = ini.GetSetting(i.ToString(), "Name");
-                    int amount = Int32.Parse(ini.GetSetting(i.ToString(), "Amount"));
+                    int amount;
+                    if (!Int32.TryParse(ini.GetSetting(i.ToString(), "Amount"), out amount))
+                        amount = Int32.MaxValue;
                     current = new LoadOutItem(namee, amount);
                     items.Add(i, current);
                 }
