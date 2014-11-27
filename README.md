@@ -49,13 +49,13 @@ A: %serverroot%/server/_your_server's_identity_
 Our sponsors:
 ------------
 
-[Streamlines Servers](www.streamline-servers.com)
+[Streamlines Servers](http://www.streamline-servers.com)
 
-[Revolt Servers](revoltservers.com)
+[Revolt Servers](http://revoltservers.com)
 
-[FPS Players](fpsplayers.com)
+[FPS Players](http://fpsplayers.com)
 
 Links:
 ------
 
-[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [Jenkins](http://jenkins.pluton-team.org), [IRC](http://webchat.freenode.net?channels=%23pluton)
+[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [IRC](http://webchat.freenode.net?channels=%23pluton)
