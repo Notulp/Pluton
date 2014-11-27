@@ -727,23 +727,26 @@ namespace Pluton
         }
 
         // PlayerLoot.StartLootingEntity()
-        public static void StartLootingEntity(PlayerLoot playerLoot, BasePlayer looter, BaseEntity entity)
+        public static void StartLootingEntity(PlayerLoot playerLoot)
         {
-            var ele = new Events.EntityLootEvent(playerLoot, Server.GetPlayer(looter), new Entity(entity));
+            BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
+            var ele = new Events.EntityLootEvent(playerLoot, Server.GetPlayer(looter), new Entity(playerLoot.entitySource));
             OnLootingEntity.OnNext(ele);
         }
 
         // PlayerLoot.StartLootingPlayer()
-        public static void StartLootingPlayer(PlayerLoot playerLoot, BasePlayer looter, BasePlayer looted)
+        public static void StartLootingPlayer(PlayerLoot playerLoot)
         {
-            var ple = new Events.PlayerLootEvent(playerLoot, Server.GetPlayer(looter), Server.GetPlayer(looted));
+            BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
+            var ple = new Events.PlayerLootEvent(playerLoot, Server.GetPlayer(looter), Server.GetPlayer(playerLoot.entitySource as BasePlayer));
             OnLootingPlayer.OnNext(ple);
         }
 
         // PlayerLoot.StartLootingItem()
-        public static void StartLootingItem(PlayerLoot playerLoot, BasePlayer looter, Item item)
+        public static void StartLootingItem(PlayerLoot playerLoot)
         {
-            var ile = new Events.ItemLootEvent(playerLoot, Server.GetPlayer(looter), item);
+            BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
+            var ile = new Events.ItemLootEvent(playerLoot, Server.GetPlayer(looter), playerLoot.itemSource);
             OnLootingItem.OnNext(ile);
         }
 

@@ -23,7 +23,7 @@ namespace Pluton.Patcher
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
         private static TypeDefinition codeLock;
-        private static string version = "1.0.0.9";
+        private static string version = "1.0.0.10";
 
         #region patches
 
@@ -368,8 +368,6 @@ namespace Pluton.Patcher
 
         private static void PlayerStartLootingPatch()
         {
-            FieldDefinition owner = pLoot.GetField("Owner");
-            FieldReference ownerFieldRef = owner as FieldReference;
             MethodDefinition plEntity = pLoot.GetMethod("StartLootingEntity");
             MethodDefinition lootEntity = hooksClass.GetMethod("StartLootingEntity");
             MethodDefinition plPlayer = pLoot.GetMethod("StartLootingPlayer");
@@ -379,27 +377,18 @@ namespace Pluton.Patcher
 
             CloneMethod(plEntity);
             ILProcessor eiLProcessor = plEntity.Body.GetILProcessor();
-            eiLProcessor.InsertBefore(plEntity.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
-            eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x02], Instruction.Create(OpCodes.Ldarg_1));
-            eiLProcessor.InsertAfter(plEntity.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootEntity)));
+            eiLProcessor.InsertBefore(plEntity.Body.Instructions[plEntity.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            eiLProcessor.InsertBefore(plEntity.Body.Instructions[plEntity.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootEntity)));
 
             CloneMethod(plPlayer);
             ILProcessor piLProcessor = plPlayer.Body.GetILProcessor();
-            piLProcessor.InsertBefore(plPlayer.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
-            piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x02], Instruction.Create(OpCodes.Ldarg_1));
-            piLProcessor.InsertAfter(plPlayer.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootPlayer)));
+            piLProcessor.InsertBefore(plPlayer.Body.Instructions[plPlayer.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            piLProcessor.InsertBefore(plPlayer.Body.Instructions[plPlayer.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootPlayer)));
 
             CloneMethod(plItem);
             ILProcessor iiLProcessor = plItem.Body.GetILProcessor();
-            iiLProcessor.InsertBefore(plItem.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iiLProcessor.InsertAfter(plItem.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iiLProcessor.InsertAfter(plItem.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldfld, ownerFieldRef));
-            iiLProcessor.InsertAfter(plItem.Body.Instructions[0x02], Instruction.Create(OpCodes.Ldarg_1));
-            iiLProcessor.InsertAfter(plItem.Body.Instructions[0x03], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
+            iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
         }
 
         private static void ResourceGatherMultiplierPatch()
