@@ -23,7 +23,7 @@ namespace Pluton.Patcher
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
         private static TypeDefinition codeLock;
-        private static string version = "1.0.0.10";
+        private static string version = "1.0.0.11";
 
         #region patches
 
@@ -263,8 +263,8 @@ namespace Pluton.Patcher
             // Op.Codes.Ldarg_0 would be 'this', the actuall BasePlayer object, but Connection is maybe better for us
             // OpCodes.Ldarg_1 = first(only) parameter of BasePlayer.PlayerInit(Connnection c)
             // 32 = end of the method
-            iLProcessor.InsertBefore(bpInit.Body.Instructions[82], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(bpInit.Body.Instructions[82], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
+            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
         }
 
         private static void PlayerDiedPatch()
