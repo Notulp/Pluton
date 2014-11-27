@@ -46,7 +46,7 @@ Q: Uhm, identityfolder?
 A: %serverroot%/server/_your_server's_identity_
 
 
-Our sponsor:
+Our sponsors:
 ------------
 
 [Streamlines Servers](www.streamline-servers.com)
