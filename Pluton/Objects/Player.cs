@@ -3,13 +3,18 @@ using UnityEngine;
 
 namespace Pluton
 {
+    [Serializable]
     public class Player : CountedInstance
-    {     
-        public readonly BasePlayer basePlayer;
+    {
+        [NonSerialized]
+        private BasePlayer _basePlayer;
+
+        public readonly ulong GameID;
 
         public Player(BasePlayer player)
         {
-            basePlayer = player;
+            GameID = player.userID;
+            _basePlayer = player;
             try {
                 Stats = new PlayerStats(SteamID);
             } catch (Exception ex) {
@@ -198,9 +203,14 @@ namespace Pluton
             }
         }
 
-        public ulong GameID {
+        public BasePlayer basePlayer {
             get {
-                return basePlayer.userID;
+                if (_basePlayer == null)
+                    return BasePlayer.FindByID(GameID);
+                return _basePlayer;
+            }
+            private set {
+                _basePlayer = value;
             }
         }
 
@@ -209,7 +219,7 @@ namespace Pluton
                 return basePlayer.metabolism.health.value;
             }
             set {
-                basePlayer.metabolism.health.Add(value);
+                basePlayer.metabolism.health.value = value;
             }
         }
 
