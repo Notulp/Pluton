@@ -23,7 +23,7 @@ namespace Pluton.Patcher
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
         private static TypeDefinition codeLock;
-        private static string version = "1.0.0.11";
+        private static string version = "1.0.0.12";
 
         #region patches
 
@@ -214,7 +214,7 @@ namespace Pluton.Patcher
 
         private static void NPCDiedPatch()
         {
-            MethodDefinition npcdie = bAnimal.GetMethod("Die");
+            MethodDefinition npcdie = bAnimal.GetMethod("OnKilled");
             MethodDefinition npcDied = hooksClass.GetMethod("NPCDied");
 
             CloneMethod(npcdie);
@@ -390,11 +390,11 @@ namespace Pluton.Patcher
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
         }
-
+        
         private static void ResourceGatherMultiplierPatch()
         {
             TypeDefinition bRes = rustAssembly.MainModule.GetType("ResourceDispenser");
-            MethodDefinition ctInit = bRes.GetMethod("GivePlayerResourceFromItem");
+            MethodDefinition ctInit = bRes.GetMethod("GiveResourceFromItem");
             MethodDefinition gathering = hooksClass.GetMethod("ResourceGatherMultiplier");
             CloneMethod(ctInit);
             ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
@@ -538,22 +538,22 @@ namespace Pluton.Patcher
 
             PlayerStartLootingPatch();
 
-            PlayerTakeRadiationPatch();
-            PlayerTakeDamageOLPatch();
-            PlayerTakeDamagePatch();
+            //PlayerTakeRadiationPatch();
+            //PlayerTakeDamageOLPatch();
+            //PlayerTakeDamagePatch();
             PlayerAttackedPatch();
             PlayerDiedPatch();
 
-            RunMetabolismPatch();
+            //RunMetabolismPatch(); //owner?
 
             NPCDiedPatch();
-            NPCHurtPatch();
+            //NPCHurtPatch();
 
             CorpseAttackedPatch();
             CorpseInitPatch();
 
             //BuildingBlockFrameInitPatch();
-            BuildingBlockAttackedPatch();
+            //BuildingBlockAttackedPatch();
             //BuildingBlockUpdatePatch();
             //BuildingBlockBuiltPatch();
 
