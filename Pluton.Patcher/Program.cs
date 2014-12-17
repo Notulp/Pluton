@@ -23,7 +23,7 @@ namespace Pluton.Patcher
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
         private static TypeDefinition codeLock;
-        private static string version = "1.0.0.12";
+        private static string version = "1.0.0.13";
 
         #region patches
 
@@ -541,7 +541,7 @@ namespace Pluton.Patcher
             //PlayerTakeRadiationPatch();
             //PlayerTakeDamageOLPatch();
             //PlayerTakeDamagePatch();
-            PlayerAttackedPatch();
+            //PlayerAttackedPatch();
             PlayerDiedPatch();
 
             //RunMetabolismPatch(); //owner?

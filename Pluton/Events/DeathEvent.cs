@@ -15,7 +15,7 @@ namespace Pluton.Events
             HitBone = bonename==""?"unknown":bonename;
         }
 
-        public float DamageAmount {
+        /*public float DamageAmount {
             get {
                 return _info.damageAmount;
             }
@@ -28,7 +28,7 @@ namespace Pluton.Events
             get {
                 return _info.damageType;
             }
-        }
+        }*/
 
         public BaseEntity Attacker {
             get {
@@ -36,13 +36,13 @@ namespace Pluton.Events
             }
         }
 
-        public InvItem Weapon {
+        /*public InvItem Weapon {
             get {
                 if (_info.Weapon == null)
                     return null;
                 return new InvItem(_info.Weapon);
             }
-        }
+        }*/
     }
 }
 

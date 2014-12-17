@@ -15,7 +15,7 @@ namespace Pluton
         public void Kill()
         {
             var info = new HitInfo();
-            info.damageType = Rust.DamageType.Suicide;
+            info.AddDamage(Rust.DamageType.Suicide, 100f);
             info.Initiator = baseAnimal as BaseEntity;
             baseAnimal.Die(info);
         }
@@ -28,10 +28,10 @@ namespace Pluton
 
         public float Health {
             get {
-                return baseAnimal.myHealth;
+                return baseAnimal.health;
             }
             set {
-                baseAnimal.myHealth = value;
+                baseAnimal.health = value;
             }
 
         }

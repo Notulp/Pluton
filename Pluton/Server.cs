@@ -13,7 +13,7 @@
         public bool Loaded = false;
         public Dictionary<ulong, Player> Players;
         public Dictionary<ulong, OfflinePlayer> OfflinePlayers;
-        public Dictionary<string, StructureRecorder.Structure> Structures;
+        //public Dictionary<string, StructureRecorder.Structure> Structures;
         public Dictionary<string, LoadOut> LoadOuts;
         public DataStore serverData;
         private static Pluton.Server server;
@@ -73,13 +73,13 @@
             if (server == null) {
                 server = new Pluton.Server();
                 server.LoadOuts = new Dictionary<string, LoadOut>();
-                server.Structures = new Dictionary<string, StructureRecorder.Structure>();
+                //server.Structures = new Dictionary<string, StructureRecorder.Structure>();
                 server.Players = new Dictionary<ulong, Player>();
                 server.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
                 server.serverData = new DataStore("ServerData.ds");
                 server.serverData.Load();
                 server.LoadLoadouts();
-                server.LoadStructures();
+                //server.LoadStructures();
                 server.ReloadBlueprints();
                 server.LoadOfflinePlayers();
             }
@@ -135,7 +135,7 @@
             Logger.Log("[Server] " + server.OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
         }
 
-        public void LoadStructures()
+        /*public void LoadStructures()
         {
             string path = Util.GetStructuresFolder();
             if (!Directory.Exists(path))
@@ -154,7 +154,7 @@
                 }
             }
             Logger.Log("[Server] " + Structures.Count.ToString() + " structure loaded!");
-        }
+        }*/
 
         public void Save()
         {

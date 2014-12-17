@@ -333,14 +333,20 @@ namespace Pluton
 
             OnGathering.OnNext(new Events.GatherEvent(res, info));
 
-            res.health -= info.damageAmount * info.resourceGatherProficiency;
-            if ((double) res.health <= 0.0)
-                res.Kill(ProtoBuf.EntityDestroy.Mode.None, 0, 0.0f, new Vector3());
-            else
-                res.Invoke("UpdateNetworkStage", 0.1f);
+            ResourceDispenser dispenser = res.GetComponent<ResourceDispenser>();
+            if (dispenser != null) {
+                dispenser.OnAttacked(info);
+            }
+            float num = info.damageTypes.Total() * info.resourceGatherProficiency;
+            res.health -= num;
+            if (res.health <= 0) {
+                res.Kill(EntityDestroy.Mode.None, 0, 0, default(Vector3));
+                return;
+            }
+            res.CallMethod("UpdateNetworkStage", 0,1);
         }
 
-        // BaseAnimal.OnAttacked()
+        /*// BaseAnimal.OnAttacked()
         public static void NPCHurt(BaseAnimal animal, HitInfo info)
         {
             var npc = new NPC(animal);
@@ -362,7 +368,7 @@ namespace Pluton
                 if (animal.myHealth <= 0)
                     animal.Die(info);
             }
-        }
+        }*/
 
         // BaseAnimal.Die()
         public static void NPCDied(BaseAnimal animal, HitInfo info)
@@ -399,7 +405,7 @@ namespace Pluton
         {
             if (info == null) {
                 info = new HitInfo();
-                info.damageType = player.metabolism.lastDamage;
+                info.AddDamage(Rust.DamageType.LAST, 100f);
                 info.Initiator = player as BaseEntity;
             }
 
@@ -445,14 +451,13 @@ namespace Pluton
         }
 
         // BasePlayer.OnAttacked()
-        public static void PlayerHurt(BasePlayer player, HitInfo info)
+        /*public static void PlayerHurt(BasePlayer player, HitInfo info)
         {
             var p = Server.GetPlayer(player);
 
             if (info == null) { // it should never accour, but just in case
                 info = new HitInfo();
-                info.damageAmount = 0.0f;
-                info.damageType = player.metabolism.lastDamage;
+                info.AddDamage(Rust.DamageType.LAST, 0f);
                 info.Initiator = player as BaseEntity;
             }
 
@@ -483,7 +488,7 @@ namespace Pluton
             player.CheckDeathCondition(info);
 
             player.SendEffect("takedamage_hit");
-        }
+        }*/
 
         // BasePlayer.TakeDamage()
         public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType)
@@ -505,7 +510,7 @@ namespace Pluton
         }
         
 
-        public static void RunMetabolism(PlayerMetabolism pm, float delta, BasePlayer owner)
+        /*public static void RunMetabolism(PlayerMetabolism pm, float delta, BasePlayer owner)
         {
             delta = delta * World.GetWorld().MetabolismDeltaMultiplier;
             MetabolismTickEvent Evt = new MetabolismTickEvent(owner);
@@ -656,13 +661,13 @@ namespace Pluton
                 pm.lastDamage = Rust.DamageType.Radiation;
             }
             return;
-        }
+        }*/
 
 
 
 
 
-        // BuildingBlock.OnAttacked()
+        /*// BuildingBlock.OnAttacked()
         public static void EntityAttacked(BuildingBlock bb, HitInfo info)
         {
             if (info.Initiator != null) {
@@ -678,7 +683,7 @@ namespace Pluton
                     return;
             }
             OnBuildingPartAttacked.OnNext(new BuildingHurtEvent(bp, info));
-        }
+        }*/
 
         public static void BuildingPartDestroyed(BuildingPart bp, HitInfo info)
         {
@@ -794,14 +799,16 @@ namespace Pluton
             if (re.ChangePos && re.SpawnPos != Vector3.zero) {
                 player.transform.position = re.SpawnPos;
             }
-            player.supressSnapshots = true;
-            player.StopSpectating();
-            player.UpdateNetworkGroup();
-            player.UpdatePlayerCollider(true, false);
-            player.StartSleeping();
-            player.metabolism.Reset();
+            player.SetPlayerFlag (BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+            player.StopSpectating ();
+            player.UpdateNetworkGroup ();
+            player.UpdatePlayerCollider (true, false);
+            player.StartSleeping ();
+            player.metabolism.Reset ();
             if (re.GiveDefault)
                 player.inventory.GiveDefaultItems();
+
+            player.SendFullSnapshot();
 
             if (re.WakeUp)
                 player.EndSleeping();

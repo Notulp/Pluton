@@ -38,10 +38,10 @@
             return new LoadOut(name);
         }
 
-        public StructureRecorder.Structure CreateStructure(string name)
+        /*public StructureRecorder.Structure CreateStructure(string name)
         {
             return new Pluton.StructureRecorder.Structure(name);
-        }
+        }*/
 
         public void DestroyEntity(BaseEntity ent)
         {

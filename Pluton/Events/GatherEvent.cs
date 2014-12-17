@@ -20,12 +20,12 @@ namespace Pluton.Events
             Prefab = _res.LookupPrefabName();
             PrefabID = _res.prefabID;
             Stage = _res.stage;
-            if (_info.Weapon != null)
-                Tool = new InvItem(_info.Weapon);
+            //if (_info.Weapon != null)
+            //    Tool = new InvItem(_info.Weapon);
 
         }
 
-        public float DamageAmount {
+        /*public float DamageAmount {
             get {
                 return _info.damageAmount;
             }
@@ -38,7 +38,7 @@ namespace Pluton.Events
             get {
                 return _info.damageType;
             }
-        }
+        }*/
 
         public float Health {
             get {

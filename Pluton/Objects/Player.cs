@@ -103,7 +103,7 @@ namespace Pluton
         public void Kill()
         {
             var info = new HitInfo();
-            info.damageType = Rust.DamageType.Suicide;
+            info.AddDamage(Rust.DamageType.Suicide, 100f);
             info.Initiator = basePlayer as BaseEntity;
             basePlayer.Die(info);
         }
@@ -180,7 +180,7 @@ namespace Pluton
                 }
             }
 
-            basePlayer.supressSnapshots = true;
+            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             basePlayer.transform.position = firstloc;
             basePlayer.UpdateNetworkGroup();
 
@@ -216,10 +216,10 @@ namespace Pluton
 
         public float Health {
             get {
-                return basePlayer.metabolism.health.value;
+                return basePlayer.health;
             }
             set {
-                basePlayer.metabolism.health.value = value;
+                basePlayer.health = value;
             }
         }
 

@@ -19,7 +19,7 @@ namespace Pluton.Events
             _info = info;
             BasePlayer player = info.Initiator as BasePlayer;
             var p = Server.GetPlayer(player);
-            Tool = new InvItem(info.Weapon);
+            //Tool = new InvItem(info.Weapon);
             _block = bp.buildingBlock;
             BuildingPart = bp;
             Builder = p;

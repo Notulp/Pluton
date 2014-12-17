@@ -28,14 +28,14 @@ namespace Pluton
             buildingBlock.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, buildingBlock.transform.position);
         }
 
-        public float Health {
+        /*public float Health {
             get {
                 return buildingBlock.blockHealth;
             }
             set {
                 buildingBlock.blockHealth = value;
             }
-        }
+        }*/
 
         public Vector3 Location {
             get {
