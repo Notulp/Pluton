@@ -91,8 +91,10 @@ namespace Pluton
             OnClientAuth.OnNext(ae);
 
             ca.m_AuthConnection.Remove(connection);
-            if (!ae.approved)
+            if (!ae.approved) {
                 ConnectionAuth.Reject(connection, ae._reason);
+                return;
+            }
 
             Approval instance = new Approval();
             instance.level = Application.loadedLevelName;
@@ -283,6 +285,97 @@ namespace Pluton
             }
         }
 
+        public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
+        {
+            try {
+                Assert.Test (combatEnt.isServer, "This should be called serverside only");
+                if (combatEnt.IsDead()) {
+                    return;
+                }
+
+                BasePlayer player = combatEnt.GetComponent<BasePlayer>();
+                BaseAnimal animal = combatEnt.GetComponent<BaseAnimal>();
+
+                if (!SkinnedMeshCollider.ScaleDamage (info)) {
+                    if (combatEnt.baseProtection != null) {
+                        combatEnt.baseProtection.Scale (info.damageTypes);
+                        if (ConsoleGlobal.developer > 1) {
+                            Debug.Log ("BaseProtection Scaling for entity :" + combatEnt.name);
+                        }
+                    }
+                }
+                else {
+                    if (ConsoleGlobal.developer > 1) {
+                        Debug.Log ("SMC scaling damage for entity :" + combatEnt.name);
+                    }
+                }
+
+                HurtEvent he;
+                if (player != null) {
+                    he = new PlayerHurtEvent(Server.GetPlayer(player), info);
+                    OnPlayerHurt.OnNext(he as PlayerHurtEvent);
+                }
+                if (animal != null) {
+                    he = new NPCHurtEvent(new NPC(animal), info);
+                    OnNPCHurt.OnNext(he as NPCHurtEvent);
+                }
+
+                if (vis.attack) {
+                    if (info.PointStart != info.PointEnd) {
+                        ConsoleSystem.Broadcast("ddraw.arrow", new object[] {
+                            60, Color.cyan, info.PointStart, info.PointEnd, 0.1
+                        });
+                        ConsoleSystem.Broadcast("ddraw.sphere", new object[] {
+                            60, Color.cyan, info.HitPositionWorld, 0.05
+                        });
+                    }
+                    string text = string.Empty;
+                    for (int i = 0; i < info.damageTypes.types.Length; i++) {
+                        float num = info.damageTypes.types [i];
+                        if (num != 0) {
+                            string text2 = text;
+                            text = string.Concat (new string[] {
+                                text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
+                            });
+                        }
+                    }
+                    string text3 = string.Concat (new object[] {
+                        "<color=lightblue>Damage:</color>".PadRight(10),
+                        info.damageTypes.Total().ToString("0.00"),
+                        "\r\n<color=lightblue>Health:</color>".PadRight(10),
+                        combatEnt.health.ToString ("0.00"), " / ",
+                        (combatEnt.health - info.damageTypes.Total () > 0) ? "<color=green>" : "<color=red>",
+                        (combatEnt.health - info.damageTypes.Total ()).ToString ("0.00"), "</color>",
+                        "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
+                        "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
+                        "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
+                        "\r\n<color=lightblue>Damages:</color>\r\n", text
+                    });
+                    ConsoleSystem.Broadcast ("ddraw.text", new object[] {
+                        60, Color.white, info.HitPositionWorld, text3
+                    });
+                }
+
+                combatEnt.health -= info.damageTypes.Total();
+                if (ConsoleGlobal.developer > 1) {
+                    Debug.Log("[Combat]".PadRight(10) +
+                        combatEnt.gameObject.name + " hurt " +
+                        info.damageTypes.GetMajorityDamageType() + "/" +
+                        info.damageTypes.Total() + " - " +
+                        combatEnt.health.ToString("0") + " health left"
+                    );
+                }
+                combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
+                if (combatEnt.health <= 0) {
+                    combatEnt.Die(info);
+                }
+
+            } catch (Exception ex) {
+                Logger.LogError("gah");
+                Logger.LogException(ex);
+            }
+        }
+
         public static void DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
         {
             if (!doorLock.IsLocked())
@@ -340,94 +433,14 @@ namespace Pluton
             float num = info.damageTypes.Total() * info.resourceGatherProficiency;
             res.health -= num;
             if (res.health <= 0) {
-                res.Kill(EntityDestroy.Mode.None, 0, 0, default(Vector3));
+                res.Kill(EntityDestroy.Mode.None, 0, 0, Vector3.zero);
                 return;
             }
-            res.CallMethod("UpdateNetworkStage", 0,1);
+            res.Invoke("UpdateNetworkStage", 0.1f);
         }
 
-        /*// BaseAnimal.OnAttacked()
-        public static void NPCHurt(BaseAnimal animal, HitInfo info)
+        public static void PlayerConnected(BasePlayer player)
         {
-            var npc = new NPC(animal);
-
-            if (info.Initiator != null) {
-                Server.GetPlayer(info.Initiator as BasePlayer)
-                    .Stats.AddDamageTo(info.damageAmount, false, true, false);
-            }
-
-            if (Realm.Server()) {
-                if (animal.myHealth <= 0) {
-                    return;
-                }
-
-                if ((animal.myHealth - info.damageAmount) > 0.0f)
-                    OnNPCHurt.OnNext(new Events.NPCHurtEvent(npc, info));
-
-                animal.myHealth -= info.damageAmount;
-                if (animal.myHealth <= 0)
-                    animal.Die(info);
-            }
-        }*/
-
-        // BaseAnimal.Die()
-        public static void NPCDied(BaseAnimal animal, HitInfo info)
-        {
-
-            if (info.Initiator != null) {
-                Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(false, true);
-            }
-
-            var npc = new NPC(animal);
-            OnNPCDied.OnNext(new Events.NPCDeathEvent(npc, info));
-        }
-
-        // BasePlayer.PlayerInit()
-        public static void PlayerConnected(Network.Connection connection)
-        {
-            var player = connection.player as BasePlayer;
-            var p = new Player(player);
-            if (Server.GetServer().OfflinePlayers.ContainsKey(player.userID))
-                Server.GetServer().OfflinePlayers.Remove(player.userID);
-            if (!Server.GetServer().Players.ContainsKey(player.userID))
-                Server.GetServer().Players.Add(player.userID, p);
-
-            OnPlayerConnected.OnNext(p);
-            if (Config.GetBoolValue("Config", "welcomeMessage", true)) {
-                p.Message("Welcome " + p.Name + "!");
-                p.Message(String.Format("This server is powered by Pluton[v{0}]!", Bootstrap.Version));
-                p.Message("Visit pluton-team.org for more information or to report bugs!");
-            }
-        }
-
-        // BasePlayer.Die()
-        public static void PlayerDied(BasePlayer player, HitInfo info)
-        {
-            if (info == null) {
-                info = new HitInfo();
-                info.AddDamage(Rust.DamageType.LAST, 100f);
-                info.Initiator = player as BaseEntity;
-            }
-
-            Player victim = Server.GetPlayer(player);
-
-            if (info.Initiator != null) {
-                PlayerStats statsV = victim.Stats;
-
-                if (info.Initiator is BasePlayer) {
-                    Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
-
-                    victim.Stats.AddDeath(true, false);
-                } else if (info.Initiator is BaseAnimal) {
-                    victim.Stats.AddDeath(false, true);
-                }
-            }
-
-            Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
-            OnPlayerDied.OnNext(pde);
-
-            if (!pde.dropLoot)
-                player.inventory.Strip();
         }
 
         // BasePlayer.OnDisconnected()
@@ -450,59 +463,7 @@ namespace Pluton
             OnPlayerDisconnected.OnNext(p);
         }
 
-        // BasePlayer.OnAttacked()
-        /*public static void PlayerHurt(BasePlayer player, HitInfo info)
-        {
-            var p = Server.GetPlayer(player);
-
-            if (info == null) { // it should never accour, but just in case
-                info = new HitInfo();
-                info.AddDamage(Rust.DamageType.LAST, 0f);
-                info.Initiator = player as BaseEntity;
-            }
-
-            if (!player.TestAttack(info) || !Realm.Server() || (info.damageAmount <= 0.0f))
-                return;
-
-            if (!player.IsDead())
-                OnPlayerHurt.OnNext(new Events.PlayerHurtEvent(p, info));
-
-            if (info.damageAmount <= 0.0f)
-                return;
-
-            bool fromPlayer = (info.Initiator is BasePlayer);
-            PlayerStats statV = p.Stats;
-            statV.AddDamageFrom(info.damageAmount, fromPlayer, !fromPlayer, false);
-            p.Stats = statV;
-
-            if (fromPlayer) {
-                string sid = info.Initiator.ToPlayer().userID.ToString();
-                PlayerStats statA = new PlayerStats(sid);
-                statA.AddDamageTo(info.damageAmount, true, false, false);
-                Server.GetServer().serverData.Add("PlayerStats", sid, statA);
-            }
-
-            player.metabolism.bleeding.Add(Mathf.InverseLerp(0.0f, 100f, info.damageAmount));
-            player.metabolism.SubtractHealth(info.damageAmount);
-            player.TakeDamageIndicator(info.damageAmount, player.transform.position - info.PointStart);
-            player.CheckDeathCondition(info);
-
-            player.SendEffect("takedamage_hit");
-        }*/
-
-        // BasePlayer.TakeDamage()
-        public static void PlayerTakeDamage(BasePlayer player, float dmgAmount, Rust.DamageType dmgType)
-        {
-            var ptd = new PlayerTakedmgEvent(Server.GetPlayer(player), dmgAmount, dmgType);
-            OnPlayerTakeDamage.OnNext(ptd);
-        }
-
-        public static void PlayerTakeDamageOverload(BasePlayer player, float dmgAmount)
-        {
-            PlayerTakeDamage(player, dmgAmount, Rust.DamageType.Generic);
-        }
-
-        // BasePlayer.TakeRadiation()
+        // BasePlayer.UpdateRadiation()
         public static void PlayerTakeRadiation(BasePlayer player, float dmgAmount)
         {
             var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), dmgAmount);
@@ -663,74 +624,6 @@ namespace Pluton
             return;
         }*/
 
-
-
-
-
-        /*// BuildingBlock.OnAttacked()
-        public static void EntityAttacked(BuildingBlock bb, HitInfo info)
-        {
-            if (info.Initiator != null) {
-                Server.GetPlayer(info.Initiator as BasePlayer)
-                    .Stats.AddDamageTo(info.damageAmount, false, false, true);
-            }
-
-            var bp = new BuildingPart(bb);
-            // if entity will be destroyed call the method below
-            if ((bb.blockHealth - info.damageAmount) <= 0.0f) {
-                BuildingPartDestroyed(bp, info);
-                if ((bb.blockHealth - info.damageAmount) <= 0.0f)
-                    return;
-            }
-            OnBuildingPartAttacked.OnNext(new BuildingHurtEvent(bp, info));
-        }*/
-
-        public static void BuildingPartDestroyed(BuildingPart bp, HitInfo info)
-        {
-            OnBuildingPartDestroyed.OnNext(new BuildingHurtEvent(bp, info));
-        }
-
-        // BuildingBlock.BecomeFrame()
-        public static void EntityFrameDeployed(Item.Modules.Planner planner, Item item, BasePlayer p, GameObject obj)
-        {
-            if (obj == null)
-                return;
-
-            FrameDeployedEvent fde = new FrameDeployedEvent(planner, item, p, obj);
-            OnBuildingFrameDeployed.OnNext(fde);
-        }
-
-        // BuildingBlock.BecomeBuilt()
-        public static void EntityBuilt(BuildingBlock bb)
-        {
-            var bp = new BuildingPart(bb);
-            OnBuildingComplete.OnNext(bp);
-        }
-
-        // BuildingBlock.DoBuild()
-        public static void EntityBuildingUpdate(BuildingBlock bb, HitInfo info)
-        {
-            // hammer prof = 1
-            // called anytime you hit a building block with a constructor item (hammer)
-            BuildingPart bp = new BuildingPart(bb);
-
-            BuildingEvent ebe = new Events.BuildingEvent(bp, info);
-            OnBuildingUpdate.OnNext(ebe);
-        }
-
-        // BaseCorpse.InitCorpse()
-        public static void CorpseInit(BaseCorpse corpse, BaseEntity parent)
-        {
-            OnCorpseDropped.OnNext(new CorpseInitEvent(corpse, parent));
-        }
-
-        // BaseCorpse.OnAttacked()
-        public static void CorpseHit(BaseCorpse corpse, HitInfo info)
-        {
-            CorpseHurtEvent che = new CorpseHurtEvent(corpse, info);
-            OnCorpseAttacked.OnNext(che);
-        }
-
         // PlayerLoot.StartLootingEntity()
         public static void StartLootingEntity(PlayerLoot playerLoot)
         {
@@ -761,7 +654,7 @@ namespace Pluton
             Server.GetServer().CraftingTimeScale = craft;
             double resource = Double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             World.GetWorld().ResourceGatherMultiplier = resource;
-            float metabolismdelta = float.Parse(Config.GetValue("Config", "metabolismModifier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float metabolismdelta = Single.Parse(Config.GetValue("Config", "metabolismModifier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             World.GetWorld().MetabolismDeltaMultiplier = metabolismdelta;
             float time = Single.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
@@ -799,12 +692,19 @@ namespace Pluton
             if (re.ChangePos && re.SpawnPos != Vector3.zero) {
                 player.transform.position = re.SpawnPos;
             }
-            player.SetPlayerFlag (BasePlayer.PlayerFlags.ReceivingSnapshot, true);
-            player.StopSpectating ();
-            player.UpdateNetworkGroup ();
-            player.UpdatePlayerCollider (true, false);
-            player.StartSleeping ();
-            player.metabolism.Reset ();
+            player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+            player.StopSpectating();
+            player.UpdateNetworkGroup();
+            player.UpdatePlayerCollider(true, false);
+            player.StartSleeping();
+            player.metabolism.Reset();
+
+            if (re.StartHealth == -1) {
+                player.InitializeHealth(player.StartHealth(), player.StartMaxHealth());
+            } else {
+                player.InitializeHealth(re.StartHealth, player.StartMaxHealth());
+            }
+
             if (re.GiveDefault)
                 player.inventory.GiveDefaultItems();
 
@@ -824,7 +724,7 @@ namespace Pluton
                     Steamworks.SteamGameServer.SetGameTags(pchGameTags);
                 }
             } catch (Exception ex) {
-                Debug.Log("[Hooks] Error while setting the server modded.");
+                Logger.LogError("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
             }
         }

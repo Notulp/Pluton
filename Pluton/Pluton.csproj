@@ -120,6 +120,7 @@
     <Compile Include="CryptoExtensions.cs" />
     <Compile Include="CoreConfig.cs" />
     <Compile Include="DirectoryConfig.cs" />
+    <Compile Include="Serialize\UnityEngineExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

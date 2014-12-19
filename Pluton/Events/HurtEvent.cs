@@ -14,20 +14,20 @@ namespace Pluton.Events
             HitBone = bonename==""?"unknown":bonename;
         }
 
-        /*public float DamageAmount {
+        public float[] DamageAmounts {
             get {
-                return _info.damageAmount;
+                return _info.damageTypes.types;
             }
             set {
-                _info.damageAmount = value;
+                _info.damageTypes.types = value;
             }
         }
 
         public Rust.DamageType DamageType {
             get {
-                return _info.damageType;
+                return _info.damageTypes.GetMajorityDamageType();
             }
-        }*/
+        }
 
         public BaseEntity Attacker {
             get {
@@ -35,13 +35,22 @@ namespace Pluton.Events
             }
         }
 
-        /*public InvItem Weapon {
+        public InvItem Weapon {
             get {
-                if (_info.Weapon == null)
+                try {
+                    if (_info.Weapon == null)
+                        return null;
+                    if (_info.Weapon.GetItem() == null)
+                        return null;
+
+                    return new InvItem(_info.Weapon.GetItem());
+                } catch (Exception ex) {
+                    Logger.LogWarning("[HurtEvent] Got an exception instead of the weapon.");
+                    Logger.LogException(ex);
                     return null;
-                return new InvItem(_info.Weapon);
+                }
             }
-        }*/
+        }
     }
 }
 

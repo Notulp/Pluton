@@ -290,26 +290,6 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDisconnected)));
         }
 
-        private static void PlayerTakeDamageOLPatch()
-        {
-            MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
-            MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamageOverload");
-
-            foreach (var method in bPlayer.GetMethods()) {
-                if (method.Name == "TakeDamage") {
-                    if (method.Parameters.Count == 1) {
-                        hurt = method;
-                        break;
-                    }
-                }
-            }
-
-            CloneMethod(hurt);
-            ILProcessor iLProcessor = hurt.Body.GetILProcessor();
-            iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
-        }
         private static void RunMetabolismPatch()
         {
             
@@ -331,27 +311,6 @@ namespace Pluton.Patcher
             runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(metabolismRunHook)));
             runMetabolism.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
             
-        }
-        private static void PlayerTakeDamagePatch()
-        {
-            MethodDefinition hurt = bPlayer.GetMethod("TakeDamageIndicator");
-            MethodDefinition playerTakeDMG = hooksClass.GetMethod("PlayerTakeDamage");
-
-            foreach (var method in bPlayer.GetMethods()) {
-                if (method.Name == "TakeDamage") {
-                    if (method.Parameters.Count == 2) {
-                        hurt = method;
-                        break;
-                    }
-                }
-            }
-
-            CloneMethod(hurt);
-            ILProcessor iLProcessor = hurt.Body.GetILProcessor();
-            iLProcessor.InsertBefore(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x01], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertAfter(hurt.Body.Instructions[0x02], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeDMG)));
         }
 
         private static void PlayerTakeRadiationPatch()
@@ -415,7 +374,7 @@ namespace Pluton.Patcher
             MethodDefinition respawn = bPlayer.GetMethod("Respawn");
             MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
 
-            for (var l = 37; l >= 0; l--) {
+            for (var l = 46; l >= 0; l--) {
                 respawn.Body.Instructions.RemoveAt(l);
             }
 
@@ -499,6 +458,26 @@ namespace Pluton.Patcher
 
         }
 
+        private static void CombatEntityHurtPatch()
+        {
+            TypeDefinition combatEnt = rustAssembly.MainModule.GetType("BaseCombatEntity");
+            MethodDefinition hurtHook = hooksClass.GetMethod("CombatEntityHurt");
+
+            foreach (var hurt in combatEnt.GetMethods()) {
+                if (hurt.Name == "Hurt") {
+                    if (hurt.Parameters[0].Name == "info") {
+                        hurt.Body.Instructions.Clear();
+
+                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(hurtHook)));
+                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+                    }
+                }
+            }
+
+        }
+
         #endregion
 
         // from fougerite.patcher
@@ -519,6 +498,8 @@ namespace Pluton.Patcher
 
         private static void PatchASMCSharp()
         {
+            CombatEntityHurtPatch();
+
             SwapAirdropPatch();
 
             BootstrapAttachPatch();
@@ -542,15 +523,15 @@ namespace Pluton.Patcher
             //PlayerTakeDamageOLPatch();
             //PlayerTakeDamagePatch();
             //PlayerAttackedPatch();
-            PlayerDiedPatch();
+            //PlayerDiedPatch();
 
             //RunMetabolismPatch(); //owner?
 
-            NPCDiedPatch();
+            //NPCDiedPatch();
             //NPCHurtPatch();
 
-            CorpseAttackedPatch();
-            CorpseInitPatch();
+            //CorpseAttackedPatch();
+            //CorpseInitPatch();
 
             //BuildingBlockFrameInitPatch();
             //BuildingBlockAttackedPatch();
