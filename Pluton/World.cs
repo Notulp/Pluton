@@ -9,8 +9,7 @@ namespace Pluton
 
         private static World instance;
 
-        public double ResourceGatherMultiplier = 1.0;
-        public float MetabolismDeltaMultiplier = 1.0f;
+        public double ResourceGatherMultiplier = 1.0d;
         public Timer freezeTimeTimer;
         private float frozenTime = -1;
 

@@ -14,6 +14,27 @@ namespace Pluton.Events
             HitBone = bonename==""?"unknown":bonename;
         }
 
+        /******************
+        *                 *
+        * Generic      0  *
+        * Hunger       1  *
+        * Thirst       2  *
+        * Cold         3  *
+        * Drowned      4  *
+        * Heat         5  *
+        * Bleeding     6  *
+        * Poison       7  *
+        * Suicide      8  *
+        * Bullet       9  *
+        * Slash        10 *
+        * Blunt        11 *
+        * Fall         12 *
+        * Radiation    13 *
+        * Bite         14 *
+        * Stab         15 *
+        *                 *
+        ******************/
+
         public float[] DamageAmounts {
             get {
                 return _info.damageTypes.types;

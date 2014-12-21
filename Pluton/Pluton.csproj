@@ -81,7 +81,6 @@
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="TimedEvent.cs" />
-    <Compile Include="Events\BuildingHurtEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
     <Compile Include="Objects\BuildingPart.cs" />
     <Compile Include="Objects\Entity.cs" />
@@ -121,6 +120,8 @@
     <Compile Include="CoreConfig.cs" />
     <Compile Include="DirectoryConfig.cs" />
     <Compile Include="Serialize\UnityEngineExtensions.cs" />
+    <Compile Include="Objects\CombatEntity.cs" />
+    <Compile Include="Events\CombatEntityHurtEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

@@ -23,7 +23,7 @@ namespace Pluton.Patcher
         private static TypeDefinition pLoot;
         private static TypeDefinition item;
         private static TypeDefinition codeLock;
-        private static string version = "1.0.0.13";
+        private static string version = "1.0.0.16";
 
         #region patches
 
@@ -318,11 +318,11 @@ namespace Pluton.Patcher
             MethodDefinition getRadiated = bPlayer.GetMethod("UpdateRadiation");
             MethodDefinition playerTakeRAD = hooksClass.GetMethod("PlayerTakeRadiation");
 
-            CloneMethod(getRadiated);
-            ILProcessor iLProcessor = getRadiated.Body.GetILProcessor();
-            iLProcessor.InsertBefore(getRadiated.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(getRadiated.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(getRadiated.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeRAD)));
+            getRadiated.Body.Instructions.Clear();
+            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeRAD)));
+            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void PlayerStartLootingPatch()
@@ -475,7 +475,6 @@ namespace Pluton.Patcher
                     }
                 }
             }
-
         }
 
         #endregion
@@ -498,37 +497,25 @@ namespace Pluton.Patcher
 
         private static void PatchASMCSharp()
         {
-            CombatEntityHurtPatch();
-
-            SwapAirdropPatch();
-
             BootstrapAttachPatch();
-            ServerShutdownPatch();
-            ServerInitPatch();
-            SetModdedPatch();
 
-            RespawnPatch();
-
+            CargoPlaneBehaviourPatch();
+            ChatPatch();
             ClientAuthPatch();
+            CombatEntityHurtPatch();
+            CraftingTimePatch();
+
+            DoorCodePatch();
 
             GatherPatch();
-            ChatPatch();
 
-            PlayerDisconnectedPatch();
             PlayerConnectedPatch();
-
+            PlayerDisconnectedPatch();
             PlayerStartLootingPatch();
+            PlayerTakeRadiationPatch();
+            PlayerDiedPatch();
 
-            //PlayerTakeRadiationPatch();
-            //PlayerTakeDamageOLPatch();
-            //PlayerTakeDamagePatch();
-            //PlayerAttackedPatch();
-            //PlayerDiedPatch();
-
-            //RunMetabolismPatch(); //owner?
-
-            //NPCDiedPatch();
-            //NPCHurtPatch();
+            NPCDiedPatch();
 
             //CorpseAttackedPatch();
             //CorpseInitPatch();
@@ -538,12 +525,13 @@ namespace Pluton.Patcher
             //BuildingBlockUpdatePatch();
             //BuildingBlockBuiltPatch();
 
-            CraftingTimePatch();
             ResourceGatherMultiplierPatch();
+            RespawnPatch();
 
-            DoorCodePatch();
-
-            CargoPlaneBehaviourPatch();
+            ServerShutdownPatch();
+            ServerInitPatch();
+            SetModdedPatch();
+            SwapAirdropPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
             rustAssembly.MainModule.Types.Add(plutonClass);

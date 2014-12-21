@@ -124,13 +124,20 @@
         {
             try {
                 if (State == PluginState.Loaded && Globals.Contains(func)) {
+                    object result = (object)null;
+
+                    // this should report if it takes more than 1 sec to complete the call, decent way to catch slowpoke plugins
+                    Profile profile = new Profile(Name, func);
+                    profile.Start();
+
                     if (Type == PluginType.Python)
-                        return PyEngine.Operations.InvokeMember(Class, func, obj);
+                        result = PyEngine.Operations.InvokeMember(Class, func, obj);
                     else if (Type == PluginType.JS)
-                        return JSEngine.Invoke(func, obj);
+                        result = JSEngine.Invoke(func, obj);
                     else if (Type == PluginType.CSharp)
-                        return CSharpEngine.CallMethod(func, obj);
-                    return (object)null;
+                        result = CSharpEngine.CallMethod(func, obj);
+                    profile.Stop();
+                    return result;
                 } else {
                     Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);
                     return null;
@@ -147,7 +154,7 @@
             if(Type == PluginType.Python)
                 return PyEngine.GetService<ExceptionOperations>().FormatException(ex);
             else
-                return ex.ToString();
+                return ex.ToString() + Environment.NewLine + ex.StackTrace;
         }
 
         #region file operations
@@ -338,7 +345,7 @@
         public void OnBuildingComplete(BuildingPart bp) {
             this.Invoke("On_BuildingComplete", bp);
         }
-
+        /*
         public IDisposable OnBuildingPartAttackedHook;
         public void OnBuildingPartAttacked(BuildingHurtEvent he) {
             this.Invoke("On_BuildingPartAttacked", he);
@@ -347,7 +354,7 @@
         public IDisposable OnBuildingPartDestroyedHook;
         public void OnBuildingPartDestroyed(BuildingHurtEvent he) {
             this.Invoke("On_BuildingPartDestroyed", he);
-        }
+        }*/
 
         public IDisposable OnBuildingUpdateHook;
         public void OnBuildingUpdate(BuildingEvent be) {
@@ -384,9 +391,9 @@
             this.Invoke("On_CorpseDropped", ie);
         }
 
-        public IDisposable OnCorpseAttackedHook;
-        public void OnCorpseAttacked(CorpseHurtEvent he) {
-            this.Invoke("On_CorpseAttacked", he);
+        public IDisposable OnCorpseHurtHook;
+        public void OnCorpseHurt(CorpseHurtEvent he) {
+            this.Invoke("On_CorpseHurt", he);
         }
 
         public IDisposable OnDoorCodeHook;
@@ -424,7 +431,7 @@
 
         public IDisposable OnNPCHurtHook;
         public void OnNPCHurt(NPCHurtEvent he) {
-            this.Invoke("On_NPCAttacked", he);
+            this.Invoke("On_NPCHurt", he);
         }
 
         public IDisposable OnNPCKilledHook;
@@ -432,9 +439,14 @@
             this.Invoke("On_NPCKilled", de);
         }
 
-        public IDisposable OnPlayerAttackedHook;
-        public void OnPlayerAttacked(PlayerHurtEvent he) {
-            this.Invoke("On_PlayerAttacked", he);
+        public IDisposable OnPlayerHurtHook;
+        public void OnPlayerHurt(PlayerHurtEvent he) {
+            this.Invoke("On_PlayerHurt", he);
+        }
+
+        public IDisposable OnCombatEntityHurtHook;
+        public void OnCombatEntityHurt(CombatEntityHurtEvent he) {
+            this.Invoke("On_CombatEntityHurt", he);
         }
 
         public IDisposable OnPlayerConnectedHook;

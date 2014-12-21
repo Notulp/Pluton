@@ -229,8 +229,8 @@
                 case "On_CorpseDropped":
                     plugin.OnCorpseDroppedHook = Hooks.OnCorpseDropped.Subscribe(c => plugin.OnCorpseDropped(c));
                     break;
-                case "On_CorpseAttacked":
-                    plugin.OnCorpseAttackedHook = Hooks.OnCorpseAttacked.Subscribe(c => plugin.OnCorpseAttacked(c));
+                case "On_CorpseHurt":
+                    plugin.OnCorpseHurtHook = Hooks.OnCorpseHurt.Subscribe(c => plugin.OnCorpseHurt(c));
                     break;
                 case "On_BuildingComplete":
                     plugin.OnBuildingCompleteHook = Hooks.OnBuildingComplete.Subscribe(b => plugin.OnBuildingComplete(b));
@@ -238,19 +238,19 @@
                 case "On_BuildingUpdate":
                     plugin.OnBuildingUpdateHook = Hooks.OnBuildingUpdate.Subscribe(b => plugin.OnBuildingUpdate(b));
                     break;
-                case "On_BuildingPartAttacked":
+               /* case "On_BuildingPartAttacked":
                     plugin.OnBuildingPartAttackedHook = Hooks.OnBuildingPartAttacked.Subscribe(b => plugin.OnBuildingPartAttacked(b));
                     break;
                 case "On_BuildingPartDestroyed":
                     plugin.OnBuildingPartDestroyedHook = Hooks.OnBuildingPartDestroyed.Subscribe(b => plugin.OnBuildingPartDestroyed(b));
-                    break;
+                    break;*/
                 case "On_DoorCode":
                     plugin.OnDoorCodeHook = Hooks.OnDoorCode.Subscribe(b => plugin.OnDoorCode(b));
                     break;
                 case "On_FrameDeployed":
                     plugin.OnFrameDeployedHook = Hooks.OnBuildingFrameDeployed.Subscribe(f => plugin.OnFrameDeployed(f));
                     break;
-                case "On_NPCAttacked":
+                case "On_NPCHurt":
                     plugin.OnNPCHurtHook = Hooks.OnNPCHurt.Subscribe(n => plugin.OnNPCHurt(n));
                     break;
                 case "On_NPCKilled":
@@ -274,8 +274,11 @@
                 case "On_PlayerGathering":
                     plugin.OnPlayerGatheringHook = Hooks.OnGathering.Subscribe(g => plugin.OnPlayerGathering(g));
                     break;
-                case "On_PlayerAttacked":
-                    plugin.OnPlayerAttackedHook = Hooks.OnPlayerHurt.Subscribe(p => plugin.OnPlayerAttacked(p));
+                case "On_PlayerHurt":
+                    plugin.OnPlayerHurtHook = Hooks.OnPlayerHurt.Subscribe(p => plugin.OnPlayerHurt(p));
+                    break;
+                case "On_CombatEntiyHurt":
+                    plugin.OnCombatEntityHurtHook = Hooks.OnCombatEntityHurt.Subscribe(c => plugin.OnCombatEntityHurt(c));
                     break;
                 case "On_PlayerDied":
                     plugin.OnPlayerDiedHook = Hooks.OnPlayerDied.Subscribe(p => plugin.OnPlayerDied(p));
@@ -348,8 +351,8 @@
                 case "On_CorpseDropped":
                     plugin.OnCorpseDroppedHook.Dispose();
                     break;
-                case "On_CorpseAttacked":
-                    plugin.OnCorpseAttackedHook.Dispose();
+                case "On_CorpseHurt":
+                    plugin.OnCorpseHurtHook.Dispose();
                     break;
                 case "On_BuildingComplete":
                     plugin.OnBuildingCompleteHook.Dispose();
@@ -357,12 +360,12 @@
                 case "On_BuildingUpdate":
                     plugin.OnBuildingUpdateHook.Dispose();
                     break;
-                case "On_BuildingPartAttacked":
+                /*case "On_BuildingPartAttacked":
                     plugin.OnBuildingPartAttackedHook.Dispose();
                     break;
                 case "On_BuildingPartDestroyed":
                     plugin.OnBuildingPartDestroyedHook.Dispose();
-                    break;
+                    break;*/
                 case "On_DoorCode":
                     plugin.OnDoorCodeHook.Dispose();
                     break;
@@ -393,8 +396,11 @@
                 case "On_PlayerGathering":
                     plugin.OnPlayerGatheringHook.Dispose();
                     break;
-                case "On_PlayerAttacked":
-                    plugin.OnPlayerAttackedHook.Dispose();
+                case "On_PlayerHurt":
+                    plugin.OnPlayerHurtHook.Dispose();
+                    break;
+                case "On_CombatEntityHurt":
+                    plugin.OnCombatEntityHurtHook.Dispose();
                     break;
                 case "On_PlayerDied":
                     plugin.OnPlayerDiedHook.Dispose();
