@@ -81,6 +81,60 @@ namespace Pluton
 
 
         #region Handlers
+
+        // chat.say()
+        public static void Chat(ConsoleSystem.Arg arg)
+        {
+            if (arg.ArgsStr.StartsWith("\"/") && !arg.ArgsStr.StartsWith("\"/ ")) {
+                Command(arg);
+                return;
+            }
+
+            if (!chat.enabled) {
+                arg.ReplyWith("Chat is disabled.");
+            } else {
+                if (arg.ArgsStr == "\"\"") {
+                    return;
+                }
+
+                BasePlayer basePlayer = arg.Player ();
+                if (!basePlayer) {
+                    return;
+                }
+
+                ChatEvent pChat = new ChatEvent(Server.GetPlayer(basePlayer), arg);
+
+                string str = arg.GetString(0, "text");
+
+                if (str.Length > 128)
+                    str = str.Substring(0, 128);
+
+                if (chat.serverlog)
+                    Debug.Log(basePlayer.displayName + ": " + str);
+
+                OnChat.OnNext(pChat);
+
+                if (pChat.FinalText != "") {
+                    Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
+                    arg.ReplyWith(pChat.Reply);
+
+                    if (server.globalchat) {
+                        ConsoleSystem.Broadcast("chat.add " + pChat.BroadcastName.QuoteSafe() + " " + pChat.FinalText.QuoteSafe() + " 1.0");
+                    } else {
+                        float num = Mathf.Pow(50, 2);
+                        foreach (Connection current in Net.sv.connections) {
+                            if (!(current.player == null)) {
+                                float sqrMagnitude = (current.player.transform.position - basePlayer.transform.position).sqrMagnitude;
+                                if (sqrMagnitude <= num) {
+                                    ConsoleSystem.SendClientCommand(current, "chat.add " + pChat.BroadcastName.QuoteSafe() + " " + pChat.FinalText.QuoteSafe() + " " + Mathf.Clamp01(num - sqrMagnitude + 0.2f).ToString("F").Replace(',', '.'));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // ConnectionAuth.Approve()
         public static void ClientAuth(ConnectionAuth ca, Connection connection)
         {
@@ -100,6 +154,17 @@ namespace Pluton
             instance.levelSize = global::World.Size;
             instance.hostname = server.hostname;
             Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
+        }
+
+        //FacePunch.ConsoleSystem.OnClientCommand
+        public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
+        {
+            ClientConsoleEvent ce = new ClientConsoleEvent(arg, rconCmd);
+            if (arg.connection != null) {
+                OnClientConsole.OnNext(ce);
+
+                arg.ReplyWith(ce.Reply);
+            }
         }
 
         public static bool blueprintsLoaded = false;
@@ -143,6 +208,8 @@ namespace Pluton
             }
 
             if (Config.GetBoolValue("Commands", "enabled", true)) {
+                // TODO: make a plugin from these, no need to be in the core
+
                 if (cmd.cmd == Config.GetValue("Commands", "ShowMyStats", "mystats")) {
                     PlayerStats stats = player.Stats;
                     player.Message(String.Format("You have {0} kills and {1} deaths!", stats.Kills, stats.Deaths));
@@ -217,70 +284,6 @@ namespace Pluton
             if (cmd.Reply != "")
                 arg.ReplyWith(cmd.Reply);
 
-        }
-
-        // chat.say()
-        public static void Chat(ConsoleSystem.Arg arg)
-        {
-            if (arg.ArgsStr.StartsWith("\"/") && !arg.ArgsStr.StartsWith("\"/ ")) {
-                Command(arg);
-                return;
-            }
-
-            if (!chat.enabled) {
-                arg.ReplyWith("Chat is disabled.");
-            } else {
-                if (arg.ArgsStr == "\"\"") {
-                    return;
-                }
-
-                BasePlayer basePlayer = arg.Player ();
-                if (!basePlayer) {
-                    return;
-                }
-
-                ChatEvent pChat = new ChatEvent(Server.GetPlayer(basePlayer), arg);
-
-                string str = arg.GetString(0, "text");
-
-                if (str.Length > 128)
-                    str = str.Substring(0, 128);
-
-                if (chat.serverlog)
-                    Debug.Log(basePlayer.displayName + ": " + str);
-
-                OnChat.OnNext(pChat);
-
-                if (pChat.FinalText != "") {
-                    Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
-                    arg.ReplyWith(pChat.Reply);
-
-                    if (server.globalchat) {
-                        ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText) + " 1.0");
-                    } else {
-                        float num = Mathf.Pow(50, 2);
-                        foreach (Connection current in Net.sv.connections) {
-                            if (!(current.player == null)) {
-                                float sqrMagnitude = (current.player.transform.position - basePlayer.transform.position).sqrMagnitude;
-                                if (sqrMagnitude <= num) {
-                                    ConsoleSystem.SendClientCommand(current, "chat.add " + StringExtensions.QuoteSafe(pChat.BroadcastName) + " " + StringExtensions.QuoteSafe(pChat.FinalText) + " " + Mathf.Clamp01(num - sqrMagnitude + 0.2f).ToString("F").Replace(',', '.'));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //FacePunch.ConsoleSystem.OnClientCommand
-        public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
-        {
-            ClientConsoleEvent ce = new ClientConsoleEvent(arg, rconCmd);
-            if (arg.connection != null) {
-                OnClientConsole.OnNext(ce);
-
-                arg.ReplyWith(ce.Reply);
-            }
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
@@ -390,39 +393,6 @@ namespace Pluton
             OnDoorCode.OnNext(dc);
         }
 
-        //FacePunch.ConsoleSystem.Run
-        public static void ServerConsoleCommand(String rconCmd, bool wantFeedback)
-        {
-            if (!String.IsNullOrEmpty(rconCmd)) {
-                ServerConsoleEvent ce = new ServerConsoleEvent(rconCmd, wantFeedback);
-
-                foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
-                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ce.cmd);
-                    foreach (ConsoleCommand cmd in commands) {
-                        if (cmd.callback == null)
-                            continue;
-                        try {
-                            cmd.callback(ce.Args.ToArray());
-                        } catch (Exception ex) {
-                            Logger.LogError(cmd.plugin.FormatExeption(ex));
-                        }
-                    }
-                }
-
-                OnServerConsole.OnNext(ce);
-
-                if(wantFeedback)
-                    Debug.Log(String.Format("{0} was executed from console!", rconCmd));
-            }
-        }
-
-        // In future create an Event, allow people to adjust certain resources to give certain amounts!
-        public static void ResourceGatherMultiplier(int amount, BasePlayer player, ItemAmount itemAmt)
-        {
-            int newAmt = (int)((double)amount * World.GetWorld().ResourceGatherMultiplier);
-            player.inventory.GiveItem(itemAmt.itemid, newAmt, true);
-        }
-
         // BaseResource.OnAttacked()
         public static void Gathering(BaseResource res, HitInfo info)
         {
@@ -530,6 +500,50 @@ namespace Pluton
             player.metabolism.radiation.SetFieldValue("value", ptr.Next);
         }
 
+        // In future create an Event, allow people to adjust certain resources to give certain amounts!
+        public static void ResourceGatherMultiplier(int amount, BasePlayer player, ItemAmount itemAmt)
+        {
+            int newAmt = (int)((double)amount * World.GetWorld().ResourceGatherMultiplier);
+            player.inventory.GiveItem(itemAmt.itemid, newAmt, true);
+        }
+
+        public static void Respawn(BasePlayer player, bool newPos)
+        {
+            Player p = Server.GetPlayer(player);
+            RespawnEvent re = new RespawnEvent(p);
+            OnRespawn.OnNext(re);
+
+            ++ServerPerformance.spawns;
+            if (newPos) {
+                BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
+                player.transform.position = spawnPoint.pos;
+                player.transform.rotation = spawnPoint.rot;
+            }
+            if (re.ChangePos && re.SpawnPos != Vector3.zero) {
+                player.transform.position = re.SpawnPos;
+            }
+            player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+            player.StopSpectating();
+            player.UpdateNetworkGroup();
+            player.UpdatePlayerCollider(true, false);
+            player.StartSleeping();
+            player.metabolism.Reset();
+
+            if (re.StartHealth < Single.Epsilon) {
+                player.InitializeHealth(player.StartHealth(), player.StartMaxHealth());
+            } else {
+                player.InitializeHealth(re.StartHealth, player.StartMaxHealth());
+            }
+
+            if (re.GiveDefault)
+                player.inventory.GiveDefaultItems();
+
+            player.SendFullSnapshot();
+
+            if (re.WakeUp)
+                player.EndSleeping();
+        }
+
         // PlayerLoot.StartLootingEntity()
         public static void StartLootingEntity(PlayerLoot playerLoot)
         {
@@ -569,6 +583,32 @@ namespace Pluton
             }
         }
 
+        //FacePunch.ConsoleSystem.Run
+        public static void ServerConsoleCommand(String rconCmd, bool wantFeedback)
+        {
+            if (!String.IsNullOrEmpty(rconCmd)) {
+                ServerConsoleEvent ce = new ServerConsoleEvent(rconCmd, wantFeedback);
+
+                foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ce.cmd);
+                    foreach (ConsoleCommand cmd in commands) {
+                        if (cmd.callback == null)
+                            continue;
+                        try {
+                            cmd.callback(ce.Args.ToArray());
+                        } catch (Exception ex) {
+                            Logger.LogError(cmd.plugin.FormatExeption(ex));
+                        }
+                    }
+                }
+
+                OnServerConsole.OnNext(ce);
+
+                if(wantFeedback)
+                    Debug.Log(String.Format("{0} was executed from console!", rconCmd));
+            }
+        }
+
         public static void ServerInit()
         {
             float craft = Single.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
@@ -596,43 +636,6 @@ namespace Pluton
             Bootstrap.SaveAll();
         }
 
-        public static void Respawn(BasePlayer player, bool newPos)
-        {
-            Player p = Server.GetPlayer(player);
-            RespawnEvent re = new RespawnEvent(p);
-            OnRespawn.OnNext(re);
-
-            ++ServerPerformance.spawns;
-            if (newPos) {
-                BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
-                player.transform.position = spawnPoint.pos;
-                player.transform.rotation = spawnPoint.rot;
-            }
-            if (re.ChangePos && re.SpawnPos != Vector3.zero) {
-                player.transform.position = re.SpawnPos;
-            }
-            player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
-            player.StopSpectating();
-            player.UpdateNetworkGroup();
-            player.UpdatePlayerCollider(true, false);
-            player.StartSleeping();
-            player.metabolism.Reset();
-
-            if (re.StartHealth == -1) {
-                player.InitializeHealth(player.StartHealth(), player.StartMaxHealth());
-            } else {
-                player.InitializeHealth(re.StartHealth, player.StartMaxHealth());
-            }
-
-            if (re.GiveDefault)
-                player.inventory.GiveDefaultItems();
-
-            player.SendFullSnapshot();
-
-            if (re.WakeUp)
-                player.EndSleeping();
-        }
-
         public static void SetModded()
         {
             try {
@@ -656,10 +659,6 @@ namespace Pluton
             {
                 Server.GetServer().Broadcast(Config.GetValue("BroadcastMessages", arg));
             }
-        }
-
-        public Hooks()
-        {
         }
     }
 }
