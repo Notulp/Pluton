@@ -122,6 +122,7 @@
     <Compile Include="Serialize\UnityEngineExtensions.cs" />
     <Compile Include="Objects\CombatEntity.cs" />
     <Compile Include="Events\CombatEntityHurtEvent.cs" />
+    <Compile Include="Stopper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

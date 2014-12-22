@@ -9,9 +9,13 @@ namespace Pluton
         [ConsoleSystem.Admin, ConsoleSystem.Help("Helps to break basic functionality", "")]
         public static bool enabled;
 
+        [ConsoleSystem.Admin, ConsoleSystem.Help("Measure perfomance of method calls.", "")]
+        public static bool stopper;
+
         static pluton()
         {
             pluton.enabled = true;
+            pluton.stopper = false;
         }
 
         public pluton()

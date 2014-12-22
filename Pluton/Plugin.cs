@@ -127,8 +127,7 @@
                     object result = (object)null;
 
                     // this should report if it takes more than 1 sec to complete the call, decent way to catch slowpoke plugins
-                    Profile profile = new Profile(Name, func);
-                    profile.Start();
+                    Stopper stopper = new Stopper(Name, func).Start();
 
                     if (Type == PluginType.Python)
                         result = PyEngine.Operations.InvokeMember(Class, func, obj);
@@ -136,7 +135,9 @@
                         result = JSEngine.Invoke(func, obj);
                     else if (Type == PluginType.CSharp)
                         result = CSharpEngine.CallMethod(func, obj);
-                    profile.Stop();
+
+                    stopper.Stop();
+
                     return result;
                 } else {
                     Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);

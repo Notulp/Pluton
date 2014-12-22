@@ -28,39 +28,41 @@ namespace Pluton
 
         public void AirDrop()
         {
-            float speed = UnityEngine.Random.Range(40f, 60f);
-            float height = UnityEngine.Random.Range(350f, 500f);
+            float speed = UnityEngine.Random.Range(35f, 65f);
+            float height = UnityEngine.Random.Range(350f, 550f);
 
-            Vector3 endPos = Vector3Ex.Range(-1f, 1f);
-            endPos.y = 0f;
-            endPos.Normalize();
-            endPos = endPos * 4096f;
-
-            AirDropAt(endPos, speed, height);
+            AirDrop(speed, height);
         }
 
         public void AirDrop(float speed, float height = 400f)
         {
-            Vector3 endPos = Vector3Ex.Range(-1f, 1f);
-            endPos.y = 0f;
-            endPos.Normalize();
-            endPos = endPos * 4096f;
+            float worldSize = (float)(global::World.Size - (global::World.Size / 3));
+            Vector3 dropAt = Vector3.zero;
 
-            AirDropAt(endPos, speed, height);
+            while (dropAt.x == 0 || dropAt.z == 0)
+                dropAt = Vector3Ex.Range(-worldSize, worldSize);
+
+            dropAt.y = 0f;
+
+            AirDropAt(dropAt, speed, height);
         }
 
         public void AirDropAt(Vector3 position, float speed = 50f, float height = 400f)
         {
-            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", new Vector3(), new Quaternion());
+            float worldSize = (float)(global::World.Size - (global::World.Size / 7));
+            Vector3 zero = Vector3.zero;
+
+            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", zero, Quaternion.identity);
             CargoPlane cp = entity.GetComponent<CargoPlane>();
 
-            Vector3 startPos, endPos;
+            Vector3 startPos = zero, endPos = zero;
             float secsToTake;
 
-            startPos = Vector3Ex.Range(-1f, 1f);
-            startPos.y = 0f;
-            startPos.Normalize();
-            startPos = startPos * 4096f;
+            float rand = (float)(worldSize + (worldSize / UnityEngine.Random.Range(-10f, 10f)));
+
+            while (startPos.x == 0 || startPos.z == 0)
+                startPos = Vector3Ex.Range(-rand, rand);
+
             startPos.y = height;
             endPos = position + (position - startPos);
             endPos.y = height;
@@ -69,10 +71,11 @@ namespace Pluton
             cp.SetFieldValue("startPos", startPos);
             cp.SetFieldValue("endPos", endPos);
             cp.SetFieldValue("secondsToTake", secsToTake);
-            cp.SetFieldValue("secondsTaken", 0f);
             cp.transform.rotation = Quaternion.LookRotation(endPos - startPos);
             
             entity.Spawn(true);
+
+            entity.Invoke("KillMessage", secsToTake - 1);
         }
 
         public void AirDropAt(float x, float y, float z, float speed = 50f, float height = 400f)
