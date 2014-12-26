@@ -18,7 +18,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
         private static TypeDefinition worldClass;
-        private static string version = "1.0.0.17";
+        private static string version = "1.0.0.18";
 
         #region patches
 
@@ -116,6 +116,23 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftTime)));
         }
 
+        private static void DoPlacementPatch()
+        {
+            TypeDefinition construction = rustAssembly.MainModule.GetType("Construction/Common");
+            MethodDefinition createConstruction = construction.GetMethod("CreateConstruction");
+            MethodDefinition doPlacement = hooksClass.GetMethod("DoPlacement");
+
+            ILProcessor iLProcessor = createConstruction.Body.GetILProcessor();
+            iLProcessor.Body.Instructions.Clear();
+
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Nop));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doPlacement)));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
         private static void DoorCodePatch()
         {
             MethodDefinition codeUnlock = codeLock.GetMethod("UnlockWithCode");
@@ -127,6 +144,36 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(codeUnlock.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
             iLProcessor.InsertAfter(codeUnlock.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
             iLProcessor.InsertAfter(codeUnlock.Body.Instructions[1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
+        }
+
+        private static void DoorUsePatch()
+        {
+            TypeDefinition door = rustAssembly.MainModule.GetType("Door");
+            MethodDefinition close = door.GetMethod("RPC_CloseDoor");
+            MethodDefinition open = door.GetMethod("RPC_OpenDoor");
+            MethodDefinition doorUse = hooksClass.GetMethod("DoorUse");
+
+            ILProcessor iLC = close.Body.GetILProcessor();
+            for (int i = close.Body.Instructions.Count - 1; i > 3; i--)
+                close.Body.Instructions.RemoveAt(i);
+
+            ILProcessor iLO = open.Body.GetILProcessor();
+            for (int i = open.Body.Instructions.Count - 1; i > 3; i--)
+                open.Body.Instructions.RemoveAt(i);
+
+            iLC.InsertAfter(close.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
+            iLC.InsertAfter(close.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
+            iLC.InsertAfter(close.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
+            iLC.InsertAfter(close.Body.Instructions[6], Instruction.Create(OpCodes.Ldc_I4_0));
+            iLC.InsertAfter(close.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
+            iLC.InsertAfter(close.Body.Instructions[8], Instruction.Create(OpCodes.Ret));
+
+            iLO.InsertAfter(open.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
+            iLO.InsertAfter(open.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
+            iLO.InsertAfter(open.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
+            iLO.InsertAfter(open.Body.Instructions[6], Instruction.Create(OpCodes.Ldc_I4_1));
+            iLO.InsertAfter(open.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
+            iLO.InsertAfter(open.Body.Instructions[8], Instruction.Create(OpCodes.Ret));
         }
 
         private static void GatherPatch()
@@ -363,8 +410,10 @@ namespace Pluton.Patcher
             ClientAuthPatch();
             CombatEntityHurtPatch();
             CraftingTimePatch();
+            DoPlacementPatch();
 
             DoorCodePatch();
+            DoorUsePatch();
 
             GatherPatch();
 
