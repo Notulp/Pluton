@@ -50,9 +50,17 @@ namespace Pluton.Events
             }
         }
 
-        public BaseEntity Attacker {
+        public Entity Attacker {
             get {
-                return _info.Initiator;
+                try {
+                    if (_info.Initiator != null)
+                        return new Entity(_info.Initiator);
+                    return null;
+                } catch (Exception ex) {
+                    Logger.LogWarning("[HurtEvent] Got an exception instead of the attacker.");
+                    Logger.LogException(ex);
+                    return null;
+                }
             }
         }
 
