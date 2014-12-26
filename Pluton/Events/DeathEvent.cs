@@ -15,20 +15,41 @@ namespace Pluton.Events
             HitBone = bonename==""?"unknown":bonename;
         }
 
-        /*public float DamageAmount {
+        /******************
+        *                 *
+        * Generic      0  *
+        * Hunger       1  *
+        * Thirst       2  *
+        * Cold         3  *
+        * Drowned      4  *
+        * Heat         5  *
+        * Bleeding     6  *
+        * Poison       7  *
+        * Suicide      8  *
+        * Bullet       9  *
+        * Slash        10 *
+        * Blunt        11 *
+        * Fall         12 *
+        * Radiation    13 *
+        * Bite         14 *
+        * Stab         15 *
+        *                 *
+        ******************/
+
+        public float[] DamageAmounts {
             get {
-                return _info.damageAmount;
+                return _info.damageTypes.types;
             }
             set {
-                _info.damageAmount = value;
+                _info.damageTypes.types = value;
             }
         }
 
         public Rust.DamageType DamageType {
             get {
-                return _info.damageType;
+                return _info.damageTypes.GetMajorityDamageType();
             }
-        }*/
+        }
 
         public BaseEntity Attacker {
             get {
@@ -36,13 +57,26 @@ namespace Pluton.Events
             }
         }
 
-        /*public InvItem Weapon {
+        public InvItem Weapon {
             get {
-                if (_info.Weapon == null)
+                try {
+                    if (_info.Weapon == null)
+                        return null;
+                    uint itemUID = (uint)_info.Weapon.GetFieldValue("ownerItemUID");
+
+                    BasePlayer ownerPlayer = _info.Weapon.ownerPlayer;
+                    if (ownerPlayer == null) {
+                        return null;
+                    }
+
+                    return new InvItem(ownerPlayer.inventory.FindItemUID(itemUID));
+                } catch (Exception ex) {
+                    Logger.LogWarning("[DeathEvent] Got an exception instead of the weapon.");
+                    Logger.LogException(ex);
                     return null;
-                return new InvItem(_info.Weapon);
+                }
             }
-        }*/
+        }
     }
 }
 

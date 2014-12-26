@@ -7,6 +7,7 @@ namespace Pluton.Events
         public bool GiveDefault;
         public bool ChangePos;
         public bool WakeUp;
+        public float StartHealth = -1;
         public UnityEngine.Vector3 SpawnPos;
         public Player Player;
 

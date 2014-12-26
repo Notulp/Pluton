@@ -81,7 +81,6 @@
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="TimedEvent.cs" />
-    <Compile Include="Events\BuildingHurtEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
     <Compile Include="Objects\BuildingPart.cs" />
     <Compile Include="Objects\Entity.cs" />
@@ -112,14 +111,16 @@
     <Compile Include="StructureRecorder\Origo.cs" />
     <Compile Include="CSharpPlugin.cs" />
     <Compile Include="Events\CommandPermissionEvent.cs" />
-    <Compile Include="Events\MetabolismDamageEvent.cs" />
-    <Compile Include="Events\MetabolismTickEvent.cs" />
     <Compile Include="Events\ChatEvent.cs" />
     <Compile Include="Events\CommandEvent.cs" />
     <Compile Include="Events\DoorCodeEvent.cs" />
     <Compile Include="CryptoExtensions.cs" />
     <Compile Include="CoreConfig.cs" />
     <Compile Include="DirectoryConfig.cs" />
+    <Compile Include="Serialize\UnityEngineExtensions.cs" />
+    <Compile Include="Events\CombatEntityHurtEvent.cs" />
+    <Compile Include="Stopper.cs" />
+    <Compile Include="Events\DoorUseEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

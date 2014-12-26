@@ -6,46 +6,91 @@ namespace Pluton.Events
     {
         public readonly HitInfo _info;
         public readonly Player Gatherer;
-        public readonly BaseResource _res;
+        public readonly Entity Resource;
         public readonly string Prefab;
         public readonly uint PrefabID;
-        public readonly InvItem Tool;
         public readonly int Stage;
 
-        public GatherEvent(BaseResource res, HitInfo info)
+        public GatherEvent(BaseEntity res, HitInfo info)
         {
             _info = info;
-            _res = res;
+            Resource = new Entity(res);
             Gatherer = Server.GetPlayer(_info.Initiator as BasePlayer);
-            Prefab = _res.LookupPrefabName();
-            PrefabID = _res.prefabID;
-            Stage = _res.stage;
-            //if (_info.Weapon != null)
-            //    Tool = new InvItem(_info.Weapon);
-
+            Prefab = res.LookupPrefabName();
+            PrefabID = res.prefabID;
+            BaseResource br = res as BaseResource;
+            if (br != null)
+                Stage = br.stage;
         }
 
-        /*public float DamageAmount {
+        /******************
+        *                 *
+        * Generic      0  *
+        * Hunger       1  *
+        * Thirst       2  *
+        * Cold         3  *
+        * Drowned      4  *
+        * Heat         5  *
+        * Bleeding     6  *
+        * Poison       7  *
+        * Suicide      8  *
+        * Bullet       9  *
+        * Slash        10 *
+        * Blunt        11 *
+        * Fall         12 *
+        * Radiation    13 *
+        * Bite         14 *
+        * Stab         15 *
+        *                 *
+        ******************/
+
+        public float[] DamageAmounts {
             get {
-                return _info.damageAmount;
+                return _info.damageTypes.types;
             }
             set {
-                _info.damageAmount = value;
+                _info.damageTypes.types = value;
             }
         }
 
         public Rust.DamageType DamageType {
             get {
-                return _info.damageType;
+                return _info.damageTypes.GetMajorityDamageType();
             }
-        }*/
+        }
 
-        public float Health {
+        public Entity Attacker {
             get {
-                return _res.health;
+                try {
+                    if (_info.Initiator != null)
+                        return new Entity(_info.Initiator);
+                    return null;
+                } catch (Exception ex) {
+                    Logger.LogWarning("[HurtEvent] Got an exception instead of the attacker.");
+                    Logger.LogException(ex);
+                    return null;
+                }
             }
-            set {
-                _res.health = value;
+        }
+
+        public InvItem Weapon {
+            get {
+                try {
+                    if (_info.Weapon == null)
+                        return null;
+                    uint itemUID = (uint)_info.Weapon.GetFieldValue("ownerItemUID");
+
+                    BasePlayer ownerPlayer = _info.Weapon.ownerPlayer;
+                    if (ownerPlayer == null) {
+                        return null;
+                    }
+
+                    return new InvItem(ownerPlayer.inventory.FindItemUID(itemUID));
+                } catch (Exception ex) {
+                    Logger.LogWarning("[GatherEvent] Got an exception instead of the weapon.");
+                    Logger.LogException(ex);
+                    return null;
+                }
             }
         }
 

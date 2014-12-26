@@ -22,12 +22,39 @@ namespace Pluton
             baseEntity.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, baseEntity.transform.position);
         }
 
+        public BuildingPart ToBuildingPart()
+        {
+            BuildingBlock b = baseEntity.GetComponent<BuildingBlock>();
+            if (b == null)
+                return null;
+            return new BuildingPart(b);
+        }
+
+        public NPC ToNPC()
+        {
+            BaseAnimal a = baseEntity.GetComponent<BaseAnimal>();
+            if (a == null)
+                return null;
+            return new NPC(a);
+        }
+
+        public Player ToPlayer()
+        {
+            BasePlayer p = baseEntity.ToPlayer();
+            if (p == null)
+                return null;
+            return Server.GetPlayer(p);
+        }
+
         public Vector3 Location {
             get {
                 return baseEntity.transform.position;
             }
-            set {
-                baseEntity.transform.position.Set(value.x, value.y, value.z);
+        }
+
+        public string Name {
+            get {
+                return baseEntity.name == "player/player" ? (baseEntity as BasePlayer).displayName  : baseEntity.name;
             }
         }
 
@@ -35,26 +62,17 @@ namespace Pluton
             get {
                 return baseEntity.transform.position.x;
             }
-            set {
-                baseEntity.transform.position.Set(value, Y, Z);
-            }
         }
 
         public float Y {
             get {
                 return baseEntity.transform.position.y;
             }
-            set {
-                baseEntity.transform.position.Set(X, value, Z);
-            }
         }
 
         public float Z {
             get {
                 return baseEntity.transform.position.z;
-            }
-            set {
-                baseEntity.transform.position.Set(X, Y, value);
             }
         }
     }

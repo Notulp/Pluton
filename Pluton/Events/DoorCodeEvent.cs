@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pluton
+namespace Pluton.Events
 {
     public class DoorCodeEvent
     {

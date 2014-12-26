@@ -6,13 +6,16 @@ namespace Pluton
     public class pluton : ConsoleSystem
     {
 
-        [ConsoleSystem.Admin]
-        [ConsoleSystem.Help("Helps to break basic functionality", "")]
+        [ConsoleSystem.Admin, ConsoleSystem.Help("Helps to break basic functionality", "")]
         public static bool enabled;
+
+        [ConsoleSystem.Admin, ConsoleSystem.Help("Measure perfomance of method calls.", "")]
+        public static bool stopper;
 
         static pluton()
         {
             pluton.enabled = true;
+            pluton.stopper = false;
         }
 
         public pluton()
@@ -58,8 +61,7 @@ namespace Pluton
             }
         }
 
-        [ConsoleSystem.User]
-        [ConsoleSystem.Help("pluton.login <rcon.password>", "")]
+        [ConsoleSystem.User, ConsoleSystem.Help("pluton.login <rcon.password>", "")]
         public static void login(ConsoleSystem.Arg arg)
         {
             if (arg.connection != null && arg.ArgsStr == rcon.password) {
@@ -69,8 +71,7 @@ namespace Pluton
             }
         }
 
-        [ConsoleSystem.Admin]
-        [ConsoleSystem.Help("pluton.reload <optional = plugin name>", "")]
+        [ConsoleSystem.Admin, ConsoleSystem.Help("pluton.reload <optional = plugin name>", "")]
         public static void reload(ConsoleSystem.Arg arg)
         {
             if (PluginLoader.Plugins.ContainsKey(arg.ArgsStr)) {
@@ -86,16 +87,14 @@ namespace Pluton
             }
         }
 
-        [ConsoleSystem.Admin]
-        [ConsoleSystem.Help("Manually saves stats, server", "")]
+        [ConsoleSystem.Admin, ConsoleSystem.Help("Manually saves stats, server", "")]
         public static void saveall(ConsoleSystem.Arg arg)
         {
             Bootstrap.SaveAll();
             arg.ReplyWith("Everything saved!");
         }
 
-        [ConsoleSystem.Admin]
-        [ConsoleSystem.Help("Prints some data to the server console.", "")]
+        [ConsoleSystem.Admin, ConsoleSystem.Help("Prints some data to the server console.", "")]
         public static void status(ConsoleSystem.Arg arg)
         {
             UnityEngine.Debug.Log(CountedInstance.InstanceReportText());

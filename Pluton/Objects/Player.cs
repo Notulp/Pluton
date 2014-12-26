@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Runtime.Serialization;
 
 namespace Pluton
 {
@@ -21,6 +22,17 @@ namespace Pluton
                 Logger.LogDebug("[Player] Couldn't load stats!");
                 Logger.LogException(ex);
             }
+        }
+
+        [OnDeserialized]
+        public void OnPlayerDeserialized(StreamingContext context)
+        {
+            Logger.LogWarning("Deserializing player with id: " + GameID.ToString());
+            _basePlayer = BasePlayer.FindByID(GameID);
+            if (_basePlayer == null)
+                Logger.LogWarning("_basePlayer is <null>, is the player offline?");
+            else
+                Logger.LogWarning("basePlayer found: " + _basePlayer.displayName);
         }
 
         public static Player Find(string nameOrSteamidOrIP)
@@ -141,7 +153,7 @@ namespace Pluton
 
         public void ConsoleMessage(string msg)
         {
-            SendConsoleCommand("echo " + msg);
+            basePlayer.SendConsoleCommand("echo " + msg);
         }
 
         public void SendConsoleCommand(string cmd)
@@ -164,11 +176,12 @@ namespace Pluton
             Teleport(v3.x, v3.y, v3.z);
         }
 
+        public static float worldSizeHalf = (float)global::World.Size / 2;
         public static Vector3[] firstLocations = new Vector3[]{
-            new Vector3(2000, 0, 2000),
-            new Vector3(-2000, 0, 2000),
-            new Vector3(2000, 0, -2000),
-            new Vector3(-2000, 0, -2000)
+            new Vector3(worldSizeHalf, 0, worldSizeHalf),
+            new Vector3(-worldSizeHalf, 0, worldSizeHalf),
+            new Vector3(worldSizeHalf, 0, -worldSizeHalf),
+            new Vector3(-worldSizeHalf, 0, -worldSizeHalf)
         };
 
         public void Teleport(float x, float y, float z)
@@ -180,15 +193,25 @@ namespace Pluton
                 }
             }
 
-            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             basePlayer.transform.position = firstloc;
-            basePlayer.UpdateNetworkGroup();
+            //basePlayer.UpdateNetworkGroup();
+
+            basePlayer.StartSleeping();
+            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
 
             basePlayer.transform.position = new UnityEngine.Vector3(x, y, z);
             basePlayer.UpdateNetworkGroup();
             basePlayer.UpdatePlayerCollider(true, false);
             basePlayer.SendFullSnapshot();
             basePlayer.inventory.SendSnapshot();
+            //basePlayer.CallMethod("ClientRPC", basePlayer, "StartLoading");
+
+            ProtoBuf.RPCMessage rPCMessage = new ProtoBuf.RPCMessage();
+            rPCMessage.funcName = StringPool.Get("startloading");
+            basePlayer.net.MessageClient(basePlayer.net.connection, MSG.RPC_MESSAGE, rPCMessage.ToProtoBytes());
+
+            basePlayer.CallMethod("SendNetworkUpdate_Position");
+            basePlayer.Invoke("EndSleeping", 0.5f);
         }
 
         public bool Admin {
@@ -240,7 +263,7 @@ namespace Pluton
                 return basePlayer.transform.position;
             }
             set {
-                basePlayer.transform.position.Set(value.x, value.y, value.z);
+                Teleport(value.x, value.y, value.z);
             }
         }
 
@@ -253,6 +276,12 @@ namespace Pluton
         public string Name {
             get {
                 return basePlayer.displayName;
+            }
+        }
+
+        public bool Offline {
+            get {
+                return _basePlayer == null;
             }
         }
 
@@ -299,26 +328,17 @@ namespace Pluton
             get {
                 return basePlayer.transform.position.x;
             }
-            set {
-                basePlayer.transform.position.Set(value, Y, Z);
-            }
         }
 
         public float Y {
             get {
                 return basePlayer.transform.position.y;
             }
-            set {
-                basePlayer.transform.position.Set(X, value, Z);
-            }
         }
 
         public float Z {
             get {
                 return basePlayer.transform.position.z;
-            }
-            set {
-                basePlayer.transform.position.Set(X, Y, value);
             }
         }
     }

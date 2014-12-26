@@ -40,9 +40,6 @@ namespace Pluton
             get {
                 return baseAnimal.transform.position;
             }
-            set {
-                baseAnimal.transform.position.Set(value.x, value.y, value.z);
-            }
         }
 
         public string Name {
@@ -61,26 +58,17 @@ namespace Pluton
             get {
                 return baseAnimal.transform.position.x;
             }
-            set {
-                baseAnimal.transform.position.Set(value, Y, Z);
-            }
         }
 
         public float Y {
             get {
                 return baseAnimal.transform.position.y;
             }
-            set {
-                baseAnimal.transform.position.Set(X, value, Z);
-            }
         }
 
         public float Z {
             get {
                 return baseAnimal.transform.position.z;
-            }
-            set {
-                baseAnimal.transform.position.Set(X, Y, value);
             }
         }
     }

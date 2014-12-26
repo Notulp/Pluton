@@ -43,7 +43,6 @@ namespace Pluton
             }
 
             try {
-                Debug.Log("Public folder: " + Util.GetPublicFolder());
                 LogsFolder = Path.Combine(Util.GetPublicFolder(), "Logs");
                 if (!Directory.Exists(LogsFolder))
                     Directory.CreateDirectory(LogsFolder);
