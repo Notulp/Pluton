@@ -357,9 +357,9 @@
             this.Invoke("On_BuildingPartDestroyed", he);
         }*/
 
-        public IDisposable OnBuildingUpdateHook;
-        public void OnBuildingUpdate(BuildingEvent be) {
-            this.Invoke("On_BuildingUpdate", be);
+        public IDisposable OnPlacementHook;
+        public void OnPlacement(BuildingEvent be) {
+            this.Invoke("On_Placement", be);
         }
 
         public IDisposable OnChatHook;
@@ -402,17 +402,9 @@
             this.Invoke("On_DoorCode", dc);
         }
 
-        public void OnDoorUse() {
-            throw new NotImplementedException("There is no OnDoorUse hook yet!");
-        }
-
-        public void OnEntityDecay() {
-            throw new NotImplementedException("There is no OnEntityDecay hook yet!");
-        }
-
-        public IDisposable OnFrameDeployedHook;
-        public void OnFrameDeployed(FrameDeployedEvent fde) {
-            this.Invoke("On_FrameDeployed", fde);
+        public IDisposable OnDoorUseHook;
+        public void OnDoorUse(DoorUseEvent due) {
+            this.Invoke("On_DoorUse", due);
         }
 
         public IDisposable OnLootingEntityHook;
@@ -478,17 +470,6 @@
         public IDisposable OnPlayerTakeRadiationHook;
         public void OnPlayerTakeRadiation(PlayerTakeRadsEvent re) {
             this.Invoke("On_PlayerTakeRadiation", re);
-        }
-
-        public IDisposable OnMetabolismTickHook;
-        public void OnMetabolismTick(MetabolismTickEvent re)
-        {
-            this.Invoke("On_MetabolismTick", re);
-        }
-        public IDisposable OnMetabolismDamageHook;
-        public void OnMetabolismDamage(MetabolismDamageEvent re)
-        {
-            this.Invoke("On_MetabolismDamage", re);
         }
 
         public IDisposable OnRespawnHook;

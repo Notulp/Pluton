@@ -5,30 +5,30 @@ namespace Pluton.Events
 {
     public class BuildingEvent : CountedInstance
     {
-        public Construction.Socket[] Sockets;
         public readonly BuildingBlock _block;
         public BuildingPart BuildingPart;
         public readonly Player Builder;
-        public string BlockFullName;
-        public string BlockName;
-        public InvItem Tool;
-        public readonly HitInfo _info;
+        public readonly Construction.Common Common;
+        public readonly Construction.Target Target;
+        public bool NeedsValidPlacement;
 
-        public BuildingEvent(BuildingPart bp, HitInfo info)
+        public string DestroyReason = String.Empty;
+        public bool DoDestroy = false;
+
+        public BuildingEvent(Construction.Common common, Construction.Target target, BuildingBlock bb, bool bNeedsValidPlacement)
         {
-            _info = info;
-            BasePlayer player = info.Initiator as BasePlayer;
-            var p = Server.GetPlayer(player);
-            //Tool = new InvItem(info.Weapon);
-            _block = bp.buildingBlock;
-            BuildingPart = bp;
-            Builder = p;
+            Builder = Server.GetPlayer(target.player);
+            _block = bb;
+            BuildingPart = new BuildingPart(bb);
+            Common = common;
+            Target = target;
+            NeedsValidPlacement = bNeedsValidPlacement;
+        }
 
-            if (_block.blockDefinition != null) {
-                BlockName = _block.blockDefinition.name;
-                Sockets = _block.blockDefinition.sockets;
-                BlockFullName = _block.blockDefinition.fullname;
-            }
+        public void Destroy(string reason = "Plugin blocks building!")
+        {
+            DoDestroy = true;
+            DestroyReason = reason;
         }
     }
 }

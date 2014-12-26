@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Network;
 using ProtoBuf;
 using UnityEngine;
@@ -20,7 +20,7 @@ namespace Pluton
 
         public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
-        public static Subject<BuildingEvent> OnBuildingUpdate = new Subject<BuildingEvent>();
+        public static Subject<BuildingEvent> OnPlacement = new Subject<BuildingEvent>();
 
         public static Subject<ChatEvent> OnChat = new Subject<ChatEvent>();
 
@@ -40,6 +40,8 @@ namespace Pluton
 
         public static Subject<DoorCodeEvent> OnDoorCode = new Subject<DoorCodeEvent>();
 
+        public static Subject<DoorUseEvent> OnDoorUse = new Subject<DoorUseEvent>();
+
         public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
 
         public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
@@ -55,10 +57,6 @@ namespace Pluton
         public static Subject<PlayerTakedmgEvent> OnPlayerTakeDamage = new Subject<PlayerTakedmgEvent>();
 
         public static Subject<PlayerTakeRadsEvent> OnPlayerTakeRads = new Subject<PlayerTakeRadsEvent>();
-
-        public static Subject<MetabolismTickEvent> OnMetTick = new Subject<MetabolismTickEvent>();
-
-        public static Subject<MetabolismDamageEvent> OnMetDamage = new Subject<MetabolismDamageEvent>();
 
         public static Subject<GatherEvent> OnGathering = new Subject<GatherEvent>();
 
@@ -236,10 +234,10 @@ namespace Pluton
                     player.Message(msg);
                     return;
                 }
-				if (cmd.cmd == Config.GetValue("Commands", "Help", "help")) {
-					foreach (string key in Config.PlutonConfig.EnumSection("HelpMessage")) {
-						player.Message(Config.GetValue("HelpMessage", key));
-					}
+                if (cmd.cmd == Config.GetValue("Commands", "Help", "help")) {
+                    foreach (string key in Config.PlutonConfig.EnumSection("HelpMessage")) {
+                        player.Message(Config.GetValue("HelpMessage", key));
+                    }
                 }
 
                 List<ChatCommands> cc = new List<ChatCommands>();
@@ -354,7 +352,7 @@ namespace Pluton
                         combatEnt.health.ToString ("0.00"), " / ",
                         (combatEnt.health - info.damageTypes.Total () > 0) ? "<color=green>" : "<color=red>",
                         (combatEnt.health - info.damageTypes.Total ()).ToString ("0.00"), "</color>",
-                         "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
+                        "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
                         "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
                         "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
                         "\r\n<color=lightblue>Damages:</color>\r\n", text
@@ -391,6 +389,56 @@ namespace Pluton
 
             DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc);
             OnDoorCode.OnNext(dc);
+        }
+
+        // Door.RPC_CloseDoor()/RPC_OpenDoor()
+        public static void DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
+        {
+            BaseLock baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
+            if (baseLock != null) {
+                bool TryCloseOpen = open ? !baseLock.OnTryToOpen(rpc.player) : !baseLock.OnTryToClose(rpc.player);
+                if (TryCloseOpen)
+                    return;
+            }
+
+            DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
+            OnDoorUse.OnNext(due);
+
+            door.SetFlag(BaseEntity.Flags.Open, due.Open);
+            door.Invoke("UpdateLayer", 0f);
+            door.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+
+            if (due.DenyReason != "")
+                rpc.player.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(Server.server_message_name) + " " + StringExtensions.QuoteSafe(due.DenyReason));
+        }
+
+        // Construiction.Common.CreateConstruction()
+        public static BuildingBlock DoPlacement(Construction.Common common, Construction.Target target, bool bNeedsValidPlacement)
+        {
+            try {
+                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(common.prefab);
+                BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
+
+                BuildingEvent be = new BuildingEvent(common, target, component, bNeedsValidPlacement);
+                OnPlacement.OnNext(be);
+
+                bool flag = Construction.UpdatePlacement(gameObject.transform, common, target);
+                if (bNeedsValidPlacement && !flag) {
+                    UnityEngine.Object.Destroy(gameObject);
+                    return null;
+                }
+
+                if (be.DoDestroy) {
+                    be.Builder.Message(be.DestroyReason);
+                    UnityEngine.Object.Destroy(gameObject);
+                    return null;
+                }
+
+                return component;
+            } catch (Exception ex) {
+                Logger.LogException(ex);
+                return null;
+            }
         }
 
         // BaseResource.OnAttacked()
@@ -666,4 +714,3 @@ namespace Pluton
         }
     }
 }
-

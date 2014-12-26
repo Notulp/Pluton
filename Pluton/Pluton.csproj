@@ -111,8 +111,6 @@
     <Compile Include="StructureRecorder\Origo.cs" />
     <Compile Include="CSharpPlugin.cs" />
     <Compile Include="Events\CommandPermissionEvent.cs" />
-    <Compile Include="Events\MetabolismDamageEvent.cs" />
-    <Compile Include="Events\MetabolismTickEvent.cs" />
     <Compile Include="Events\ChatEvent.cs" />
     <Compile Include="Events\CommandEvent.cs" />
     <Compile Include="Events\DoorCodeEvent.cs" />
@@ -120,9 +118,9 @@
     <Compile Include="CoreConfig.cs" />
     <Compile Include="DirectoryConfig.cs" />
     <Compile Include="Serialize\UnityEngineExtensions.cs" />
-    <Compile Include="Objects\CombatEntity.cs" />
     <Compile Include="Events\CombatEntityHurtEvent.cs" />
     <Compile Include="Stopper.cs" />
+    <Compile Include="Events\DoorUseEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
