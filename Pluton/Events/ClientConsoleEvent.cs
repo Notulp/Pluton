@@ -24,7 +24,7 @@ namespace Pluton.Events
 
             foreach (String str in rconCmd.Split(' '))
                 Args.Add(str);
-            
+
             this.cmd = Args[0];
             Args.RemoveAt(0);
         }
