@@ -62,10 +62,14 @@ namespace Pluton.Events
                 try {
                     if (_info.Weapon == null)
                         return null;
-                    if (_info.Weapon.GetItem() == null)
-                        return null;
+                    uint itemUID = (uint)_info.Weapon.GetFieldValue("ownerItemUID");
 
-                    return new InvItem(_info.Weapon.GetItem());
+                    BasePlayer ownerPlayer = _info.Weapon.ownerPlayer;
+                    if (ownerPlayer == null) {
+                        return null;
+                    }
+
+                    return new InvItem(ownerPlayer.inventory.FindItemUID(itemUID));
                 } catch (Exception ex) {
                     Logger.LogWarning("[DeathEvent] Got an exception instead of the weapon.");
                     Logger.LogException(ex);
