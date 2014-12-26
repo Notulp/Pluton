@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using System.Timers;
 
@@ -102,6 +103,14 @@ namespace Pluton
         public float GetGround(Vector3 v3)
         {
             return GetGround(v3.x, v3.z);
+        }
+
+        public System.Collections.Generic.List<string> GetPrefabNames()
+        {
+            System.Collections.Generic.Dictionary<uint, string> pool = (System.Collections.Generic.Dictionary<uint, string>)ReflectionExtensions.GetStaticFieldValue(typeof(StringPool), "toString");
+            return (from keyvaluepair in pool
+                    orderby keyvaluepair.Value ascending
+                    select keyvaluepair.Value).ToList<string>();
         }
 
         public BaseEntity SpawnMapEntity(string name, float x, float z) {
