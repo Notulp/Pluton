@@ -4,12 +4,12 @@ namespace Pluton.Events
 {
     public class CombatEntityHurtEvent : HurtEvent
     {
-        public readonly CombatEntity Victim;
+        public readonly Entity Victim;
 
         public CombatEntityHurtEvent(BaseCombatEntity combatEnt, HitInfo info)
             : base(info)
         {
-            Victim = new CombatEntity(combatEnt);
+            Victim = new Entity(combatEnt);
         }
     }
 }
