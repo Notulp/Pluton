@@ -180,14 +180,23 @@ namespace Pluton.Patcher
         {
             TypeDefinition bRes = rustAssembly.MainModule.GetType("BaseResource");
             MethodDefinition gather = bRes.GetMethod("OnAttacked");
-            MethodDefinition gathering = hooksClass.GetMethod("Gathering");
+            MethodDefinition gatheringBR = hooksClass.GetMethod("GatheringBR");
 
-            CloneMethod(gather);
+            TypeDefinition treeEnt = rustAssembly.MainModule.GetType("TreeEntity");
+            MethodDefinition gatherWood = treeEnt.GetMethod("OnAttacked");
+            MethodDefinition gatheringTree = hooksClass.GetMethod("GatheringTree");
+
             gather.Body.Instructions.Clear();
             gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
             gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
+            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gatheringBR)));
             gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+            gatherWood.Body.Instructions.Clear();
+            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gatheringTree)));
+            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void NPCDiedPatch()

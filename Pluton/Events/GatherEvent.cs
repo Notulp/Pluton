@@ -6,19 +6,21 @@ namespace Pluton.Events
     {
         public readonly HitInfo _info;
         public readonly Player Gatherer;
-        public readonly BaseResource _res;
+        public readonly Entity Resource;
         public readonly string Prefab;
         public readonly uint PrefabID;
         public readonly int Stage;
 
-        public GatherEvent(BaseResource res, HitInfo info)
+        public GatherEvent(BaseEntity res, HitInfo info)
         {
             _info = info;
-            _res = res;
+            Resource = new Entity(res);
             Gatherer = Server.GetPlayer(_info.Initiator as BasePlayer);
-            Prefab = _res.LookupPrefabName();
-            PrefabID = _res.prefabID;
-            Stage = _res.stage;
+            Prefab = res.LookupPrefabName();
+            PrefabID = res.prefabID;
+            BaseResource br = res as BaseResource;
+            if (br != null)
+                Stage = br.stage;
         }
 
         /******************
@@ -89,15 +91,6 @@ namespace Pluton.Events
                     Logger.LogException(ex);
                     return null;
                 }
-            }
-        }
-
-        public float Health {
-            get {
-                return _res.health;
-            }
-            set {
-                _res.health = value;
             }
         }
 

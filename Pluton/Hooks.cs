@@ -442,7 +442,7 @@ namespace Pluton
         }
 
         // BaseResource.OnAttacked()
-        public static void Gathering(BaseResource res, HitInfo info)
+        public static void GatheringBR(BaseResource res, HitInfo info)
         {
             if (!Realm.Server())
                 return;
@@ -460,6 +460,26 @@ namespace Pluton
                 return;
             }
             res.Invoke("UpdateNetworkStage", 0.1f);
+        }
+
+        // TreeEntity.OnAttacked()
+        public static void GatheringTree(TreeEntity tree, HitInfo info)
+        {
+            if (!Realm.Server())
+                return;
+
+            OnGathering.OnNext(new Events.GatherEvent(tree, info));
+
+            ResourceDispenser dispenser = tree.GetComponent<ResourceDispenser>();
+            if (dispenser != null) {
+                dispenser.OnAttacked(info);
+            }
+            float num = info.damageTypes.Total() * info.resourceGatherProficiency;
+            tree.health -= num;
+            if (tree.health <= 0) {
+                tree.Kill(EntityDestroy.Mode.None, 0, 0, Vector3.zero);
+                return;
+            }
         }
 
         // BaseAnimal.Die()
