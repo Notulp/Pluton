@@ -119,9 +119,9 @@ namespace Pluton
                     if (server.globalchat) {
                         ConsoleSystem.Broadcast("chat.add " + pChat.BroadcastName.QuoteSafe() + " " + pChat.FinalText.QuoteSafe() + " 1.0");
                     } else {
-                        float num = Mathf.Pow(50, 2);
+                        float num = 2500;
                         foreach (Connection current in Net.sv.connections) {
-                            if (!(current.player == null)) {
+                            if (current.player != null) {
                                 float sqrMagnitude = (current.player.transform.position - basePlayer.transform.position).sqrMagnitude;
                                 if (sqrMagnitude <= num) {
                                     ConsoleSystem.SendClientCommand(current, "chat.add " + pChat.BroadcastName.QuoteSafe() + " " + pChat.FinalText.QuoteSafe() + " " + Mathf.Clamp01(num - sqrMagnitude + 0.2f).ToString("F").Replace(',', '.'));
@@ -567,7 +567,7 @@ namespace Pluton
             OnPlayerTakeRads.OnNext(ptr);
             player.metabolism.radiation.SetFieldValue("value", ptr.Next);
         }
-
+        /*
         // In future create an Event, allow people to adjust certain resources to give certain amounts!
         public static void ResourceGatherMultiplier(int amount, BaseEntity receiver, ItemAmount itemAmt)
         {
@@ -577,7 +577,7 @@ namespace Pluton
 
             Item item = ItemManager.CreateByItemID(itemAmt.itemid, newAmt);
             receiver.GiveItem(item);
-        }
+        }*/
 
         public static void Respawn(BasePlayer player, bool newPos)
         {

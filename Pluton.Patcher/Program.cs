@@ -281,7 +281,7 @@ namespace Pluton.Patcher
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
         }
-        
+        /*
         private static void ResourceGatherMultiplierPatch()
         {
             TypeDefinition bRes = rustAssembly.MainModule.GetType("ResourceDispenser");
@@ -290,16 +290,12 @@ namespace Pluton.Patcher
             CloneMethod(ctInit);
             ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
 
-            iLProcessor.InsertBefore(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldloc_2));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[52], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[53], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[54], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[48], Instruction.Create(OpCodes.Ldloc_2));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[49], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[50], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.InsertAfter(ctInit.Body.Instructions[51], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
 
-            for (int i = 0; i < 8; i++) {
-                iLProcessor.Body.Instructions[44 + i] = Instruction.Create(OpCodes.Nop);
-            }
-
-        }
+        }*/
 
         private static void RespawnPatch()
         {
@@ -341,7 +337,7 @@ namespace Pluton.Patcher
 
             CloneMethod(serverInit);
             ILProcessor il = serverInit.Body.GetILProcessor();
-            il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 2], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
+            il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
         }
 
         private static void ServerShutdownPatch()
@@ -434,7 +430,7 @@ namespace Pluton.Patcher
 
             NPCDiedPatch();
 
-            ResourceGatherMultiplierPatch();
+            //ResourceGatherMultiplierPatch();
             RespawnPatch();
 
             ServerShutdownPatch();
