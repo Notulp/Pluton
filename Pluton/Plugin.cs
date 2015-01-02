@@ -103,7 +103,7 @@
                 Assembly assembly = Assembly.Load(bin);
                 Type classType = assembly.GetType(name + "." + name);
                 if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
-                    throw new NotSupportedException("Main module class not found:" + Name);
+                    throw new TypeLoadException("Main module class not found:" + Name);
                 CSharpEngine = (CSharpPlugin)Activator.CreateInstance(classType);
 
                 CSharpEngine.Server = Server.GetServer();
