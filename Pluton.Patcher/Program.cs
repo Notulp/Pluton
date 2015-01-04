@@ -18,7 +18,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
         private static TypeDefinition worldClass;
-        private static string version = "1.0.0.18";
+        private static string version = "1.0.0.19";
 
         #region patches
 
@@ -37,6 +37,19 @@ namespace Pluton.Patcher
         {
             TypeDefinition cargoPlane = rustAssembly.MainModule.GetType("CargoPlane");
             MethodDefinition startMtd = cargoPlane.GetMethod("Start");
+            MethodDefinition updateMtd = cargoPlane.GetMethod("Update");
+
+            MethodDefinition getWorld = worldClass.GetMethod("GetWorld");
+            MethodDefinition dropLoot = worldClass.GetMethod("DropLargeLootBox");
+
+            ILProcessor il = updateMtd.Body.GetILProcessor();
+
+            for (int i = 41; i >= 23; i--) {
+                if (i < 25 || i > 27)
+                    il.Body.Instructions.RemoveAt(i);
+            }
+            il.InsertAfter(il.Body.Instructions[22], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(getWorld)));
+            il.InsertAfter(il.Body.Instructions[26], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(dropLoot)));
 
             startMtd.Body.Instructions.Clear();
             startMtd.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));

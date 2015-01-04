@@ -79,6 +79,32 @@ namespace Pluton
             entity.Invoke("KillMessage", secsToTake - 1);
         }
 
+        public void DropLargeLootBox(Vector3 v3)
+        {
+            try {
+                BaseEntity baseEntity = GameManager.CreateEntity("items/large_woodbox_deployed", v3, default(Quaternion));
+                if (baseEntity) {
+                    var parachute = GameManager.CreateEntity("parachute", default(Vector3), default(Quaternion));
+                    if (parachute) {
+                        parachute.SetParent(baseEntity);
+                        parachute.Spawn(true);
+                    }
+                    baseEntity.globalBroadcast = true;
+                    baseEntity.Spawn(true);
+                    StorageBox sb = baseEntity as StorageBox;
+                    sb.inventory.Initialize(null, 16);
+                    sb.SetFlag(BaseEntity.Flags.Locked, true);
+                    DropUpdate du = baseEntity.gameObject.AddComponent<DropUpdate>();
+                    du.parachute = parachute;
+                    du.box = sb;
+                    du.self = baseEntity;
+                }
+            } catch (Exception ex) {
+                Logger.LogError("[DropLoot] Couldn't drop!");
+                Logger.LogError(ex.StackTrace);
+            }
+        }
+
         public void AirDropAt(float x, float y, float z, float speed = 50f, float height = 400f)
         {
             AirDropAt(new Vector3(x, y, z), speed, height);

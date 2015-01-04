@@ -121,6 +121,7 @@
     <Compile Include="Events\CombatEntityHurtEvent.cs" />
     <Compile Include="Stopper.cs" />
     <Compile Include="Events\DoorUseEvent.cs" />
+    <Compile Include="Objects\DropUpdate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
