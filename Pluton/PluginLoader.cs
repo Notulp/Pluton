@@ -351,7 +351,7 @@
                 case "On_DoorUse":
                     plugin.OnDoorUseHook.Dispose();
                     break;
-                case "On_NPCAttacked":
+                case "On_NPCHurt":
                     plugin.OnNPCHurtHook.Dispose();
                     break;
                 case "On_NPCKilled":
