@@ -98,6 +98,18 @@ namespace Pluton
                     du.parachute = parachute;
                     du.box = sb;
                     du.self = baseEntity;
+                    RaycastHit hit;
+                    var origin = new Vector3(v3.x, v3.y - 2, v3.z);
+                    if (Physics.Raycast(origin, Vector3.down, out hit, 1000,  LayerMask.GetMask(
+                        "Deployed", "Ragdoll", "Invisible",
+                        "AI", "Player Movement", "Player Interaction",
+                        "Game Trace", "Sky", "World", "Player (Server)",
+                        "Trigger", "Player Model Renderin", "Grass",
+                        "Construction", "Construction Socket", "Terrain",
+                        "Guide", "Debris", "Resource", "Construction Trigger"
+                    ))) {
+                        du.ground = hit.point;
+                    }
                 }
             } catch (Exception ex) {
                 Logger.LogError("[DropLoot] Couldn't drop!");
