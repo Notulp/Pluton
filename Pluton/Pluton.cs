@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Pluton
 {
@@ -82,6 +83,11 @@ namespace Pluton
                 Config.Reload();
                 Server.GetServer().LoadLoadouts();
                 arg.ReplyWith("Pluton reloaded!");
+
+                var planes = (from plane in UnityEngine.Object.FindObjectsOfType<CargoPlane>()
+                                  where plane.transform.position.x == 0f && plane.transform.position.z == 0f
+                                  select plane).ToList();
+                planes.ForEach(p => p.SendMessage("KillMessage", UnityEngine.SendMessageOptions.DontRequireReceiver));
             } else {
                 arg.ReplyWith(String.Format("Couldn't find plugin: {0}!", arg.ArgsStr));
             }
