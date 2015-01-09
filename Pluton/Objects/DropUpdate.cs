@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Pluton
 {
     public class DropUpdate : MonoBehaviour
     {
+        public static string DSTABLE = "SerializedAirDrops";
+        public static string DSKEY = "List";
+
+        public static System.Collections.Generic.List<SerializedVector3> SerializedDUList;
+
         public bool landed = false;
 
         float X;
@@ -53,6 +59,9 @@ namespace Pluton
 
         private void OnLanded()
         {
+            SaveThis();
+            Save();
+
             landed = true;
 
             self.transform.position = ground;
@@ -78,6 +87,9 @@ namespace Pluton
         {
             if (landed) {
                 if (box.inventory.itemList.Count == 0) {
+                    RemoveThis();
+                    Save();
+
                     if (parachute != null)
                         parachute.Kill();
 
@@ -131,6 +143,36 @@ namespace Pluton
             AddItemRandom(2f, "pistol_eoka", 1, 1);
             AddItemRandom(20f, "bandage", 1, 2);
             AddItemRandom(10f, "antiradpills", 1, 2);
+        }
+
+        public void RemoveThis()
+        {
+            if (SerializedDUList.Contains(ground.Serialize())) {
+                SerializedDUList.Remove(ground.Serialize());
+            }
+        }
+
+        public void SaveThis()
+        {
+            if (!SerializedDUList.Contains(ground.Serialize())) {
+                SerializedDUList.Add(ground.Serialize());
+            }
+        }
+
+        public static void Save()
+        {
+            Server.GetServer().serverData.Add(DSTABLE, DSKEY, SerializedDUList);
+        }
+
+        public static void Load()
+        {
+            SerializedDUList = (System.Collections.Generic.List<SerializedVector3>)Server.GetServer().serverData.Get(DSTABLE, DSKEY);
+            var boxes = UnityEngine.Object.FindObjectsOfType<StorageBox>();
+            var droppedBoxes = (from box in boxes
+                                         where SerializedDUList.Contains(box.transform.position.Serialize())
+                                         select box).ToList();
+
+            droppedBoxes.ForEach(d => d.gameObject.AddComponent<DropUpdate>());
         }
     }
 }
