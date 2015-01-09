@@ -5,10 +5,7 @@ namespace Pluton
 {
     public class DropUpdate : MonoBehaviour
     {
-        private bool landed = false;
-
-        float timeToTake = 0;
-        float timeTaken = 0;
+        public bool landed = false;
 
         float X;
         float Y;
@@ -24,6 +21,9 @@ namespace Pluton
 
         [NonSerialized]
         public StorageBox box;
+
+        [NonSerialized]
+        Vector3 velocity;
 
         public Vector3 ground {
             get {
@@ -62,15 +62,27 @@ namespace Pluton
             box.inventory.capacity = 16;
 
             PopulateLoot();
+
             if (parachute != null)
                 parachute.Kill();
+
+            parachute = null;
+        }
+
+        private void Awake()
+        {
+            velocity = Vector3.zero;
         }
 
         private void Update()
         {
             if (landed) {
                 if (box.inventory.itemList.Count == 0) {
-                    self.Kill();
+                    if (parachute != null)
+                        parachute.Kill();
+
+                    if (self!= null)
+                        self.Kill();
                 }
                 return;
             }
@@ -80,17 +92,12 @@ namespace Pluton
 
             float dist = Y - groundY;
 
-            if (timeToTake == 0)
-                timeToTake = dist / UnityEngine.Random.Range(0.6f, 0.10f);
-
             if (dist < 0.05f) {
                 OnLanded();
                 return;
             }
 
-            timeTaken += Time.deltaTime;
-            float num = Mathf.InverseLerp(0f, timeToTake, timeTaken);
-            self.transform.position = UnityEngine.Vector3.Lerp(position, ground, num);
+            self.transform.position = Vector3.SmoothDamp(self.transform.position, self.transform.position - new Vector3(0f, 0.5f, 0f), ref velocity, 0.3f); 
             self.SendNetworkUpdate(BasePlayer.NetworkQueue.Positional);
             Realm.Pop();
         }
@@ -111,18 +118,19 @@ namespace Pluton
 
         private void PopulateLoot()
         {
-            this.AddItemRandom(60f, "apple", 1, 3);
-            this.AddItemRandom(10f, "furnace", 1, 1);
-            this.AddItemRandom(5f, "ammo_rifle", 10, 200);
-            this.AddItemRandom(5f, "ammo_pistol", 10, 200);
-            this.AddItemRandom(5f, "ammo_shotgun", 10, 200);
-            this.AddItemRandom(20f, "paper", 10, 200);
-            this.AddItemRandom(15f, "chicken_cooked", 1, 2);
-            this.AddItemRandom(2f, "rifle_bolt", 1, 1);
-            this.AddItemRandom(2f, "shotgun_waterpipe", 1, 1);
-            this.AddItemRandom(2f, "pistol_eoka", 1, 1);
-            this.AddItemRandom(20f, "bandage", 1, 2);
-            this.AddItemRandom(10f, "antiradpills", 1, 2);
+            // chance (%), itemname, min amount, max amount 
+            AddItemRandom(60f, "apple", 1, 3);
+            AddItemRandom(10f, "furnace", 1, 1);
+            AddItemRandom(5f, "ammo_rifle", 10, 200);
+            AddItemRandom(5f, "ammo_pistol", 10, 200);
+            AddItemRandom(5f, "ammo_shotgun", 10, 200);
+            AddItemRandom(20f, "paper", 10, 200);
+            AddItemRandom(15f, "chicken_cooked", 1, 2);
+            AddItemRandom(2f, "rifle_bolt", 1, 1);
+            AddItemRandom(2f, "shotgun_waterpipe", 1, 1);
+            AddItemRandom(2f, "pistol_eoka", 1, 1);
+            AddItemRandom(20f, "bandage", 1, 2);
+            AddItemRandom(10f, "antiradpills", 1, 2);
         }
     }
 }

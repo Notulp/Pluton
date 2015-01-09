@@ -92,8 +92,6 @@ namespace Pluton
                     baseEntity.globalBroadcast = true;
                     baseEntity.Spawn(true);
                     StorageBox sb = baseEntity as StorageBox;
-                    sb.inventory.Initialize(null, 16);
-                    sb.SetFlag(BaseEntity.Flags.Locked, true);
                     DropUpdate du = baseEntity.gameObject.AddComponent<DropUpdate>();
                     du.parachute = parachute;
                     du.box = sb;
