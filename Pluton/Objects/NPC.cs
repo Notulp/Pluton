@@ -5,70 +5,70 @@ namespace Pluton
 {
     public class NPC : CountedInstance
     {
-        public readonly BaseAnimal baseAnimal;
+        public readonly BaseNPC baseNPC;
 
-        public NPC(BaseAnimal animal)
+        public NPC(BaseNPC npc)
         {
-            baseAnimal = animal;
+            baseNPC = npc;
         }
 
         public void Kill()
         {
             var info = new HitInfo();
             info.AddDamage(Rust.DamageType.Suicide, 100f);
-            info.Initiator = baseAnimal as BaseEntity;
-            baseAnimal.Die(info);
+            info.Initiator = baseNPC as BaseEntity;
+            baseNPC.Die(info);
         }
 
         public uint ID {
             get {
-                return baseAnimal.net.ID; 
+                return baseNPC.net.ID; 
             }
         }
 
         public float Health {
             get {
-                return baseAnimal.health;
+                return baseNPC.health;
             }
             set {
-                baseAnimal.health = value;
+                baseNPC.health = value;
             }
 
         }
 
         public Vector3 Location {
             get {
-                return baseAnimal.transform.position;
+                return baseNPC.transform.position;
             }
         }
 
         public string Name {
             get {
-                return baseAnimal.name;
+                return baseNPC.name;
             }
         }
 
         public string Prefab {
             get {
-                return baseAnimal.modelPrefab;
+                return baseNPC.modelPrefab;
             }
         }
 
         public float X {
             get {
-                return baseAnimal.transform.position.x;
+                return baseNPC.transform.position.x;
             }
         }
 
         public float Y {
             get {
-                return baseAnimal.transform.position.y;
+                return baseNPC.transform.position.y;
             }
         }
 
         public float Z {
             get {
-                return baseAnimal.transform.position.z;
+                return baseNPC.transform.position.z;
             }
         }
     }

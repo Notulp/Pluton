@@ -11,14 +11,14 @@ namespace Pluton.Patcher
         private static AssemblyDefinition facepunchAssembly;
         private static AssemblyDefinition plutonAssembly;
         private static AssemblyDefinition rustAssembly;
-        private static TypeDefinition bAnimal;
+        private static TypeDefinition bNPC;
         private static TypeDefinition bPlayer;
         private static TypeDefinition codeLock;
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
         private static TypeDefinition worldClass;
-        private static string version = "1.0.0.19";
+        private static string version = "1.0.0.21";
 
         #region patches
 
@@ -214,7 +214,7 @@ namespace Pluton.Patcher
 
         private static void NPCDiedPatch()
         {
-            MethodDefinition npcdie = bAnimal.GetMethod("OnKilled");
+            MethodDefinition npcdie = bNPC.GetMethod("OnKilled");
             MethodDefinition npcDied = hooksClass.GetMethod("NPCDied");
 
             CloneMethod(npcdie);
@@ -501,7 +501,7 @@ namespace Pluton.Patcher
                 return 20;
             }
 
-            bAnimal = rustAssembly.MainModule.GetType("BaseAnimal");
+            bNPC = rustAssembly.MainModule.GetType("BaseNPC");
             bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
             codeLock = rustAssembly.MainModule.GetType("CodeLock");
             hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");

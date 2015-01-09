@@ -292,7 +292,7 @@ namespace Pluton
                     return;
                 }
 
-                BaseAnimal animal = combatEnt.GetComponent<BaseAnimal>();
+                BaseNPC npc = combatEnt.GetComponent<BaseNPC>();
                 BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
                 BasePlayer player = combatEnt.GetComponent<BasePlayer>();
 
@@ -314,8 +314,8 @@ namespace Pluton
                 if (player != null) {
                     he = new PlayerHurtEvent(Server.GetPlayer(player), info);
                     OnPlayerHurt.OnNext(he as PlayerHurtEvent);
-                } else if (animal != null) {
-                    he = new NPCHurtEvent(new NPC(animal), info);
+                } else if (npc != null) {
+                    he = new NPCHurtEvent(new NPC(npc), info);
                     OnNPCHurt.OnNext(he as NPCHurtEvent);
                 } else if (corpse != null) {
                     he = new CorpseHurtEvent(corpse, info);
@@ -483,13 +483,13 @@ namespace Pluton
         }
 
         // BaseAnimal.Die()
-        public static void NPCDied(BaseAnimal animal, HitInfo info)
+        public static void NPCDied(BaseNPC bnpc, HitInfo info)
         {
             if (info.Initiator != null && info.Initiator.ToPlayer() != null) {
                 Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(false, true);
             }
 
-            var npc = new NPC(animal);
+            var npc = new NPC(bnpc);
             OnNPCDied.OnNext(new Events.NPCDeathEvent(npc, info));
         }
 
@@ -510,7 +510,7 @@ namespace Pluton
                 if (info.Initiator is BasePlayer) {
                     Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
                     victim.Stats.AddDeath(true, false);
-                } else if (info.Initiator is BaseAnimal) {
+                } else if (info.Initiator is BaseNPC) {
                     victim.Stats.AddDeath(false, true);
                 }
             }

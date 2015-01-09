@@ -32,7 +32,7 @@ namespace Pluton
 
         public NPC ToNPC()
         {
-            BaseAnimal a = baseEntity.GetComponent<BaseAnimal>();
+            BaseNPC a = baseEntity.GetComponent<BaseNPC>();
             if (a == null)
                 return null;
             return new NPC(a);
