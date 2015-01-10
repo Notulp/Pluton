@@ -387,8 +387,8 @@ namespace Pluton
             if (!doorLock.IsLocked())
                 return;
 
-            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc);
-            OnDoorCode.OnNext(dc);
+            /*DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc);
+            OnDoorCode.OnNext(dc);*/
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()

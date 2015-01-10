@@ -206,9 +206,10 @@ namespace Pluton
             basePlayer.inventory.SendSnapshot();
             //basePlayer.CallMethod("ClientRPC", basePlayer, "StartLoading");
 
-            ProtoBuf.RPCMessage rPCMessage = new ProtoBuf.RPCMessage();
-            rPCMessage.funcName = StringPool.Get("startloading");
-            basePlayer.net.MessageClient(basePlayer.net.connection, MSG.RPC_MESSAGE, rPCMessage.ToProtoBytes());
+            NetworkData networkData = new NetworkData ();
+            networkData.WriteUInt(StringPool.Get("startloading"));
+            networkData.WriteUInt64 ((basePlayer.net.connection != null) ? basePlayer.net.connection.ownerid : 0);
+            basePlayer.net.MessageClient(basePlayer.net.connection, MSG.RPC_MESSAGE, networkData.ToBytes());
 
             basePlayer.CallMethod("SendNetworkUpdate_Position");
             basePlayer.Invoke("EndSleeping", 0.5f);

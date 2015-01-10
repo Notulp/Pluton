@@ -56,10 +56,10 @@ namespace Pluton
             }
             buildingBlock.transform.localRotation *= Quaternion.Euler(grade.rotationAmount);
 
-            ProtoBuf.RPCMessage rPCMessage = new ProtoBuf.RPCMessage();
-            rPCMessage.funcName = StringPool.Get("updateconditionalmodels");
-            rPCMessage.data = null;
-            buildingBlock.net.Broadcast(MSG.RPC_MESSAGE, rPCMessage.ToProtoBytes(), Network.SendMethod.Reliable);
+            NetworkData networkData = new NetworkData();
+            networkData.WriteUInt(StringPool.Get("updateconditionalmodels"));
+            networkData.WriteUInt64(0);
+            buildingBlock.net.Broadcast(MSG.RPC_MESSAGE, networkData.ToBytes(), Network.SendMethod.Reliable);
 
             buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
         }

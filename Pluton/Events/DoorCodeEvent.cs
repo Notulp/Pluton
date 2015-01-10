@@ -15,7 +15,8 @@ namespace Pluton.Events
             codeLock = doorLock;
             doorCode = (string)doorLock.GetFieldValue("code");
         }
-
+        // FIXME: needs some rework
+        /*
         public void Deny()
         {
             if (doorCode == "0000")
@@ -42,7 +43,7 @@ namespace Pluton.Events
         public bool IsCorrect()
         {
             return msg.dataString == doorCode;
-        }
+        }*/
     }
 }
 
