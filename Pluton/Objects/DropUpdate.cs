@@ -57,6 +57,12 @@ namespace Pluton
         {
         }
 
+        ~DropUpdate()
+        {
+            RemoveThis();
+            Save();
+        }
+
         private void OnLanded()
         {
             if (SerializedDUList == null)
@@ -150,14 +156,12 @@ namespace Pluton
 
         public void RemoveThis()
         {
-            if (SerializedDUList.Contains(ground.Serialize())) {
-                SerializedDUList.Remove(ground.Serialize());
-            }
+            Remove(ground);
         }
 
         public void SaveThis()
         {
-            if (!SerializedDUList.Contains(ground.Serialize())) {
+            if (!Contains(ground)) {
                 SerializedDUList.Add(ground.Serialize());
             }
         }
@@ -172,15 +176,40 @@ namespace Pluton
             if (Server.GetServer().serverData.ContainsKey(DSTABLE, DSKEY)) {
                 SerializedDUList = (System.Collections.Generic.List<SerializedVector3>)Server.GetServer().serverData.Get(DSTABLE, DSKEY);
                 var boxes = UnityEngine.Object.FindObjectsOfType<StorageBox>();
-                var droppedBoxes = (from box in boxes
-                                                where SerializedDUList.Contains(box.transform.position.Serialize())
-                                                select box).ToList();
+                var droppedBoxes = (from droppedBox in boxes
+                                        where Contains(droppedBox.transform.position)
+                                        select droppedBox).ToList();
 
-                droppedBoxes.ForEach(d => d.gameObject.AddComponent<DropUpdate>());
+                foreach (var dbox in droppedBoxes) {
+                    var du = dbox.gameObject.AddComponent<DropUpdate>();
+                    du.box = dbox;
+                    du.self = dbox as BaseEntity;
+                    du.landed = true;
+                }
             } else {
                 SerializedDUList = new System.Collections.Generic.List<SerializedVector3>();
                 Save();
                 Server.GetServer().serverData.Save();
+            }
+        }
+
+        public static bool Contains(Vector3 v3)
+        {
+            foreach (SerializedVector3 sv3 in SerializedDUList) {
+                if (sv3.ToVector3() == v3) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static void Remove(Vector3 v3)
+        {
+            for (int i = 0; i < SerializedDUList.Count; i++) {
+                if (SerializedDUList[i].ToVector3() == v3) {
+                    SerializedDUList.RemoveAt(i);
+                    return;
+                }
             }
         }
     }

@@ -72,7 +72,6 @@ namespace Pluton
             DataStore.GetInstance().Load();
             Server.GetServer();
             PluginLoader.GetInstance().Init();
-            DropUpdate.Load();
             ReloadTimers();
             server.official = false;
         }
