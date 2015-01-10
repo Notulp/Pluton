@@ -107,7 +107,9 @@ namespace Pluton
         {
             return (from item in ItemManager.Instance.itemList
                     where item.displayname == itemName
-                    select item.itemid).ElementAt<int>(0);
+                       || item.shortname == itemName
+                       || item.worldprefab == itemName
+                    select item.itemid).FirstOrDefault<int>();
         }
 
         public static ContainerPreference GetContainerPreference(string category)
