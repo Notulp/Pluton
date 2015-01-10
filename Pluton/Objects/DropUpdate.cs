@@ -59,6 +59,9 @@ namespace Pluton
 
         private void OnLanded()
         {
+            if (SerializedDUList == null)
+                SerializedDUList = new System.Collections.Generic.List<SerializedVector3>();
+
             SaveThis();
             Save();
 
@@ -166,13 +169,19 @@ namespace Pluton
 
         public static void Load()
         {
-            SerializedDUList = (System.Collections.Generic.List<SerializedVector3>)Server.GetServer().serverData.Get(DSTABLE, DSKEY);
-            var boxes = UnityEngine.Object.FindObjectsOfType<StorageBox>();
-            var droppedBoxes = (from box in boxes
-                                         where SerializedDUList.Contains(box.transform.position.Serialize())
-                                         select box).ToList();
+            if (Server.GetServer().serverData.ContainsKey(DSTABLE, DSKEY)) {
+                SerializedDUList = (System.Collections.Generic.List<SerializedVector3>)Server.GetServer().serverData.Get(DSTABLE, DSKEY);
+                var boxes = UnityEngine.Object.FindObjectsOfType<StorageBox>();
+                var droppedBoxes = (from box in boxes
+                                                where SerializedDUList.Contains(box.transform.position.Serialize())
+                                                select box).ToList();
 
-            droppedBoxes.ForEach(d => d.gameObject.AddComponent<DropUpdate>());
+                droppedBoxes.ForEach(d => d.gameObject.AddComponent<DropUpdate>());
+            } else {
+                SerializedDUList = new System.Collections.Generic.List<SerializedVector3>();
+                Save();
+                Server.GetServer().serverData.Save();
+            }
         }
     }
 }
