@@ -85,6 +85,7 @@ namespace Pluton
                 parachute.Kill();
 
             parachute = null;
+            Realm.Pop();
         }
 
         private void Awake()
