@@ -168,8 +168,7 @@
         {
             bool inQuote = false;
             string current = "";
-            var final = new string[20]; // should be enough
-            int Count = 0;
+            List<string> final = new List<string>();
 
             foreach (string str in sArr) {
                 if (str.StartsWith("\""))
@@ -187,14 +186,13 @@
 
                 if (!inQuote) {
                     if (current != "")
-                        final[Count] = (current + " " + str).Replace("\"", "");
+                        final.Add((current + " " + str).Replace("\"", ""));
                     if (current == "")
-                        final[Count] = (str).Replace("\"", "");
-                    Count += 1;
+                        final.Add(str.Replace("\"", ""));
                     current = "";
                 }
             }
-            return final;
+            return final.ToArray();
         }
 
         public static Hashtable HashtableFromFile(string path)
