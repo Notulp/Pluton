@@ -51,9 +51,11 @@ namespace Pluton.Events
             }
         }
 
-        public BaseEntity Attacker {
+        public Entity Attacker {
             get {
-                return _info.Initiator;
+                if (_info.Initiator == null)
+                    return null;
+                return new Entity(_info.Initiator);
             }
         }
 
