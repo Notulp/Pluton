@@ -563,9 +563,9 @@ namespace Pluton
         // BasePlayer.UpdateRadiation()
         public static void PlayerTakeRadiation(BasePlayer player, float radAmount)
         {
-            var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), (float)player.metabolism.radiation.GetFieldValue("value"), radAmount);
+            var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), player.metabolism.radiation.value, radAmount);
             OnPlayerTakeRads.OnNext(ptr);
-            player.metabolism.radiation.SetFieldValue("value", ptr.Next);
+            player.metabolism.radiation.value = ptr.Next;
         }
         /*
         // In future create an Event, allow people to adjust certain resources to give certain amounts!
