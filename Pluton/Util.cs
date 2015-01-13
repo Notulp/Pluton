@@ -16,6 +16,62 @@
         private static Util util;
         private static DirectoryInfo UtilPath;
 
+        public Dictionary<string, GameObject> zones = new Dictionary<string, GameObject>();
+        public DataStore ZoneStore;
+
+        public Zone2D GetZone(string name)
+        {
+            return zones[name].GetComponent<Zone2D>();
+        }
+
+        public void SetZone(Zone2D zone)
+        {
+            zones[zone.Name] = zone.gameObject;
+        }
+
+        public Zone2D CreateZone(string name)
+        {
+            try {
+                GameObject obj = new GameObject(name);
+                var gobj = GameObject.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
+                var zone = gobj.AddComponent<Zone2D>();
+                zone.Name = name;
+                zones.Add(name, gobj);
+                return zone;
+            } catch (Exception ex) {
+                Logger.LogException(ex);
+                return null;
+            }
+        }
+
+        public void LoadZones()
+        {
+            try {
+                Logger.LogWarning("Loading zones.");
+                Hashtable zht = ZoneStore.GetTable("Zones");
+                foreach (object zone in zht.Values) {
+                    var z = zone as SerializedZone2D;
+                    Logger.LogWarning("Zone found with name: " + z.Name);
+                    z.ToZone2D();
+                }
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+        }
+
+        public void SaveZones()
+        {
+            try {
+                Logger.LogWarning("Saving " + zones.Count.ToString() + " zone.");
+                foreach (var zone in zones.Values) {
+                    var z = zone.gameObject.GetComponent<Zone2D>();
+                    ZoneStore.Add("Zones", z.Name, z.Serialize());
+                }
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+        }
+
         public void ConsoleLog(string str, bool adminOnly = false)
         {
             try
@@ -155,6 +211,8 @@
             if (util == null) {
                 util = new Util();
                 UtilPath = new DirectoryInfo(Path.Combine(GetPublicFolder(), "Util"));
+                util.ZoneStore = new DataStore("Zones.ds");
+                util.LoadZones();
             }
             return util;
         }

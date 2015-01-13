@@ -187,6 +187,9 @@
                 serverData.Add("OfflinePlayers", op2.SteamID, op2);
             }
             serverData.Save();
+
+            Util.GetUtil().SaveZones();
+            Util.GetUtil().ZoneStore.Save();
         }
 
         public List<Player> ActivePlayers {
