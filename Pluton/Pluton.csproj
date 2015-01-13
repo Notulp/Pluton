@@ -122,6 +122,8 @@
     <Compile Include="Stopper.cs" />
     <Compile Include="Events\DoorUseEvent.cs" />
     <Compile Include="Objects\DropUpdate.cs" />
+    <Compile Include="Objects\Zone2D.cs" />
+    <Compile Include="Serialize\SerializedZone2D.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
