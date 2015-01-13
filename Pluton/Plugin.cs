@@ -127,16 +127,14 @@
                     object result = (object)null;
 
                     // this should report if it takes more than 1 sec to complete the call, decent way to catch slowpoke plugins
-                    Stopper stopper = new Stopper(Name, func).Start();
-
-                    if (Type == PluginType.Python)
-                        result = PyEngine.Operations.InvokeMember(Class, func, obj);
-                    else if (Type == PluginType.JS)
-                        result = JSEngine.Invoke(func, obj);
-                    else if (Type == PluginType.CSharp)
-                        result = CSharpEngine.CallMethod(func, obj);
-
-                    stopper.Stop();
+                    using (new Stopper(Name, func)) {
+                        if (Type == PluginType.Python)
+                            result = PyEngine.Operations.InvokeMember(Class, func, obj);
+                        else if (Type == PluginType.JS)
+                            result = JSEngine.Invoke(func, obj);
+                        else if (Type == PluginType.CSharp)
+                            result = CSharpEngine.CallMethod(func, obj);
+                    }
 
                     return result;
                 } else {

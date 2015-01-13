@@ -3,42 +3,32 @@ using System.Diagnostics;
 
 namespace Pluton
 {
-    public class Stopper : CountedInstance
+    public class Stopper : CountedInstance, IDisposable
     {
-        string Name;
-        float WarnTime;
-        Stopwatch stopper = new Stopwatch();
-        string Category;
+        string Type;
+        string Method;
+        long WarnTimeMS;
+        Stopwatch stopper;
 
-
-        public Stopper(string categ, string name, float warnSecs = 1)
+        public Stopper(string type, string method, float warnSecs = 0.1f)
         {
-            Category = categ;
-            Name = name;
-            WarnTime = warnSecs;
+            Type = type;
+            Method = method;
+            WarnTimeMS = (long)warnSecs * 1000;
+            stopper = Stopwatch.StartNew();
         }
 
-        public Stopper Start()
-        {
-            if (!pluton.stopper)
-                return this;
-
-            stopper.Reset();
-            stopper.Start();
-            return this;
-        }
-
-        public void Stop()
+        void IDisposable.Dispose()
         {
             if (!pluton.stopper)
                 return;
 
-            stopper.Stop();
-            if ((float)stopper.Elapsed.Seconds > WarnTime) {
-                Logger.LogWarning(String.Format("{0}.{1}: Took: {2}",
-                    Category,
-                    Name,
-                    stopper.Elapsed
+            if (stopper.ElapsedMilliseconds > WarnTimeMS) {
+                Logger.LogWarning(String.Format("[{0}.{1}] Took: {2}s ({3}ms)",
+                    Type,
+                    Method,
+                    stopper.Elapsed.Seconds,
+                    stopper.ElapsedMilliseconds
                 ));
             }
         }
