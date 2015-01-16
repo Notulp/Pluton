@@ -18,7 +18,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
         private static TypeDefinition worldClass;
-        private static string version = "1.0.0.21";
+        private static string version = "1.0.0.23";
 
         #region patches
 
