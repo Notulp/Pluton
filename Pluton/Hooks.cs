@@ -145,13 +145,7 @@ namespace Pluton
                 ConnectionAuth.Reject(connection, ae._reason);
                 return;
             }
-
-            Approval instance = new Approval();
-            instance.level = Application.loadedLevelName;
-            instance.levelSeed = global::World.Seed;
-            instance.levelSize = global::World.Size;
-            instance.hostname = server.hostname;
-            Net.sv.Approve(connection, Approval.SerializeToBytes(instance));
+            SingletonComponent<ServerMgr>.Instance.ConnectionApproved(connection);
         }
 
         //FacePunch.ConsoleSystem.OnClientCommand

@@ -68,7 +68,7 @@ namespace Pluton.Patcher
 
             ILProcessor iLProcessor = onClientCmd.Body.GetILProcessor();
 
-            for (int i = 22; i >= 18; i--)
+            for (int i = 23; i >= 18; i--)
                 iLProcessor.Body.Instructions.RemoveAt(i);
 
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[17], Instruction.Create(OpCodes.Ldloc_2));
