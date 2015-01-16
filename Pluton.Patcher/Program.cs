@@ -33,28 +33,6 @@ namespace Pluton.Patcher
             init.Body.GetILProcessor().InsertAfter(init.Body.Instructions[init.Body.Instructions.Count - 2], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
-        private static void CargoPlaneBehaviourPatch()
-        {
-            TypeDefinition cargoPlane = rustAssembly.MainModule.GetType("CargoPlane");
-            MethodDefinition startMtd = cargoPlane.GetMethod("Start");
-            MethodDefinition updateMtd = cargoPlane.GetMethod("Update");
-
-            MethodDefinition getWorld = worldClass.GetMethod("GetWorld");
-            MethodDefinition dropLoot = worldClass.GetMethod("DropLargeLootBox");
-
-            ILProcessor il = updateMtd.Body.GetILProcessor();
-
-            for (int i = 41; i >= 23; i--) {
-                if (i < 25 || i > 27)
-                    il.Body.Instructions.RemoveAt(i);
-            }
-            il.InsertAfter(il.Body.Instructions[22], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(getWorld)));
-            il.InsertAfter(il.Body.Instructions[26], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(dropLoot)));
-
-            startMtd.Body.Instructions.Clear();
-            startMtd.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-        }
-
         private static void ChatPatch()
         {
             TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
@@ -334,12 +312,12 @@ namespace Pluton.Patcher
 
             ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
 
-            for (int i = 9; i >= 6; i--)
+            for (int i = 11; i >= 8; i--)
                 iLProcessor.Body.Instructions.RemoveAt(i);
 
-            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[6], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[7], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));            
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[7], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[8], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(onServerCmd.Body.Instructions[9], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));            
         }
 
         private static void ServerInitPatch()
@@ -378,29 +356,6 @@ namespace Pluton.Patcher
             il.InsertAfter(servUpdate.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
         }
 
-        private static void SwapAirdropPatch()
-        {
-            TypeDefinition eventcmd = rustAssembly.MainModule.GetType("EventCmd");
-            TypeDefinition eventPref = rustAssembly.MainModule.GetType("TriggeredEventPrefab");
-            MethodDefinition run = eventcmd.GetMethod("run");
-            MethodDefinition runEvent = eventPref.GetMethod("RunEvent");
-
-            MethodDefinition getWorld = worldClass.GetMethod("GetWorld");
-            MethodDefinition airDrop = worldClass.GetMethod("AirDrop");
-
-            run.Body.Instructions.Clear();
-            runEvent.Body.Instructions.Clear();
-
-            run.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(getWorld)));
-            run.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(airDrop)));
-            run.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-
-            runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(getWorld)));
-            runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(airDrop)));
-            runEvent.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-
-        }
-
         #endregion
 
         // from fougerite.patcher
@@ -423,7 +378,6 @@ namespace Pluton.Patcher
         {
             BootstrapAttachPatch();
 
-            CargoPlaneBehaviourPatch();
             ChatPatch();
             ClientAuthPatch();
             CombatEntityHurtPatch();
@@ -449,7 +403,6 @@ namespace Pluton.Patcher
             ServerShutdownPatch();
             ServerInitPatch();
             SetModdedPatch();
-            SwapAirdropPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
             rustAssembly.MainModule.Types.Add(plutonClass);
