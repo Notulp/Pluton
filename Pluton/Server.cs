@@ -82,8 +82,6 @@
                 //server.LoadStructures();
                 server.ReloadBlueprints();
                 server.LoadOfflinePlayers();
-
-                DropUpdate.SerializedDUList = new List<SerializedVector3>();
             }
             return server;
         }

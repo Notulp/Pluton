@@ -29,23 +29,25 @@ namespace Pluton
 
         public void AirDrop()
         {
-            float speed = UnityEngine.Random.Range(35f, 65f);
-            float height = UnityEngine.Random.Range(350f, 550f);
-
+            float speed = UnityEngine.Random.Range(30f, 55f);
+            float height = UnityEngine.Random.Range(global::World.Height - (global::World.Height / 10), global::World.Height);
             AirDrop(speed, height);
         }
 
         public void AirDrop(float speed, float height = 400f)
         {
-            float worldSize = (float)(global::World.Size - (global::World.Size / 3));
-            Vector3 dropAt = Vector3.zero;
-
-            while (dropAt.x == 0 || dropAt.z == 0)
-                dropAt = Vector3Ex.Range(-worldSize, worldSize);
-
-            dropAt.y = 0f;
-
-            AirDropAt(dropAt, speed, height);
+            BaseEntity baseEntity = GameManager.CreateEntity("events/cargo_plane", default(Vector3), default(Quaternion));
+            if (baseEntity) {
+                baseEntity.Spawn(true);
+            }
+            CargoPlane cp = baseEntity.GetComponent<CargoPlane>();
+            Vector3 start = (Vector3)cp.GetFieldValue("startPos");
+            Vector3 end = (Vector3)cp.GetFieldValue("endPos");
+            start.y = height;
+            end.y = height;
+            cp.SetFieldValue("secondsToTake", Vector3.Distance(start, end) / speed);
+            cp.SetFieldValue("startPos", start);
+            cp.SetFieldValue("endPos", end);
         }
 
         public void AirDropAt(Vector3 position, float speed = 50f, float height = 400f)
@@ -53,13 +55,16 @@ namespace Pluton
             float worldSize = (float)(global::World.Size - (global::World.Size / 7));
             Vector3 zero = Vector3.zero;
 
-            BaseEntity entity = GameManager.CreateEntity("events/cargo_plane", zero, Quaternion.identity);
-            CargoPlane cp = entity.GetComponent<CargoPlane>();
+            BaseEntity baseEntity = GameManager.CreateEntity("events/cargo_plane", default(Vector3), default(Quaternion));
+            if (baseEntity) {
+                baseEntity.Spawn(true);
+            }
+            CargoPlane cp = baseEntity.GetComponent<CargoPlane>();
 
             Vector3 startPos = zero, endPos = zero;
             float secsToTake;
 
-            float rand = (float)(worldSize + (worldSize / UnityEngine.Random.Range(-10f, 10f)));
+            float rand = (float)(worldSize * UnityEngine.Random.Range(0.4f, 1.2f));
 
             while (startPos.x == 0 || startPos.z == 0)
                 startPos = Vector3Ex.Range(-rand, rand);
@@ -74,45 +79,7 @@ namespace Pluton
             cp.SetFieldValue("secondsToTake", secsToTake);
             cp.transform.rotation = Quaternion.LookRotation(endPos - startPos);
             
-            entity.Spawn(true);
-
-            entity.Invoke("KillMessage", secsToTake - 1);
-        }
-
-        public void DropLargeLootBox(Vector3 v3)
-        {
-            try {
-                BaseEntity baseEntity = GameManager.CreateEntity("items/large_woodbox_deployed", v3, default(Quaternion));
-                if (baseEntity) {
-                    var parachute = GameManager.CreateEntity("parachute", default(Vector3), default(Quaternion));
-                    if (parachute) {
-                        parachute.SetParent(baseEntity);
-                        parachute.Spawn(true);
-                    }
-                    baseEntity.globalBroadcast = true;
-                    baseEntity.Spawn(true);
-                    StorageBox sb = baseEntity as StorageBox;
-                    DropUpdate du = baseEntity.gameObject.AddComponent<DropUpdate>();
-                    du.parachute = parachute;
-                    du.box = sb;
-                    du.self = baseEntity;
-                    RaycastHit hit;
-                    var origin = new Vector3(v3.x, v3.y - 2, v3.z);
-                    if (Physics.Raycast(origin, Vector3.down, out hit, 1000,  LayerMask.GetMask(
-                        "Deployed", "Ragdoll", "Invisible",
-                        "AI", "Player Movement", "Player Interaction",
-                        "Game Trace", "Sky", "World", "Player (Server)",
-                        "Trigger", "Player Model Renderin", "Grass",
-                        "Construction", "Construction Socket", "Terrain",
-                        "Guide", "Debris", "Resource", "Construction Trigger"
-                    ))) {
-                        du.ground = hit.point;
-                    }
-                }
-            } catch (Exception ex) {
-                Logger.LogError("[DropLoot] Couldn't drop!");
-                Logger.LogError(ex.StackTrace);
-            }
+            baseEntity.Spawn(true);
         }
 
         public void AirDropAt(float x, float y, float z, float speed = 50f, float height = 400f)

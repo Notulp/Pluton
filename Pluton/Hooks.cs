@@ -677,8 +677,6 @@ namespace Pluton
 
         public static void ServerInit()
         {
-            DropUpdate.Load();
-
             float craft = Single.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             Server.GetServer().CraftingTimeScale = craft;
             double resource = Double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
