@@ -153,6 +153,7 @@ namespace Pluton
 
         public void Draw()
         {
+            ComputeAllTris();
             for (int i = 0; i < Tris.Length; i += 3) {
                 DrawLine(Verts[Tris[i]], Verts[Tris[i + 1]], Color.red);
                 DrawLine(Verts[Tris[i]], Verts[Tris[i + 2]], Color.red);

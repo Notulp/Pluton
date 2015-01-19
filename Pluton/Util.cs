@@ -36,7 +36,7 @@
                 var gobj = GameObject.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
                 var zone = gobj.AddComponent<Zone2D>();
                 zone.Name = name;
-                zones.Add(name, gobj);
+                zones[name] = zone.gameObject;
                 return zone;
             } catch (Exception ex) {
                 Logger.LogException(ex);

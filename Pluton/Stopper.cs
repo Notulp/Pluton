@@ -14,7 +14,7 @@ namespace Pluton
         {
             Type = type;
             Method = method;
-            WarnTimeMS = (long)warnSecs * 1000;
+            WarnTimeMS = (long)(warnSecs * 1000);
             stopper = Stopwatch.StartNew();
         }
 
