@@ -12,6 +12,8 @@ namespace Pluton
 
         public Stopper(string type, string method, float warnSecs = 0.1f)
         {
+            if (!pluton.stopper)
+                return;
             Type = type;
             Method = method;
             WarnTimeMS = (long)(warnSecs * 1000);
