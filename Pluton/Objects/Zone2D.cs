@@ -16,8 +16,8 @@ namespace Pluton
 
         public List<Vector3> Verts;
 
-        public static float min = -100f;
-        public static float max = 800f;
+        public static float min = -50f;
+        public static float max = (float)global::World.Height;
 
         public int[] Tris;
         public int TrisCount = 0;
