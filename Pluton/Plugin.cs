@@ -70,6 +70,7 @@
                 Scope.SetVariable("World", World.GetWorld());
                 Scope.SetVariable("Commands", chatCommands);
                 Scope.SetVariable("ServerConsoleCommands", consoleCommands);
+                Scope.SetVariable("GlobalData", GlobalData);
                 PyEngine.Execute(code, Scope);
                 Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
                 Globals = PyEngine.Operations.GetMemberNames(Class);
@@ -89,6 +90,7 @@
                     .SetValue("Plugin", this)
                     .SetValue("Commands", chatCommands)
                     .SetValue("ServerConsoleCommands", consoleCommands)
+                    .SetValue("GlobalData", GlobalData)
                     .Execute(code);
                 JavaScriptParser parser = new JavaScriptParser();
                 Globals = (from function in parser.Parse(code).FunctionDeclarations

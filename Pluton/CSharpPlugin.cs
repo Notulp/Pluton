@@ -11,6 +11,11 @@ namespace Pluton
         public Util Util;
         public ChatCommands Commands;
         public ConsoleCommands ServerConsoleCommands;
+        public System.Collections.Generic.Dictionary<string, object> GlobalData {
+            get {
+                return Plugin.GlobalData;
+            }
+        }
 
         public CSharpPlugin()
         {
