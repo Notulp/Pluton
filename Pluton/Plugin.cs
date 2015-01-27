@@ -244,6 +244,36 @@
 
         #endregion
 
+        #region jsonfiles
+
+        public bool JsonFileExists(string path)
+        {
+            path = ValidateRelativePath(path + ".json");
+            if (path == null)
+                return false;
+
+            return File.Exists(path);
+        }
+
+        public string FromJsonFile(string path)
+        {
+            if (JsonFileExists(path))
+                return File.ReadAllText(path);
+
+            return null;
+        }
+
+        public void ToJsonFile(string path, string json)
+        {
+            path = ValidateRelativePath(path + ".json");
+            if (path == null)
+                return;
+
+            File.WriteAllText(path, json);
+        }
+
+        #endregion
+
         #region inifiles
 
         public IniParser GetIni(string path)
