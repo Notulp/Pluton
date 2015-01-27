@@ -21,6 +21,7 @@
         public void Init()
         {
             Plugin.LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
+            Plugin.GlobalData = new Dictionary<string, object>();
             pluginDirectory = new DirectoryInfo(Path.Combine(Util.GetPublicFolder(), "Plugins"));
             if (!Directory.Exists(pluginDirectory.FullName)) {
                 Directory.CreateDirectory(pluginDirectory.FullName);

@@ -35,6 +35,8 @@
         public readonly List<TimedEvent> ParallelTimers;
         public static string LibPath;
 
+        public static Dictionary<string, object> GlobalData;
+
         public ConsoleCommands consoleCommands;
         public ChatCommands chatCommands;
 
