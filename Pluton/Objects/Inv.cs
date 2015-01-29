@@ -49,6 +49,11 @@ namespace Pluton
             return _inv.GiveItem(itemID, amount, true);
         }
 
+        public bool Add(string longNameOrShortNameOrPrefab, int amount)
+        {
+            return _inv.GiveItem(InvItem.GetItemID(longNameOrShortNameOrPrefab), amount, true);
+        }
+
         public void Notice(LoadOutItem loItem)
         {
             string msg = String.Format("{0} {1}", InvItem.GetItemID(loItem.Name), loItem.Amount);
