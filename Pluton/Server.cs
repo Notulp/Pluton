@@ -164,9 +164,9 @@
             }
         }
 
-        public bool SendCommand(string command, bool wantsReply = true)
+        public bool SendCommand(string command, params object[] args)
         {
-            return ConsoleSystem.Run(command, wantsReply);
+            return ConsoleSystem.Run.Server.Normal(command, args);
         }
 
         public void OnShutdown()
