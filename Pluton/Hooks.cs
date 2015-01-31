@@ -425,7 +425,7 @@ namespace Pluton
             door.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
 
             if (due.DenyReason != "")
-                rpc.player.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(Server.server_message_name) + " " + StringExtensions.QuoteSafe(due.DenyReason));
+                rpc.player.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(due.DenyReason));
         }
 
         // Construiction.Common.CreateConstruction()
@@ -641,7 +641,7 @@ namespace Pluton
 
             if (ele.Cancel) {
                 playerLoot.Clear();
-                looter.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(Server.server_message_name) + " " + StringExtensions.QuoteSafe(ele.cancelReason));
+                looter.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(ele.cancelReason));
             }
         }
 
@@ -654,7 +654,7 @@ namespace Pluton
 
             if (ple.Cancel) {
                 playerLoot.Clear();
-                looter.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(Server.server_message_name) + " " + StringExtensions.QuoteSafe(ple.cancelReason));
+                looter.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(ple.cancelReason));
             }
         }
 
@@ -667,33 +667,34 @@ namespace Pluton
 
             if (ile.Cancel) {
                 playerLoot.Clear();
-                looter.SendConsoleCommand("chat.add " + StringExtensions.QuoteSafe(Server.server_message_name) + " " + StringExtensions.QuoteSafe(ile.cancelReason));
+                looter.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(ile.cancelReason));
             }
         }
 
-        //FacePunch.ConsoleSystem.Run
-        public static void ServerConsoleCommand(String rconCmd, bool wantFeedback)
-        {
-            if (!String.IsNullOrEmpty(rconCmd)) {
-                ServerConsoleEvent ce = new ServerConsoleEvent(rconCmd, wantFeedback);
+        // Facepunch.ConsoleSystem.SystemRealm.Normal
+        public static void ServerConsoleCommand(ConsoleSystem.SystemRealm realm, ConsoleSystem.RunOptions options, string cmd, string[] args) {
+            try {
+                if (!Bootstrap.PlutonLoaded)
+                    return;
+
+                ServerConsoleEvent ssc = new ServerConsoleEvent(realm, options, cmd, args);
 
                 foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
-                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ce.cmd);
-                    foreach (ConsoleCommand cmd in commands) {
-                        if (cmd.callback == null)
+                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(cmd);
+                    foreach (ConsoleCommand cc in commands) {
+                        if (cc.callback == null)
                             continue;
                         try {
-                            cmd.callback(ce.Args.ToArray());
+                            cc.callback(args);
                         } catch (Exception ex) {
-                            Logger.LogError(cmd.plugin.FormatExeption(ex));
+                            Logger.LogError(cc.plugin.FormatExeption(ex));
                         }
                     }
                 }
 
-                OnServerConsole.OnNext(ce);
-
-                if(wantFeedback)
-                    Debug.Log(String.Format("{0} was executed from console!", rconCmd));
+                OnServerConsole.OnNext(ssc);
+            } catch (Exception ex) {
+                Logger.LogException(ex);
             }
         }
 

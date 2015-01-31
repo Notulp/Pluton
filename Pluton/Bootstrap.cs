@@ -12,6 +12,7 @@ namespace Pluton
 
         public static ServerTimers timers;
 
+        public static bool PlutonLoaded = false;
 
         public static void AttachBootstrap()
         {
@@ -27,6 +28,8 @@ namespace Pluton
                 }
 
                 Init();
+
+                PlutonLoaded = true;
                 Console.WriteLine("Pluton Loaded!");
             } catch (Exception ex) {
                 Debug.LogException(ex);
