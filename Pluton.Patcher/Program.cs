@@ -411,7 +411,7 @@ namespace Pluton.Patcher
         private static void PatchFacepunch()
         {
             ClientConsoleCommandPatch();
-            ServerConsoleCommandPatch();
+            //ServerConsoleCommandPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, facepunchAssembly.MainModule.Import(typeof(Object)));
             facepunchAssembly.MainModule.Types.Add(plutonClass);
