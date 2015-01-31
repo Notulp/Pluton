@@ -207,7 +207,7 @@ namespace Pluton
             //basePlayer.CallMethod("ClientRPC", basePlayer, "StartLoading");
 
             NetworkData networkData = new NetworkData ();
-            networkData.WriteUInt(StringPool.Get("startloading"));
+            networkData.WriteUInt32(StringPool.Get("startloading"));
             networkData.WriteUInt64 ((basePlayer.net.connection != null) ? basePlayer.net.connection.ownerid : 0);
             basePlayer.net.MessageClient(basePlayer.net.connection, MSG.RPC_MESSAGE, networkData.ToBytes());
 
