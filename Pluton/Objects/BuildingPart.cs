@@ -57,7 +57,7 @@ namespace Pluton
             buildingBlock.transform.localRotation *= Quaternion.Euler(grade.rotationAmount);
 
             NetworkData networkData = new NetworkData();
-            networkData.WriteUInt(StringPool.Get("updateconditionalmodels"));
+            networkData.WriteUInt32(StringPool.Get("updateconditionalmodels"));
             networkData.WriteUInt64(0);
             buildingBlock.net.Broadcast(MSG.RPC_MESSAGE, networkData.ToBytes(), Network.SendMethod.Reliable);
 
