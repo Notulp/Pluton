@@ -107,8 +107,30 @@ namespace Pluton
                 if (str.Length > 128)
                     str = str.Substring(0, 128);
 
-                if (chat.serverlog)
-                    Debug.Log(basePlayer.displayName + ": " + str);
+                if (str.Length <= 0) return;
+
+
+                if (chat.serverlog) {
+                    ServerConsole.PrintColoured (new object[] {
+                        ConsoleColor.DarkYellow,
+                        basePlayer.displayName + ": ",
+                        ConsoleColor.DarkGreen,
+                        str
+                    });
+                    server.Log ("Log.Chat.txt", string.Format ("{0}/{1}: {2}\r\n", basePlayer.userID, basePlayer.displayName, str));
+                    Debug.Log (string.Format ("[CHAT] {0}: {1}", basePlayer.displayName, str));
+                }
+
+                string arg2 = "#5af";
+                if (basePlayer.IsAdmin ()) {
+                    arg2 = "#af5";
+                }
+
+                if (DeveloperList.IsDeveloper (basePlayer)) {
+                    arg2 = "#fa5";
+                }
+
+                string text2 = string.Format ("<color={2}>{0}</color>  {1}", basePlayer.displayName.Replace('<', ' ').Replace('>', ' '), str.Replace('<', ' ').Replace('>', ' '), arg2);
 
                 OnChat.OnNext(pChat);
 
@@ -117,14 +139,14 @@ namespace Pluton
                     arg.ReplyWith(pChat.Reply);
 
                     if (server.globalchat) {
-                        ConsoleSystem.Broadcast("chat.add " + pChat.BroadcastName.QuoteSafe() + " " + pChat.FinalText.QuoteSafe() + " 1.0");
+                        ConsoleSystem.Broadcast("chat.add", basePlayer.userID, text2, 1);
                     } else {
                         float num = 2500;
                         foreach (Connection current in Net.sv.connections) {
                             if (current.player != null) {
                                 float sqrMagnitude = (current.player.transform.position - basePlayer.transform.position).sqrMagnitude;
                                 if (sqrMagnitude <= num) {
-                                    ConsoleSystem.SendClientCommand(current, "chat.add " + pChat.BroadcastName.QuoteSafe() + " " + pChat.FinalText.QuoteSafe() + " " + Mathf.Clamp01(num - sqrMagnitude + 0.2f).ToString("F").Replace(',', '.'));
+                                    ConsoleSystem.SendClientCommand(current, "chat.add", basePlayer.userID, text2, Mathf.Clamp01(num - sqrMagnitude + 0.2f));
                                 }
                             }
                         }
