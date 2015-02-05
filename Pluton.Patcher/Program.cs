@@ -18,7 +18,7 @@ namespace Pluton.Patcher
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
         private static TypeDefinition worldClass;
-        private static string version = "1.0.0.24";
+        private static string version = "1.0.0.25";
 
         #region patches
 
@@ -313,11 +313,11 @@ namespace Pluton.Patcher
                     MethodDefinition onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
 
                     ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[12], Instruction.Create(OpCodes.Ldarg_0));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_1));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Ldarg_2));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[15], Instruction.Create(OpCodes.Ldarg_3));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[16], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));
+                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[12], Instruction.Create(OpCodes.Ldloc_1));
+                    //iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_1));
+                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_2));
+                    //iLProcessor.InsertAfter(iLProcessor.Body.Instructions[15], Instruction.Create(OpCodes.Ldarg_3));
+                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));
                 }
             }
         }

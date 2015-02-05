@@ -674,20 +674,20 @@ namespace Pluton
         }
 
         // Facepunch.ConsoleSystem.SystemRealm.Normal
-        public static void ServerConsoleCommand(ConsoleSystem.SystemRealm realm, ConsoleSystem.RunOptions options, string cmd, object[] args) {
+        public static void ServerConsoleCommand(ConsoleSystem.Arg arg, string cmd) {
             try {
                 if (!Bootstrap.PlutonLoaded)
                     return;
 
-                ServerConsoleEvent ssc = new ServerConsoleEvent(realm, options, cmd, args);
+                ServerConsoleEvent ssc = new ServerConsoleEvent(arg, cmd);
 
                 foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
-                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(cmd);
+                    ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ssc.cmd);
                     foreach (ConsoleCommand cc in commands) {
                         if (cc.callback == null)
                             continue;
                         try {
-                            cc.callback(args);
+                            cc.callback(arg.ArgsStr.Split(' '));
                         } catch (Exception ex) {
                             Logger.LogError(cc.plugin.FormatExeption(ex));
                         }
