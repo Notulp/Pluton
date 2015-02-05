@@ -615,6 +615,7 @@ namespace Pluton
             player.UpdateNetworkGroup();
             player.UpdatePlayerCollider(true, false);
             player.StartSleeping();
+            player.Invoke("LifeStoryStart", 0f);
             player.metabolism.Reset();
 
             if (re.StartHealth < Single.Epsilon) {
@@ -626,6 +627,7 @@ namespace Pluton
             if (re.GiveDefault)
                 player.inventory.GiveDefaultItems();
 
+            player.SendNetworkUpdateImmediate(false);
             player.SendFullSnapshot();
 
             if (re.WakeUp)
@@ -672,7 +674,7 @@ namespace Pluton
         }
 
         // Facepunch.ConsoleSystem.SystemRealm.Normal
-        public static void ServerConsoleCommand(ConsoleSystem.SystemRealm realm, ConsoleSystem.RunOptions options, string cmd, string[] args) {
+        public static void ServerConsoleCommand(ConsoleSystem.SystemRealm realm, ConsoleSystem.RunOptions options, string cmd, object[] args) {
             try {
                 if (!Bootstrap.PlutonLoaded)
                     return;

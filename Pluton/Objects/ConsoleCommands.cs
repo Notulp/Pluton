@@ -6,7 +6,7 @@ namespace Pluton
 {
     public class ConsoleCommand
     {
-        public delegate void CallbackDelegate(string[] args);
+        public delegate void CallbackDelegate(object[] args);
 
         public string _command;
         public string _description;

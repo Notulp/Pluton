@@ -7,7 +7,7 @@ namespace Pluton.Events
     public class ServerConsoleEvent : CountedInstance
     {
         public readonly string cmd;
-        public readonly List<string> Args;
+        public readonly List<object> Args;
 
         public bool IsServer {
             get {
@@ -36,15 +36,15 @@ namespace Pluton.Events
         public ConsoleSystem.SystemRealm Realm;
         public ConsoleSystem.RunOptions Options;
 
-        public ServerConsoleEvent(ConsoleSystem.SystemRealm realm, ConsoleSystem.RunOptions options, string rconCmd, string[] args)
+        public ServerConsoleEvent(ConsoleSystem.SystemRealm realm, ConsoleSystem.RunOptions options, string rconCmd, object[] args)
         {
+            if(String.IsNullOrEmpty(rconCmd))
+                return;
+
             this.Options = options;
             this.Realm = realm;
             this.Args = args.ToList();
             this.cmd = rconCmd;
-
-            if(String.IsNullOrEmpty(rconCmd))
-                return;
         }
     }
 }
