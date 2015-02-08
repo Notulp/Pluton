@@ -11,7 +11,7 @@ namespace Pluton
         public string _command;
         public string _description;
         public string _usage;
-        public Plugin plugin;
+        public BasePlugin plugin;
         public CallbackDelegate callback;
 
         public ConsoleCommand setCallback(CallbackDelegate function) {
@@ -59,11 +59,11 @@ namespace Pluton
 
     public class ConsoleCommands
     {
-        public Plugin plugin;
+        public BasePlugin plugin;
 
         public Dictionary<int, ConsoleCommand> Commands = new Dictionary<int, ConsoleCommand>();
 
-        public ConsoleCommands(Plugin pl)
+        public ConsoleCommands(BasePlugin pl)
         {
             plugin = pl;
         }

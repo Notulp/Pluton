@@ -9,9 +9,9 @@
     public class PluginLoader
     {
 
-        private static Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
+        private static Dictionary<string, BasePlugin> plugins = new Dictionary<string, BasePlugin>();
 
-        public static Dictionary<string, Plugin> Plugins { get { return plugins; } }
+        public static Dictionary<string, BasePlugin> Plugins { get { return plugins; } }
 
         private DirectoryInfo pluginDirectory;
         private static PluginLoader instance;
@@ -20,8 +20,8 @@
 
         public void Init()
         {
-            Plugin.LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
-            Plugin.GlobalData = new Dictionary<string, object>();
+            PYPlugin.LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
+            BasePlugin.GlobalData = new Dictionary<string, object>();
             pluginDirectory = new DirectoryInfo(Path.Combine(Util.GetPublicFolder(), "Plugins"));
             if (!Directory.Exists(pluginDirectory.FullName)) {
                 Directory.CreateDirectory(pluginDirectory.FullName);
@@ -83,14 +83,14 @@
             return Path.Combine(GetPluginDirectoryPath(name), name + ".dll");
         }
 
-        private string GetPluginScriptText(string name, Plugin.PluginType type)
+        private string GetPluginScriptText(string name, PluginType type)
         {
             string path = "";
-            if (type == Plugin.PluginType.Python)
+            if (type == PluginType.Python)
                 path = GetPyPluginScriptPath(name);
-            else if (type == Plugin.PluginType.JS)
+            else if (type == PluginType.JavaScript)
                 path = GetJSPluginScriptPath(name);
-            else if (type == Plugin.PluginType.CSharp)
+            else if (type == PluginType.CSharp)
                 return GetCSharpPluginScriptPath(name);
 
             if (path == "") return null;
@@ -104,19 +104,19 @@
         {
             if (CoreConfig.GetBoolValue("python", "enabled"))
                 foreach (string name in GetPyPluginNames())
-                    LoadPlugin(name, Plugin.PluginType.Python);
+                    LoadPlugin(name, PluginType.Python);
             else
                 Logger.LogDebug("[PluginLoader] Python plugins are disabled in Core.cfg.");
 
             if (CoreConfig.GetBoolValue("javascript", "enabled"))
                 foreach (string name in GetJSPluginNames())
-                    LoadPlugin(name, Plugin.PluginType.JS);
+                    LoadPlugin(name, PluginType.JavaScript);
             else
                 Logger.LogDebug("[PluginLoader] Javascript plugins are disabled in Core.cfg.");
 
             if (CoreConfig.GetBoolValue("csharp", "enabled"))
                 foreach (string name in GetCSharpPluginNames())
-                    LoadPlugin(name, Plugin.PluginType.CSharp);
+                    LoadPlugin(name, PluginType.CSharp);
             else
                 Logger.LogDebug("[PluginLoader] CSharp plugins are disabled in Core.cfg.");
 
@@ -136,7 +136,7 @@
             LoadPlugins();
         }
 
-        public void LoadPlugin(string name, Plugin.PluginType type)
+        public void LoadPlugin(string name, PluginType type)
         {
             Logger.LogDebug("[PluginLoader] Loading plugin " + name + ".");
 
@@ -148,7 +148,18 @@
             try {
                 string code = GetPluginScriptText(name, type);
                 DirectoryInfo path = new DirectoryInfo(Path.Combine(pluginDirectory.FullName, name));
-                Plugin plugin = new Plugin(name, code, path, type);
+                BasePlugin plugin = null;
+                switch(type){
+                case PluginType.CSharp:
+                    plugin = new CSPlugin(name, code, path);
+                    break;
+                case PluginType.JavaScript:
+                    plugin = new JSPlugin(name, code, path);
+                    break;
+                case PluginType.Python:
+                    plugin = new PYPlugin(name, code, path);
+                    break;
+                }
 
                 InstallHooks(plugin);
                 plugins.Add(name, plugin);
@@ -165,7 +176,7 @@
             Logger.LogDebug("[PluginLoader] Unloading " + name + " plugin.");
 
             if (plugins.ContainsKey(name)) {
-                Plugin plugin = plugins[name];
+                BasePlugin plugin = plugins[name];
 
                 plugin.KillTimers();
                 RemoveHooks(plugin);
@@ -179,7 +190,7 @@
             }
         }
 
-        public void ReloadPlugin(Plugin plugin)
+        public void ReloadPlugin(BasePlugin plugin)
         {
             UnloadPlugin(plugin.Name);
             LoadPlugin(plugin.Name, plugin.Type);
@@ -188,7 +199,7 @@
         public void ReloadPlugin(string name)
         {
             if (plugins.ContainsKey(name)) {
-                Plugin plugin = plugins[name];
+                BasePlugin plugin = plugins[name];
                 UnloadPlugin(plugin.Name);
                 LoadPlugin(plugin.Name, plugin.Type);
             }
@@ -198,9 +209,9 @@
 
         #region install/remove hooks
 
-        private void InstallHooks(Plugin plugin)
+        private void InstallHooks(BasePlugin plugin)
         {
-            if (plugin.State != Plugin.PluginState.Loaded)
+            if (plugin.State != PluginState.Loaded)
                 return;
 
             foreach (string method in plugin.Globals) {
@@ -226,9 +237,6 @@
                     break;
                 case "On_CommandPermission":
                     plugin.OnCommandPermissionHook = Hooks.OnCommandPermission.Subscribe(c => plugin.OnCommandPermission(c));
-                    break;
-                case "On_CorpseDropped":
-                    plugin.OnCorpseDroppedHook = Hooks.OnCorpseDropped.Subscribe(c => plugin.OnCorpseDropped(c));
                     break;
                 case "On_CorpseHurt":
                     plugin.OnCorpseHurtHook = Hooks.OnCorpseHurt.Subscribe(c => plugin.OnCorpseHurt(c));
@@ -305,9 +313,9 @@
             }
         }
 
-        private void RemoveHooks(Plugin plugin)
+        private void RemoveHooks(BasePlugin plugin)
         {
-            if (plugin.State != Plugin.PluginState.Loaded)
+            if (plugin.State != PluginState.Loaded)
                 return;
 
             foreach (string method in plugin.Globals) {
@@ -333,9 +341,6 @@
                     break;
                 case "On_CommandPermission":
                     plugin.OnCommandPermissionHook.Dispose();
-                    break;
-                case "On_CorpseDropped":
-                    plugin.OnCorpseDroppedHook.Dispose();
                     break;
                 case "On_CorpseHurt":
                     plugin.OnCorpseHurtHook.Dispose();
@@ -384,9 +389,6 @@
                     break;
                 case "On_PlayerDied":
                     plugin.OnPlayerDiedHook.Dispose();
-                    break;
-                case "On_PlayerTakeDamage":
-                    plugin.OnPlayerTakeDamageHook.Dispose();
                     break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook.Dispose();

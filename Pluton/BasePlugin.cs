@@ -1,173 +1,143 @@
-﻿namespace Pluton
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using Pluton.Events;
+using System.Net;
+using System.Text;
+
+namespace Pluton
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
-    using System.Globalization;
-    using System.ComponentModel;
-    using System.Collections.Generic;
-    using System.Collections;
-    using System.IO;
-    using Pluton.Events;
-    using Jint;
-    using Jint.Native;
-    using Jint.Parser;
-    using Jint.Parser.Ast;
-    using Microsoft.Scripting.Hosting;
-
-    using System.Net;
-    using System.Text;
-
-    public class Plugin : CountedInstance
+    public class BasePlugin : CountedInstance, IPlugin
     {
-        public readonly string Name;
-        public readonly string Code;
-        public readonly object Class;
-        public readonly PluginState State = PluginState.NotLoaded;
-        public readonly PluginType Type;
-        public readonly DirectoryInfo RootDir;
-        public readonly ScriptEngine PyEngine;
-        public readonly Engine JSEngine;
-        public readonly CSharpPlugin CSharpEngine;
-        public readonly ScriptScope Scope;
-        public readonly IList<string> Globals;
-        public readonly Dictionary<string, TimedEvent> Timers;
-        public readonly List<TimedEvent> ParallelTimers;
-        public static string LibPath;
+        /// <summary>
+        /// Name of the Plugin.
+        /// </summary>
+        /// <value>The name.</value>
+        public string Name {
+            get;
+            private set;
+        }
 
+        /// <summary>
+        /// Source code (or path in case of c# plugins).
+        /// </summary>
+        /// <value>The code.</value>
+        public string Code {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// DirectoryInfo of the directory in which the plugin is in.
+        /// </summary>
+        /// <value>The root dir.</value>
+        public DirectoryInfo RootDir {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Global methods of the plugin.
+        /// </summary>
+        /// <value>The globals.</value>
+        public IList<string> Globals {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Dictionary that holds the timers.
+        /// </summary>
+        public readonly Dictionary<string, TimedEvent> Timers;
+
+        /// <summary>
+        /// List of parallel timers.
+        /// </summary>
+        public readonly List<TimedEvent> ParallelTimers;
+
+        /// <summary>
+        /// A global storage that any plugin can easily access.
+        /// </summary>
         public static Dictionary<string, object> GlobalData;
 
+        /// <summary>
+        /// The console commands.
+        /// </summary>
         public ConsoleCommands consoleCommands;
+
+        /// <summary>
+        /// The chat commands.
+        /// </summary>
         public ChatCommands chatCommands;
 
-        public enum PluginState { NotLoaded, Loaded, HashNotFound }
-        public enum PluginType { Python, JS, CSharp }
+        /// <summary>
+        /// The type of the plugin.
+        /// </summary>
+        public PluginType Type = PluginType.Undefined;
 
-        public Plugin(string name, string code, DirectoryInfo path, PluginType type)
+        /// <summary>
+        /// The current state of the plugin.
+        /// </summary>
+        public PluginState State = PluginState.NotLoaded;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Pluton.BasePlugin"/> class.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="code">Code.</param>
+        /// <param name="rootdir">RootDir.</param>
+        public BasePlugin(string name, string code, DirectoryInfo rootdir)
         {
             Name = name;
             Code = code;
-            RootDir = path;
-            Type = type;
-            State = PluginState.NotLoaded;
+            RootDir = rootdir;
+
             Timers = new Dictionary<string, TimedEvent>();
             ParallelTimers = new List<TimedEvent>();
             consoleCommands = new ConsoleCommands(this);
             chatCommands = new ChatCommands(this);
-
-            if (type == PluginType.Python) {
-                if (CoreConfig.GetBoolValue("python", "checkHash") && !code.VerifyMD5Hash()) {
-                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, type));
-                    State = PluginState.HashNotFound;
-                    return;
-                }
-                PyEngine = IronPython.Hosting.Python.CreateEngine();
-                Scope = PyEngine.CreateScope();
-                Scope.SetVariable("Plugin", this);
-                Scope.SetVariable("Server", Pluton.Server.GetServer());
-                Scope.SetVariable("DataStore", DataStore.GetInstance());
-                Scope.SetVariable("Util", Util.GetUtil());
-                Scope.SetVariable("World", World.GetWorld());
-                Scope.SetVariable("Commands", chatCommands);
-                Scope.SetVariable("ServerConsoleCommands", consoleCommands);
-                Scope.SetVariable("GlobalData", GlobalData);
-                PyEngine.Execute(code, Scope);
-                Class = PyEngine.Operations.Invoke(Scope.GetVariable(name));
-                Globals = PyEngine.Operations.GetMemberNames(Class);
-            } else if (type == PluginType.JS) {
-                if (CoreConfig.GetBoolValue("javascript", "checkHash") && !code.VerifyMD5Hash()) {
-                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, type));
-                    State = PluginState.HashNotFound;
-                    return;
-                }
-
-                JSEngine = new Engine(cfg => cfg.AllowClr(typeof(UnityEngine.GameObject).Assembly,
-                    typeof(PlayerInventory).Assembly))
-                    .SetValue("Server", Server.GetServer())
-                    .SetValue("DataStore", DataStore.GetInstance())
-                    .SetValue("Util", Util.GetUtil())
-                    .SetValue("World", World.GetWorld())
-                    .SetValue("Plugin", this)
-                    .SetValue("Commands", chatCommands)
-                    .SetValue("ServerConsoleCommands", consoleCommands)
-                    .SetValue("GlobalData", GlobalData)
-                    .Execute(code);
-                JavaScriptParser parser = new JavaScriptParser();
-                Globals = (from function in parser.Parse(code).FunctionDeclarations
-                           select function.Id.Name).ToList<string>();
-            } else if (type == PluginType.CSharp) {
-                //For C# plugins code is the dll path
-                byte[] bin = File.ReadAllBytes(code);
-                if (CoreConfig.GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
-                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, type));
-                    State = PluginState.HashNotFound;
-                    return;
-                }
-
-                Assembly assembly = Assembly.Load(bin);
-                Type classType = assembly.GetType(name + "." + name);
-                if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
-                    throw new TypeLoadException("Main module class not found:" + Name);
-                CSharpEngine = (CSharpPlugin)Activator.CreateInstance(classType);
-
-                CSharpEngine.Server = Server.GetServer();
-                CSharpEngine.DataStore = DataStore.GetInstance();
-                CSharpEngine.Util = Util.GetUtil();
-                CSharpEngine.World = World.GetWorld();
-                CSharpEngine.Plugin = this;
-                CSharpEngine.Commands = chatCommands;
-                CSharpEngine.ServerConsoleCommands = consoleCommands;
-
-                Globals = (from method in classType.GetMethods()
-                    select method.Name).ToList<string>();
-            }
-            State = PluginState.Loaded;
         }
 
-        public object Invoke(string func, params object[] obj)
+        /// <summary>
+        /// Format exceptions to give meaningful reports.
+        /// </summary>
+        /// <returns>String representation of the exception.</returns>
+        /// <param name="ex">The exception object.</param>
+        public virtual string FormatException(Exception ex)
         {
-            try {
-                if (State == PluginState.Loaded && Globals.Contains(func)) {
-                    object result = (object)null;
-
-                    // this should report if it takes more than 1 sec to complete the call, decent way to catch slowpoke plugins
-                    using (new Stopper(Name, func)) {
-                        if (Type == PluginType.Python)
-                            result = PyEngine.Operations.InvokeMember(Class, func, obj);
-                        else if (Type == PluginType.JS)
-                            result = JSEngine.Invoke(func, obj);
-                        else if (Type == PluginType.CSharp)
-                            result = CSharpEngine.CallMethod(func, obj);
-                    }
-
-                    return result;
-                } else {
-                    Logger.LogDebug("[Plugin] Function: " + func + " not found in plugin: " + Name);
-                    return null;
-                }
-            } catch (Exception ex) {
-                string fileinfo = (String.Format("Plugin: {0} [{1}]! Method: {2}!", Name, Type, func) + Environment.NewLine);
-                Logger.LogError(fileinfo + FormatExeption(ex));
-                return null;
-            }
+            string nuline = Environment.NewLine;
+            return ex.Message + nuline + ex.TargetSite.ToString() + nuline + ex.StackTrace;
         }
 
-        public string FormatExeption(Exception ex)
+        /// <summary>
+        /// Invoke the specified method and args.
+        /// </summary>
+        /// <param name="method">Method.</param>
+        /// <param name="args">Arguments.</param>
+        public virtual object Invoke(string method, params object[] args)
         {
-            if(Type == PluginType.Python)
-                return PyEngine.GetService<ExceptionOperations>().FormatException(ex);
-            else
-                return ex.ToString() + Environment.NewLine + ex.StackTrace;
+            return null;
         }
 
         #region file operations
 
+        /// <summary>
+        /// Normalizes the path.
+        /// </summary>
+        /// <returns>The path.</returns>
+        /// <param name="path">Path.</param>
         private static string NormalizePath(string path)
         {
             return Path.GetFullPath(new Uri(path).LocalPath)
-				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
+        /// <summary>
+        /// Validates the relative path.
+        /// </summary>
+        /// <returns>The relative path.</returns>
+        /// <param name="path">Path.</param>
         public string ValidateRelativePath(string path)
         {
             string normalizedPath = NormalizePath(Path.Combine(RootDir.FullName, path));
@@ -179,6 +149,11 @@
             return normalizedPath;
         }
 
+        /// <summary>
+        /// Creates the dir.
+        /// </summary>
+        /// <returns><c>true</c>, if dir was created, <c>false</c> otherwise.</returns>
+        /// <param name="path">Path.</param>
         public bool CreateDir(string path)
         {
             try {
@@ -197,6 +172,10 @@
             return false;
         }
 
+        /// <summary>
+        /// Deletes the log.
+        /// </summary>
+        /// <param name="path">Path.</param>
         public void DeleteLog(string path)
         {
             path = ValidateRelativePath(path + ".log");
@@ -207,6 +186,11 @@
                 File.Delete(path);
         }
 
+        /// <summary>
+        /// Log the specified text at path.log.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        /// <param name="text">Text.</param>
         public void Log(string path, string text)
         {
             path = ValidateRelativePath(path + ".log");
@@ -216,6 +200,11 @@
             File.AppendAllText(path, "[" + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "] " + text + "\r\n");
         }
 
+        /// <summary>
+        /// Rotates the log.
+        /// </summary>
+        /// <param name="logfile">Logfile.</param>
+        /// <param name="max">Max.</param>
         public void RotateLog(string logfile, int max = 6)
         {
             logfile = ValidateRelativePath(logfile + ".log");
@@ -245,6 +234,8 @@
         }
 
         #endregion
+
+
 
         #region jsonfiles
 
@@ -325,12 +316,12 @@
 
         #endregion
 
-        public Plugin GetPlugin(string name)
+        public BasePlugin GetPlugin(string name)
         {
-            Plugin plugin;	
+            BasePlugin plugin;  
             plugin = PluginLoader.Plugins[name];
             if (plugin == null) {
-                Logger.LogDebug("[Plugin] [GetPlugin] '" + name + "' plugin not found!");
+                Logger.LogDebug("[Plugin][GetPlugin] '" + name + "' plugin not found!");
                 return null;
             }
             return plugin;
@@ -339,7 +330,7 @@
         #region time
 
         // CONSIDER: putting these into a separate class along with some new shortcut
-        //				Time.GetDate() looks more appropriate than Plugin.GetDate()
+        //              Time.GetDate() looks more appropriate than Plugin.GetDate()
         public string GetDate()
         {
             return DateTime.Now.ToShortDateString();
@@ -370,24 +361,10 @@
             this.Invoke("On_AllPluginsLoaded");
         }
 
-        public void OnBlueprintUse() {
-            throw new NotImplementedException("There is no OnBlueprintUse hook yet!");
-        }
-
         public IDisposable OnBuildingCompleteHook;
         public void OnBuildingComplete(BuildingPart bp) {
             this.Invoke("On_BuildingComplete", bp);
         }
-        /*
-        public IDisposable OnBuildingPartAttackedHook;
-        public void OnBuildingPartAttacked(BuildingHurtEvent he) {
-            this.Invoke("On_BuildingPartAttacked", he);
-        }
-
-        public IDisposable OnBuildingPartDestroyedHook;
-        public void OnBuildingPartDestroyed(BuildingHurtEvent he) {
-            this.Invoke("On_BuildingPartDestroyed", he);
-        }*/
 
         public IDisposable OnPlacementHook;
         public void OnPlacement(BuildingEvent be) {
@@ -417,11 +394,6 @@
         public IDisposable OnCommandPermissionHook;
         public void OnCommandPermission(CommandPermissionEvent perm) {
             this.Invoke("On_CommandPermission", perm);
-        }
-
-        public IDisposable OnCorpseDroppedHook;
-        public void OnCorpseDropped(CorpseInitEvent ie) {
-            this.Invoke("On_CorpseDropped", ie);
         }
 
         public IDisposable OnCorpseHurtHook;
@@ -607,8 +579,8 @@
         public List<TimedEvent> GetParallelTimer(string name)
         {
             return (from timer in ParallelTimers
-                    where timer.Name == name
-                    select timer).ToList();
+                where timer.Name == name
+                select timer).ToList();
         }
 
         public void KillParallelTimer(string name)

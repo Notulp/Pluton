@@ -36,8 +36,6 @@ namespace Pluton
 
         public static Subject<CorpseHurtEvent> OnCorpseHurt = new Subject<CorpseHurtEvent>();
 
-        public static Subject<CorpseInitEvent> OnCorpseDropped = new Subject<CorpseInitEvent>();
-
         public static Subject<DoorCodeEvent> OnDoorCode = new Subject<DoorCodeEvent>();
 
         public static Subject<DoorUseEvent> OnDoorUse = new Subject<DoorUseEvent>();
@@ -53,8 +51,6 @@ namespace Pluton
         public static Subject<PlayerDeathEvent> OnPlayerDied = new Subject<PlayerDeathEvent>();
 
         public static Subject<PlayerHurtEvent> OnPlayerHurt = new Subject<PlayerHurtEvent>();
-
-        public static Subject<PlayerTakedmgEvent> OnPlayerTakeDamage = new Subject<PlayerTakedmgEvent>();
 
         public static Subject<PlayerTakeRadsEvent> OnPlayerTakeRads = new Subject<PlayerTakeRadsEvent>();
 
@@ -200,7 +196,7 @@ namespace Pluton
             if (cmd.cmd == "")
                 return;
 
-            foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+            foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.Plugins) {
                 ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.cmd);
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
@@ -216,7 +212,7 @@ namespace Pluton
                     try {
                         chatCmd.callback(cmd.args, player);
                     } catch (Exception ex) {
-                        Logger.LogError(chatCmd.plugin.FormatExeption(ex));
+                        Logger.LogError(chatCmd.plugin.FormatException(ex));
                     }
                 }
             }
@@ -257,7 +253,7 @@ namespace Pluton
                 }
 
                 List<ChatCommands> cc = new List<ChatCommands>();
-                foreach (KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+                foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.Plugins) {
                     cc.Add(pl.Value.chatCommands);
                 }
                 if (cmd.cmd == Config.GetValue("Commands", "Commands", "commands")) {
@@ -681,7 +677,7 @@ namespace Pluton
 
                 ServerConsoleEvent ssc = new ServerConsoleEvent(arg, cmd);
 
-                foreach(KeyValuePair<string, Plugin> pl in PluginLoader.Plugins) {
+                foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.Plugins) {
                     ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ssc.cmd);
                     foreach (ConsoleCommand cc in commands) {
                         if (cc.callback == null)
@@ -689,7 +685,7 @@ namespace Pluton
                         try {
                             cc.callback(arg.ArgsStr.Split(' '));
                         } catch (Exception ex) {
-                            Logger.LogError(cc.plugin.FormatExeption(ex));
+                            Logger.LogError(cc.plugin.FormatException(ex));
                         }
                     }
                 }

@@ -79,7 +79,6 @@
     <Compile Include="Events\EntityLootEvent.cs" />
     <Compile Include="Events\PlayerLootEvent.cs" />
     <Compile Include="PluginLoader.cs" />
-    <Compile Include="Plugin.cs" />
     <Compile Include="TimedEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
     <Compile Include="Objects\BuildingPart.cs" />
@@ -123,6 +122,11 @@
     <Compile Include="Events\DoorUseEvent.cs" />
     <Compile Include="Objects\Zone2D.cs" />
     <Compile Include="Serialize\SerializedZone2D.cs" />
+    <Compile Include="IPlugin.cs" />
+    <Compile Include="BasePlugin.cs" />
+    <Compile Include="JSPlugin.cs" />
+    <Compile Include="PYPlugin.cs" />
+    <Compile Include="CSPlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

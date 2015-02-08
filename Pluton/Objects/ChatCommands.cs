@@ -11,7 +11,7 @@ namespace Pluton
         public string _command;
         public string _description;
         public string _usage;
-        public Plugin plugin;
+        public BasePlugin plugin;
         public CallbackDelegate callback;
 
         public ChatCommand setCallback(CallbackDelegate function) {
@@ -54,11 +54,11 @@ namespace Pluton
 
     public class ChatCommands
     {
-        public Plugin plugin;
+        public BasePlugin plugin;
 
         public Dictionary<int, ChatCommand> Commands = new Dictionary<int, ChatCommand>();
 
-        public ChatCommands(Plugin pl)
+        public ChatCommands(BasePlugin pl)
         {
             plugin = pl;
         }
