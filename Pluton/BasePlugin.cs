@@ -235,10 +235,13 @@ namespace Pluton
 
         #endregion
 
-
-
         #region jsonfiles
 
+        /// <summary>
+        /// Wether or not the specified '.json' file exists.
+        /// </summary>
+        /// <returns><c>true</c>, if the file exists, <c>false</c> otherwise.</returns>
+        /// <param name="path">Path to the '.json' file.</param>
         public bool JsonFileExists(string path)
         {
             path = ValidateRelativePath(path + ".json");
@@ -248,6 +251,11 @@ namespace Pluton
             return File.Exists(path);
         }
 
+        /// <summary>
+        /// Reads a '.json' file.
+        /// </summary>
+        /// <returns>The json string.</returns>
+        /// <param name="path">Path to the '.json' file.</param>
         public string FromJsonFile(string path)
         {
             if (JsonFileExists(path))
@@ -256,6 +264,11 @@ namespace Pluton
             return null;
         }
 
+        /// <summary>
+        /// Saves a json string at the specified path with '.json' extension.
+        /// </summary>
+        /// <param name="path">File name.</param>
+        /// <param name="json">The json string to save.</param>
         public void ToJsonFile(string path, string json)
         {
             path = ValidateRelativePath(path + ".json");
@@ -269,6 +282,11 @@ namespace Pluton
 
         #region inifiles
 
+        /// <summary>
+        /// Gets the ini.
+        /// </summary>
+        /// <returns>An IniParser object.</returns>
+        /// <param name="path">File name.</param>
         public IniParser GetIni(string path)
         {
             path = ValidateRelativePath(path + ".ini");
@@ -281,6 +299,11 @@ namespace Pluton
             return (IniParser)null;
         }
 
+        /// <summary>
+        /// Checks if the specified ini file exists.
+        /// </summary>
+        /// <returns><c>true</c>, if it exists, <c>false</c> otherwise.</returns>
+        /// <param name="path">File name.</param>
         public bool IniExists(string path)
         {
             path = ValidateRelativePath(path + ".ini");
@@ -290,6 +313,11 @@ namespace Pluton
             return File.Exists(path);
         }
 
+        /// <summary>
+        /// Creates the ini.
+        /// </summary>
+        /// <returns>The ini.</returns>
+        /// <param name="path">Path.</param>
         public IniParser CreateIni(string path)
         {
             try {
@@ -305,6 +333,11 @@ namespace Pluton
             return (IniParser)null;
         }
 
+        /// <summary>
+        /// Gets the inis.
+        /// </summary>
+        /// <returns>The inis.</returns>
+        /// <param name="path">Path.</param>
         public List<IniParser> GetInis(string path)
         {
             path = ValidateRelativePath(path);
@@ -316,6 +349,11 @@ namespace Pluton
 
         #endregion
 
+        /// <summary>
+        /// Gets the plugin.
+        /// </summary>
+        /// <returns>The plugin.</returns>
+        /// <param name="name">Name.</param>
         public BasePlugin GetPlugin(string name)
         {
             BasePlugin plugin;  
@@ -329,23 +367,37 @@ namespace Pluton
 
         #region time
 
-        // CONSIDER: putting these into a separate class along with some new shortcut
-        //              Time.GetDate() looks more appropriate than Plugin.GetDate()
+        /// <summary>
+        /// Gets the date.
+        /// </summary>
+        /// <returns>The date.</returns>
         public string GetDate()
         {
             return DateTime.Now.ToShortDateString();
         }
 
+        /// <summary>
+        /// Gets the ticks.
+        /// </summary>
+        /// <returns>The ticks.</returns>
         public int GetTicks()
         {
             return Environment.TickCount;
         }
 
+        /// <summary>
+        /// Gets the time.
+        /// </summary>
+        /// <returns>The time.</returns>
         public string GetTime()
         {
             return DateTime.Now.ToShortTimeString();
         }
 
+        /// <summary>
+        /// Gets the timestamp.
+        /// </summary>
+        /// <returns>The timestamp.</returns>
         public long GetTimestamp()
         {
             TimeSpan span = (TimeSpan)(DateTime.UtcNow - new DateTime(0x7b2, 1, 1, 0, 0, 0));
@@ -507,6 +559,12 @@ namespace Pluton
 
         #region timer methods
 
+        /// <summary>
+        /// Creates a timer.
+        /// </summary>
+        /// <returns>The timer.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="timeoutDelay">Timeout delay.</param>
         public TimedEvent CreateTimer(string name, int timeoutDelay)
         {
             TimedEvent timedEvent = GetTimer(name);
@@ -518,6 +576,13 @@ namespace Pluton
             return timedEvent;
         }
 
+        /// <summary>
+        /// Creates a timer.
+        /// </summary>
+        /// <returns>The timer.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="timeoutDelay">Timeout delay.</param>
+        /// <param name="args">Arguments.</param>
         public TimedEvent CreateTimer(string name, int timeoutDelay, Dictionary<string, object> args)
         {
             TimedEvent timedEvent = GetTimer(name);
@@ -530,6 +595,11 @@ namespace Pluton
             return timedEvent;
         }
 
+        /// <summary>
+        /// Gets a timer.
+        /// </summary>
+        /// <returns>The timer.</returns>
+        /// <param name="name">Name.</param>
         public TimedEvent GetTimer(string name)
         {
             TimedEvent result;
@@ -541,6 +611,10 @@ namespace Pluton
             return result;
         }
 
+        /// <summary>
+        /// Kills the timer.
+        /// </summary>
+        /// <param name="name">Name.</param>
         public void KillTimer(string name)
         {
             TimedEvent timer = GetTimer(name);
@@ -551,6 +625,9 @@ namespace Pluton
             Timers.Remove(name);
         }
 
+        /// <summary>
+        /// Kills the timers.
+        /// </summary>
         public void KillTimers()
         {
             foreach (TimedEvent current in Timers.Values) {
@@ -567,6 +644,13 @@ namespace Pluton
 
         #region ParalellTimers
 
+        /// <summary>
+        /// Creates a parallel timer.
+        /// </summary>
+        /// <returns>The parallel timer.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="timeoutDelay">Timeout delay.</param>
+        /// <param name="args">Arguments.</param>
         public TimedEvent CreateParallelTimer(string name, int timeoutDelay, Dictionary<string, object> args)
         {
             TimedEvent timedEvent = new TimedEvent(name, (double)timeoutDelay);
@@ -576,6 +660,11 @@ namespace Pluton
             return timedEvent;
         }
 
+        /// <summary>
+        /// Gets the parallel timer.
+        /// </summary>
+        /// <returns>The parallel timer.</returns>
+        /// <param name="name">Name.</param>
         public List<TimedEvent> GetParallelTimer(string name)
         {
             return (from timer in ParallelTimers
@@ -583,6 +672,10 @@ namespace Pluton
                 select timer).ToList();
         }
 
+        /// <summary>
+        /// Kills the parallel timer.
+        /// </summary>
+        /// <param name="name">Name.</param>
         public void KillParallelTimer(string name)
         {
             foreach (TimedEvent timer in GetParallelTimer(name)) {
@@ -595,6 +688,10 @@ namespace Pluton
 
         #region WEB
 
+        /// <summary>
+        /// GET request.
+        /// </summary>
+        /// <param name="url">URL.</param>
         public string GET(string url)
         {
             using (System.Net.WebClient client = new System.Net.WebClient())
@@ -603,6 +700,11 @@ namespace Pluton
             }
         }
 
+        /// <summary>
+        /// POST request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
         public string POST(string url, string data)
         {
             using (WebClient client = new WebClient())
@@ -613,6 +715,11 @@ namespace Pluton
             }
         }
 
+        /// <summary>
+        /// POSTs a json string to the specified url.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="json">Json.</param>
         public string POSTJSON(string url, string json)
         {
             using (WebClient client = new WebClient())
@@ -625,6 +732,11 @@ namespace Pluton
 
         #endregion
 
+        /// <summary>
+        /// Creates a Dictionary<string, object> object.</c>.
+        /// </summary>
+        /// <returns>The dictionary.</returns>
+        /// <param name="cap">Capacity.</param>
         public Dictionary<string, object> CreateDict(int cap = 10)
         {
             return new Dictionary<string, object>(cap);
