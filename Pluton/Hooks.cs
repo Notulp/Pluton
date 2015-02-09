@@ -456,41 +456,49 @@ namespace Pluton
         // BaseResource.OnAttacked()
         public static void GatheringBR(BaseResource res, HitInfo info)
         {
-            if (!Realm.Server())
-                return;
+            if (res.isServer) {
+                OnGathering.OnNext(new Events.GatherEvent(res, info));
 
-            OnGathering.OnNext(new Events.GatherEvent(res, info));
+                float num = info.damageTypes.Total () * info.resourceGatherProficiency;
+                if (res.baseProtection) {
+                    res.baseProtection.Scale (info.damageTypes);
+                }
 
-            ResourceDispenser dispenser = res.GetComponent<ResourceDispenser>();
-            if (dispenser != null) {
-                dispenser.OnAttacked(info);
+                ResourceDispenser dispenser = res.GetComponent<ResourceDispenser>();
+
+                if (dispenser != null)
+                    dispenser.OnAttacked(info);
+
+                float num2 = num;
+                res.health -= num2;
+                if (res.health <= 0) {
+                    res.Kill (EntityDestroy.Mode.None, 0, 0, default(Vector3));
+                    return;
+                }
+                res.Invoke ("UpdateNetworkStage", 0.1f);
             }
-            float num = info.damageTypes.Total() * info.resourceGatherProficiency;
-            res.health -= num;
-            if (res.health <= 0) {
-                res.Kill(EntityDestroy.Mode.None, 0, 0, Vector3.zero);
-                return;
-            }
-            res.Invoke("UpdateNetworkStage", 0.1f);
         }
 
         // TreeEntity.OnAttacked()
         public static void GatheringTree(TreeEntity tree, HitInfo info)
         {
-            if (!Realm.Server())
-                return;
+            if (tree.isServer) {
+                OnGathering.OnNext(new Events.GatherEvent(tree, info));
 
-            OnGathering.OnNext(new Events.GatherEvent(tree, info));
-
-            ResourceDispenser dispenser = tree.GetComponent<ResourceDispenser>();
-            if (dispenser != null) {
-                dispenser.OnAttacked(info);
-            }
-            float num = info.damageTypes.Total() * info.resourceGatherProficiency;
-            tree.health -= num;
-            if (tree.health <= 0) {
-                tree.Kill(EntityDestroy.Mode.None, 0, 0, Vector3.zero);
-                return;
+                float num = info.damageTypes.Total () * info.resourceGatherProficiency;
+                if (tree.protection) {
+                    tree.protection.Scale (info.damageTypes);
+                }
+                ResourceDispenser rdp = tree.GetComponent<ResourceDispenser>();
+                if (rdp != null) {
+                    rdp.OnAttacked(info);
+                }
+                float num2 = num;
+                tree.health -= num2;
+                if (tree.health <= 0) {
+                    tree.Kill (EntityDestroy.Mode.None, 0, 0, default(Vector3));
+                    return;
+                }
             }
         }
 

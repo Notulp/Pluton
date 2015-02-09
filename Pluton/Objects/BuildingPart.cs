@@ -32,12 +32,6 @@ namespace Pluton
             PrefabID = bb.prefabID;
         }
 
-        public void CancelDemolish()
-        {
-            buildingBlock.beingDemolished = false;
-            buildingBlock.Invoke("HealthCreepCheck", 0f);
-        }
-
         public Construction.Socket FindSocket(string name)
         {
             return buildingBlock.FindSocket(name);
@@ -62,12 +56,6 @@ namespace Pluton
             buildingBlock.net.Broadcast(MSG.RPC_MESSAGE, networkData.ToBytes(), Network.SendMethod.Reliable);
 
             buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-        }
-
-        public void StartDemolish()
-        {
-            buildingBlock.beingDemolished = true;
-            buildingBlock.Invoke("HealthCreepCheck", 0f);
         }
 
         public BuildingBlock buildingBlock {
