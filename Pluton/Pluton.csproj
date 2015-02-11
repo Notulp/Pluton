@@ -127,6 +127,7 @@
     <Compile Include="JSPlugin.cs" />
     <Compile Include="PYPlugin.cs" />
     <Compile Include="CSPlugin.cs" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
