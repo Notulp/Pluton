@@ -143,12 +143,12 @@ namespace Pluton
 
         public void Message(string msg)
         {
-            basePlayer.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(msg));
+            MessageFrom(Server.server_message_name, msg);
         }
 
         public void MessageFrom(string from, string msg)
         {
-            basePlayer.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(from), StringExtensions.QuoteSafe(msg));
+            basePlayer.SendConsoleCommand("chat.add", 0, from.ColorText("fa5") + ": " + msg);
         }
 
         public void ConsoleMessage(string msg)

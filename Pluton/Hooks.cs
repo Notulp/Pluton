@@ -126,9 +126,9 @@ namespace Pluton
                     arg2 = "#fa5";
                 }
 
-                string text2 = string.Format ("<color={2}>{0}</color>  {1}", basePlayer.displayName.Replace('<', ' ').Replace('>', ' '), str.Replace('<', ' ').Replace('>', ' '), arg2);
-
                 OnChat.OnNext(pChat);
+
+                string text2 = string.Format ("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText.Replace('<', '[').Replace('>', ']'), arg2);
 
                 if (pChat.FinalText != "") {
                     Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
@@ -421,7 +421,7 @@ namespace Pluton
             door.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
 
             if (due.DenyReason != "")
-                rpc.player.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(due.DenyReason));
+                rpc.player.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), due.DenyReason));
         }
 
         // Construiction.Common.CreateConstruction()
@@ -651,7 +651,7 @@ namespace Pluton
 
             if (ele.Cancel) {
                 playerLoot.Clear();
-                looter.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(ele.cancelReason));
+                looter.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), ele.cancelReason));
             }
         }
 
@@ -664,7 +664,7 @@ namespace Pluton
 
             if (ple.Cancel) {
                 playerLoot.Clear();
-                looter.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(ple.cancelReason));
+                looter.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), ple.cancelReason));
             }
         }
 
@@ -677,7 +677,7 @@ namespace Pluton
 
             if (ile.Cancel) {
                 playerLoot.Clear();
-                looter.SendConsoleCommand("chat.add", StringExtensions.QuoteSafe(Server.server_message_name), StringExtensions.QuoteSafe(ile.cancelReason));
+                looter.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), ile.cancelReason));
             }
         }
 

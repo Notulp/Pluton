@@ -24,12 +24,12 @@
 
         public void Broadcast(string arg)
         {
-            ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(server_message_name) + " " + StringExtensions.QuoteSafe(arg));
+            BroadcastFrom(server_message_name, arg);
         }
 
         public void BroadcastFrom(string name, string arg)
         {
-            ConsoleSystem.Broadcast("chat.add " + StringExtensions.QuoteSafe(name) + " " + StringExtensions.QuoteSafe(arg));
+            ConsoleSystem.Broadcast("chat.add", String.Format("{0}: {1}", name.ColorText("fa5"), arg));
         }
 
         public void BroadcastNotice(string s)
