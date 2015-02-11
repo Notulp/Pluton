@@ -49,7 +49,7 @@ namespace Pluton
 
         public static void Reload()
         {
-            string ConfigPath = Path.Combine(Util.GetPublicFolder(), "Pluton.cfg");
+            string ConfigPath = DirectoryConfig.GetConfigPath("Pluton");
              
             if (File.Exists(ConfigPath))
                 PlutonConfig = new IniParser(ConfigPath);

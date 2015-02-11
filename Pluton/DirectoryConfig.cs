@@ -54,7 +54,7 @@ namespace Pluton
 
         public static void Reload()
         {
-            string ConfigPath = Path.Combine(Util.GetPublicFolder(), "DirectoryConfig.cfg");
+            string ConfigPath = Path.Combine(Util.GetServerFolder(), "DirectoryConfig.cfg");
 
             if (File.Exists(ConfigPath))
                 DirConfig = new IniParser(ConfigPath);
