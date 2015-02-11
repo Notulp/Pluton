@@ -7,13 +7,10 @@ using UnityEngine;
 namespace Pluton
 {
     [Serializable]
-    public class BuildingPart : CountedInstance
+    public class BuildingPart : Entity
     {
         [NonSerialized]
         private BuildingBlock _buildingBlock;
-
-        public readonly string Prefab;
-        public readonly uint PrefabID;
 
         SerializedVector3 position;
 
@@ -25,11 +22,9 @@ namespace Pluton
             position = buildingBlock.transform.position.Serialize();
         }
 
-        public BuildingPart(BuildingBlock bb)
+        public BuildingPart(BuildingBlock bb) : base(bb)
         {
             _buildingBlock = bb;
-            Prefab = bb.LookupPrefabName();
-            PrefabID = bb.prefabID;
         }
 
         public Construction.Socket FindSocket(string name)
@@ -40,6 +35,11 @@ namespace Pluton
         public void Destroy()
         {
             buildingBlock.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, buildingBlock.transform.position);
+        }
+
+        public override bool IsBuildingPart()
+        {
+            return true;
         }
 
         public void Rotate()
@@ -80,6 +80,7 @@ namespace Pluton
             }
             set {
                 buildingBlock.SetGrade(value);
+                buildingBlock.SetHealthToMax();
                 buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
             }
         }
@@ -90,30 +91,6 @@ namespace Pluton
             }
             set {
                 buildingBlock.health = value;
-            }
-        }
-
-        public Vector3 Location {
-            get {
-                return buildingBlock.transform.position;
-            }
-        }
-
-        public float X {
-            get {
-                return buildingBlock.transform.position.x;
-            }
-        }
-
-        public float Y {
-            get {
-                return buildingBlock.transform.position.y;
-            }
-        }
-
-        public float Z {
-            get {
-                return buildingBlock.transform.position.z;
             }
         }
     }

@@ -9,7 +9,13 @@ namespace Pluton.Events
         public CombatEntityHurtEvent(BaseCombatEntity combatEnt, HitInfo info)
             : base(info)
         {
-            Victim = new Entity(combatEnt);
+            var block = combatEnt.GetComponent<BuildingBlock>();
+
+            if (block != null) {
+                Victim = new BuildingPart(block);
+            } else {
+                Victim = new Entity(combatEnt);
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ namespace Pluton.Events
 {
     public class BuildingEvent : CountedInstance
     {
-        public readonly BuildingBlock _block;
         public BuildingPart BuildingPart;
         public readonly Player Builder;
         public readonly Construction.Common Common;
@@ -18,7 +17,6 @@ namespace Pluton.Events
         public BuildingEvent(Construction.Common common, Construction.Target target, BuildingBlock bb, bool bNeedsValidPlacement)
         {
             Builder = Server.GetPlayer(target.player);
-            _block = bb;
             BuildingPart = new BuildingPart(bb);
             Common = common;
             Target = target;

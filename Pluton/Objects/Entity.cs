@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace Pluton
 {
+    [Serializable]
     public class Entity : CountedInstance
     {
-
+        [NonSerialized]
         public readonly BaseEntity baseEntity;
         public readonly string Prefab;
         public readonly uint PrefabID;
@@ -17,9 +18,24 @@ namespace Pluton
             PrefabID = baseEntity.prefabID;
         }
 
-        public void Kill()
+        public virtual void Kill()
         {
             baseEntity.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, baseEntity.transform.position);
+        }
+
+        public virtual bool IsBuildingPart()
+        {
+            return false;
+        }
+
+        public virtual bool IsNPC()
+        {
+            return false;
+        }
+
+        public virtual bool IsPlayer()
+        {
+            return false;
         }
 
         public BuildingPart ToBuildingPart()
@@ -46,13 +62,20 @@ namespace Pluton
             return Server.GetPlayer(p);
         }
 
-        public Vector3 Location {
+        public virtual Vector3 Location {
             get {
                 return baseEntity.transform.position;
             }
+            set {
+                bool oldsync = baseEntity.syncPosition;
+                baseEntity.transform.position = value;
+                baseEntity.syncPosition = true;
+                baseEntity.TransformChanged();
+                baseEntity.syncPosition = oldsync;
+            }
         }
 
-        public string Name {
+        public virtual string Name {
             get {
                 return baseEntity.name == "player/player" ? (baseEntity as BasePlayer).displayName  : baseEntity.name;
             }

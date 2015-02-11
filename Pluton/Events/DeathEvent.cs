@@ -53,9 +53,25 @@ namespace Pluton.Events
 
         public Entity Attacker {
             get {
-                if (_info.Initiator == null)
+                try {
+                    if (_info.Initiator != null) {
+                        BaseEntity ent = _info.Initiator;
+                        BasePlayer p = ent.GetComponent<BasePlayer>();
+                        if (p != null)
+                            return Server.GetPlayer(p);
+
+                        BaseNPC n = ent.GetComponent<BaseNPC>();
+                        if (n != null)
+                            return new NPC(n);
+
+                        return new Entity(ent);
+                    }
                     return null;
-                return new Entity(_info.Initiator);
+                } catch (Exception ex) {
+                    Logger.LogWarning("[HurtEvent] Got an exception instead of the attacker.");
+                    Logger.LogException(ex);
+                    return null;
+                }
             }
         }
 

@@ -5,14 +5,14 @@ using System.Runtime.Serialization;
 namespace Pluton
 {
     [Serializable]
-    public class Player : CountedInstance
+    public class Player : Entity
     {
         [NonSerialized]
         private BasePlayer _basePlayer;
 
         public readonly ulong GameID;
 
-        public Player(BasePlayer player)
+        public Player(BasePlayer player) : base(player)
         {
             GameID = player.userID;
             _basePlayer = player;
@@ -112,11 +112,11 @@ namespace Pluton
             return null;
         }
 
-        public void Kill()
+        public override void Kill()
         {
             var info = new HitInfo();
-            info.AddDamage(Rust.DamageType.Suicide, 100f);
-            info.Initiator = basePlayer as BaseEntity;
+            info.AddDamage(Rust.DamageType.Suicide, Single.MaxValue);
+            info.Initiator = baseEntity;
             basePlayer.Die(info);
         }
 
@@ -154,6 +154,11 @@ namespace Pluton
         public void ConsoleMessage(string msg)
         {
             basePlayer.SendConsoleCommand("echo", msg);
+        }
+
+        public override bool IsPlayer()
+        {
+            return true;
         }
 
         public void SendConsoleCommand(string cmd)
@@ -259,7 +264,7 @@ namespace Pluton
             }
         }
 
-        public Vector3 Location {
+        public override Vector3 Location {
             get {
                 return basePlayer.transform.position;
             }
@@ -274,7 +279,7 @@ namespace Pluton
             }
         }
 
-        public string Name {
+        public override string Name {
             get {
                 return basePlayer.displayName;
             }
@@ -322,24 +327,6 @@ namespace Pluton
         public float TimeOnline {
             get {
                 return basePlayer.net.connection.connectionTime;
-            }
-        }
-
-        public float X {
-            get {
-                return basePlayer.transform.position.x;
-            }
-        }
-
-        public float Y {
-            get {
-                return basePlayer.transform.position.y;
-            }
-        }
-
-        public float Z {
-            get {
-                return basePlayer.transform.position.z;
             }
         }
     }
