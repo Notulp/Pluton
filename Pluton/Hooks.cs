@@ -457,6 +457,8 @@ namespace Pluton
         public static void GatheringBR(BaseResource res, HitInfo info)
         {
             if (res.isServer) {
+                info.resourceGatherProficiency = info.resourceGatherProficiency * World.GetWorld().ResourceGatherMultiplier;
+
                 OnGathering.OnNext(new Events.GatherEvent(res, info));
 
                 float num = info.damageTypes.Total () * info.resourceGatherProficiency;
@@ -483,9 +485,11 @@ namespace Pluton
         public static void GatheringTree(TreeEntity tree, HitInfo info)
         {
             if (tree.isServer) {
+                info.resourceGatherProficiency = info.resourceGatherProficiency * World.GetWorld().ResourceGatherMultiplier;
+
                 OnGathering.OnNext(new Events.GatherEvent(tree, info));
 
-                float num = info.damageTypes.Total () * info.resourceGatherProficiency;
+                float num = info.damageTypes.Total() * info.resourceGatherProficiency;
                 if (tree.protection) {
                     tree.protection.Scale (info.damageTypes);
                 }
@@ -708,7 +712,7 @@ namespace Pluton
         {
             float craft = Single.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             Server.GetServer().CraftingTimeScale = craft;
-            double resource = Double.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float resource = Single.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             World.GetWorld().ResourceGatherMultiplier = resource;
             float time = Single.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
