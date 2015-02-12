@@ -29,7 +29,7 @@
 
         public void BroadcastFrom(string name, string arg)
         {
-            ConsoleSystem.Broadcast("chat.add", String.Format("{0}: {1}", name.ColorText("fa5"), arg));
+            ConsoleSystem.Broadcast("chat.add", 0, String.Format("{0}: {1}", name.ColorText("fa5"), arg));
         }
 
         public void BroadcastNotice(string s)
