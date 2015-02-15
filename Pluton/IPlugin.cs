@@ -39,6 +39,7 @@ namespace Pluton
         void OnPlayerDisconnected(Player player);
         void OnPlayerGathering(GatherEvent ge);
         void OnPlayerHurt(PlayerHurtEvent he);
+        void OnPlayerStartCrafting(CraftEvent ce);
         void OnPlayerTakeRadiation(PlayerTakeRadsEvent re);
 
         void OnRespawn(RespawnEvent re);

@@ -286,6 +286,9 @@
                 case "On_PlayerDied":
                     plugin.OnPlayerDiedHook = Hooks.OnPlayerDied.Subscribe(p => plugin.OnPlayerDied(p));
                     break;
+                case "On_PlayerStartCrafting":
+                    plugin.OnPlayerStartCraftingHook = Hooks.OnPlayerStartCrafting.Subscribe(p => plugin.OnPlayerStartCrafting(p));
+                    break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                     break;
@@ -389,6 +392,9 @@
                     break;
                 case "On_PlayerDied":
                     plugin.OnPlayerDiedHook.Dispose();
+                    break;
+                case "On_PlayerStartCrafting":
+                    plugin.OnPlayerStartCraftingHook.Dispose();
                     break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook.Dispose();

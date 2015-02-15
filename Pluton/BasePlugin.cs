@@ -518,9 +518,9 @@ namespace Pluton
             this.Invoke("On_PlayerGathering", ge);
         }
 
-        public IDisposable OnPlayerTakeDamageHook;
-        public void OnPlayerTakeDamage(PlayerTakedmgEvent de) {
-            this.Invoke("On_PlayerTakeDamage", de);
+        public IDisposable OnPlayerStartCraftingHook;
+        public void OnPlayerStartCrafting(CraftEvent ce) {
+            this.Invoke("On_PlayerStartCrafting", ce);
         }
 
         public IDisposable OnPlayerTakeRadiationHook;

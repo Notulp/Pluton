@@ -44,6 +44,8 @@ namespace Pluton
 
         public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
 
+        public static Subject<CraftEvent> OnPlayerStartCrafting = new Subject<CraftEvent>();
+
         public static Subject<Player> OnPlayerConnected = new Subject<Player>();
 
         public static Subject<Player> OnPlayerDisconnected = new Subject<Player>();
@@ -515,6 +517,43 @@ namespace Pluton
 
             var npc = new NPC(bnpc);
             OnNPCDied.OnNext(new Events.NPCDeathEvent(npc, info));
+        }
+
+        // ItemCrafter.CraftItem()
+        public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null)
+        {
+            CraftEvent ce = new CraftEvent(self, bp, owner, instanceData);
+            OnPlayerStartCrafting.OnNext(ce);
+            if (!self.CanCraft(bp, 1) && !owner.IsAdmin()) {
+                return false;
+            }
+            if (ce.Cancel) {
+                if (ce.cancelReason != "")
+                    owner.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), ce.cancelReason));
+                return false;
+            }
+
+            self.taskUID++;
+            ItemCraftTask itemCraftTask = new ItemCraftTask();
+            itemCraftTask.blueprint = bp;
+            if (!ce.FreeCraft) {
+                foreach (ItemBlueprintIngredient current in bp.ingredients) {
+                    foreach (ItemContainer current2 in self.containers) {
+                        current.amount -= current2.Take(itemCraftTask.ingredients, current.item.itemid, current.amount);
+                    }
+                }
+            }
+            itemCraftTask.endTime = 0;
+            itemCraftTask.taskUID = self.taskUID;
+            itemCraftTask.owner = owner;
+            itemCraftTask.instanceData = instanceData;
+            self.queue.Enqueue (itemCraftTask);
+            if (itemCraftTask.owner != null) {
+                itemCraftTask.owner.Command(String.Format("note.craft_add {0} {1}",
+                    itemCraftTask.taskUID,
+                    itemCraftTask.blueprint.targetItem.itemid));
+            }
+            return true;
         }
 
         // BasePlayer.Die()
