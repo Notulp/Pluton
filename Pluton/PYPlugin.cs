@@ -16,7 +16,7 @@ namespace Pluton
         public static string LibPath;
 
         ScriptEngine Engine;
-        ScriptScope Scope;
+        public ScriptScope Scope;
         object Class;
 
         /// <summary>
