@@ -17,8 +17,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static TypeDefinition worldClass;
-        private static string version = "1.0.0.25";
+        private static string version = "1.0.0.27";
 
         #region patches
 
@@ -95,16 +94,21 @@ namespace Pluton.Patcher
             }
         }
 
-        private static void CraftingTimePatch()
+        private static void CraftingStartPatch()
         {
-            MethodDefinition ctInit = itemCrafter.GetMethod("Init");
-            MethodDefinition craftTime = hooksClass.GetMethod("CraftingTime");
+            MethodDefinition craftit = itemCrafter.GetMethod("CraftItem");
+            MethodDefinition craftHook = hooksClass.GetMethod("PlayerStartCrafting");
 
-            CloneMethod(ctInit);
-            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
+            ILProcessor il = craftit.Body.GetILProcessor();
+            il.Body.Instructions.Clear();
 
-            iLProcessor.InsertBefore(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[9], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftTime)));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Nop));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_3));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftHook)));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void DoPlacementPatch()
@@ -272,21 +276,6 @@ namespace Pluton.Patcher
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
         }
-        /*
-        private static void ResourceGatherMultiplierPatch()
-        {
-            TypeDefinition bRes = rustAssembly.MainModule.GetType("ResourceDispenser");
-            MethodDefinition ctInit = bRes.GetMethod("GiveResourceFromItem");
-            MethodDefinition gathering = hooksClass.GetMethod("ResourceGatherMultiplier");
-            CloneMethod(ctInit);
-            ILProcessor iLProcessor = ctInit.Body.GetILProcessor();
-
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[48], Instruction.Create(OpCodes.Ldloc_2));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[49], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[50], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertAfter(ctInit.Body.Instructions[51], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gathering)));
-
-        }*/
 
         private static void RespawnPatch()
         {
@@ -314,9 +303,7 @@ namespace Pluton.Patcher
 
                     ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[12], Instruction.Create(OpCodes.Ldloc_1));
-                    //iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_1));
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_2));
-                    //iLProcessor.InsertAfter(iLProcessor.Body.Instructions[15], Instruction.Create(OpCodes.Ldarg_3));
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));
                 }
             }
@@ -383,7 +370,7 @@ namespace Pluton.Patcher
             ChatPatch();
             ClientAuthPatch();
             CombatEntityHurtPatch();
-            CraftingTimePatch();
+            CraftingStartPatch();
             DoPlacementPatch();
 
             DoorCodePatch();
@@ -399,7 +386,6 @@ namespace Pluton.Patcher
 
             NPCDiedPatch();
 
-            //ResourceGatherMultiplierPatch();
             RespawnPatch();
 
             ServerShutdownPatch();
@@ -460,9 +446,8 @@ namespace Pluton.Patcher
             bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
             codeLock = rustAssembly.MainModule.GetType("CodeLock");
             hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
-            itemCrafter = rustAssembly.MainModule.GetType("ItemBlueprint");
+            itemCrafter = rustAssembly.MainModule.GetType("ItemCrafter");
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
-            worldClass = plutonAssembly.MainModule.GetType("Pluton.World");
 
             //Check if patching is required
             TypeDefinition plutonClass = rustAssembly.MainModule.GetType("Pluton");
