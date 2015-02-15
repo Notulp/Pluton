@@ -14,6 +14,12 @@ namespace Pluton.Events
             Looter = looter;
             pLoot = pl;
         }
+
+        public void Stop(string reason = "A plugin stops you from looting that!")
+        {
+            cancelReason = reason;
+            Cancel = true;
+        }
     }
 }
 
