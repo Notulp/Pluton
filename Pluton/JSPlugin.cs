@@ -37,6 +37,7 @@ namespace Pluton
                 .SetValue("Commands", chatCommands)
                 .SetValue("ServerConsoleCommands", consoleCommands)
                 .SetValue("GlobalData", GlobalData)
+                .SetValue("Find", Find.Instance)
                 .Execute(code);
             JavaScriptParser parser = new JavaScriptParser();
             Globals = (from function in parser.Parse(code).FunctionDeclarations

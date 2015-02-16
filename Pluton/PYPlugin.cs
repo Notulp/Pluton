@@ -44,6 +44,7 @@ namespace Pluton
             Scope.SetVariable("Commands", chatCommands);
             Scope.SetVariable("ServerConsoleCommands", consoleCommands);
             Scope.SetVariable("GlobalData", GlobalData);
+            Scope.SetVariable("Find", Find.Instance);
             Engine.Execute(code, Scope);
             Class = Engine.Operations.Invoke(Scope.GetVariable(name));
             Globals = Engine.Operations.GetMemberNames(Class);

@@ -43,6 +43,16 @@ namespace Pluton
         public ConsoleCommands ServerConsoleCommands;
 
         /// <summary>
+        /// Find instance for C# plugins.
+        /// </summary>
+        /// <value>The find class.</value>
+        public Find Find {
+            get {
+                return Find.Instance;
+            }
+        }
+
+        /// <summary>
         /// A global storage that any plugin can easily access.
         /// </summary>
         public System.Collections.Generic.Dictionary<string, object> GlobalData {
