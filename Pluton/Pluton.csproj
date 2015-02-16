@@ -129,6 +129,7 @@
     <Compile Include="CSPlugin.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Events\CraftEvent.cs" />
+    <Compile Include="Find.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
