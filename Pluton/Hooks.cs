@@ -16,8 +16,6 @@ namespace Pluton
 
         #region Events
 
-        public static Subject<FrameDeployedEvent> OnBuildingFrameDeployed = new Subject<FrameDeployedEvent>();
-
         public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
         public static Subject<BuildingEvent> OnPlacement = new Subject<BuildingEvent>();
