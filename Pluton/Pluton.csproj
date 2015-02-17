@@ -99,7 +99,6 @@
     <Compile Include="Events\RespawnEvent.cs" />
     <Compile Include="Events\ClientConsoleEvent.cs" />
     <Compile Include="Events\ServerConsoleEvent.cs" />
-    <Compile Include="Events\FrameDeployedEvent.cs" />
     <Compile Include="CountedInstance.cs" />
     <Compile Include="Objects\ChatCommands.cs" />
     <Compile Include="Objects\ConsoleCommands.cs" />
