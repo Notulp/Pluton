@@ -280,12 +280,11 @@
             if (!File.Exists(path))
                 File.AppendAllText("", path);
             var ini = new IniParser(path);
-            foreach (Item.Definition item in ItemManager.Instance.itemList) {
-                ini.AddSetting(item.displayname, "itemid", item.itemid.ToString());
-                ini.AddSetting(item.displayname, "category", item.category);
-                ini.AddSetting(item.displayname, "shortname", item.shortname);
-                ini.AddSetting(item.displayname, "worldPrefab", item.worldprefab);
-                ini.AddSetting(item.displayname, "description", item.description);
+            foreach (ItemDefinition item in ItemManager.Instance.itemList) {
+                ini.AddSetting(item.displayName.english, "itemid", item.itemid.ToString());
+                ini.AddSetting(item.displayName.english, "category", item.category.ToString());
+                ini.AddSetting(item.displayName.english, "shortname", item.shortname);
+                ini.AddSetting(item.displayName.english, "description", item.displayDescription.english);
             }
             ini.Save();
         }

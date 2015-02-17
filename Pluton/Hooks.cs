@@ -457,11 +457,11 @@ namespace Pluton
         public static void GatheringBR(BaseResource res, HitInfo info)
         {
             if (res.isServer) {
-                info.resourceGatherProficiency = info.resourceGatherProficiency * World.GetWorld().ResourceGatherMultiplier;
+                for (int i = 0; i < info.damageTypes.types.Length; i++)
+                    info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
 
                 OnGathering.OnNext(new Events.GatherEvent(res, info));
 
-                float num = info.damageTypes.Total () * info.resourceGatherProficiency;
                 if (res.baseProtection) {
                     res.baseProtection.Scale (info.damageTypes);
                 }
@@ -471,7 +471,7 @@ namespace Pluton
                 if (dispenser != null)
                     dispenser.OnAttacked(info);
 
-                float num2 = num;
+                float num2 = info.damageTypes.Total();
                 res.health -= num2;
                 if (res.health <= 0) {
                     res.Kill (EntityDestroy.Mode.None, 0, 0, default(Vector3));
@@ -485,11 +485,11 @@ namespace Pluton
         public static void GatheringTree(TreeEntity tree, HitInfo info)
         {
             if (tree.isServer) {
-                info.resourceGatherProficiency = info.resourceGatherProficiency * World.GetWorld().ResourceGatherMultiplier;
+                for (int i = 0; i < info.damageTypes.types.Length; i++)
+                    info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
 
                 OnGathering.OnNext(new Events.GatherEvent(tree, info));
 
-                float num = info.damageTypes.Total() * info.resourceGatherProficiency;
                 if (tree.protection) {
                     tree.protection.Scale (info.damageTypes);
                 }
@@ -497,7 +497,7 @@ namespace Pluton
                 if (rdp != null) {
                     rdp.OnAttacked(info);
                 }
-                float num2 = num;
+                float num2 = info.damageTypes.Total();
                 tree.health -= num2;
                 if (tree.health <= 0) {
                     tree.Kill (EntityDestroy.Mode.None, 0, 0, default(Vector3));
@@ -535,9 +535,9 @@ namespace Pluton
             ItemCraftTask itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bp;
             if (!ce.FreeCraft) {
-                foreach (ItemBlueprintIngredient current in bp.ingredients) {
+                foreach (ItemAmount current in bp.ingredients) {
                     foreach (ItemContainer current2 in self.containers) {
-                        current.amount -= current2.Take(itemCraftTask.ingredients, current.item.itemid, current.amount);
+                        current.amount -= current2.Take(itemCraftTask.ingredients, current.itemid, (int)current.amount);
                     }
                 }
             }

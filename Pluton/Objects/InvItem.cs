@@ -54,7 +54,7 @@ namespace Pluton
 
         public string Category {
             get {
-                return _item.info.category;
+                return _item.info.category.ToString();
             }
         }
 
@@ -81,7 +81,7 @@ namespace Pluton
 
         public string Name {
             get {
-                return _item.info.displayname;
+                return _item.info.displayName.english;
             }
         }
 
@@ -106,10 +106,10 @@ namespace Pluton
         public static int GetItemID(string itemName)
         {
             return (from item in ItemManager.Instance.itemList
-                    where item.displayname == itemName
-                       || item.shortname == itemName
-                       || item.worldprefab == itemName
-                    select item.itemid).FirstOrDefault<int>();
+                             where item.displayName.english == itemName ||
+                                 item.displayName.translated == itemName ||
+                                 item.shortname == itemName
+                             select item.itemid).FirstOrDefault<int>();
         }
 
         public static ContainerPreference GetContainerPreference(string category)

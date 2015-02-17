@@ -80,7 +80,7 @@
                 server.serverData.Load();
                 server.LoadLoadouts();
                 //server.LoadStructures();
-                server.ReloadBlueprints();
+                //server.ReloadBlueprints();
                 server.LoadOfflinePlayers();
             }
             return server;
@@ -94,17 +94,17 @@
                 if(blueprints.Count > 0)
                      Hooks.blueprintsLoaded = true; // used so reloading blueprints won't re-hook in an infinite loop!
                 craftTimeScale = value;
-                ReloadBlueprints();
+                //ReloadBlueprints();
             }
         }
 
-        public void ReloadBlueprints() {
+        /*public void ReloadBlueprints() {
             foreach (ItemBlueprint p in blueprints) {
                 p.ingredients.Clear();
                 p.Init();
                 p.time = p.time / CraftingTimeScale;
             }
-        }
+        }*/
 
         public void LoadLoadouts()
         {

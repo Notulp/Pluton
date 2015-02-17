@@ -12,7 +12,7 @@ namespace Pluton.Events
         /// <summary>
         /// Item.Definition of the target item.
         /// </summary>
-        public Item.Definition Target;
+        public ItemDefinition Target;
 
         /// <summary>
         /// The ItemCrafter object.

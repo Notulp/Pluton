@@ -93,15 +93,6 @@ namespace Pluton.Events
                 }
             }
         }
-
-        public float Proficiency {
-            get {
-                return _info.resourceGatherProficiency;
-            }
-            set {
-                _info.resourceGatherProficiency = value;
-            }
-        }
     }
 }
 
