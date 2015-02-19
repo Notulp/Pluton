@@ -17,7 +17,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.27";
+        private static string version = "1.0.0.28";
 
         #region patches
 
@@ -405,15 +405,6 @@ namespace Pluton.Patcher
             facepunchAssembly.MainModule.Types.Add(plutonClass);
         }
 
-        /*
-         * Return values :
-         * 10 : File not found
-         * 20 : Reading dll error
-         * 30 : Server already patched
-         * 40 : Generic patch exeption Assembly-CSharp
-         * 41 : Generic patch exeption Facepunch
-         * 50 : File write error
-         */
         public static int Main(string[] args)
         {
             bool interactive = true;
@@ -431,7 +422,7 @@ namespace Pluton.Patcher
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
-                return 10;
+                return (int)ExitCode.DLL_MISSING;
             } catch (Exception ex) {
                 Console.WriteLine("An error occured while reading the assemblies :");
                 Console.WriteLine(ex.ToString());
@@ -439,7 +430,7 @@ namespace Pluton.Patcher
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
-                return 20;
+                return (int)ExitCode.DLL_READ_ERROR;
             }
 
             bNPC = rustAssembly.MainModule.GetType("BaseNPC");
@@ -451,15 +442,11 @@ namespace Pluton.Patcher
 
             //Check if patching is required
             TypeDefinition plutonClass = rustAssembly.MainModule.GetType("Pluton");
-            if (plutonClass == null)
-            {
-                try
-                {
+            if (plutonClass == null) {
+                try {
                     PatchASMCSharp();
                     Console.WriteLine("Patched Assembly-CSharp !");
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     interactive = true;
                     Console.WriteLine("An error occured while patching Assembly-CSharp :");
                     Console.WriteLine();
@@ -474,11 +461,12 @@ namespace Pluton.Patcher
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadKey();
                     }
-                    return 40;
+                    return (int)ExitCode.ACDLL_GENERIC_PATCH_ERR;
                 }
+            } else {
+                Console.WriteLine("Assembly-CSharp.dll is already patched!");
+                return (int)ExitCode.ACDLL_ALREADY_PATCHED;
             }
-            else
-                Console.WriteLine("Assembly-CSharp is already patched!");               
             
 
             plutonClass = facepunchAssembly.MainModule.GetType("Pluton");
@@ -504,11 +492,12 @@ namespace Pluton.Patcher
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadKey();
                     }
-                    return 41;
+                    return (int)ExitCode.FPDLL_GENERIC_PATCH_ERR;
                 }
+            } else {
+                Console.WriteLine("Facepunch.dll is already patched!");
+                return (int)ExitCode.FPDLL_ALREADY_PATCHED;
             }
-            else
-                Console.WriteLine("Facepunch is already patched!");
                   
 
             try {
@@ -524,14 +513,27 @@ namespace Pluton.Patcher
                     Console.ReadKey();
                 }
 
-                return 50;
+                return (int)ExitCode.DLL_WRITE_ERROR;
             }
 
             //Successfully patched the server
             Console.WriteLine("Completed !");
-            System.Threading.Thread.Sleep(250);
-            Environment.Exit(0);
-            return -1;
+
+            if (interactive)
+                System.Threading.Thread.Sleep(250);
+
+            return (int)ExitCode.SUCCESS;
         }
+    }
+
+    public enum ExitCode : int {
+        SUCCESS = 0,
+        DLL_MISSING = 10,
+        DLL_READ_ERROR = 20,
+        DLL_WRITE_ERROR = 21,
+        ACDLL_ALREADY_PATCHED = 30,
+        FPDLL_ALREADY_PATCHED = 31,
+        ACDLL_GENERIC_PATCH_ERR = 40,
+        FPDLL_GENERIC_PATCH_ERR = 41
     }
 }
