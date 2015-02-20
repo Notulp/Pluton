@@ -41,10 +41,6 @@
       <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Facepunch">
-      <HintPath>..\ref\Facepunch.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ref\UnityEngine.dll</HintPath>
       <Private>False</Private>
