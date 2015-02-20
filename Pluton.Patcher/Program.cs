@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.30";
+        private static string version = "1.0.0.31";
 
         #region patches
 
@@ -65,12 +65,12 @@ namespace Pluton.Patcher
 
             ILProcessor iLProcessor = onClientCmd.Body.GetILProcessor();
 
-            for (int i = 23; i >= 18; i--)
+            for (int i = 19; i >= 14; i--)
                 iLProcessor.Body.Instructions.RemoveAt(i);
 
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[17], Instruction.Create(OpCodes.Ldloc_2));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[18], Instruction.Create(OpCodes.Ldloc_1));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));            
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[13], Instruction.Create(OpCodes.Ldloc_1));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[14], Instruction.Create(OpCodes.Ldloc_0));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[15], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));
         }
 
         private static void CombatEntityHurtPatch()
