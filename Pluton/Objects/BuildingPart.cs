@@ -34,7 +34,7 @@ namespace Pluton
 
         public void Destroy()
         {
-            buildingBlock.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, buildingBlock.transform.position);
+            buildingBlock.Kill(BaseNetworkable.DestroyMode.Gib);
         }
 
         public override bool IsBuildingPart()
@@ -49,12 +49,7 @@ namespace Pluton
                 return;
             }
             buildingBlock.transform.localRotation *= Quaternion.Euler(grade.rotationAmount);
-
-            NetworkData networkData = new NetworkData();
-            networkData.WriteUInt32(StringPool.Get("updateconditionalmodels"));
-            networkData.WriteUInt64(0);
-            buildingBlock.net.Broadcast(MSG.RPC_MESSAGE, networkData.ToBytes(), Network.SendMethod.Reliable);
-
+            buildingBlock.ClientRPC(null, "UpdateConditionalModels", new object[0]);
             buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
         }
 

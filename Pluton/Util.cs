@@ -101,12 +101,12 @@
 
         public void DestroyEntity(BaseEntity ent)
         {
-            ent.GetComponent<BaseNetworkable>().Kill();
+            ent.GetComponent<BaseNetworkable>().KillMessage();
         }
 
         public void DestroyEntityGib(BaseEntity ent)
         {
-            ent.GetComponent<BaseNetworkable>().Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 1, ent.transform.position);
+            ent.GetComponent<BaseNetworkable>().Kill(BaseNetworkable.DestroyMode.Gib);
         }
 
         public void DestroyObject(GameObject go)

@@ -463,7 +463,7 @@ namespace Pluton
                 OnGathering.OnNext(new Events.GatherEvent(res, info));
 
                 if (res.baseProtection) {
-                    res.baseProtection.Scale (info.damageTypes);
+                    res.baseProtection.Scale(info.damageTypes);
                 }
 
                 ResourceDispenser dispenser = res.GetComponent<ResourceDispenser>();
@@ -474,7 +474,7 @@ namespace Pluton
                 float num2 = info.damageTypes.Total();
                 res.health -= num2;
                 if (res.health <= 0) {
-                    res.Kill (EntityDestroy.Mode.None, 0, 0, default(Vector3));
+                    res.KillMessage();
                     return;
                 }
                 res.Invoke ("UpdateNetworkStage", 0.1f);
@@ -491,7 +491,7 @@ namespace Pluton
                 OnGathering.OnNext(new Events.GatherEvent(tree, info));
 
                 if (tree.protection) {
-                    tree.protection.Scale (info.damageTypes);
+                    tree.protection.Scale(info.damageTypes);
                 }
                 ResourceDispenser rdp = tree.GetComponent<ResourceDispenser>();
                 if (rdp != null) {
@@ -500,7 +500,7 @@ namespace Pluton
                 float num2 = info.damageTypes.Total();
                 tree.health -= num2;
                 if (tree.health <= 0) {
-                    tree.Kill (EntityDestroy.Mode.None, 0, 0, default(Vector3));
+                    tree.KillMessage();
                     return;
                 }
             }
@@ -674,6 +674,8 @@ namespace Pluton
 
             player.SendNetworkUpdateImmediate(false);
             player.SendFullSnapshot();
+
+            player.ClientRPC(null, player, "StartLoading", new object[0]);
 
             if (re.WakeUp)
                 player.EndSleeping();

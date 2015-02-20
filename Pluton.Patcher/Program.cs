@@ -7,8 +7,6 @@ namespace Pluton.Patcher
 {
     class MainClass
     {
-
-        private static AssemblyDefinition facepunchAssembly;
         private static AssemblyDefinition plutonAssembly;
         private static AssemblyDefinition rustAssembly;
         private static TypeDefinition bNPC;
@@ -17,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.28";
+        private static string version = "1.0.0.30";
 
         #region patches
 
@@ -29,7 +27,7 @@ namespace Pluton.Patcher
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
             MethodDefinition init = serverInit.GetMethod("Initialization");
 
-            init.Body.GetILProcessor().InsertAfter(init.Body.Instructions[init.Body.Instructions.Count - 2], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 12], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void ChatPatch()
@@ -61,7 +59,7 @@ namespace Pluton.Patcher
 
         private static void ClientConsoleCommandPatch()
         {
-            TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
+            TypeDefinition consoleSystem = rustAssembly.MainModule.GetType("ConsoleSystem");
             MethodDefinition onClientCmd = consoleSystem.GetMethod("OnClientCommand");
             MethodDefinition onClientConsole = hooksClass.GetMethod("ClientConsoleCommand");
 
@@ -72,7 +70,7 @@ namespace Pluton.Patcher
 
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[17], Instruction.Create(OpCodes.Ldloc_2));
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[18], Instruction.Create(OpCodes.Ldloc_1));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onClientConsole)));            
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[19], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));            
         }
 
         private static void CombatEntityHurtPatch()
@@ -295,7 +293,7 @@ namespace Pluton.Patcher
 
         private static void ServerConsoleCommandPatch()
         {
-            TypeDefinition consoleSystem = facepunchAssembly.MainModule.GetType("ConsoleSystem");
+            TypeDefinition consoleSystem = rustAssembly.MainModule.GetType("ConsoleSystem");
             foreach (var i in consoleSystem.GetNestedType("SystemRealm").GetMethods()) {
                 if (i.Parameters.Count == 3 && i.Name == "Normal") {
                     MethodDefinition onServerCmd = i;
@@ -304,7 +302,7 @@ namespace Pluton.Patcher
                     ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[12], Instruction.Create(OpCodes.Ldloc_1));
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_2));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, facepunchAssembly.MainModule.Import(onServerConsole)));
+                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerConsole)));
                 }
             }
         }
@@ -392,17 +390,11 @@ namespace Pluton.Patcher
             ServerInitPatch();
             SetModdedPatch();
 
-            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
-            rustAssembly.MainModule.Types.Add(plutonClass);
-        }
-
-        private static void PatchFacepunch()
-        {
             ClientConsoleCommandPatch();
             ServerConsoleCommandPatch();
 
-            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, facepunchAssembly.MainModule.Import(typeof(Object)));
-            facepunchAssembly.MainModule.Types.Add(plutonClass);
+            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
+            rustAssembly.MainModule.Types.Add(plutonClass);
         }
 
         public static int Main(string[] args)
@@ -413,7 +405,6 @@ namespace Pluton.Patcher
             
             Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", version));
             try {
-                facepunchAssembly = AssemblyDefinition.ReadAssembly("Facepunch.dll");
                 plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
                 rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
             } catch (FileNotFoundException ex) {
@@ -467,42 +458,9 @@ namespace Pluton.Patcher
                 Console.WriteLine("Assembly-CSharp.dll is already patched!");
                 return (int)ExitCode.ACDLL_ALREADY_PATCHED;
             }
-            
-
-            plutonClass = facepunchAssembly.MainModule.GetType("Pluton");
-            if (plutonClass == null)
-            {
-                try
-                {
-                    PatchFacepunch();
-                    Console.WriteLine("Patched Facepunch !");
-                }
-                catch (Exception ex)
-                {
-                    interactive = true;
-                    Console.WriteLine("An error occured while patching Facepunch :");
-                    Console.WriteLine();
-                    Console.WriteLine(ex.Message.ToString());
-
-                    Console.WriteLine();
-                    Console.WriteLine(ex.StackTrace.ToString());
-                    Console.WriteLine();
-
-                    if (interactive) {
-                        Console.WriteLine("Press any key to continue...");
-                        Console.ReadKey();
-                    }
-                    return (int)ExitCode.FPDLL_GENERIC_PATCH_ERR;
-                }
-            } else {
-                Console.WriteLine("Facepunch.dll is already patched!");
-                return (int)ExitCode.FPDLL_ALREADY_PATCHED;
-            }
-                  
 
             try {
                 rustAssembly.Write("Assembly-CSharp.dll");
-                facepunchAssembly.Write("Facepunch.dll");
             } catch (Exception ex) {
                 Console.WriteLine("An error occured while writing the assembly :");
                 Console.WriteLine("Error at: " + ex.TargetSite.Name);
@@ -532,8 +490,6 @@ namespace Pluton.Patcher
         DLL_READ_ERROR = 20,
         DLL_WRITE_ERROR = 21,
         ACDLL_ALREADY_PATCHED = 30,
-        FPDLL_ALREADY_PATCHED = 31,
-        ACDLL_GENERIC_PATCH_ERR = 40,
-        FPDLL_GENERIC_PATCH_ERR = 41
+        ACDLL_GENERIC_PATCH_ERR = 40
     }
 }

@@ -207,16 +207,12 @@ namespace Pluton
             basePlayer.transform.position = new UnityEngine.Vector3(x, y, z);
             basePlayer.UpdateNetworkGroup();
             basePlayer.UpdatePlayerCollider(true, false);
+            basePlayer.SendNetworkUpdateImmediate(false);
             basePlayer.SendFullSnapshot();
             basePlayer.inventory.SendSnapshot();
-            //basePlayer.CallMethod("ClientRPC", basePlayer, "StartLoading");
-
-            NetworkData networkData = new NetworkData ();
-            networkData.WriteUInt32(StringPool.Get("startloading"));
-            networkData.WriteUInt64 ((basePlayer.net.connection != null) ? basePlayer.net.connection.ownerid : 0);
-            basePlayer.net.MessageClient(basePlayer.net.connection, MSG.RPC_MESSAGE, networkData.ToBytes());
 
             basePlayer.CallMethod("SendNetworkUpdate_Position");
+            basePlayer.ClientRPC(null, basePlayer, "StartLoading", new object[0]);
             basePlayer.Invoke("EndSleeping", 0.5f);
         }
 

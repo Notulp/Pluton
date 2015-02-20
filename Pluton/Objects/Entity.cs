@@ -20,7 +20,7 @@ namespace Pluton
 
         public virtual void Kill()
         {
-            baseEntity.Kill(ProtoBuf.EntityDestroy.Mode.Gib, 2, 0, baseEntity.transform.position);
+            baseEntity.Kill(BaseNetworkable.DestroyMode.Gib);
         }
 
         public virtual bool IsBuildingPart()
