@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.32";
+        private static string version = "1.0.0.33";
 
         #region patches
 
@@ -343,22 +343,6 @@ namespace Pluton.Patcher
             il.InsertAfter(servUpdate.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
         }
 
-        private static void FixRustStabilityPatch()
-        {
-            TypeDefinition saveRes = rustAssembly.MainModule.GetType("SaveRestore");
-            MethodDefinition load = saveRes.GetMethod("InitializeStability");
-
-            TypeDefinition serv = rustAssembly.MainModule.GetType("server");
-            FieldReference servstab = serv.GetField("stability");
-
-            ILProcessor il = load.Body.GetILProcessor();
-            
-            il.InsertBefore(il.Body.Instructions[0], Instruction.Create(OpCodes.Nop));
-            il.InsertAfter(il.Body.Instructions[0], Instruction.Create(OpCodes.Ldsfld, servstab));
-            il.InsertAfter(il.Body.Instructions[1], Instruction.Create(OpCodes.Brtrue, il.Body.Instructions[4]));
-            il.InsertAfter(il.Body.Instructions[2], Instruction.Create(OpCodes.Ret));
-        }
-
         #endregion
 
         // from fougerite.patcher
@@ -408,8 +392,6 @@ namespace Pluton.Patcher
 
             ClientConsoleCommandPatch();
             ServerConsoleCommandPatch();
-
-            FixRustStabilityPatch();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
             rustAssembly.MainModule.Types.Add(plutonClass);
