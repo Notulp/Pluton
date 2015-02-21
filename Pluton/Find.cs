@@ -59,7 +59,7 @@ namespace Pluton
         /// <param name="name">Name.</param>
         public List<NPC> NPCs(string name)
         {
-            return (from npc in BaseNPC.list
+            return (from npc in UnityEngine.Object.FindObjectsOfType<BaseNPC>()
                 where npc.name.Contains(name) 
                 select new NPC(npc)).ToList<NPC>();
         }
