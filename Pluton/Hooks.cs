@@ -457,27 +457,34 @@ namespace Pluton
         public static void GatheringBR(BaseResource res, HitInfo info)
         {
             if (res.isServer) {
-                for (int i = 0; i < info.damageTypes.types.Length; i++)
-                    info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
+
+                // TODO: fixme again
+//                if (World.GetWorld().ResourceGatherMultiplier != -1) {
+//                    for (int i = 0; i < info.damageTypes.types.Length; i++) {
+//                        info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
+//                    }
+//                }
 
                 OnGathering.OnNext(new Events.GatherEvent(res, info));
 
-                if (res.baseProtection) {
-                    res.baseProtection.Scale(info.damageTypes);
-                }
-
                 ResourceDispenser dispenser = res.GetComponent<ResourceDispenser>();
-
-                if (dispenser != null)
+                if (dispenser != null) {
                     dispenser.OnAttacked(info);
-
-                float num2 = info.damageTypes.Total();
-                res.health -= num2;
-                if (res.health <= 0) {
-                    res.KillMessage();
-                    return;
                 }
-                res.Invoke ("UpdateNetworkStage", 0.1f);
+
+                if (!info.DidGather) {
+                    if (res.baseProtection) {
+                        res.baseProtection.Scale(info.damageTypes);
+                    }
+
+                    float num2 = info.damageTypes.Total();
+                    res.health -= num2;
+                    if (res.health <= 0) {
+                        res.KillMessage();
+                        return;
+                    }
+                    res.Invoke("UpdateNetworkStage", 0.1f);
+                }
             }
         }
 
@@ -485,23 +492,30 @@ namespace Pluton
         public static void GatheringTree(TreeEntity tree, HitInfo info)
         {
             if (tree.isServer) {
-                for (int i = 0; i < info.damageTypes.types.Length; i++)
-                    info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
+
+                // TODO: fixme again
+//                if (World.GetWorld().ResourceGatherMultiplier != -1) {
+//                    for (int i = 0; i < info.damageTypes.types.Length; i++) {
+//                        info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
+//                    }
+//                }
 
                 OnGathering.OnNext(new Events.GatherEvent(tree, info));
 
-                if (tree.protection) {
-                    tree.protection.Scale(info.damageTypes);
-                }
                 ResourceDispenser rdp = tree.GetComponent<ResourceDispenser>();
                 if (rdp != null) {
                     rdp.OnAttacked(info);
                 }
-                float num2 = info.damageTypes.Total();
-                tree.health -= num2;
-                if (tree.health <= 0) {
-                    tree.KillMessage();
-                    return;
+                if (!info.DidGather) {
+                    if (tree.protection) {
+                        tree.protection.Scale(info.damageTypes);
+                    }
+                    float num2 = info.damageTypes.Total();
+                    tree.health -= num2;
+                    if (tree.health <= 0) {
+                        tree.KillMessage();
+                        return;
+                    }
                 }
             }
         }
@@ -751,7 +765,7 @@ namespace Pluton
         {
             float craft = Single.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             Server.GetServer().CraftingTimeScale = craft;
-            float resource = Single.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            float resource = Single.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             World.GetWorld().ResourceGatherMultiplier = resource;
             float time = Single.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
