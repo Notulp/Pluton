@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.33";
+        private static string version = "1.0.0.34";
 
         #region patches
 
@@ -68,9 +68,9 @@ namespace Pluton.Patcher
             for (int i = 19; i >= 14; i--)
                 iLProcessor.Body.Instructions.RemoveAt(i);
 
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[13], Instruction.Create(OpCodes.Ldloc_1));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[14], Instruction.Create(OpCodes.Ldloc_0));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[15], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[10], Instruction.Create(OpCodes.Ldloc_1));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[11], Instruction.Create(OpCodes.Ldloc_0));
+            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[12], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));
         }
 
         private static void CombatEntityHurtPatch()
@@ -303,6 +303,17 @@ namespace Pluton.Patcher
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[12], Instruction.Create(OpCodes.Ldloc_1));
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_2));
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerConsole)));
+
+                    int count = iLProcessor.Body.Instructions.Count;
+                    for (int k = 5; k < 11; k++) {
+                        iLProcessor.Body.Instructions.RemoveAt(count - k);
+                    }
+                    iLProcessor.Body.Instructions.RemoveAt(iLProcessor.Body.Instructions.Count - 7);
+                    iLProcessor.Body.Instructions.RemoveAt(iLProcessor.Body.Instructions.Count - 9);
+                    iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4], Instruction.Create(OpCodes.Brtrue, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 2]));
+                    iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 7], Instruction.Create(OpCodes.Brfalse, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4]));
+                    iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 10], Instruction.Create(OpCodes.Brtrue, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4]));
+//                    throw new Exception("asd");
                 }
             }
         }

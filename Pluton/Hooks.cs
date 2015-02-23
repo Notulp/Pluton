@@ -166,14 +166,24 @@ namespace Pluton
             SingletonComponent<ServerMgr>.Instance.ConnectionApproved(connection);
         }
 
-        //FacePunch.ConsoleSystem.OnClientCommand
+        // ConsoleSystem.OnClientCommand()
         public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
         {
             ClientConsoleEvent ce = new ClientConsoleEvent(arg, rconCmd);
             if (arg.connection != null) {
                 OnClientConsole.OnNext(ce);
 
-                arg.ReplyWith(ce.Reply);
+                if (arg.Invalid) {
+                    if (!Net.sv.IsConnected()) {
+                        return;
+                    }
+                    Net.sv.write.Start();
+                    Net.sv.write.PacketID(Message.Type.ConsoleMessage);
+                    Net.sv.write.String(ce.Reply);
+                    Net.sv.write.Send(new SendInfo(arg.connection));
+                } else {
+                    arg.ReplyWith(ce.Reply);
+                }
             }
         }
 
@@ -756,6 +766,9 @@ namespace Pluton
                 }
 
                 OnServerConsole.OnNext(ssc);
+                if (arg.Invalid) {
+                    Debug.Log(ssc.Reply);
+                }
             } catch (Exception ex) {
                 Logger.LogException(ex);
             }

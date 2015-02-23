@@ -7,29 +7,29 @@ namespace Pluton.Events
     {
         public readonly ConsoleSystem.Arg Internal;
         public readonly Player User;
-        public readonly String cmd;
-        public readonly List<String> Args;
-        public String Reply;
+        public readonly string cmd;
+        public readonly List<string> Args;
+        public string Reply;
 
-        public ClientConsoleEvent(ConsoleSystem.Arg arg, String rconCmd)
+        public ClientConsoleEvent(ConsoleSystem.Arg arg, string rconCmd)
         {
             this.Internal = arg;
             this.User = Player.FindByGameID((arg.connection.player as BasePlayer).userID);
-            this.Args = new List<String>();
+            this.Args = new List<string>();
 
-            Reply = String.Format("{0} was executed from console!", rconCmd);
+            Reply = "Command not found!";
 
             if(String.IsNullOrEmpty(rconCmd))
                 return;
 
-            foreach (String str in rconCmd.Split(' '))
+            foreach (string str in rconCmd.Split(' '))
                 Args.Add(str);
 
             this.cmd = Args[0];
             Args.RemoveAt(0);
         }
 
-        public void ReplyWith(String msg)
+        public void ReplyWith(string msg)
         {
             Reply = msg;
         }

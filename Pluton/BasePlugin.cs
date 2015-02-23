@@ -435,6 +435,7 @@ namespace Pluton
 
         public IDisposable OnClientConsoleHook;
         public void OnClientConsole(ClientConsoleEvent ce) {
+            ce.ReplyWith(ce.cmd + " " + String.Join(" ", ce.Args.ToArray()) + " was executed!");
             this.Invoke("On_ClientConsole", ce);
         }
 
