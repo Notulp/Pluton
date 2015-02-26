@@ -14,7 +14,8 @@ namespace Pluton.Events
         {
             RadAmount = amount;
             Current = current;
-            Next = UnityEngine.Mathf.Max(amount, current);
+            float next = UnityEngine.Mathf.Clamp(amount, p.basePlayer.metabolism.radiation_level.min, p.basePlayer.metabolism.radiation_level.max);
+            Next = next <= current ? current : next;
 			Victim = p;
 		}
 	}

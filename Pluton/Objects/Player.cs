@@ -115,7 +115,7 @@ namespace Pluton
         public override void Kill()
         {
             var info = new HitInfo();
-            info.AddDamage(Rust.DamageType.Suicide, Single.MaxValue);
+            info.damageTypes.Add(Rust.DamageType.Suicide, Single.MaxValue);
             info.Initiator = baseEntity;
             basePlayer.Die(info);
         }
