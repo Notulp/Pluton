@@ -463,10 +463,19 @@ namespace Pluton
             }
         }
 
+        public static void Gathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
+        {
+            Item item = ItemManager.CreateByItemID(itemAmt.itemid, amount, false);
+            if (item == null) {
+                return;
+            }
+            to.GiveItem(item);
+        }
+
         // BaseResource.OnAttacked()
         public static void GatheringBR(BaseResource res, HitInfo info)
         {
-            if (res.isServer) {
+            /*if (res.isServer) {
 
                 // TODO: fixme again
 //                if (World.GetWorld().ResourceGatherMultiplier != -1) {
@@ -495,13 +504,13 @@ namespace Pluton
                     }
                     res.Invoke("UpdateNetworkStage", 0.1f);
                 }
-            }
+            }*/
         }
 
         // TreeEntity.OnAttacked()
         public static void GatheringTree(TreeEntity tree, HitInfo info)
         {
-            if (tree.isServer) {
+            /*if (tree.isServer) {
 
                 // TODO: fixme again
 //                if (World.GetWorld().ResourceGatherMultiplier != -1) {
@@ -527,7 +536,7 @@ namespace Pluton
                         return;
                     }
                 }
-            }
+            }*/
         }
 
         // BaseAnimal.Die()
