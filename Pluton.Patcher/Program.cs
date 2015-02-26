@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.34";
+        private static string version = "1.0.0.35";
 
         #region patches
 
@@ -313,7 +313,6 @@ namespace Pluton.Patcher
                     iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4], Instruction.Create(OpCodes.Brtrue, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 2]));
                     iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 7], Instruction.Create(OpCodes.Brfalse, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4]));
                     iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 10], Instruction.Create(OpCodes.Brtrue, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4]));
-//                    throw new Exception("asd");
                 }
             }
         }
@@ -354,6 +353,28 @@ namespace Pluton.Patcher
             il.InsertAfter(servUpdate.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
         }
 
+        private static void GiveItemsPatch()
+        {
+            TypeDefinition disp = rustAssembly.MainModule.GetType("ResourceDispenser");
+            //TypeDefinition entComp = rustAssembly.MainModule.GetType("EntityComponent`1");
+            MethodDefinition giveFromItem = disp.GetMethod("GiveResourceFromItem");
+            //FieldReference fromEnt = entComp.GetField("baseEntity");
+
+            MethodDefinition onGather = hooksClass.GetMethod("Gathering");
+
+            ILProcessor il = giveFromItem.Body.GetILProcessor();
+            int count = il.Body.Instructions.Count;
+            for (int i = count - 1; i > count - 14; i--) {
+                il.Body.Instructions.RemoveAt(i);
+            }
+            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_2));
+            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldloc_S, il.Body.Variables[6]));
+            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onGather)));
+            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ret));
+        }
+
         #endregion
 
         // from fougerite.patcher
@@ -385,7 +406,7 @@ namespace Pluton.Patcher
             DoorCodePatch();
             DoorUsePatch();
 
-            GatherPatch();
+            GiveItemsPatch();
 
             PlayerConnectedPatch();
             PlayerDisconnectedPatch();
