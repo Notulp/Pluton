@@ -583,7 +583,7 @@ namespace Pluton
         {
             if (info == null) {
                 info = new HitInfo();
-                info.AddDamage(player.lastDamage, Single.MaxValue);
+                info.damageTypes.Add(player.lastDamage, Single.MaxValue);
                 info.Initiator = player as BaseEntity;
             }
 
@@ -648,9 +648,9 @@ namespace Pluton
         // BasePlayer.UpdateRadiation()
         public static void PlayerTakeRadiation(BasePlayer player, float radAmount)
         {
-            var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), player.metabolism.radiation.value, radAmount);
+            var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), player.metabolism.radiation_level.value, radAmount);
             OnPlayerTakeRads.OnNext(ptr);
-            player.metabolism.radiation.value = ptr.Next;
+            player.metabolism.radiation_level.value = ptr.Next;
         }
         /*
         // In future create an Event, allow people to adjust certain resources to give certain amounts!
