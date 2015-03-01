@@ -8,9 +8,9 @@ namespace Pluton
     public class CSharpPlugin
     {
         /// <summary>
-        /// The server.
+        /// The commands.
         /// </summary>
-        public Server Server;
+        public ChatCommands Commands;
 
         /// <summary>
         /// The data store.
@@ -23,24 +23,29 @@ namespace Pluton
         public BasePlugin Plugin;
 
         /// <summary>
-        /// The world.
-        /// </summary>
-        public World World;
-
-        /// <summary>
         /// The util.
         /// </summary>
         public Util Util;
 
         /// <summary>
-        /// The commands.
+        /// The server.
         /// </summary>
-        public ChatCommands Commands;
+        public Server Server;
 
         /// <summary>
         /// The server console commands.
         /// </summary>
         public ConsoleCommands ServerConsoleCommands;
+
+        /// <summary>
+        /// The web.
+        /// </summary>
+        public Web Web;
+
+        /// <summary>
+        /// The world.
+        /// </summary>
+        public World World;
 
         /// <summary>
         /// Find instance for C# plugins.

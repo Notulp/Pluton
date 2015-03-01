@@ -31,15 +31,16 @@ namespace Pluton
             Engine = new JintEngine(Options.Ecmascript5)
                 .AllowClr(true);
 
-            Engine.SetParameter("Server", Server.GetServer())
+            Engine.SetParameter("Commands", chatCommands)
                 .SetParameter("DataStore", DataStore.GetInstance())
-                .SetParameter("Util", Util.GetUtil())
-                .SetParameter("World", World.GetWorld())
-                .SetParameter("Plugin", this)
-                .SetParameter("Commands", chatCommands)
-                .SetParameter("ServerConsoleCommands", consoleCommands)
-                .SetParameter("GlobalData", GlobalData)
                 .SetParameter("Find", Find.Instance)
+                .SetParameter("GlobalData", GlobalData)
+                .SetParameter("Plugin", this)
+                .SetParameter("Server", Server.GetServer())
+                .SetParameter("ServerConsoleCommands", consoleCommands)
+                .SetParameter("Util", Util.GetUtil())
+                .SetParameter("Web", Web)
+                .SetParameter("World", World.GetWorld())
                 .SetFunction("importClass", new importit(importClass));
 
             Program = JintEngine.Compile(code, false);
