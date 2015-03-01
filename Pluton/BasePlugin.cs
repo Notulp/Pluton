@@ -81,6 +81,8 @@ namespace Pluton
         /// </summary>
         public PluginState State = PluginState.NotLoaded;
 
+        public Web Web = new Web();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.BasePlugin"/> class.
         /// </summary>
@@ -695,6 +697,50 @@ namespace Pluton
         /// <param name="url">URL.</param>
         public string GET(string url)
         {
+            return Web.GET(url);
+        }
+
+        /// <summary>
+        /// POST request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
+        public string POST(string url, string data)
+        {
+            return Web.POST(url, data);
+        }
+
+        /// <summary>
+        /// POSTs a json string to the specified url.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="json">Json.</param>
+        public string POSTJSON(string url, string json)
+        {
+            return Web.POSTJSON(url, json);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Creates a Dictionary<string, object> object.</c>.
+        /// </summary>
+        /// <returns>The dictionary.</returns>
+        /// <param name="cap">Capacity.</param>
+        public Dictionary<string, object> CreateDict(int cap = 10)
+        {
+            return new Dictionary<string, object>(cap);
+        }
+    }
+
+    public class Web
+    {
+        /// <summary>
+        /// GET request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        public string GET(string url)
+        {
             using (System.Net.WebClient client = new System.Net.WebClient())
             {
                 return client.DownloadString(url);
@@ -729,18 +775,6 @@ namespace Pluton
                 byte[] bytes = client.UploadData(url, "POST", Encoding.UTF8.GetBytes(json));
                 return Encoding.UTF8.GetString(bytes);
             }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Creates a Dictionary<string, object> object.</c>.
-        /// </summary>
-        /// <returns>The dictionary.</returns>
-        /// <param name="cap">Capacity.</param>
-        public Dictionary<string, object> CreateDict(int cap = 10)
-        {
-            return new Dictionary<string, object>(cap);
         }
     }
 }

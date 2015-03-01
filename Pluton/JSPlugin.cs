@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using Jint;
-using Jint.Native;
-using Jint.Parser;
-using Jint.Parser.Ast;
+using Jint.Expressions;
 
 namespace Pluton
 {
     public class JSPlugin : BasePlugin
     {
-        public Jint.Engine Engine;
+        public JintEngine Engine;
+        public Program Program;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.JSPlugin"/> class.
@@ -28,21 +28,28 @@ namespace Pluton
                 return;
             }
 
-            Engine = new Jint.Engine(cfg => cfg.AllowClr(typeof(UnityEngine.GameObject).Assembly))
-                .SetValue("Server", Server.GetServer())
-                .SetValue("DataStore", DataStore.GetInstance())
-                .SetValue("Util", Util.GetUtil())
-                .SetValue("World", World.GetWorld())
-                .SetValue("Plugin", this)
-                .SetValue("Commands", chatCommands)
-                .SetValue("ServerConsoleCommands", consoleCommands)
-                .SetValue("GlobalData", GlobalData)
-                .SetValue("Find", Find.Instance)
-                .Execute(code);
-            JavaScriptParser parser = new JavaScriptParser();
-            Globals = (from function in parser.Parse(code).FunctionDeclarations
-                select function.Id.Name).ToList<string>();
+            Engine = new JintEngine(Options.Ecmascript5)
+                .AllowClr(true);
 
+            Engine.SetParameter("Commands", chatCommands)
+                .SetParameter("DataStore", DataStore.GetInstance())
+                .SetParameter("Find", Find.Instance)
+                .SetParameter("GlobalData", GlobalData)
+                .SetParameter("Plugin", this)
+                .SetParameter("Server", Server.GetServer())
+                .SetParameter("ServerConsoleCommands", consoleCommands)
+                .SetParameter("Util", Util.GetUtil())
+                .SetParameter("Web", Web)
+                .SetParameter("World", World.GetWorld())
+                .SetFunction("importClass", new importit(importClass));
+
+            Program = JintEngine.Compile(code, false);
+
+            Globals = (from statement in Program.Statements
+                where statement.GetType() == typeof(FunctionDeclarationStatement)
+                select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
+
+            Engine.Run(Program);
             State = PluginState.Loaded;
         }
 
@@ -59,7 +66,7 @@ namespace Pluton
                     object result = (object)null;
 
                     using (new Stopper(Name, func)) {
-                        result = Engine.Invoke(func, args);
+                        result = Engine.CallFunction(func, args);
                     }
                     return result;
                 } else {
@@ -71,6 +78,14 @@ namespace Pluton
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }
+        }
+
+        public delegate Jint.Native.JsInstance importit(string t);
+
+        public Jint.Native.JsInstance importClass(string type)
+        {
+            Engine.SetParameter(type.Split('.').Last(), Util.GetUtil().TryFindReturnType(type));
+            return (Engine.Global as Jint.Native.JsDictionaryObject)[type.Split('.').Last()];
         }
     }
 }

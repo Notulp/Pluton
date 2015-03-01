@@ -36,15 +36,16 @@ namespace Pluton
             }
             Engine = IronPython.Hosting.Python.CreateEngine();
             Scope = Engine.CreateScope();
+            Scope.SetVariable("Commands", chatCommands);
+            Scope.SetVariable("DataStore", DataStore.GetInstance());
+            Scope.SetVariable("Find", Find.Instance);
+            Scope.SetVariable("GlobalData", GlobalData);
             Scope.SetVariable("Plugin", this);
             Scope.SetVariable("Server", Pluton.Server.GetServer());
-            Scope.SetVariable("DataStore", DataStore.GetInstance());
-            Scope.SetVariable("Util", Util.GetUtil());
-            Scope.SetVariable("World", World.GetWorld());
-            Scope.SetVariable("Commands", chatCommands);
             Scope.SetVariable("ServerConsoleCommands", consoleCommands);
-            Scope.SetVariable("GlobalData", GlobalData);
-            Scope.SetVariable("Find", Find.Instance);
+            Scope.SetVariable("Util", Util.GetUtil());
+            Scope.SetVariable("Web", Web);
+            Scope.SetVariable("World", World.GetWorld());
             Engine.Execute(code, Scope);
             Class = Engine.Operations.Invoke(Scope.GetVariable(name));
             Globals = Engine.Operations.GetMemberNames(Class);
