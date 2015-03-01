@@ -465,11 +465,20 @@ namespace Pluton
 
         public static void Gathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
         {
-            Item item = ItemManager.CreateByItemID(itemAmt.itemid, amount, false);
-            if (item == null) {
-                return;
+            BaseEntity from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
+            GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
+            OnGathering.OnNext(ge);
+
+            amount = Mathf.RoundToInt(Mathf.Min((float)ge.Amount, itemAmt.amount));
+            itemAmt.amount -= amount;
+
+            if (amount > 0) {
+                Item item = ItemManager.CreateByItemID(itemAmt.itemid, amount, false);
+                if (item == null) {
+                    return;
+                }
+                to.GiveItem(item);
             }
-            to.GiveItem(item);
         }
 
         // BaseResource.OnAttacked()
