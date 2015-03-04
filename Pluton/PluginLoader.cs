@@ -102,22 +102,25 @@
 
         public void LoadPlugins()
         {
-            if (CoreConfig.GetBoolValue("python", "enabled"))
+            if (CoreConfig.GetBoolValue("python", "enabled")) {
+                PluginWatcher.GetInstance().AddWatcher(PluginType.Python, "*.py");
                 foreach (string name in GetPyPluginNames())
                     LoadPlugin(name, PluginType.Python);
-            else
+            } else
                 Logger.LogDebug("[PluginLoader] Python plugins are disabled in Core.cfg.");
 
-            if (CoreConfig.GetBoolValue("javascript", "enabled"))
+            if (CoreConfig.GetBoolValue("javascript", "enabled")) {
+                PluginWatcher.GetInstance().AddWatcher(PluginType.JavaScript, "*.js");
                 foreach (string name in GetJSPluginNames())
                     LoadPlugin(name, PluginType.JavaScript);
-            else
+            } else
                 Logger.LogDebug("[PluginLoader] Javascript plugins are disabled in Core.cfg.");
 
-            if (CoreConfig.GetBoolValue("csharp", "enabled"))
+            if (CoreConfig.GetBoolValue("csharp", "enabled")) {
+                PluginWatcher.GetInstance().AddWatcher(PluginType.CSharp, "*.dll");
                 foreach (string name in GetCSharpPluginNames())
                     LoadPlugin(name, PluginType.CSharp);
-            else
+            } else
                 Logger.LogDebug("[PluginLoader] CSharp plugins are disabled in Core.cfg.");
 
             OnAllLoaded.OnNext("");
@@ -167,6 +170,7 @@
                 Logger.Log("[PluginLoader] " + name + " plugin was loaded successfuly.");
             } catch (Exception ex) {
                 Server.GetServer().Broadcast(name + " plugin could not be loaded.");
+                Logger.Log("[PluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
             }
         }
@@ -194,6 +198,7 @@
         {
             UnloadPlugin(plugin.Name);
             LoadPlugin(plugin.Name, plugin.Type);
+
         }
 
         public void ReloadPlugin(string name)
