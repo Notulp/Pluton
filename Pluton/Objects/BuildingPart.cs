@@ -44,11 +44,12 @@ namespace Pluton
 
         public void Rotate()
         {
-            Construction.Grade grade = buildingBlock.blockDefinition.grades[buildingBlock.grade];
-            if (!grade.canRotate) {
+            var blockDefinition = buildingBlock.blockDefinition;
+            if (!blockDefinition.canRotate)
+            {
                 return;
             }
-            buildingBlock.transform.localRotation *= Quaternion.Euler(grade.rotationAmount);
+            buildingBlock.transform.localRotation *= Quaternion.Euler(blockDefinition.rotationAmount);
             buildingBlock.ClientRPC(null, "UpdateConditionalModels", new object[0]);
             buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
         }
@@ -69,7 +70,7 @@ namespace Pluton
             }
         }
 
-        public int Grade {
+        public BuildingGrade.Enum Grade {
             get {
                 return buildingBlock.grade;
             }

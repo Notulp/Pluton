@@ -35,7 +35,7 @@ namespace Pluton
                 select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
-        public List<BuildingPart> BuildingPartsByGrade(int grade)
+        public List<BuildingPart> BuildingPartsByGrade(BuildingGrade.Enum grade)
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
                 where block.grade == grade

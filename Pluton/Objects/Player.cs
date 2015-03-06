@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Runtime.Serialization;
+using Network;
 
 namespace Pluton
 {
@@ -301,7 +302,7 @@ namespace Pluton
 
         public int Ping {
             get {
-                return basePlayer.net.connection.ping;
+                return Net.sv.GetAveragePing(basePlayer.net.connection);
             }
         }
 
