@@ -465,19 +465,26 @@ namespace Pluton
 
         public static void Gathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
         {
+            itemAmt.amount += amount;
             BaseEntity from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
             GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
             OnGathering.OnNext(ge);
 
-            amount = Mathf.RoundToInt(Mathf.Min((float)ge.Amount, itemAmt.amount));
-            itemAmt.amount -= amount;
+            if (ge.Amount > 0) {
+                amount = Mathf.RoundToInt(Mathf.Min((float)ge.Amount, itemAmt.amount));
 
-            if (amount > 0) {
-                Item item = ItemManager.CreateByItemID(itemAmt.itemid, amount, false);
-                if (item == null) {
-                    return;
+                if (amount > 0) {
+
+                    itemAmt.amount -= amount;
+                    if (itemAmt.amount < 0)
+                        itemAmt.amount = 0;
+
+                    Item item = ItemManager.CreateByItemID(itemAmt.itemid, amount, false);
+                    if (item == null) {
+                        return;
+                    }
+                    to.GiveItem(item);
                 }
-                to.GiveItem(item);
             }
         }
 
@@ -727,17 +734,19 @@ namespace Pluton
 
         public static void ServerInit()
         {
-            float craft = Single.Parse(Config.GetInstance().GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float craft = Single.Parse(Config.GetInstance().GetValue("Config", "craftTimescale", "1.0"), System.Globalization.CultureInfo.InvariantCulture) / 10;
             Server.GetInstance().CraftingTimeScale = craft;
-            float resource = Single.Parse(Config.GetInstance().GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            float resource = Single.Parse(Config.GetInstance().GetValue("Config", "resourceGatherMultiplier", "1.0"), System.Globalization.CultureInfo.InvariantCulture);
             World.GetInstance().ResourceGatherMultiplier = resource;
-            float time = Single.Parse(Config.GetInstance().GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            float time = Single.Parse(Config.GetInstance().GetValue("Config", "permanentTime", "-1"), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
                 World.GetInstance().Time = time;
                 World.GetInstance().FreezeTime();
             } else {
-                World.GetInstance().Timescale = Single.Parse(Config.GetInstance().GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+                World.GetInstance().Timescale = Single.Parse(Config.GetInstance().GetValue("Config", "timescale", "30"), System.Globalization.CultureInfo.InvariantCulture);
             }
+            if (Server.GetInstance().Loaded == true) return;
+
             Server.GetInstance().Loaded = true;
             OnServerInit.OnNext("");
         }

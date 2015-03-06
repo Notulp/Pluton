@@ -79,15 +79,22 @@ namespace Pluton
                 PluginLoader.GetInstance().ReloadPlugin(arg.ArgsStr);
                 arg.ReplyWith(String.Format("{0} plugin reloaded!", arg.ArgsStr));
             } else if (arg.ArgsStr == "") {
-                PluginLoader.GetInstance().ReloadPlugins();
                 Config.GetInstance().Reload();
                 Server.GetInstance().LoadLoadouts();
+                if (Server.GetInstance().Loaded)
+                    Hooks.ServerInit();
+
+                PluginLoader.GetInstance().ReloadPlugins();
+
                 arg.ReplyWith("Pluton reloaded!");
 
                 var planes = (from plane in UnityEngine.Object.FindObjectsOfType<CargoPlane>()
                                   where plane.transform.position.x == 0f && plane.transform.position.z == 0f
                                   select plane).ToList();
                 planes.ForEach(p => p.SendMessage("KillMessage", UnityEngine.SendMessageOptions.DontRequireReceiver));
+                if (planes.Count != 0) {
+                    Pluton.Logger.LogWarning(String.Format("Destroyed {0} plane at Vector3.zero", planes.Count));
+                }
             } else {
                 arg.ReplyWith(String.Format("Couldn't find plugin: {0}!", arg.ArgsStr));
             }
