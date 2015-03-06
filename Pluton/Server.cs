@@ -68,19 +68,16 @@
 
         public void Initialize()
         {
-            if (Instance == null) {
-                Instance = new Pluton.Server();
-                Instance.LoadOuts = new Dictionary<string, LoadOut>();
-                //Instance.Structures = new Dictionary<string, StructureRecorder.Structure>();
-                Instance.Players = new Dictionary<ulong, Player>();
-                Instance.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
-                Instance.serverData = new DataStore("ServerData.ds");
-                Instance.serverData.Load();
-                Instance.LoadLoadouts();
-                //Instance.LoadStructures();
-                //Instance.ReloadBlueprints();
-                Instance.LoadOfflinePlayers();
-            }
+            Instance.LoadOuts = new Dictionary<string, LoadOut>();
+            //Instance.Structures = new Dictionary<string, StructureRecorder.Structure>();
+            Instance.Players = new Dictionary<ulong, Player>();
+            Instance.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
+            Instance.serverData = new DataStore("ServerData.ds");
+            Instance.serverData.Load();
+            Instance.LoadLoadouts();
+            //Instance.LoadStructures();
+            //Instance.ReloadBlueprints();
+            Instance.LoadOfflinePlayers();
         }
 
         [Obsolete("Server.GetServer() is obsolete, use Server.GetInstance() instead.", false)]
