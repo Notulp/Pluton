@@ -47,9 +47,15 @@
         {
             try {
                 Logger.LogWarning("Loading zones.");
+                zones = new Dictionary<string, GameObject>();
                 Hashtable zht = ZoneStore.GetTable("Zones");
+                if (zht == null)
+                    return;
+
                 foreach (object zone in zht.Values) {
                     var z = zone as SerializedZone2D;
+                    if (z == null)
+                        continue;
                     Logger.LogWarning("Zone found with name: " + z.Name);
                     z.ToZone2D();
                 }
@@ -63,7 +69,7 @@
             try {
                 Logger.LogWarning("Saving " + zones.Count.ToString() + " zone.");
                 foreach (var zone in zones.Values) {
-                    var z = zone.gameObject.GetComponent<Zone2D>();
+                    var z = zone.GetComponent<Zone2D>();
                     ZoneStore.Add("Zones", z.Name, z.Serialize());
                 }
             } catch (Exception ex) {
@@ -209,6 +215,7 @@
         {
             UtilPath = new DirectoryInfo(Path.Combine(GetPublicFolder(), "Util"));
             ZoneStore = new DataStore("Zones.ds");
+            ZoneStore.Load();
             LoadZones();
         }
 
