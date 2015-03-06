@@ -15,17 +15,21 @@
         private readonly Dictionary<string, System.Type> typeCache = new Dictionary<string, System.Type>();
         private static DirectoryInfo UtilPath;
 
-        public Dictionary<string, GameObject> zones = new Dictionary<string, GameObject>();
+        public Dictionary<string, Zone2D> zones = new Dictionary<string, Zone2D>();
         public DataStore ZoneStore;
 
         public Zone2D GetZone(string name)
         {
-            return zones[name].GetComponent<Zone2D>();
+            if (zones.ContainsKey(name))
+                return zones[name];
+            return null;
         }
 
         public void SetZone(Zone2D zone)
         {
-            zones[zone.Name] = zone.gameObject;
+            if (zone == null)
+                throw new NullReferenceException("SetZone( zone )");
+            zones[zone.Name] = zone;
         }
 
         public Zone2D CreateZone(string name)
@@ -35,7 +39,7 @@
                 var gobj = GameObject.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
                 var zone = gobj.AddComponent<Zone2D>();
                 zone.Name = name;
-                zones[name] = zone.gameObject;
+                zones[name] = zone;
                 return zone;
             } catch (Exception ex) {
                 Logger.LogException(ex);
@@ -47,7 +51,7 @@
         {
             try {
                 Logger.LogWarning("Loading zones.");
-                zones = new Dictionary<string, GameObject>();
+                zones = new Dictionary<string, Zone2D>();
                 Hashtable zht = ZoneStore.GetTable("Zones");
                 if (zht == null)
                     return;
@@ -69,8 +73,7 @@
             try {
                 Logger.LogWarning("Saving " + zones.Count.ToString() + " zone.");
                 foreach (var zone in zones.Values) {
-                    var z = zone.GetComponent<Zone2D>();
-                    ZoneStore.Add("Zones", z.Name, z.Serialize());
+                    ZoneStore.Add("Zones", zone.Name, zone.Serialize());
                 }
             } catch (Exception ex) {
                 Debug.LogException(ex);
