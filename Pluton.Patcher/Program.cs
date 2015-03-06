@@ -304,15 +304,6 @@ namespace Pluton.Patcher
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_2));
                     iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerConsole)));
 
-                    int count = iLProcessor.Body.Instructions.Count;
-                    for (int k = 5; k < 11; k++) {
-                        iLProcessor.Body.Instructions.RemoveAt(count - k);
-                    }
-                    iLProcessor.Body.Instructions.RemoveAt(iLProcessor.Body.Instructions.Count - 7);
-                    iLProcessor.Body.Instructions.RemoveAt(iLProcessor.Body.Instructions.Count - 9);
-                    iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4], Instruction.Create(OpCodes.Brtrue, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 2]));
-                    iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 7], Instruction.Create(OpCodes.Brfalse, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4]));
-                    iLProcessor.InsertBefore(iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 10], Instruction.Create(OpCodes.Brtrue, iLProcessor.Body.Instructions[iLProcessor.Body.Instructions.Count - 4]));
                 }
             }
         }
