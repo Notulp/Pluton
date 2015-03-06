@@ -729,7 +729,7 @@ namespace Pluton
         {
             float craft = Single.Parse(Config.GetInstance().GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
             Server.GetInstance().CraftingTimeScale = craft;
-            float resource = Single.Parse(Config.GetInstance().GetValue("Config", "resourceGatherMultiplier", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            float resource = Single.Parse(Config.GetInstance().GetValue("Config", "resourceGatherMultiplier", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             World.GetInstance().ResourceGatherMultiplier = resource;
             float time = Single.Parse(Config.GetInstance().GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
