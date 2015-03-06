@@ -10,10 +10,9 @@
     using System.Text.RegularExpressions;
     using UnityEngine;
 
-    public class Util
+    public class Util : Singleton<Util>, ISingleton
     {
         private readonly Dictionary<string, System.Type> typeCache = new Dictionary<string, System.Type>();
-        private static Util util;
         private static DirectoryInfo UtilPath;
 
         public Dictionary<string, GameObject> zones = new Dictionary<string, GameObject>();
@@ -76,7 +75,7 @@
         {
             try
             {
-                foreach (Player player in Server.GetServer().Players.Values)
+                foreach (Player player in Server.GetInstance().Players.Values)
                 {
                     if (!adminOnly || (adminOnly && player.Admin))
                         player.ConsoleMessage(str);
@@ -206,15 +205,17 @@
             return Path.Combine(GetPublicFolder(), "Structures");
         }
 
+        public void Initialize()
+        {
+            UtilPath = new DirectoryInfo(Path.Combine(GetPublicFolder(), "Util"));
+            ZoneStore = new DataStore("Zones.ds");
+            LoadZones();
+        }
+
+        [Obsolete("Util.GetUtil() is obsolete, use Util.GetInstance() instead.", false)]
         public static Util GetUtil()
         {
-            if (util == null) {
-                util = new Util();
-                UtilPath = new DirectoryInfo(Path.Combine(GetPublicFolder(), "Util"));
-                util.ZoneStore = new DataStore("Zones.ds");
-                util.LoadZones();
-            }
-            return util;
+            return Instance;
         }
 
         public float GetVectorsDistance(Vector3 v1, Vector3 v2)

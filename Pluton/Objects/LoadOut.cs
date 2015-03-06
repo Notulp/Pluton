@@ -50,9 +50,9 @@ namespace Pluton
                 }
             }
             ini = null;
-            if (Server.GetServer().LoadOuts.ContainsKey(Name))
-                Server.GetServer().LoadOuts.Remove(Name);
-            Server.GetServer().LoadOuts.Add(Name, this);
+            if (Server.GetInstance().LoadOuts.ContainsKey(Name))
+                Server.GetInstance().LoadOuts.Remove(Name);
+            Server.GetInstance().LoadOuts.Add(Name, this);
         }
 
         public bool Add(InvItem item)
@@ -69,9 +69,9 @@ namespace Pluton
             items.Add(itemCount, item);
             itemCount++;
 
-            if (Server.GetServer().LoadOuts.ContainsKey(Name))
-                Server.GetServer().LoadOuts.Remove(Name);
-            Server.GetServer().LoadOuts.Add(Name, this);
+            if (Server.GetInstance().LoadOuts.ContainsKey(Name))
+                Server.GetInstance().LoadOuts.Remove(Name);
+            Server.GetInstance().LoadOuts.Add(Name, this);
             return true;
         }
 
@@ -102,9 +102,9 @@ namespace Pluton
                 Logger.LogDebug("[LoadOut] An error accoured while reorganizing the items?");
                 itemCount = count;
             }
-            if (Server.GetServer().LoadOuts.ContainsKey(Name))
-                Server.GetServer().LoadOuts.Remove(Name);
-            Server.GetServer().LoadOuts.Add(Name, this);
+            if (Server.GetInstance().LoadOuts.ContainsKey(Name))
+                Server.GetInstance().LoadOuts.Remove(Name);
+            Server.GetInstance().LoadOuts.Add(Name, this);
         }
 
         public void ToIni()

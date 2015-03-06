@@ -191,7 +191,7 @@ namespace Pluton
         public static void CraftingTime(ItemBlueprint ibp) {
             if (!blueprintsLoaded) {
                 ibp.ingredients.Clear();
-                Server.GetServer().blueprints.Add(ibp);
+                Server.GetInstance().blueprints.Add(ibp);
             }
         }
 
@@ -206,7 +206,7 @@ namespace Pluton
             if (cmd.cmd == "")
                 return;
 
-            foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.Plugins) {
+            foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
                 ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.cmd);
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
@@ -227,16 +227,16 @@ namespace Pluton
                 }
             }
 
-            if (Config.GetBoolValue("Commands", "enabled", true)) {
+            if (Config.GetInstance().GetBoolValue("Commands", "enabled", true)) {
                 // TODO: make a plugin from these, no need to be in the core
 
-                if (cmd.cmd == Config.GetValue("Commands", "ShowMyStats", "mystats")) {
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "ShowMyStats", "mystats")) {
                     PlayerStats stats = player.Stats;
                     player.Message(String.Format("You have {0} kills and {1} deaths!", stats.Kills, stats.Deaths));
                     player.Message(String.Format("You have taken {0} dmg, and caused {1} in total!", stats.TotalDamageTaken, stats.TotalDamageDone));
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "ShowStatsOther", "statsof")) {
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "ShowStatsOther", "statsof")) {
                     Player pOther = Player.Find(String.Join(" ", cmd.args));
                     if (pOther != null) {
                         PlayerStats stats2 = pOther.Stats;
@@ -247,33 +247,33 @@ namespace Pluton
                     player.Message("Can't find player: " + String.Join(" ", cmd.args));
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "ShowLocation", "whereami")) {
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "ShowLocation", "whereami")) {
                     player.Message(player.Location.ToString());
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "ShowOnlinePlayers", "players")) {
-                    string msg = Server.GetServer().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetServer().Players.Count) ;
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "ShowOnlinePlayers", "players")) {
+                    string msg = Server.GetInstance().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetInstance().Players.Count) ;
                     player.Message(msg);
                     return;
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Help", "help")) {
-                    foreach (string key in Config.PlutonConfig.EnumSection("HelpMessage")) {
-                        player.Message(Config.GetValue("HelpMessage", key));
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "Help", "help")) {
+                    foreach (string key in Config.GetInstance().PlutonConfig.EnumSection("HelpMessage")) {
+                        player.Message(Config.GetInstance().GetValue("HelpMessage", key));
                     }
                 }
 
                 List<ChatCommands> cc = new List<ChatCommands>();
-                foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.Plugins) {
+                foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
                     cc.Add(pl.Value.chatCommands);
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Commands", "commands")) {
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "Commands", "commands")) {
                     List<string> list = new List<string>();
                     foreach (ChatCommands cm in cc) {
                         list.AddRange(cm.getCommands());
                     }
                     player.Message(String.Join(", ", list.ToArray()));
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Description", "whatis")) {
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "Description", "whatis")) {
                     if (cmd.args.Length < 1)
                         player.Message("You must provide a command name");
                     else {
@@ -285,7 +285,7 @@ namespace Pluton
                             player.Message(String.Join("\r\n", list.ToArray()));
                     }
                 }
-                if (cmd.cmd == Config.GetValue("Commands", "Usage", "howto")) {
+                if (cmd.cmd == Config.GetInstance().GetValue("Commands", "Usage", "howto")) {
                     if (cmd.args.Length < 1)
                         player.Message("You must provide a command name");
                     else {
@@ -481,73 +481,6 @@ namespace Pluton
             }
         }
 
-        // BaseResource.OnAttacked()
-        public static void GatheringBR(BaseResource res, HitInfo info)
-        {
-            /*if (res.isServer) {
-
-                // TODO: fixme again
-//                if (World.GetWorld().ResourceGatherMultiplier != -1) {
-//                    for (int i = 0; i < info.damageTypes.types.Length; i++) {
-//                        info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
-//                    }
-//                }
-
-                OnGathering.OnNext(new Events.GatherEvent(res, info));
-
-                ResourceDispenser dispenser = res.GetComponent<ResourceDispenser>();
-                if (dispenser != null) {
-                    dispenser.OnAttacked(info);
-                }
-
-                if (!info.DidGather) {
-                    if (res.baseProtection) {
-                        res.baseProtection.Scale(info.damageTypes);
-                    }
-
-                    float num2 = info.damageTypes.Total();
-                    res.health -= num2;
-                    if (res.health <= 0) {
-                        res.KillMessage();
-                        return;
-                    }
-                    res.Invoke("UpdateNetworkStage", 0.1f);
-                }
-            }*/
-        }
-
-        // TreeEntity.OnAttacked()
-        public static void GatheringTree(TreeEntity tree, HitInfo info)
-        {
-            /*if (tree.isServer) {
-
-                // TODO: fixme again
-//                if (World.GetWorld().ResourceGatherMultiplier != -1) {
-//                    for (int i = 0; i < info.damageTypes.types.Length; i++) {
-//                        info.damageTypes.types[i] = info.damageTypes.types[i] * World.GetWorld().ResourceGatherMultiplier;
-//                    }
-//                }
-
-                OnGathering.OnNext(new Events.GatherEvent(tree, info));
-
-                ResourceDispenser rdp = tree.GetComponent<ResourceDispenser>();
-                if (rdp != null) {
-                    rdp.OnAttacked(info);
-                }
-                if (!info.DidGather) {
-                    if (tree.protection) {
-                        tree.protection.Scale(info.damageTypes);
-                    }
-                    float num2 = info.damageTypes.Total();
-                    tree.health -= num2;
-                    if (tree.health <= 0) {
-                        tree.KillMessage();
-                        return;
-                    }
-                }
-            }*/
-        }
-
         // BaseAnimal.Die()
         public static void NPCDied(BaseNPC bnpc, HitInfo info)
         {
@@ -630,13 +563,13 @@ namespace Pluton
         {
             var player = connection.player as BasePlayer;
             var p = new Player(player);
-            if (Server.GetServer().OfflinePlayers.ContainsKey(player.userID))
-                Server.GetServer().OfflinePlayers.Remove(player.userID);
-            if (!Server.GetServer().Players.ContainsKey(player.userID))
-                Server.GetServer().Players.Add(player.userID, p);
+            if (Server.GetInstance().OfflinePlayers.ContainsKey(player.userID))
+                Server.GetInstance().OfflinePlayers.Remove(player.userID);
+            if (!Server.GetInstance().Players.ContainsKey(player.userID))
+                Server.GetInstance().Players.Add(player.userID, p);
 
             OnPlayerConnected.OnNext(p);
-            if (Config.GetBoolValue("Config", "welcomeMessage", true)) {
+            if (Config.GetInstance().GetBoolValue("Config", "welcomeMessage", true)) {
                 p.Message("Welcome " + p.Name + "!");
                 p.Message(String.Format("This server is powered by Pluton[v{0}]!", Bootstrap.Version));
                 p.Message("Visit pluton-team.org for more information or to report bugs!");
@@ -648,17 +581,17 @@ namespace Pluton
         {
             var p = Server.GetPlayer(player);
 
-            if (Server.GetServer().serverData.ContainsKey("OfflinePlayers", p.SteamID)) {
-                OfflinePlayer op = (Server.GetServer().serverData.Get("OfflinePlayers", p.SteamID) as OfflinePlayer);
+            if (Server.GetInstance().serverData.ContainsKey("OfflinePlayers", p.SteamID)) {
+                OfflinePlayer op = (Server.GetInstance().serverData.Get("OfflinePlayers", p.SteamID) as OfflinePlayer);
                 op.Update(p);
-                Server.GetServer().OfflinePlayers[player.userID] = op;
+                Server.GetInstance().OfflinePlayers[player.userID] = op;
             } else {
                 OfflinePlayer op = new OfflinePlayer(p);
-                Server.GetServer().OfflinePlayers.Add(player.userID, op);
+                Server.GetInstance().OfflinePlayers.Add(player.userID, op);
             }
 
-            if (Server.GetServer().Players.ContainsKey(player.userID))
-                Server.GetServer().Players.Remove(player.userID);
+            if (Server.GetInstance().Players.ContainsKey(player.userID))
+                Server.GetInstance().Players.Remove(player.userID);
 
             OnPlayerDisconnected.OnNext(p);
         }
@@ -676,7 +609,7 @@ namespace Pluton
         {
             int newAmt = amount;
             if (receiver.ToPlayer() != null)
-                newAmt = (int)((double)amount * World.GetWorld().ResourceGatherMultiplier);
+                newAmt = (int)((double)amount * World.GetInstance().ResourceGatherMultiplier);
 
             Item item = ItemManager.CreateByItemID(itemAmt.itemid, newAmt);
             receiver.GiveItem(item);
@@ -770,7 +703,7 @@ namespace Pluton
 
                 ServerConsoleEvent ssc = new ServerConsoleEvent(arg, cmd);
 
-                foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.Plugins) {
+                foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
                     ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ssc.cmd);
                     foreach (ConsoleCommand cc in commands) {
                         if (cc.callback == null)
@@ -794,18 +727,18 @@ namespace Pluton
 
         public static void ServerInit()
         {
-            float craft = Single.Parse(Config.GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
-            Server.GetServer().CraftingTimeScale = craft;
-            float resource = Single.Parse(Config.GetValue("Config", "resourceGatherMultiplier", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
-            World.GetWorld().ResourceGatherMultiplier = resource;
-            float time = Single.Parse(Config.GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            float craft = Single.Parse(Config.GetInstance().GetValue("Config", "craftTimescale", "1.0").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            Server.GetInstance().CraftingTimeScale = craft;
+            float resource = Single.Parse(Config.GetInstance().GetValue("Config", "resourceGatherMultiplier", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+            World.GetInstance().ResourceGatherMultiplier = resource;
+            float time = Single.Parse(Config.GetInstance().GetValue("Config", "permanentTime", "-1").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             if (time != -1) {
-                World.GetWorld().Time = time;
-                World.GetWorld().FreezeTime();
+                World.GetInstance().Time = time;
+                World.GetInstance().FreezeTime();
             } else {
-                World.GetWorld().Timescale = Single.Parse(Config.GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
+                World.GetInstance().Timescale = Single.Parse(Config.GetInstance().GetValue("Config", "timescale", "30").Replace(".", ","), System.Globalization.CultureInfo.InvariantCulture);
             }
-            Server.GetServer().Loaded = true;
+            Server.GetInstance().Loaded = true;
             OnServerInit.OnNext("");
         }
 
@@ -838,9 +771,9 @@ namespace Pluton
 
         public static void Advertise()
         {
-            foreach (string arg in Config.PlutonConfig.EnumSection("BroadcastMessages"))
+            foreach (string arg in Config.GetInstance().PlutonConfig.EnumSection("BroadcastMessages"))
             {
-                Server.GetServer().Broadcast(Config.GetValue("BroadcastMessages", arg));
+                Server.GetInstance().Broadcast(Config.GetInstance().GetValue("BroadcastMessages", arg));
             }
         }
     }

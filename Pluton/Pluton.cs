@@ -36,7 +36,7 @@ namespace Pluton
                     nameFrom = "RCON";
 
                 player.Ban("Banned by: " + nameFrom);
-                Server.GetServer().Broadcast(arg.ArgsStr + " is banned from the server by " + nameFrom + "!");
+                Server.GetInstance().Broadcast(arg.ArgsStr + " is banned from the server by " + nameFrom + "!");
                 arg.ReplyWith(arg.ArgsStr + " is banned!");
             } else {
                 arg.ReplyWith("Couldn't find player: " + arg.ArgsStr);
@@ -55,7 +55,7 @@ namespace Pluton
                     nameFrom = "RCON";
 
                 player.Kick("Kicked by: " + nameFrom);
-                Server.GetServer().Broadcast(arg.ArgsStr + " is kicked from the server by " + nameFrom + "!");
+                Server.GetInstance().Broadcast(arg.ArgsStr + " is kicked from the server by " + nameFrom + "!");
                 arg.ReplyWith(arg.ArgsStr + " is kicked!");
             } else {
                 arg.ReplyWith("Couldn't find player: " + arg.ArgsStr);
@@ -75,13 +75,13 @@ namespace Pluton
         [ConsoleSystem.Admin, ConsoleSystem.Help("pluton.reload <optional = plugin name>", "")]
         public static void reload(ConsoleSystem.Arg arg)
         {
-            if (PluginLoader.Plugins.ContainsKey(arg.ArgsStr)) {
+            if (PluginLoader.GetInstance().Plugins.ContainsKey(arg.ArgsStr)) {
                 PluginLoader.GetInstance().ReloadPlugin(arg.ArgsStr);
                 arg.ReplyWith(String.Format("{0} plugin reloaded!", arg.ArgsStr));
             } else if (arg.ArgsStr == "") {
                 PluginLoader.GetInstance().ReloadPlugins();
-                Config.Reload();
-                Server.GetServer().LoadLoadouts();
+                Config.GetInstance().Reload();
+                Server.GetInstance().LoadLoadouts();
                 arg.ReplyWith("Pluton reloaded!");
 
                 var planes = (from plane in UnityEngine.Object.FindObjectsOfType<CargoPlane>()

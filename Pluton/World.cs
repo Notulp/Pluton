@@ -5,11 +5,8 @@ using System.Timers;
 
 namespace Pluton
 {
-    public class World
+    public class World : Singleton<Pluton.World>, ISingleton
     {
-
-        private static World instance;
-
         public float ResourceGatherMultiplier = 1.0f;
         public Timer freezeTimeTimer;
         private float frozenTime = -1;
@@ -218,11 +215,12 @@ namespace Pluton
             frozenTime = -1;
         }
 
+        public void Initialize() {}
+
+        [Obsolete("World.GetWorld() is obsolete, use World.GetInstance() instead.", false)]
         public static World GetWorld()
         {
-            if (instance == null)
-                instance = new World();
-            return instance;
+            return Instance;
         }
 
         System.Collections.ArrayList list = new System.Collections.ArrayList();

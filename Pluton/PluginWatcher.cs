@@ -51,7 +51,7 @@ namespace Pluton
         {
             try {
                 BasePlugin plugin = null;
-                if (PluginLoader.Plugins.TryGetValue(name, out plugin))
+                if (PluginLoader.GetInstance().Plugins.TryGetValue(name, out plugin))
                     PluginLoader.GetInstance().ReloadPlugin(plugin);
                 else
                     PluginLoader.GetInstance().LoadPlugin(name, type);

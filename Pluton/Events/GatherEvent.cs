@@ -18,7 +18,7 @@ namespace Pluton.Events
                 Resource = new Entity(from);
                 resourceDispenser = dispenser;
                 ItemAmount = itemAmt;
-                Amount = (int)(amount * World.GetWorld().ResourceGatherMultiplier);
+                Amount = (int)(amount * World.GetInstance().ResourceGatherMultiplier);
             }
         }
     }

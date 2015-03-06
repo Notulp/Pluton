@@ -29,7 +29,7 @@ namespace Pluton
         {
             Type = PluginType.Python;
 
-            if (CoreConfig.GetBoolValue("python", "checkHash") && !code.VerifyMD5Hash()) {
+            if (CoreConfig.GetInstance().GetBoolValue("python", "checkHash") && !code.VerifyMD5Hash()) {
                 Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
                 State = PluginState.HashNotFound;
                 return;
@@ -38,14 +38,14 @@ namespace Pluton
             Scope = Engine.CreateScope();
             Scope.SetVariable("Commands", chatCommands);
             Scope.SetVariable("DataStore", DataStore.GetInstance());
-            Scope.SetVariable("Find", Find.Instance);
+            Scope.SetVariable("Find", Find.GetInstance());
             Scope.SetVariable("GlobalData", GlobalData);
             Scope.SetVariable("Plugin", this);
-            Scope.SetVariable("Server", Pluton.Server.GetServer());
+            Scope.SetVariable("Server", Pluton.Server.GetInstance());
             Scope.SetVariable("ServerConsoleCommands", consoleCommands);
-            Scope.SetVariable("Util", Util.GetUtil());
-            Scope.SetVariable("Web", Web);
-            Scope.SetVariable("World", World.GetWorld());
+            Scope.SetVariable("Util", Util.GetInstance());
+            Scope.SetVariable("Web", Web.GetInstance());
+            Scope.SetVariable("World", World.GetInstance());
             Engine.Execute(code, Scope);
             Class = Engine.Operations.Invoke(Scope.GetVariable(name));
             Globals = Engine.Operations.GetMemberNames(Class);

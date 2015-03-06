@@ -14,7 +14,7 @@ namespace Pluton
         public static void Init()
         {
             TrustedHashes = new List<string>();
-            string path = DirectoryConfig.GetConfigPath("Hashes");
+            string path = DirectoryConfig.GetInstance().GetConfigPath("Hashes");
             if (!File.Exists(path))
                 File.AppendAllText(path, "// empty");
 

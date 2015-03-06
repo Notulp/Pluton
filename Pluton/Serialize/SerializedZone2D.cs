@@ -23,7 +23,7 @@ namespace Pluton
                 zone.Tris = Tris;
                 zone.TrisCount = TrisCount;
                 zone.Verts = Verts.Select(x => x.ToVector3()).ToList();
-                Util.GetUtil().zones.Add(Name, gobj);
+                Util.GetInstance().zones.Add(Name, gobj);
                 return zone;
             } catch (Exception ex) {
                 Logger.LogException(ex);

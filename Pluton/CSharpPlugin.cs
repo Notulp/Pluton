@@ -15,7 +15,11 @@ namespace Pluton
         /// <summary>
         /// The data store.
         /// </summary>
-        public DataStore DataStore;
+        public DataStore DataStore {
+            get {
+                return DataStore.GetInstance();
+            }
+        }
 
         /// <summary>
         /// The plugin.
@@ -25,12 +29,20 @@ namespace Pluton
         /// <summary>
         /// The util.
         /// </summary>
-        public Util Util;
+        public Util Util {
+            get {
+                return Util.GetInstance();
+            }
+        }
 
         /// <summary>
         /// The server.
         /// </summary>
-        public Server Server;
+        public Server Server {
+            get {
+                return Server.GetInstance();
+            }
+        }
 
         /// <summary>
         /// The server console commands.
@@ -40,12 +52,20 @@ namespace Pluton
         /// <summary>
         /// The web.
         /// </summary>
-        public Web Web;
+        public Web Web {
+            get {
+                return Web.GetInstance();
+            }
+        }
 
         /// <summary>
         /// The world.
         /// </summary>
-        public World World;
+        public World World {
+            get {
+                return World.GetInstance();
+            }
+        }
 
         /// <summary>
         /// Find instance for C# plugins.
@@ -53,7 +73,7 @@ namespace Pluton
         /// <value>The find class.</value>
         public Find Find {
             get {
-                return Find.Instance;
+                return Find.GetInstance();
             }
         }
 

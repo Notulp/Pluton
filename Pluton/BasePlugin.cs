@@ -81,7 +81,11 @@ namespace Pluton
         /// </summary>
         public PluginState State = PluginState.NotLoaded;
 
-        public Web Web = new Web();
+        public Web Web {
+            get {
+                return Web.GetInstance();
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.BasePlugin"/> class.
@@ -359,7 +363,7 @@ namespace Pluton
         public BasePlugin GetPlugin(string name)
         {
             BasePlugin plugin;  
-            plugin = PluginLoader.Plugins[name];
+            plugin = PluginLoader.GetInstance().Plugins[name];
             if (plugin == null) {
                 Logger.LogDebug("[Plugin][GetPlugin] '" + name + "' plugin not found!");
                 return null;
@@ -733,8 +737,10 @@ namespace Pluton
         }
     }
 
-    public class Web
+    public class Web : Singleton<Web>, ISingleton
     {
+        public void Initialize() {}
+
         /// <summary>
         /// GET request.
         /// </summary>

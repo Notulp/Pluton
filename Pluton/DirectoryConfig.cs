@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class DirectoryConfig
+    public class DirectoryConfig : Singleton<DirectoryConfig>, ISingleton
     {
-        private static IniParser DirConfig;
+        private IniParser DirConfig;
 
-        public static void Init()
+        public void Initialize()
         {
             string ConfigPath = Path.Combine(Util.GetServerFolder(), "DirectoryConfig.cfg");
 
@@ -33,7 +33,7 @@ namespace Pluton
             }
         }
 
-        public static string GetConfigPath(string config)
+        public string GetConfigPath(string config)
         {
             string path = DirConfig.GetSetting("Directories", config);
 
@@ -52,7 +52,7 @@ namespace Pluton
             return path;
         }
 
-        public static void Reload()
+        public void Reload()
         {
             string ConfigPath = Path.Combine(Util.GetServerFolder(), "DirectoryConfig.cfg");
 

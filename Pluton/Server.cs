@@ -8,7 +8,7 @@
     using System.Runtime.Serialization.Formatters.Binary;
     using UnityEngine;
 
-    public class Server
+    public class Server : Singleton<Server>, ISingleton
     {
         public bool Loaded = false;
         public Dictionary<ulong, Player> Players;
@@ -16,9 +16,7 @@
         //public Dictionary<string, StructureRecorder.Structure> Structures;
         public Dictionary<string, LoadOut> LoadOuts;
         public DataStore serverData;
-        private static Pluton.Server server;
         public static string server_message_name = "Pluton";
-        public Util util = new Util();
         private float craftTimeScale = 1f;
         public List<ItemBlueprint> blueprints = new List<ItemBlueprint>();
 
@@ -57,7 +55,7 @@
         public static Player GetPlayer(BasePlayer bp)
         {
             try {
-                Player p = server.FindPlayer(bp.userID);
+                Player p = GetInstance().FindPlayer(bp.userID);
                 if (p != null)
                     return p;
                 return new Player(bp);
@@ -68,22 +66,27 @@
             }
         }
 
+        public void Initialize()
+        {
+            if (Instance == null) {
+                Instance = new Pluton.Server();
+                Instance.LoadOuts = new Dictionary<string, LoadOut>();
+                //Instance.Structures = new Dictionary<string, StructureRecorder.Structure>();
+                Instance.Players = new Dictionary<ulong, Player>();
+                Instance.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
+                Instance.serverData = new DataStore("ServerData.ds");
+                Instance.serverData.Load();
+                Instance.LoadLoadouts();
+                //Instance.LoadStructures();
+                //Instance.ReloadBlueprints();
+                Instance.LoadOfflinePlayers();
+            }
+        }
+
+        [Obsolete("Server.GetServer() is obsolete, use Server.GetInstance() instead.", false)]
         public static Pluton.Server GetServer()
         {
-            if (server == null) {
-                server = new Pluton.Server();
-                server.LoadOuts = new Dictionary<string, LoadOut>();
-                //server.Structures = new Dictionary<string, StructureRecorder.Structure>();
-                server.Players = new Dictionary<ulong, Player>();
-                server.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
-                server.serverData = new DataStore("ServerData.ds");
-                server.serverData.Load();
-                server.LoadLoadouts();
-                //server.LoadStructures();
-                //server.ReloadBlueprints();
-                server.LoadOfflinePlayers();
-            }
-            return server;
+            return Instance;
         }
 
         public float CraftingTimeScale {
@@ -127,12 +130,12 @@
             Hashtable ht = serverData.GetTable("OfflinePlayers");
             if (ht != null) {
                 foreach (DictionaryEntry entry in ht) {
-                    server.OfflinePlayers.Add(UInt64.Parse(entry.Key as string), entry.Value as OfflinePlayer);
+                    Instance.OfflinePlayers.Add(UInt64.Parse(entry.Key as string), entry.Value as OfflinePlayer);
                 }
             } else {
                 Logger.LogWarning("[Server] No OfflinePlayers found!");
             }
-            Logger.Log("[Server] " + server.OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
+            Logger.Log("[Server] " + Instance.OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
         }
 
         /*public void LoadStructures()
@@ -186,8 +189,8 @@
             }
             serverData.Save();
 
-            Util.GetUtil().SaveZones();
-            Util.GetUtil().ZoneStore.Save();
+            Util.GetInstance().SaveZones();
+            Util.GetInstance().ZoneStore.Save();
         }
 
         public List<Player> ActivePlayers {

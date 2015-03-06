@@ -4,21 +4,9 @@ using System.Collections.Generic;
 
 namespace Pluton
 {
-    public class Find
+    public class Find : Singleton<Find>, ISingleton
     {
-        static Find instance;
-
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>The instance.</value>
-        public static Find Instance {
-            get {
-                if (instance == null)
-                    instance = new Find();
-                return instance;
-            }
-        }
+        public void Initialize(){}
 
         public List<BuildingPart> BuildingParts()
         {
@@ -131,7 +119,7 @@ namespace Pluton
         /// <param name="nameorIPorID">Name or IP or ID.</param>
         public Player Player(string nameorIPorID)
         {
-            return (from player in Server.GetServer().Players.Values
+            return (from player in Server.GetInstance().Players.Values
                 where player.Name == nameorIPorID ||
                 player.IP == nameorIPorID ||
                 player.SteamID == nameorIPorID
@@ -144,7 +132,7 @@ namespace Pluton
         /// <param name="nameorIP">Name or IP.</param>
         public List<Player> Players(string nameorIP)
         {
-            return (from player in Server.GetServer().Players.Values
+            return (from player in Server.GetInstance().Players.Values
                 where player.Name.Contains(nameorIP) ||
                 player.IP.Contains(nameorIP)
                 select player).ToList<Player>();

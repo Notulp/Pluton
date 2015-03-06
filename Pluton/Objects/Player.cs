@@ -169,12 +169,12 @@ namespace Pluton
 
         public void GroundTeleport(float x, float y, float z)
         {
-            Teleport(x, World.GetWorld().GetGround(x, z), z);
+            Teleport(x, World.GetInstance().GetGround(x, z), z);
         }
         
         public void GroundTeleport(Vector3 v3)
         {
-            Teleport(v3.x, World.GetWorld().GetGround(v3.x, v3.z), v3.z);
+            Teleport(v3.x, World.GetInstance().GetGround(v3.x, v3.z), v3.z);
         }
 
         public void Teleport(Vector3 v3)
@@ -308,10 +308,10 @@ namespace Pluton
 
         public PlayerStats Stats {
             get {
-                return Server.GetServer().serverData.Get("PlayerStats", SteamID) as PlayerStats;
+                return Server.GetInstance().serverData.Get("PlayerStats", SteamID) as PlayerStats;
             }
             set {
-                Server.GetServer().serverData.Add("PlayerStats", SteamID, value);
+                Server.GetInstance().serverData.Add("PlayerStats", SteamID, value);
             }
         }
 

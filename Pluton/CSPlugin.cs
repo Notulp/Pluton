@@ -26,7 +26,7 @@ namespace Pluton
 
             //For C# plugins code is the dll path
             byte[] bin = File.ReadAllBytes(code);
-            if (CoreConfig.GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
+            if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
                 Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
                 State = PluginState.HashNotFound;
                 return;
@@ -38,10 +38,6 @@ namespace Pluton
                 throw new TypeLoadException("Main module class not found:" + Name);
             Engine = (CSharpPlugin)Activator.CreateInstance(classType);
 
-            Engine.Server = Server.GetServer();
-            Engine.DataStore = DataStore.GetInstance();
-            Engine.Util = Util.GetUtil();
-            Engine.World = World.GetWorld();
             Engine.Plugin = this;
             Engine.Commands = chatCommands;
             Engine.ServerConsoleCommands = consoleCommands;

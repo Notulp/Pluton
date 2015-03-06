@@ -18,7 +18,7 @@ namespace Pluton.Events
             cmd = command[0];
             args = new string[command.Length - 1];
             Array.Copy(command, 1, args, 0, command.Length - 1);
-            quotedArgs = Util.GetUtil().GetQuotedArgs(args);
+            quotedArgs = Util.GetInstance().GetQuotedArgs(args);
         }
 
         public void ReplyWith(string msg)

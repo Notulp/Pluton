@@ -30,7 +30,7 @@ namespace Pluton
 
         public PlayerStats(string steamid)
         {
-            if (!Server.GetServer().serverData.ContainsKey("PlayerStats", steamid)) {
+            if (!Server.GetInstance().serverData.ContainsKey("PlayerStats", steamid)) {
                 Kills = 0;
                 Deaths = 0;
                 PlayerKills = 0;
@@ -45,9 +45,9 @@ namespace Pluton
                 DamageFromNPCs = 0;
                 DamageToEntities = 0;
                 FallDamage = 0;
-                Server.GetServer().serverData.Add("PlayerStats", steamid, this);
+                Server.GetInstance().serverData.Add("PlayerStats", steamid, this);
             } else {
-                var stats = Server.GetServer().serverData.Get("PlayerStats", steamid) as PlayerStats;
+                var stats = Server.GetInstance().serverData.Get("PlayerStats", steamid) as PlayerStats;
                 Kills = stats.Kills;
                 Deaths = stats.Deaths;
                 PlayerKills = stats.PlayerKills;

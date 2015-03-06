@@ -6,19 +6,18 @@
     using System.Reactive.Subjects;
     using System.Reflection;
 
-    public class PluginLoader
+    public class PluginLoader : Singleton<PluginLoader>, ISingleton
     {
 
-        private static Dictionary<string, BasePlugin> plugins = new Dictionary<string, BasePlugin>();
+        private Dictionary<string, BasePlugin> plugins = new Dictionary<string, BasePlugin>();
 
-        public static Dictionary<string, BasePlugin> Plugins { get { return plugins; } }
+        public Dictionary<string, BasePlugin> Plugins { get { return plugins; } }
 
         private DirectoryInfo pluginDirectory;
-        private static PluginLoader instance;
 
-        public static Subject<string> OnAllLoaded = new Subject<string>();
+        public Subject<string> OnAllLoaded = new Subject<string>();
 
-        public void Init()
+        public void Initialize()
         {
             PYPlugin.LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
             BasePlugin.GlobalData = new Dictionary<string, object>();
@@ -27,13 +26,6 @@
                 Directory.CreateDirectory(pluginDirectory.FullName);
             }
             ReloadPlugins();
-        }
-
-        public static PluginLoader GetInstance()
-        {
-            if (instance == null)
-                instance = new PluginLoader();
-            return instance;
         }
 
         private IEnumerable<String> GetCSharpPluginNames()
@@ -102,21 +94,21 @@
 
         public void LoadPlugins()
         {
-            if (CoreConfig.GetBoolValue("python", "enabled")) {
+            if (CoreConfig.GetInstance().GetBoolValue("python", "enabled")) {
                 PluginWatcher.GetInstance().AddWatcher(PluginType.Python, "*.py");
                 foreach (string name in GetPyPluginNames())
                     LoadPlugin(name, PluginType.Python);
             } else
                 Logger.LogDebug("[PluginLoader] Python plugins are disabled in Core.cfg.");
 
-            if (CoreConfig.GetBoolValue("javascript", "enabled")) {
+            if (CoreConfig.GetInstance().GetBoolValue("javascript", "enabled")) {
                 PluginWatcher.GetInstance().AddWatcher(PluginType.JavaScript, "*.js");
                 foreach (string name in GetJSPluginNames())
                     LoadPlugin(name, PluginType.JavaScript);
             } else
                 Logger.LogDebug("[PluginLoader] Javascript plugins are disabled in Core.cfg.");
 
-            if (CoreConfig.GetBoolValue("csharp", "enabled")) {
+            if (CoreConfig.GetInstance().GetBoolValue("csharp", "enabled")) {
                 PluginWatcher.GetInstance().AddWatcher(PluginType.CSharp, "*.dll");
                 foreach (string name in GetCSharpPluginNames())
                     LoadPlugin(name, PluginType.CSharp);
@@ -169,7 +161,7 @@
 
                 Logger.Log("[PluginLoader] " + name + " plugin was loaded successfuly.");
             } catch (Exception ex) {
-                Server.GetServer().Broadcast(name + " plugin could not be loaded.");
+                Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[PluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
             }

@@ -22,7 +22,7 @@ namespace Pluton
         {
             Type = PluginType.JavaScript;
 
-            if (CoreConfig.GetBoolValue("javascript", "checkHash") && !code.VerifyMD5Hash()) {
+            if (CoreConfig.GetInstance().GetBoolValue("javascript", "checkHash") && !code.VerifyMD5Hash()) {
                 Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
                 State = PluginState.HashNotFound;
                 return;
@@ -33,14 +33,14 @@ namespace Pluton
 
             Engine.SetParameter("Commands", chatCommands)
                 .SetParameter("DataStore", DataStore.GetInstance())
-                .SetParameter("Find", Find.Instance)
+                .SetParameter("Find", Find.GetInstance())
                 .SetParameter("GlobalData", GlobalData)
                 .SetParameter("Plugin", this)
-                .SetParameter("Server", Server.GetServer())
+                .SetParameter("Server", Server.GetInstance())
                 .SetParameter("ServerConsoleCommands", consoleCommands)
-                .SetParameter("Util", Util.GetUtil())
+                .SetParameter("Util", Util.GetInstance())
                 .SetParameter("Web", Web)
-                .SetParameter("World", World.GetWorld())
+                .SetParameter("World", World.GetInstance())
                 .SetFunction("importClass", new importit(importClass));
 
             Program = JintEngine.Compile(code, false);
@@ -84,7 +84,7 @@ namespace Pluton
 
         public Jint.Native.JsInstance importClass(string type)
         {
-            Engine.SetParameter(type.Split('.').Last(), Util.GetUtil().TryFindReturnType(type));
+            Engine.SetParameter(type.Split('.').Last(), Util.GetInstance().TryFindReturnType(type));
             return (Engine.Global as Jint.Native.JsDictionaryObject)[type.Split('.').Last()];
         }
     }

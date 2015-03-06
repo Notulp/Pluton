@@ -17,9 +17,9 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
-                DirectoryConfig.Init();
-                CoreConfig.Init();
-                Config.Init();
+                DirectoryConfig.GetInstance();
+                CoreConfig.GetInstance();
+                Config.GetInstance();
 
                 if (!pluton.enabled)
                 {
@@ -40,7 +40,7 @@ namespace Pluton
         public static void SaveAll(object x = null)
         {
             try {
-                Server.GetServer().Save();
+                Server.GetInstance().Save();
                 DataStore.GetInstance().Save();
                 Logger.LogDebug("[Bootstrap] Server saved successfully!");
             } catch (Exception ex) {
@@ -54,8 +54,8 @@ namespace Pluton
             if (timers != null)
                 timers.Dispose();
 
-            var saver = Config.GetValue("Config", "saveInterval", "180000");
-            var broadcast = Config.GetValue("Config", "broadcastInterval", "600000");
+            var saver = Config.GetInstance().GetValue("Config", "saveInterval", "180000");
+            var broadcast = Config.GetInstance().GetValue("Config", "broadcastInterval", "600000");
             if(saver != null && broadcast != null) {
                 double save = Double.Parse(saver);
                 double ads = Double.Parse(broadcast);
@@ -73,8 +73,8 @@ namespace Pluton
             Logger.Init();
             CryptoExtensions.Init();
             DataStore.GetInstance().Load();
-            Server.GetServer();
-            PluginLoader.GetInstance().Init();
+            Server.GetInstance();
+            PluginLoader.GetInstance();
             ReloadTimers();
             server.official = false;
         }

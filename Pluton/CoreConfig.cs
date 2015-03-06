@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class CoreConfig
+    public class CoreConfig : Singleton<CoreConfig>, ISingleton
     {
-        private static IniParser ConfigFile;
+        private IniParser ConfigFile;
 
-        public static void Init()
+        public void Initialize()
         {
-            string ConfigPath = DirectoryConfig.GetConfigPath("Core");
+            string ConfigPath = DirectoryConfig.GetInstance().GetConfigPath("Core");
 
             if (File.Exists(ConfigPath)) {
                 ConfigFile = new IniParser(ConfigPath);
@@ -29,7 +29,7 @@ namespace Pluton
             }
         }
 
-        public static void GenerateConfig()
+        public void GenerateConfig()
         {
             ConfigFile.AddSetting("csharp", "enabled", "false");
             ConfigFile.AddSetting("csharp", "checkHash", "true");
@@ -41,19 +41,19 @@ namespace Pluton
             ConfigFile.AddSetting("javascript", "checkHash", "false");
         }
 
-        public static string GetValue(string Section, string Setting)
+        public string GetValue(string Section, string Setting)
         {
             return ConfigFile.GetSetting(Section, Setting);
         }
 
-        public static bool GetBoolValue(string Section, string Setting)
+        public bool GetBoolValue(string Section, string Setting)
         {
             return ConfigFile.GetBoolSetting(Section, Setting);
         }
 
-        public static void Reload()
+        public void Reload()
         {
-            string ConfigPath = DirectoryConfig.GetConfigPath("Core");
+            string ConfigPath = DirectoryConfig.GetInstance().GetConfigPath("Core");
 
             if (File.Exists(ConfigPath))
                 ConfigFile = new IniParser(ConfigPath);

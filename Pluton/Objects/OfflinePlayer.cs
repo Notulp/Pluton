@@ -32,7 +32,7 @@ namespace Pluton
 
         public static OfflinePlayer Get(ulong steamID)
         {
-            OfflinePlayer op = Server.GetServer().OfflinePlayers[steamID];
+            OfflinePlayer op = Server.GetInstance().OfflinePlayers[steamID];
             if (op == null) {
                 Logger.LogDebug("[OfflinePlayer] Couldn't find OfflinePlayer: " + steamID.ToString());
                 return null;

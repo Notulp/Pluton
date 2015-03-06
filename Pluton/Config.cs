@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace Pluton
 {
-    public class Config
+    public class Config : Singleton<Config>, ISingleton
     {
-        public static IniParser PlutonConfig;
+        public IniParser PlutonConfig;
 
-        public static void Init()
+        public void Initialize()
         {
-            string ConfigPath = DirectoryConfig.GetConfigPath("Pluton");
+            string ConfigPath = DirectoryConfig.GetInstance().GetConfigPath("Pluton");
 
             if (File.Exists(ConfigPath)) {
                 PlutonConfig = new IniParser(ConfigPath);
@@ -29,7 +29,7 @@ namespace Pluton
             pluton.enabled = GetBoolValue("Config", "enabled", true);
         }
 
-        public static string GetValue(string Section, string Setting, string defaultValue = "")
+        public string GetValue(string Section, string Setting, string defaultValue = "")
         {
             if (!PlutonConfig.ContainsSetting(Section, Setting)) {
                 PlutonConfig.AddSetting(Section, Setting, defaultValue);
@@ -38,7 +38,7 @@ namespace Pluton
             return PlutonConfig.GetSetting(Section, Setting, defaultValue);
         }
 
-        public static bool GetBoolValue(string Section, string Setting, bool defaultValue = false)
+        public bool GetBoolValue(string Section, string Setting, bool defaultValue = false)
         {
             if (!PlutonConfig.ContainsSetting(Section, Setting)) {
                 PlutonConfig.AddSetting(Section, Setting, defaultValue.ToString().ToLower());
@@ -47,9 +47,9 @@ namespace Pluton
             return PlutonConfig.GetBoolSetting(Section, Setting, defaultValue);
         }
 
-        public static void Reload()
+        public void Reload()
         {
-            string ConfigPath = DirectoryConfig.GetConfigPath("Pluton");
+            string ConfigPath = DirectoryConfig.GetInstance().GetConfigPath("Pluton");
              
             if (File.Exists(ConfigPath))
                 PlutonConfig = new IniParser(ConfigPath);

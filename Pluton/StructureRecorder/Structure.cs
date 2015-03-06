@@ -43,7 +43,7 @@ namespace Pluton.StructureRecorder
         {
             foreach (StructureComponent component in Components.Values) {
                 Vector3 v3 = (component.LocalPosition.ToVector3() + spawnAt);
-                BaseEntity ent = World.GetWorld().SpawnMapEntity(component.Prefab, v3, component.LocalRotation.ToQuaternion());
+                BaseEntity ent = World.GetInstance().SpawnMapEntity(component.Prefab, v3, component.LocalRotation.ToQuaternion());
                 BuildingBlock bb = ent.GetComponent<BuildingBlock>();
                 bb.blockHealth = component.Health;
                 bb.SendNetworkUpdateImmediate();
