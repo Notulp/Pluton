@@ -81,19 +81,19 @@ namespace Pluton
             return GetLookHit(maxDist).point;
         }
 
-        public RaycastHit GetLookHit(float maxDist = 500f)
+        public RaycastHit GetLookHit(float maxDist = 500f, int layers = Physics.AllLayers)
         {
             RaycastHit hit;
             Ray orig = basePlayer.eyes.Ray();
-            Physics.Raycast(orig, out hit, maxDist, Physics.AllLayers);
+            Physics.Raycast(orig, out hit, maxDist, layers);
             return hit;
         }
 
         public Player GetLookPlayer(float maxDist = 500f)
         {
-            RaycastHit hit = GetLookHit(maxDist);
+            RaycastHit hit = GetLookHit(maxDist, LayerMask.GetMask("Player (Server)"));
             if (hit.collider != null) {
-                BasePlayer basePlayer = hit.collider.GetComponent<BasePlayer>();
+                BasePlayer basePlayer = hit.collider.GetComponentInParent<BasePlayer>();
                 if (basePlayer != null) {
                     return Server.GetPlayer(basePlayer);
                 }
@@ -103,9 +103,9 @@ namespace Pluton
 
         public BuildingPart GetLookBuildingPart(float maxDist = 500f)
         {
-            RaycastHit hit = GetLookHit(maxDist);
+            RaycastHit hit = GetLookHit(maxDist, LayerMask.GetMask("Construction", "Deployed"));
             if (hit.collider != null) {
-                BuildingBlock buildingBlock = hit.collider.GetComponent<BuildingBlock>();
+                BuildingBlock buildingBlock = hit.collider.GetComponentInParent<BuildingBlock>();
                 if (buildingBlock != null) {
                     return new BuildingPart(buildingBlock);
                 }
