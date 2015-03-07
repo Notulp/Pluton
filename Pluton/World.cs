@@ -92,12 +92,12 @@ namespace Pluton
         public float GetGround(float x, float z)
         {
             RaycastHit hit;
-            var origin = new Vector3(x, 5000, z);
+            var origin = new Vector3(x, global::World.HighestPoint.y + 1, z);
             float ground = 0f;
-            if (Physics.Raycast(origin, Vector3.down, out hit, 8000, Physics.AllLayers)) {
+            if (Physics.Raycast(origin, Vector3.down, out hit, Vector3.Distance(origin, new Vector3(origin.x, -100f, origin.z)), 1 << 23)) {
                 ground = hit.point.y;
             }
-            return ground + 2; // increase by 2, as prefabs/players will die without it.
+            return ground;
         }
 
         public float GetGround(Vector3 v3)
