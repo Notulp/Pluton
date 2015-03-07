@@ -18,7 +18,9 @@
 
         public DumpSettings(int maxItem, int maxDepth, bool disPrivate, bool useFullClassName) {
             MaxItems = maxItem;
-
+            MaxDepth = maxDepth;
+            DisplayPrivate = disPrivate;
+            UseFullClassNames = useFullClassName;
         }
     }
 
