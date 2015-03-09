@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.Serialization;
 using Network;
@@ -119,6 +120,101 @@ namespace Pluton
             info.damageTypes.Add(Rust.DamageType.Suicide, Single.MaxValue);
             info.Initiator = baseEntity;
             basePlayer.Die(info);
+        }
+
+        public bool KnowsBlueprint(int itemID)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            return playerInfo.blueprints.complete.Contains(itemID);
+        }
+
+        public bool KnowsBlueprint(ItemBlueprint itembp)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            return playerInfo.blueprints.complete.Contains(itembp.targetItem.itemid);
+        }
+
+        public Dictionary<int, bool> KnowsBlueprints(IEnumerable<int> itemIDs)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            Dictionary<int, bool> result = new Dictionary<int, bool>();
+            foreach (int itemid in itemIDs) {
+                if (!result.ContainsKey(itemid))
+                    result[itemid] = playerInfo.blueprints.complete.Contains(itemid);
+            }
+            return result;
+        }
+
+        public Dictionary<ItemBlueprint, bool> KnowsBlueprints(IEnumerable<ItemBlueprint> itemBPs)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            Dictionary<ItemBlueprint, bool> result = new Dictionary<ItemBlueprint, bool>();
+            foreach (ItemBlueprint itembp in itemBPs) {
+                int itemid = itembp.targetItem.itemid;
+                if (!result.ContainsKey(itembp))
+                    result[itembp] = playerInfo.blueprints.complete.Contains(itemid);
+            }
+            return result;
+        }
+
+        public List<int> KnownBlueprints()
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            return playerInfo.blueprints.complete;
+        }
+
+        public bool LearnBlueprint(int itemID)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            if (!playerInfo.blueprints.complete.Contains(itemID)) {
+                playerInfo.blueprints.complete.Add(itemID);
+                Persistence.SetPlayerInfo(GameID, playerInfo);
+                basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemID);
+                return true;
+            }
+            return false;
+        }
+
+        public bool LearnBlueprint(ItemBlueprint itembp)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            int itemID = itembp.targetItem.itemid;
+            if (!playerInfo.blueprints.complete.Contains(itemID)) {
+                playerInfo.blueprints.complete.Add(itemID);
+                Persistence.SetPlayerInfo(GameID, playerInfo);
+                basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemID);
+                return true;
+            }
+            return false;
+        }
+
+        public void LearnBlueprints(IEnumerable<int> itemIDs)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            foreach (int itemid in itemIDs) {
+                if (!playerInfo.blueprints.complete.Contains(itemid)) {
+                    playerInfo.blueprints.complete.Add(itemid);
+                    Persistence.SetPlayerInfo(GameID, playerInfo);
+                    basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemid);
+                }
+            }
+        }
+
+        public void LearnBlueprints(IEnumerable<ItemBlueprint> itembps)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            foreach (ItemBlueprint itembp in itembps) {
+                int itemid = itembp.targetItem.itemid;
+                if (!playerInfo.blueprints.complete.Contains(itemid)) {
+                    playerInfo.blueprints.complete.Add(itemid);
+                    Persistence.SetPlayerInfo(GameID, playerInfo);
+                    basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemid);
+                }
+            }
         }
 
         public void MakeNone(string reason = "no reason")
