@@ -8,6 +8,19 @@ namespace Pluton
     {
         public void Initialize(){}
 
+        public List<ItemBlueprint> BluePrints()
+        {
+            return ItemManager.Instance.bpList;
+        }
+
+        public List<ItemBlueprint> BluePrint(string name)
+        {
+            return (from item in ItemManager.Instance.bpList
+                where item.targetItem.shortname == name ||
+                item.targetItem.displayName.english == name
+                select item).ToList<ItemBlueprint>();
+        }
+
         public List<BuildingPart> BuildingParts()
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
@@ -70,6 +83,33 @@ namespace Pluton
                 ent.LookupShortPrefabName().Contains(name) ||
                 ent.name.Contains(name)
                 select new Entity(ent as BaseEntity)).ToList<Entity>();
+        }
+
+        public List<ItemDefinition> ItemDefinitions()
+        {
+            return ItemManager.Instance.itemList;
+        }
+
+        public List<ItemDefinition> ItemDefinitionsByCategory(string cat)
+        {
+            return (from item in ItemManager.Instance.itemList
+                where item.category.ToString() == cat
+                select item).ToList<ItemDefinition>();
+        }
+
+        public List<ItemDefinition> ItemDefinitionsByCategory(ItemCategory cat)
+        {
+            return (from item in ItemManager.Instance.itemList
+                where item.category == cat
+                select item).ToList<ItemDefinition>();
+        }
+
+        public ItemDefinition ItemDefinition(string name)
+        {
+            return (from item in ItemManager.Instance.itemList
+                where item.shortname == name ||
+                item.displayName.english == name
+                select item).FirstOrDefault<ItemDefinition>();
         }
 
         public List<Entity> Locks()
