@@ -134,6 +134,12 @@ namespace Pluton
             return playerInfo.blueprints.complete.Contains(itembp.targetItem.itemid);
         }
 
+        public bool KnowsBlueprint(ItemDefinition itemdef)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            return playerInfo.blueprints.complete.Contains(itemdef.itemid);
+        }
+
         public Dictionary<int, bool> KnowsBlueprints(IEnumerable<int> itemIDs)
         {
             ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
@@ -153,6 +159,18 @@ namespace Pluton
                 int itemid = itembp.targetItem.itemid;
                 if (!result.ContainsKey(itembp))
                     result[itembp] = playerInfo.blueprints.complete.Contains(itemid);
+            }
+            return result;
+        }
+
+        public Dictionary<ItemDefinition, bool> KnowsBlueprints(IEnumerable<ItemDefinition> itemdefs)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            Dictionary<ItemDefinition, bool> result = new Dictionary<ItemDefinition, bool>();
+            foreach (ItemDefinition itemdef in itemdefs) {
+                int itemid = itemdef.itemid;
+                if (!result.ContainsKey(itemdef))
+                    result[itemdef] = playerInfo.blueprints.complete.Contains(itemid);
             }
             return result;
         }
@@ -190,6 +208,20 @@ namespace Pluton
             return false;
         }
 
+        public bool LearnBlueprint(ItemDefinition itemdef)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            int itemID = itemdef.itemid;
+            if (!playerInfo.blueprints.complete.Contains(itemID)) {
+                playerInfo.blueprints.complete.Add(itemID);
+                Persistence.SetPlayerInfo(GameID, playerInfo);
+                basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemID);
+                return true;
+            }
+            return false;
+        }
+
         public void LearnBlueprints(IEnumerable<int> itemIDs)
         {
             ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
@@ -208,6 +240,20 @@ namespace Pluton
             ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
             foreach (ItemBlueprint itembp in itembps) {
                 int itemid = itembp.targetItem.itemid;
+                if (!playerInfo.blueprints.complete.Contains(itemid)) {
+                    playerInfo.blueprints.complete.Add(itemid);
+                    Persistence.SetPlayerInfo(GameID, playerInfo);
+                    basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemid);
+                }
+            }
+        }
+
+        public void LearnBlueprints(IEnumerable<ItemDefinition> itemdefs)
+        {
+            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            foreach (ItemDefinition itemdef in itemdefs) {
+                int itemid = itemdef.itemid;
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
                     Persistence.SetPlayerInfo(GameID, playerInfo);
