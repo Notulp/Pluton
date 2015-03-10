@@ -47,6 +47,15 @@ namespace Pluton
             containerPref = GetContainerPreference(Category);
         }
 
+        public int Amount {
+            get {
+                return _item.amount;
+            }
+            set {
+                _item.amount = value;
+            }
+        }
+
         public bool CanStack(InvItem item)
         {
             return _item.CanStack(item._item);
@@ -58,9 +67,27 @@ namespace Pluton
             }
         }
 
+        public float Condition {
+            get {
+                return _item.condition;
+            }
+            set {
+                _item.condition = value;
+            }
+        }
+
         public void Drop(Vector3 position, Vector3 offset)
         {
             _item.Drop(position, offset);
+        }
+
+        public float Fuel {
+            get {
+                return _item.fuel;
+            }
+            set {
+                _item.fuel = value;
+            }
         }
 
         public Entity Instantiate(Vector3 v3)
@@ -71,6 +98,15 @@ namespace Pluton
         public Entity Instantiate(Vector3 v3, Quaternion q)
         {
             return new Entity(_item.CreateWorldObject(v3, q));
+        }
+
+        public bool IsBlueprint {
+            get {
+                return _item.isBlueprint;
+            }
+            set {
+                _item.isBlueprint = value;
+            }
         }
 
         public int ItemID {
