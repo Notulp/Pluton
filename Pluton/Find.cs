@@ -92,6 +92,11 @@ namespace Pluton
                 select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
+        public List<TriggerComfort> ComfortZones()
+        {
+            return UnityEngine.Object.FindObjectsOfType<TriggerComfort>().ToList<TriggerComfort>();
+        }
+
         public List<Entity> CupBoards()
         {
             return (from board in UnityEngine.Object.FindObjectsOfType<BuildingPrivlidge>()
@@ -229,14 +234,28 @@ namespace Pluton
 
         public List<TriggerRadiation> RadZones()
         {
-            return (from trigger in UnityEngine.Object.FindObjectsOfType<TriggerRadiation>()
-                select trigger).ToList<TriggerRadiation>();
+            return UnityEngine.Object.FindObjectsOfType<TriggerRadiation>().ToList<TriggerRadiation>();
         }
 
         public List<Entity> Storage()
         {
             return (from storage in UnityEngine.Object.FindObjectsOfType<StorageContainer>()
                 select new Entity(storage as BaseEntity)).ToList<Entity>();
+        }
+
+        public List<TriggerTemperature> TemperatureZones()
+        {
+            return UnityEngine.Object.FindObjectsOfType<TriggerTemperature>().ToList<TriggerTemperature>();
+        }
+
+        public List<TriggerBase> Triggers()
+        {
+            return UnityEngine.Object.FindObjectsOfType<TriggerBase>().ToList<TriggerBase>();
+        }
+
+        public List<T> Triggers<T>() where T : TriggerBase
+        {
+            return UnityEngine.Object.FindObjectsOfType<T>().ToList<T>();
         }
     }
 }
