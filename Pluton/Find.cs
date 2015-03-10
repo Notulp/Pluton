@@ -13,12 +13,32 @@ namespace Pluton
             return ItemManager.Instance.bpList;
         }
 
-        public List<ItemBlueprint> BluePrint(string name)
+        public ItemBlueprint BluePrint(string name)
         {
-            return (from item in ItemManager.Instance.bpList
-                where item.targetItem.shortname == name ||
-                item.targetItem.displayName.english == name
-                select item).ToList<ItemBlueprint>();
+            return ItemManager.Instance.bpList.Find(item => {
+                if (item.targetItem.shortname == name ||
+                    item.targetItem.displayName.english == name)
+                    return true;
+                return false;
+            });
+        }
+
+        public List<ItemBlueprint> BluePrintsByCategory(string cat)
+        {
+            return ItemManager.Instance.bpList.FindAll(item => {
+                if (item.targetItem.category.ToString() == cat)
+                    return true;
+                return false;
+            });
+        }
+
+        public List<ItemBlueprint> BluePrintsByCategory(ItemCategory cat)
+        {
+            return ItemManager.Instance.bpList.FindAll(item => {
+                if (item.targetItem.category == cat)
+                    return true;
+                return false;
+            });
         }
 
         public List<BuildingPart> BuildingParts()
@@ -36,10 +56,39 @@ namespace Pluton
                 select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
+        /// <summary>
+        /// Buildings the parts by grade.
+        /// </summary>
+        /// <returns>The parts by grade.</returns>
+        /// <param name="grade">example: BuildingGrade.Enum.Twigs</param>
         public List<BuildingPart> BuildingPartsByGrade(BuildingGrade.Enum grade)
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
                 where block.grade == grade
+                select new BuildingPart(block)).ToList<BuildingPart>();
+        }
+
+        /// <summary>
+        /// Buildings the parts by grade.
+        /// </summary>
+        /// <returns>The parts by grade.</returns>
+        /// <param name="grade">grade => 0, 1, 2, 3, 4</param>
+        public List<BuildingPart> BuildingPartsByGrade(int grade)
+        {
+            return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
+                where (int)block.grade == grade
+                select new BuildingPart(block)).ToList<BuildingPart>();
+        }
+
+        /// <summary>
+        /// Buildings the parts by grade.
+        /// </summary>
+        /// <returns>The parts by grade.</returns>
+        /// <param name="grade">Twigs, Wood, etc.</param>
+        public List<BuildingPart> BuildingPartsByGrade(string grade)
+        {
+            return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
+                where block.grade.ToString() == grade
                 select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
@@ -176,6 +225,12 @@ namespace Pluton
                 where player.Name.Contains(nameorIP) ||
                 player.IP.Contains(nameorIP)
                 select player).ToList<Player>();
+        }
+
+        public List<TriggerRadiation> RadZones()
+        {
+            return (from trigger in UnityEngine.Object.FindObjectsOfType<TriggerRadiation>()
+                select trigger).ToList<TriggerRadiation>();
         }
 
         public List<Entity> Storage()
