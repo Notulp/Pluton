@@ -80,6 +80,16 @@
             }
         }
 
+        public void ChangeTriggerRadius(TriggerBase trigger, float newRadius)
+        {
+            if (newRadius < 0f) {
+                throw new InvalidOperationException(String.Format("Radius can't be less then zero. ChangeTriggerRadius({0}, {1})", trigger, newRadius));
+            }
+
+            trigger.GetComponent<SphereCollider>().radius = newRadius;
+            trigger.SendMessage("OnValidate", SendMessageOptions.DontRequireReceiver);
+        }
+
         public void ConsoleLog(string str, bool adminOnly = false)
         {
             try
