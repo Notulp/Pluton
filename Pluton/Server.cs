@@ -30,11 +30,9 @@
             ConsoleSystem.Broadcast("chat.add", 0, String.Format("{0}: {1}", name.ColorText("fa5"), arg));
         }
 
-        public void BroadcastNotice(string s)
+        public void BroadcastFrom(ulong playerid, string arg)
         {
-            foreach (Player player in this.Players.Values) {
-                //player.Notice(s);
-            }
+            ConsoleSystem.Broadcast("chat.add", playerid, arg, 1);
         }
 
         public Player FindPlayer(string s)
