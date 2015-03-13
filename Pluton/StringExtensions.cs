@@ -6,7 +6,7 @@ namespace Pluton
     {
         public static string BoldText(this string self)
         {
-            return String.Format("<b>self</b>", self);
+            return String.Format("<b>{0}</b>", self);
         }
 
         public static string ColorText(this string self, string color)
@@ -16,7 +16,7 @@ namespace Pluton
 
         public static string ItalicText(this string self)
         {
-            return String.Format("<i>self</i>", self);
+            return String.Format("<i>{0}</i>", self);
         }
 
         public static string SetSize(this string self, int size)
