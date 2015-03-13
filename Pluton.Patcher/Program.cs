@@ -338,7 +338,7 @@ namespace Pluton.Patcher
 
             ILProcessor il = servUpdate.Body.GetILProcessor();
 
-            for (var i = 36; i > 7; i--)
+            for (var i = 48; i > 7; i--)
                 il.Body.Instructions.RemoveAt(i);
 
             il.InsertAfter(servUpdate.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));

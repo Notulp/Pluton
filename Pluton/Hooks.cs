@@ -766,8 +766,8 @@ namespace Pluton
         {
             try {
                 if (pluton.enabled) {
-                    string pchGameTags = String.Format("mp{0},cp{1},v{2},modded",
-                        new object[] { server.maxplayers, BasePlayer.activePlayerList.Count, Rust.Protocol.network });
+                    string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded",
+                        new object[] { server.maxplayers, BasePlayer.activePlayerList.Count, Rust.Protocol.network, global::World.Seed, global::World.Size });
 
                     Steamworks.SteamGameServer.SetGameTags(pchGameTags);
                 }
