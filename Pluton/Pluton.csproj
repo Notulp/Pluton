@@ -48,6 +48,10 @@
     <Reference Include="Jint">
       <HintPath>ref\Jint.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.CSharp" />
+    <Reference Include="System.Threading">
+      <HintPath>ref\System.Threading.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,7 +78,6 @@
     <Compile Include="Events\ItemLootEvent.cs" />
     <Compile Include="Events\EntityLootEvent.cs" />
     <Compile Include="Events\PlayerLootEvent.cs" />
-    <Compile Include="PluginLoader.cs" />
     <Compile Include="TimedEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
     <Compile Include="Objects\BuildingPart.cs" />
@@ -103,7 +106,6 @@
     <Compile Include="Serialize\SerializedQuaternion.cs" />
     <Compile Include="Serialize\SerializedVector3.cs" />
     <Compile Include="StructureRecorder\Origo.cs" />
-    <Compile Include="CSharpPlugin.cs" />
     <Compile Include="Events\CommandPermissionEvent.cs" />
     <Compile Include="Events\ChatEvent.cs" />
     <Compile Include="Events\CommandEvent.cs" />
@@ -117,17 +119,25 @@
     <Compile Include="Events\DoorUseEvent.cs" />
     <Compile Include="Objects\Zone2D.cs" />
     <Compile Include="Serialize\SerializedZone2D.cs" />
-    <Compile Include="IPlugin.cs" />
-    <Compile Include="BasePlugin.cs" />
-    <Compile Include="JSPlugin.cs" />
-    <Compile Include="PYPlugin.cs" />
-    <Compile Include="CSPlugin.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Events\CraftEvent.cs" />
     <Compile Include="Find.cs" />
-    <Compile Include="PluginWatcher.cs" />
     <Compile Include="Singleton.cs" />
     <Compile Include="ISingleton.cs" />
+    <Compile Include="PluginLoaders\BasePlugin.cs" />
+    <Compile Include="PluginLoaders\CSharpPlugin.cs" />
+    <Compile Include="PluginLoaders\CSharpPluginLoader.cs" />
+    <Compile Include="PluginLoaders\CSPlugin.cs" />
+    <Compile Include="PluginLoaders\CSScriptPluginLoader.cs" />
+    <Compile Include="PluginLoaders\CSSPlugin.cs" />
+    <Compile Include="PluginLoaders\IPlugin.cs" />
+    <Compile Include="PluginLoaders\IPluginLoader.cs" />
+    <Compile Include="PluginLoaders\JSPlugin.cs" />
+    <Compile Include="PluginLoaders\JSPluginLoader.cs" />
+    <Compile Include="PluginLoaders\PluginLoader.cs" />
+    <Compile Include="PluginLoaders\PluginWatcher.cs" />
+    <Compile Include="PluginLoaders\PYPlugin.cs" />
+    <Compile Include="PluginLoaders\PYPluginLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -137,5 +147,6 @@
   <ItemGroup>
     <Folder Include="StructureRecorder\" />
     <Folder Include="Serialize\" />
+    <Folder Include="PluginLoaders\" />
   </ItemGroup>
 </Project>
