@@ -15,7 +15,6 @@ Get started:
 
   ```
   Assembly-CSharp.dll
-  Facepunch.dll
   UnityEngine.dll
   ```
 4. Compile Pluton and Pluton.Patcher
