@@ -10,7 +10,7 @@ namespace Pluton
     public class JSPlugin : BasePlugin
     {
         public JintEngine Engine;
-        public Program Program;
+        public Jint.Expressions.Program Program;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.JSPlugin"/> class.
@@ -18,7 +18,7 @@ namespace Pluton
         /// <param name="name">Name.</param>
         /// <param name="code">Code.</param>
         /// <param name="rootdir">Rootdir.</param>
-        public JSPlugin(string name, string code, DirectoryInfo rootdir) : base(name, code, rootdir)
+        public JSPlugin(string name, string code, DirectoryInfo rootdir) : base(name, rootdir)
         {
             Type = PluginType.JavaScript;
 

@@ -2,18 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.IO;
     using System.Reactive.Subjects;
     using System.Reflection;
 
     public class PluginLoader : Singleton<PluginLoader>, ISingleton
     {
+        public ConcurrentDictionary<string, BasePlugin> Plugins = new ConcurrentDictionary<string, BasePlugin>();
 
-        private Dictionary<string, BasePlugin> plugins = new Dictionary<string, BasePlugin>();
-
-        public Dictionary<string, BasePlugin> Plugins { get { return plugins; } }
-
-        private DirectoryInfo pluginDirectory;
+        public DirectoryInfo pluginDirectory = new DirectoryInfo(Path.Combine(Util.GetPublicFolder(), "Plugins"));
+        public Dictionary<PluginType, IPluginLoader> PluginLoaders = new Dictionary<PluginType, IPluginLoader>();
 
         public Subject<string> OnAllLoaded = new Subject<string>();
 
@@ -28,101 +27,28 @@
             ReloadPlugins();
         }
 
-        private IEnumerable<String> GetCSharpPluginNames()
-        {
-            foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
-                string path = Path.Combine(dirInfo.FullName, dirInfo.Name + ".dll");
-                if (File.Exists(path))
-                    yield return dirInfo.Name;
-            }
-        }
-
-        private IEnumerable<String> GetJSPluginNames()
-        {
-            foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
-                string path = Path.Combine(dirInfo.FullName, dirInfo.Name + ".js");
-                if (File.Exists(path))
-                    yield return dirInfo.Name;
-            }
-        }
-
-        private IEnumerable<String> GetPyPluginNames()
-        {
-            foreach (DirectoryInfo dirInfo in pluginDirectory.GetDirectories()) {
-                string path = Path.Combine(dirInfo.FullName, dirInfo.Name + ".py");
-                if (File.Exists(path))
-                    yield return dirInfo.Name;
-            }
-        }
-
-        private string GetPluginDirectoryPath(string name)
-        {
-            return Path.Combine(pluginDirectory.FullName, name);
-        }
-
-        private string GetJSPluginScriptPath(string name)
-        {
-            return Path.Combine(GetPluginDirectoryPath(name), name + ".js");
-        }
-
-        private string GetPyPluginScriptPath(string name)
-        {
-            return Path.Combine(GetPluginDirectoryPath(name), name + ".py");
-        }
-
-        private string GetCSharpPluginScriptPath(string name)
-        {
-            return Path.Combine(GetPluginDirectoryPath(name), name + ".dll");
-        }
-
-        private string GetPluginScriptText(string name, PluginType type)
-        {
-            string path = "";
-            if (type == PluginType.Python)
-                path = GetPyPluginScriptPath(name);
-            else if (type == PluginType.JavaScript)
-                path = GetJSPluginScriptPath(name);
-            else if (type == PluginType.CSharp)
-                return GetCSharpPluginScriptPath(name);
-
-            if (path == "") return null;
-
-            return File.ReadAllText(path);
-        }
-
         #region re/un/loadplugin(s)
+
+        public void LoadPlugin(string name, PluginType t)
+        {
+            PluginLoaders[t].LoadPlugin(name);
+        }
 
         public void LoadPlugins()
         {
-            if (CoreConfig.GetInstance().GetBoolValue("python", "enabled")) {
-                PluginWatcher.GetInstance().AddWatcher(PluginType.Python, "*.py");
-                foreach (string name in GetPyPluginNames())
-                    LoadPlugin(name, PluginType.Python);
-            } else
-                Logger.LogDebug("[PluginLoader] Python plugins are disabled in Core.cfg.");
-
-            if (CoreConfig.GetInstance().GetBoolValue("javascript", "enabled")) {
-                PluginWatcher.GetInstance().AddWatcher(PluginType.JavaScript, "*.js");
-                foreach (string name in GetJSPluginNames())
-                    LoadPlugin(name, PluginType.JavaScript);
-            } else
-                Logger.LogDebug("[PluginLoader] Javascript plugins are disabled in Core.cfg.");
-
-            if (CoreConfig.GetInstance().GetBoolValue("csharp", "enabled")) {
-                PluginWatcher.GetInstance().AddWatcher(PluginType.CSharp, "*.dll");
-                foreach (string name in GetCSharpPluginNames())
-                    LoadPlugin(name, PluginType.CSharp);
-            } else
-                Logger.LogDebug("[PluginLoader] CSharp plugins are disabled in Core.cfg.");
+            Logger.Log("number of loaders: " + PluginLoaders.Count.ToString());
+            foreach (IPluginLoader loader in PluginLoaders.Values) {
+                loader.LoadPlugins();
+            }
 
             OnAllLoaded.OnNext("");
         }
 
         public void UnloadPlugins()
         {
-            foreach (string name in plugins.Keys)
-                UnloadPlugin(name, false);
-            plugins.Clear();
+            foreach (IPluginLoader loader in PluginLoaders.Values) {
+                loader.UnloadPlugins();
+            }
         }
 
         public void ReloadPlugins()
@@ -131,74 +57,22 @@
             LoadPlugins();
         }
 
-        public void LoadPlugin(string name, PluginType type)
+        public void ReloadPlugin(string name)
         {
-            Logger.LogDebug("[PluginLoader] Loading plugin " + name + ".");
-
-            if (plugins.ContainsKey(name)) {
-                Logger.LogError("[PluginLoader] " + name + " plugin is already loaded.");
-                throw new InvalidOperationException("[PluginLoader] " + name + " plugin is already loaded.");
-            }
-
-            try {
-                string code = GetPluginScriptText(name, type);
-                DirectoryInfo path = new DirectoryInfo(Path.Combine(pluginDirectory.FullName, name));
-                BasePlugin plugin = null;
-                switch(type){
-                case PluginType.CSharp:
-                    plugin = new CSPlugin(name, code, path);
-                    break;
-                case PluginType.JavaScript:
-                    plugin = new JSPlugin(name, code, path);
-                    break;
-                case PluginType.Python:
-                    plugin = new PYPlugin(name, code, path);
-                    break;
-                }
-
-                InstallHooks(plugin);
-                plugins.Add(name, plugin);
-
-                Logger.Log("[PluginLoader] " + name + " plugin was loaded successfuly.");
-            } catch (Exception ex) {
-                Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
-                Logger.Log("[PluginLoader] " + name + " plugin could not be loaded.");
-                Logger.LogException(ex);
-            }
-        }
-
-        public void UnloadPlugin(string name, bool removeFromDict = true)
-        {
-            Logger.LogDebug("[PluginLoader] Unloading " + name + " plugin.");
-
-            if (plugins.ContainsKey(name)) {
-                BasePlugin plugin = plugins[name];
-
-                plugin.KillTimers();
-                RemoveHooks(plugin);
-                if (removeFromDict)
-                    plugins.Remove(name);
-
-                Logger.LogDebug("[PluginLoader] " + name + " plugin was unloaded successfuly.");
-            } else {
-                Logger.LogError("[PluginLoader] Can't unload " + name + ". Plugin is not loaded.");
-                throw new InvalidOperationException("[PluginLoader] Can't unload " + name + ". Plugin is not loaded.");
+            if (Plugins.ContainsKey(name)) {
+                PluginLoaders[Plugins[name].Type].ReloadPlugin(name);
             }
         }
 
         public void ReloadPlugin(BasePlugin plugin)
         {
-            UnloadPlugin(plugin.Name);
-            LoadPlugin(plugin.Name, plugin.Type);
-
-        }
-
-        public void ReloadPlugin(string name)
-        {
-            if (plugins.ContainsKey(name)) {
-                BasePlugin plugin = plugins[name];
-                UnloadPlugin(plugin.Name);
-                LoadPlugin(plugin.Name, plugin.Type);
+            if (Plugins.ContainsKey(plugin.Name)) {
+                var loader = PluginLoaders[plugin.Type];
+                string name = plugin.Name;
+                loader.UnloadPlugin(name);
+                plugin = null;
+                Plugins.TryRemove(name, out plugin);
+                loader.LoadPlugin(name);
             }
         }
 
@@ -206,7 +80,7 @@
 
         #region install/remove hooks
 
-        private void InstallHooks(BasePlugin plugin)
+        public void InstallHooks(BasePlugin plugin)
         {
             if (plugin.State != PluginState.Loaded)
                 return;
@@ -313,7 +187,7 @@
             }
         }
 
-        private void RemoveHooks(BasePlugin plugin)
+        public void RemoveHooks(BasePlugin plugin)
         {
             if (plugin.State != PluginState.Loaded)
                 return;

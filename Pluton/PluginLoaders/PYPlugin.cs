@@ -13,7 +13,7 @@ namespace Pluton
         /// <summary>
         /// LibraryPath for python plugins.
         /// </summary>
-        public static string LibPath;
+        public static string LibPath = Path.Combine(Util.GetPublicFolder(), Path.Combine("Python", "Lib"));
 
         ScriptEngine Engine;
         public ScriptScope Scope;
@@ -25,7 +25,7 @@ namespace Pluton
         /// <param name="name">Name.</param>
         /// <param name="code">Code.</param>
         /// <param name="rootdir">Rootdir.</param>
-        public PYPlugin(string name, string code, DirectoryInfo rootdir) : base(name, code, rootdir)
+        public PYPlugin(string name, string code, DirectoryInfo rootdir) : base(name, rootdir)
         {
             Type = PluginType.Python;
 

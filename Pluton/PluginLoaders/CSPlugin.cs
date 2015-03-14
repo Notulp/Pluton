@@ -20,7 +20,7 @@ namespace Pluton
         /// <param name="name">Name.</param>
         /// <param name="code">Code.</param>
         /// <param name="rootdir">Rootdir.</param>
-        public CSPlugin(string name, string code, DirectoryInfo rootdir) : base(name, code, rootdir)
+        public CSPlugin(string name, string code, DirectoryInfo rootdir) : base(name, rootdir)
         {
             Type = PluginType.CSharp;
 

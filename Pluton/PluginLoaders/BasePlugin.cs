@@ -20,15 +20,6 @@ namespace Pluton
         }
 
         /// <summary>
-        /// Source code (or path in case of c# plugins).
-        /// </summary>
-        /// <value>The code.</value>
-        public string Code {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// DirectoryInfo of the directory in which the plugin is in.
         /// </summary>
         /// <value>The root dir.</value>
@@ -93,10 +84,9 @@ namespace Pluton
         /// <param name="name">Name.</param>
         /// <param name="code">Code.</param>
         /// <param name="rootdir">RootDir.</param>
-        public BasePlugin(string name, string code, DirectoryInfo rootdir)
+        public BasePlugin(string name, DirectoryInfo rootdir)
         {
             Name = name;
-            Code = code;
             RootDir = rootdir;
 
             Timers = new Dictionary<string, TimedEvent>();

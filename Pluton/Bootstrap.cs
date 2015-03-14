@@ -74,6 +74,12 @@ namespace Pluton
             CryptoExtensions.Init();
             DataStore.GetInstance().Load();
             Server.GetInstance();
+
+            CSharpPluginLoader.GetInstance();
+            CSScriptPluginLoader.GetInstance();
+            JSPluginLoader.GetInstance();
+            PYPluginLoader.GetInstance();
+
             PluginLoader.GetInstance();
             ReloadTimers();
             server.official = false;

@@ -34,7 +34,7 @@ namespace Pluton
         public PluginTypeWatcher(PluginType type, string filter)
         {
             Type = type;
-            Watcher = new FileSystemWatcher(Path.Combine(Util.GetPublicFolder(), "Plugins"), filter);
+            Watcher = new FileSystemWatcher(Path.Combine(Util.GetPublicFolder(), "Plugins"), "*" + filter);
             Watcher.EnableRaisingEvents = true;
             Watcher.IncludeSubdirectories = true;
             Watcher.Changed += OnPluginChanged;

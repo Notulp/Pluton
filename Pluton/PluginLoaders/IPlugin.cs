@@ -64,7 +64,8 @@ namespace Pluton
         Undefined,
         Python,
         JavaScript,
-        CSharp
+        CSharp,
+        CSScript
     }
 }
 
