@@ -28,29 +28,8 @@ namespace Pluton
                 return;
             }
 
-            Engine = new JintEngine(Options.Ecmascript5)
-                .AllowClr(true);
-
-            Engine.SetParameter("Commands", chatCommands)
-                .SetParameter("DataStore", DataStore.GetInstance())
-                .SetParameter("Find", Find.GetInstance())
-                .SetParameter("GlobalData", GlobalData)
-                .SetParameter("Plugin", this)
-                .SetParameter("Server", Server.GetInstance())
-                .SetParameter("ServerConsoleCommands", consoleCommands)
-                .SetParameter("Util", Util.GetInstance())
-                .SetParameter("Web", Web)
-                .SetParameter("World", World.GetInstance())
-                .SetFunction("importClass", new importit(importClass));
-
-            Program = JintEngine.Compile(code, false);
-
-            Globals = (from statement in Program.Statements
-                where statement.GetType() == typeof(FunctionDeclarationStatement)
-                select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
-
-            Engine.Run(Program);
-            State = PluginState.Loaded;
+            System.Threading.ThreadPool.QueueUserWorkItem(
+                new System.Threading.WaitCallback(a => Load(code)), null);
         }
 
         /// <summary>
@@ -78,6 +57,35 @@ namespace Pluton
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }
+        }
+
+        public override void Load(string code)
+        {
+            Engine = new JintEngine(Options.Ecmascript5)
+                .AllowClr(true);
+
+            Engine.SetParameter("Commands", chatCommands)
+                .SetParameter("DataStore", DataStore.GetInstance())
+                .SetParameter("Find", Find.GetInstance())
+                .SetParameter("GlobalData", GlobalData)
+                .SetParameter("Plugin", this)
+                .SetParameter("Server", Server.GetInstance())
+                .SetParameter("ServerConsoleCommands", consoleCommands)
+                .SetParameter("Util", Util.GetInstance())
+                .SetParameter("Web", Web)
+                .SetParameter("World", World.GetInstance())
+                .SetFunction("importClass", new importit(importClass));
+
+            Program = JintEngine.Compile(code, false);
+
+            Globals = (from statement in Program.Statements
+                where statement.GetType() == typeof(FunctionDeclarationStatement)
+                select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
+
+            Engine.Run(Program);
+            State = PluginState.Loaded;
+
+            PluginLoader.GetInstance().OnPluginLoaded(this);
         }
 
         public delegate Jint.Native.JsInstance importit(string t);

@@ -8,6 +8,8 @@ namespace Pluton
         string FormatException(Exception ex);
         object Invoke(string method, params object[] args);
 
+        void Load(string code = "");
+
         void OnAllPluginsLoaded(string s);
 
         void OnChat(ChatEvent arg);

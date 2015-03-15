@@ -29,6 +29,20 @@
 
         #region re/un/loadplugin(s)
 
+        public void OnPluginLoaded(BasePlugin plugin)
+        {
+            if (plugin.State != PluginState.Loaded) {
+                throw new FileLoadException("Couldn't initialize " + plugin.Type.ToString() + " plugin.", 
+                    Path.Combine(Path.Combine(pluginDirectory.FullName, plugin.Name), plugin.Name + plugin.Type.ToString())
+                );
+            }
+
+            InstallHooks(plugin);
+            Plugins.TryAdd(plugin.Name, plugin);
+
+            Logger.Log(String.Format("[PluginLoader] {0}<{1}> plugin was loaded successfuly.", plugin.Name, plugin.Type));
+        }
+
         public void LoadPlugin(string name, PluginType t)
         {
             PluginLoaders[t].LoadPlugin(name);

@@ -34,23 +34,9 @@ namespace Pluton
                 State = PluginState.HashNotFound;
                 return;
             }
-            Engine = IronPython.Hosting.Python.CreateEngine();
-            Scope = Engine.CreateScope();
-            Scope.SetVariable("Commands", chatCommands);
-            Scope.SetVariable("DataStore", DataStore.GetInstance());
-            Scope.SetVariable("Find", Find.GetInstance());
-            Scope.SetVariable("GlobalData", GlobalData);
-            Scope.SetVariable("Plugin", this);
-            Scope.SetVariable("Server", Pluton.Server.GetInstance());
-            Scope.SetVariable("ServerConsoleCommands", consoleCommands);
-            Scope.SetVariable("Util", Util.GetInstance());
-            Scope.SetVariable("Web", Web.GetInstance());
-            Scope.SetVariable("World", World.GetInstance());
-            Engine.Execute(code, Scope);
-            Class = Engine.Operations.Invoke(Scope.GetVariable(name));
-            Globals = Engine.Operations.GetMemberNames(Class);
 
-            State = PluginState.Loaded;
+            System.Threading.ThreadPool.QueueUserWorkItem(
+                new System.Threading.WaitCallback(a => Load(code)), null);
         }
 
         /// <summary>
@@ -88,6 +74,29 @@ namespace Pluton
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }
+        }
+
+        public override void Load(string code = "")
+        {
+            Engine = IronPython.Hosting.Python.CreateEngine();
+            Scope = Engine.CreateScope();
+            Scope.SetVariable("Commands", chatCommands);
+            Scope.SetVariable("DataStore", DataStore.GetInstance());
+            Scope.SetVariable("Find", Find.GetInstance());
+            Scope.SetVariable("GlobalData", GlobalData);
+            Scope.SetVariable("Plugin", this);
+            Scope.SetVariable("Server", Pluton.Server.GetInstance());
+            Scope.SetVariable("ServerConsoleCommands", consoleCommands);
+            Scope.SetVariable("Util", Util.GetInstance());
+            Scope.SetVariable("Web", Web.GetInstance());
+            Scope.SetVariable("World", World.GetInstance());
+            Engine.Execute(code, Scope);
+            Class = Engine.Operations.Invoke(Scope.GetVariable(Name));
+            Globals = Engine.Operations.GetMemberNames(Class);
+
+            State = PluginState.Loaded;
+
+            PluginLoader.GetInstance().OnPluginLoaded(this);
         }
     }
 }

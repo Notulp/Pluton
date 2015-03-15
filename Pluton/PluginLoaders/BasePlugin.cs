@@ -5,6 +5,7 @@ using System.Linq;
 using Pluton.Events;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Pluton
 {
@@ -77,6 +78,8 @@ namespace Pluton
                 return Web.GetInstance();
             }
         }
+
+        public virtual void Load(string code = ""){}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.BasePlugin"/> class.

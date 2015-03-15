@@ -53,16 +53,10 @@ namespace Pluton
 
             try {
                 string code = GetSource(name);
+
                 DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
-                BasePlugin plugin = new CSPlugin(name, code, path);
+                new CSPlugin(name, code, path);
 
-                if (plugin.State != PluginState.Loaded)
-                    throw new FileLoadException("Couldn't initialize C# plugin.", GetMainFilePath(name));
-
-                PluginLoader.GetInstance().InstallHooks(plugin);
-                PluginLoader.GetInstance().Plugins.TryAdd(name, plugin);
-
-                Logger.Log("[CSharpPluginLoader] " + name + " plugin was loaded successfuly.");
             } catch (Exception ex) {
                 Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[CSharpPluginLoader] " + name + " plugin could not be loaded.");
@@ -126,6 +120,7 @@ namespace Pluton
         {
             PluginWatcher.GetInstance().AddWatcher(Type, Extension);
             PluginLoader.GetInstance().PluginLoaders.Add(Type, this);
+            LoadPlugins();
         }
     }
 }

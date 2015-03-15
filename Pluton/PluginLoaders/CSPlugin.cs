@@ -24,28 +24,8 @@ namespace Pluton
         {
             Type = PluginType.CSharp;
 
-            //For C# plugins code is the dll path
-            byte[] bin = File.ReadAllBytes(code);
-            if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
-                Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
-                State = PluginState.HashNotFound;
-                return;
-            }
-
-            Assembly assembly = Assembly.Load(bin);
-            Type classType = assembly.GetType(name + "." + name);
-            if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
-                throw new TypeLoadException("Main module class not found:" + Name);
-            Engine = (CSharpPlugin)Activator.CreateInstance(classType);
-
-            Engine.Plugin = this;
-            Engine.Commands = chatCommands;
-            Engine.ServerConsoleCommands = consoleCommands;
-
-            Globals = (from method in classType.GetMethods()
-                select method.Name).ToList<string>();
-
-            State = PluginState.Loaded;
+            System.Threading.ThreadPool.QueueUserWorkItem(
+                new System.Threading.WaitCallback(a => Load(code)), null);
         }
 
         /// <summary>
@@ -73,6 +53,33 @@ namespace Pluton
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }
+        }
+
+        public override void Load(string code = "")
+        {
+            byte[] bin = File.ReadAllBytes(code);
+            if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
+                Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", Name, Type));
+                State = PluginState.HashNotFound;
+                return;
+            }
+
+            Assembly assembly = Assembly.Load(bin);
+            Type classType = assembly.GetType(Name + "." + Name);
+            if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
+                throw new TypeLoadException("Main module class not found:" + Name);
+            Engine = (CSharpPlugin)Activator.CreateInstance(classType);
+
+            Engine.Plugin = this;
+            Engine.Commands = chatCommands;
+            Engine.ServerConsoleCommands = consoleCommands;
+
+            Globals = (from method in classType.GetMethods()
+                select method.Name).ToList<string>();
+
+            State = PluginState.Loaded;
+
+            PluginLoader.GetInstance().OnPluginLoaded(this);
         }
     }
 }

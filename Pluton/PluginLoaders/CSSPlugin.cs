@@ -5,6 +5,7 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Linq;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Pluton
 {
@@ -17,11 +18,9 @@ namespace Pluton
 
         public static string compileParams = "/target:library /debug- /optimize+ /out:%PLUGINPATH%%PLUGINNAME%.temp /r:System /r:Pluton /r:Assembly-CSharp /r:UnityEngine %PLUGINPATH%*.cs";
 
-        public static bool IsCompiling = false;
-        public System.Threading.Mutex mutex = new System.Threading.Mutex();
-
-        public string CompilationResults = "";
-
+        string CompilePluginParams = "";
+        string CompilationResults = "";
+        System.Threading.Mutex mutex = new System.Threading.Mutex();
         public bool Compiled = false;
 
         /// <summary>
@@ -34,41 +33,10 @@ namespace Pluton
         {
             Type = PluginType.CSScript;
 
-            string pluginCompileParams = compileParams.Replace("%PLUGINPATH%", rootdir.FullName + Path.DirectorySeparatorChar).Replace("%PLUGINNAME%", name);
+            CompilePluginParams = compileParams.Replace("%PLUGINPATH%", rootdir.FullName + Path.DirectorySeparatorChar).Replace("%PLUGINNAME%", name);
 
-            Assembly plugin = Compile(pluginCompileParams);
-
-            /*//For C# plugins code is the dll path
-            byte[] bin = File.ReadAllBytes(code);
-            if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
-                Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
-                State = PluginState.HashNotFound;
-                return;
-            }*/
-            if (plugin == null) {
-                State = PluginState.FailedToLoad;
-                return;
-            }
-
-            Type classType = plugin.GetType(name + "." + name);
-
-            if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
-                throw new TypeLoadException("Main module class not found: " + Name);
-            Engine = (CSharpPlugin)Activator.CreateInstance(classType);
-
-            Engine.Plugin = this;
-            Engine.Commands = chatCommands;
-            Engine.ServerConsoleCommands = consoleCommands;
-
-            Globals = (from method in classType.GetMethods()
-                select method.Name).ToList<string>();
-
-            string temppath = Path.Combine(RootDir.FullName, Name + ".temp");
-
-            if (File.Exists(temppath))
-                File.Delete(temppath);
-
-            State = PluginState.Loaded;
+            System.Threading.ThreadPool.QueueUserWorkItem(
+                new System.Threading.WaitCallback(a => Load()), null);
         }
 
         /// <summary>
@@ -98,7 +66,49 @@ namespace Pluton
             }
         }
 
-        public Assembly Compile(string pluginParams)
+        public override void Load(string code = "")
+        {
+            Assembly plugin = Compile();
+
+            /*//For C# plugins code is the dll path
+            byte[] bin = File.ReadAllBytes(code);
+            if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
+                Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
+                State = PluginState.HashNotFound;
+                return;
+            }*/
+            if (plugin == null) {
+                State = PluginState.FailedToLoad;
+                return;
+            }
+
+            Type classType = plugin.GetType(Name + "." + Name);
+
+            if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract) {
+                State = PluginState.FailedToLoad;
+                throw new TypeLoadException("Main module class not found: " + Name);
+            }
+
+            Engine = (CSharpPlugin)Activator.CreateInstance(classType);
+
+            Engine.Plugin = this;
+            Engine.Commands = chatCommands;
+            Engine.ServerConsoleCommands = consoleCommands;
+
+            Globals = (from method in classType.GetMethods()
+                select method.Name).ToList<string>();
+
+            string temppath = Path.Combine(RootDir.FullName, Name + ".temp");
+
+            if (File.Exists(temppath))
+                File.Delete(temppath);
+
+            State = PluginState.Loaded;
+
+            PluginLoader.GetInstance().OnPluginLoaded(this);
+        }
+
+        public Assembly Compile()
         {
             try {
                 string mcspath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "mcs.exe");
@@ -108,7 +118,7 @@ namespace Pluton
                     Process compiler = new Process();
 
                     compiler.StartInfo.FileName = mcspath;
-                    compiler.StartInfo.Arguments = pluginParams;
+                    compiler.StartInfo.Arguments = CompilePluginParams;
 
                     compiler.StartInfo.WorkingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 

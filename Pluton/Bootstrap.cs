@@ -80,7 +80,6 @@ namespace Pluton
             JSPluginLoader.GetInstance();
             PYPluginLoader.GetInstance();
 
-            PluginLoader.GetInstance();
             ReloadTimers();
             server.official = false;
         }
