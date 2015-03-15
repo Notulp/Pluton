@@ -16,7 +16,7 @@ namespace Pluton
     {
         public CSharpPlugin Engine;
 
-        public static string compileParams = "/target:library /debug- /optimize+ /out:%PLUGINPATH%%PLUGINNAME%.temp /r:System /r:Pluton /r:Assembly-CSharp /r:UnityEngine %PLUGINPATH%*.cs";
+        public static string compileParams = "/target:library /debug- /optimize+ /out:%PLUGINPATH%%PLUGINNAME%.plugin /r:System /r:Pluton /r:Assembly-CSharp /r:UnityEngine /r:UnityEngine.UI %PLUGINPATH%*.cs";
 
         string CompilePluginParams = "";
         string CompilationResults = "";
@@ -98,11 +98,6 @@ namespace Pluton
             Globals = (from method in classType.GetMethods()
                 select method.Name).ToList<string>();
 
-            string temppath = Path.Combine(RootDir.FullName, Name + ".temp");
-
-            if (File.Exists(temppath))
-                File.Delete(temppath);
-
             State = PluginState.Loaded;
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
@@ -133,6 +128,11 @@ namespace Pluton
                     compiler.StartInfo.RedirectStandardOutput = true;
                     compiler.StartInfo.RedirectStandardError = true;
 
+                    string temppath = Path.Combine(RootDir.FullName, Name + ".plugin");
+
+                    if (File.Exists(temppath))
+                        File.Delete(temppath);
+
                     compiler.Start();
 
                     DateTime start = compiler.StartTime;
@@ -150,9 +150,9 @@ namespace Pluton
                         System.Threading.Thread.Sleep(50);
                     }
                 }
-                string path = Path.Combine(RootDir.FullName, Name + ".temp");
+                string path = Path.Combine(RootDir.FullName, Name + ".plugin");
+                File.WriteAllText(Path.Combine(RootDir.FullName, Name + "_result.txt"), CompilationResults);
                 if (File.Exists(path)) {
-                    File.WriteAllText(Path.Combine(RootDir.FullName, Name + "_result.txt"), CompilationResults);
                     return Assembly.Load(File.ReadAllBytes(path));
                 } else {
                     Logger.LogError("returning null for the assembly");
