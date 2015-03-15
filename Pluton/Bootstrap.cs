@@ -80,8 +80,17 @@ namespace Pluton
             JSPluginLoader.GetInstance();
             PYPluginLoader.GetInstance();
 
+            InstallThreadedOutput();
+
             ReloadTimers();
             server.official = false;
+        }
+
+        public static void InstallThreadedOutput()
+        {
+            Application.logMessageReceivedThreaded += new Application.LogCallback(delegate(string condition, string stackTrace, LogType type) {
+                ReflectionExtensions.CallStaticMethod(typeof(Facepunch.Output), "LogHandler", condition, stackTrace, type);
+            });
         }
 
         public class ServerTimers
