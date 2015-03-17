@@ -48,7 +48,6 @@
     <Reference Include="Jint">
       <HintPath>ref\Jint.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.CSharp" />
     <Reference Include="System.Threading">
       <HintPath>ref\System.Threading.dll</HintPath>
     </Reference>
