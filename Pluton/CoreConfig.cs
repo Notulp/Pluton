@@ -31,8 +31,8 @@ namespace Pluton
 
         public void GenerateConfig()
         {
-            ConfigFile.AddSetting("csharp", "enabled", "false");
-            ConfigFile.AddSetting("csharp", "checkHash", "true");
+            ConfigFile.AddSetting("csscript", "enabled", "false");
+            ConfigFile.AddSetting("csscript", "checkHash", "true");
 
             ConfigFile.AddSetting("python", "enabled", "true");
             ConfigFile.AddSetting("python", "checkHash", "false");
