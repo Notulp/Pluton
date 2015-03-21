@@ -504,7 +504,7 @@ namespace Pluton
         {
             CraftEvent ce = new CraftEvent(self, bp, owner, instanceData);
             OnPlayerStartCrafting.OnNext(ce);
-            if (!self.CanCraft(bp, 1) && !owner.IsAdmin()) {
+            if (!self.CanCraft(bp, 1)) {
                 return false;
             }
             if (ce.Cancel) {
