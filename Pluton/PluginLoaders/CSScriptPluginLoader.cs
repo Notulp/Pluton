@@ -51,8 +51,16 @@ namespace Pluton
                 throw new InvalidOperationException("[CSScriptPluginLoader] " + name + " plugin is already loaded.");
             }
 
+            if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {
+                Logger.LogWarning(name + " plugin is already being loaded. Returning.");
+                return;
+            }
+
             try {
                 DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Add(name);
+
                 new CSSPlugin(name, path);
 
 
@@ -60,6 +68,9 @@ namespace Pluton
                 Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[CSScriptPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
+                if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {
+                    PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(name);
+                }
             }
         }
 

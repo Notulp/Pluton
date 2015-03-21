@@ -51,16 +51,27 @@ namespace Pluton
                 throw new InvalidOperationException("[CSharpPluginLoader] " + name + " plugin is already loaded.");
             }
 
+            if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {
+                Logger.LogWarning(name + " plugin is already being loaded. Returning.");
+                return;
+            }
+
             try {
                 string code = GetSource(name);
 
                 DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Add(name);
+
                 new CSPlugin(name, code, path);
 
             } catch (Exception ex) {
                 Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[CSharpPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
+                if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {
+                    PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(name);
+                }
             }
         }
 

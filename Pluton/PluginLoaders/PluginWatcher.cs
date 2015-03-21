@@ -90,10 +90,8 @@ namespace Pluton
                     }
                 }
             } else if (File.Exists(assumedPluginPathFromDir)) {
-                if (File.GetLastAccessTimeUtc(assumedPluginPathFromDir).AddSeconds(2) > DateTime.UtcNow) {
-                    if (!TryLoadPlugin(filename, Type)) {
-                        Pluton.Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
-                    }
+                if (!TryLoadPlugin(dir, Type)) {
+                    Pluton.Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
                 }
             }
         }

@@ -14,6 +14,8 @@
         public DirectoryInfo pluginDirectory = new DirectoryInfo(Path.Combine(Util.GetPublicFolder(), "Plugins"));
         public Dictionary<PluginType, IPluginLoader> PluginLoaders = new Dictionary<PluginType, IPluginLoader>();
 
+        public List<String> CurrentlyLoadingPlugins = new List<string>();
+
         public Subject<string> OnAllLoaded = new Subject<string>();
 
         public void Initialize()
@@ -39,6 +41,12 @@
 
             InstallHooks(plugin);
             Plugins.TryAdd(plugin.Name, plugin);
+
+            if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(plugin.Name)) {
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(plugin.Name);
+            }
+
+            // probably make an event here that others can hook?
 
             Logger.Log(String.Format("[PluginLoader] {0}<{1}> plugin was loaded successfuly.", plugin.Name, plugin.Type));
         }
