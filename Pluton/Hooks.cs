@@ -517,10 +517,10 @@ namespace Pluton
             ItemCraftTask itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bp;
             if (!ce.FreeCraft) {
-                List<ItemAmount> ingredients = new List<ItemAmount>(bp.ingredients);
-                foreach (ItemAmount current in ingredients) {
+                foreach (ItemAmount current in bp.ingredients) {
+                    float amount = current.amount;
                     foreach (ItemContainer current2 in self.containers) {
-                        current.amount -= current2.Take(itemCraftTask.ingredients, current.itemid, (int)current.amount);
+                        amount -= current2.Take(itemCraftTask.ingredients, current.itemid, (int)amount);
                     }
                 }
             }
