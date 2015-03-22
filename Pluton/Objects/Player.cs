@@ -309,19 +309,19 @@ namespace Pluton
             basePlayer.SendConsoleCommand(StringExtensions.QuoteSafe(cmd));
         }
 
-        public void GroundTeleport(float x, float y, float z)
+        public bool GroundTeleport(float x, float y, float z)
         {
-            Teleport(x, World.GetInstance().GetGround(x, z), z);
+            return Teleport(x, World.GetInstance().GetGround(x, z), z);
         }
         
-        public void GroundTeleport(Vector3 v3)
+        public bool GroundTeleport(Vector3 v3)
         {
-            Teleport(v3.x, World.GetInstance().GetGround(v3.x, v3.z), v3.z);
+            return Teleport(v3.x, World.GetInstance().GetGround(v3.x, v3.z), v3.z);
         }
 
-        public void Teleport(Vector3 v3)
+        public bool Teleport(Vector3 v3)
         {
-            Teleport(v3.x, v3.y, v3.z);
+            return Teleport(v3.x, v3.y, v3.z);
         }
 
         public static float worldSizeHalf = (float)global::World.Size / 2;
@@ -332,8 +332,13 @@ namespace Pluton
             new Vector3(-worldSizeHalf, 0, -worldSizeHalf)
         };
 
-        public void Teleport(float x, float y, float z)
-        {  
+        public bool Teleport(float x, float y, float z)
+        {
+            if (teleporting)
+                return false;
+
+            teleporting = true;
+
             Vector3 firstloc = Vector3.zero;
             foreach (Vector3 v3 in firstLocations) {
                 if (Vector3.Distance(Location, v3) > 1000f && Vector3.Distance(new Vector3(x, y, z), v3) > 1000f) {
@@ -357,6 +362,9 @@ namespace Pluton
             basePlayer.CallMethod("SendNetworkUpdate_Position");
             basePlayer.ClientRPC(null, basePlayer, "StartLoading", new object[0]);
             basePlayer.Invoke("EndSleeping", 0.5f);
+            teleporting = false;
+
+            return true;
         }
 
         public bool Admin {
@@ -466,6 +474,14 @@ namespace Pluton
         public float TimeOnline {
             get {
                 return basePlayer.net.connection.connectionTime;
+            }
+        }
+
+        private bool teleporting;
+
+        public bool Teleporting {
+            get {
+                return teleporting;
             }
         }
     }

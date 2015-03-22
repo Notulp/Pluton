@@ -334,7 +334,14 @@ namespace Pluton
 
                 HurtEvent he;
                 if (player != null) {
-                    he = new PlayerHurtEvent(Server.GetPlayer(player), info);
+                    Player p = Server.GetPlayer(player);
+                    if (p.Teleporting) {
+                        for (int i = 0; i < info.damageTypes.types.Length; i++) {
+                            info.damageTypes.types[i] = 0f;
+                        }
+                    }
+
+                    he = new PlayerHurtEvent(p, info);
                     OnPlayerHurt.OnNext(he as PlayerHurtEvent);
                 } else if (npc != null) {
                     he = new NPCHurtEvent(new NPC(npc), info);
