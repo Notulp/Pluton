@@ -355,10 +355,8 @@ namespace Pluton
         /// <param name="name">Name.</param>
         public BasePlugin GetPlugin(string name)
         {
-            BasePlugin plugin;  
-            plugin = PluginLoader.GetInstance().Plugins[name];
-            if (plugin == null) {
-                Logger.LogDebug("[Plugin][GetPlugin] '" + name + "' plugin not found!");
+            BasePlugin plugin;
+            if (!PluginLoader.GetInstance().Plugins.TryGetValue(name, out plugin)) {
                 return null;
             }
             return plugin;
