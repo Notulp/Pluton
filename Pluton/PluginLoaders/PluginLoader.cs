@@ -33,6 +33,10 @@
 
         public void OnPluginLoaded(BasePlugin plugin)
         {
+            if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(plugin.Name)) {
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(plugin.Name);
+            }
+
             if (plugin.State != PluginState.Loaded) {
                 throw new FileLoadException("Couldn't initialize " + plugin.Type.ToString() + " plugin.", 
                     Path.Combine(Path.Combine(pluginDirectory.FullName, plugin.Name), plugin.Name + plugin.Type.ToString())
@@ -41,10 +45,6 @@
 
             InstallHooks(plugin);
             Plugins.TryAdd(plugin.Name, plugin);
-
-            if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(plugin.Name)) {
-                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(plugin.Name);
-            }
 
             // probably make an event here that others can hook?
 
