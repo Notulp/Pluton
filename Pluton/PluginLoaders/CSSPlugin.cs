@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -16,7 +17,7 @@ namespace Pluton
     {
         public CSharpPlugin Engine;
 
-        public static string compileParams = "/target:library /debug- /optimize+ /out:%PLUGINPATH%%PLUGINNAME%.plugin /r:System /r:Pluton /r:Assembly-CSharp /r:UnityEngine /r:UnityEngine.UI %PLUGINPATH%*.cs";
+        public static string compileParams = "/target:library /debug- /optimize+ /out:%PLUGINPATH%%PLUGINNAME%.plugin %REFERENCES% %PLUGINPATH%*.cs";
 
         string CompilePluginParams = "";
         string CompilationResults = "";
@@ -33,7 +34,7 @@ namespace Pluton
         {
             Type = PluginType.CSScript;
 
-            CompilePluginParams = compileParams.Replace("%PLUGINPATH%", rootdir.FullName + Path.DirectorySeparatorChar).Replace("%PLUGINNAME%", name);
+            CompilePluginParams = compileParams.Replace("%PLUGINPATH%", rootdir.FullName + Path.DirectorySeparatorChar).Replace("%PLUGINNAME%", name).Replace("%REFERENCES%", String.Join(" ", GetDllPaths().ToArray()));
 
             System.Threading.ThreadPool.QueueUserWorkItem(
                 new System.Threading.WaitCallback(a => Load()), null);
@@ -68,6 +69,8 @@ namespace Pluton
 
         public override void Load(string code = "")
         {
+            LoadReferences();
+
             Assembly plugin = Compile();
 
             /*//For C# plugins code is the dll path
@@ -184,6 +187,50 @@ namespace Pluton
                 mutex.WaitOne();
                 CompilationResults += e.Data + Environment.NewLine;
                 mutex.ReleaseMutex();
+            }
+        }
+
+        IEnumerable<string> GetDllPaths()
+        {
+            string refpath = Path.Combine(RootDir.FullName, "References");
+            if (Directory.Exists(refpath)) {
+                DirectoryInfo refdir = new DirectoryInfo(refpath);
+                var files = refdir.GetFiles("*.dll");
+                foreach (var file in files) {
+                    yield return "/r:" + file.FullName.QuoteSafe();
+                }
+            }
+            string assLoc = Assembly.GetExecutingAssembly().Location.Replace("Pluton.dll", "");
+            if (Directory.Exists(assLoc)) {
+                var files2 = new DirectoryInfo(assLoc).GetFiles("*.dll");
+                foreach (var file2 in files2) {
+                    yield return "/r:" + file2.FullName.QuoteSafe();
+                }
+            }
+        }
+
+        public void LoadReferences()
+        {
+            List<string> dllpaths = GetRefDllPaths().ToList();
+            foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (dllpaths.Contains(ass.FullName)) {
+                    dllpaths.Remove(ass.FullName);
+                }
+            }
+            dllpaths.ForEach(path => {
+                Assembly.LoadFile(path);
+            });
+        }
+
+        IEnumerable<string> GetRefDllPaths()
+        {
+            string refpath = Path.Combine(RootDir.FullName, "References");
+            if (Directory.Exists(refpath)) {
+                DirectoryInfo refdir = new DirectoryInfo(refpath);
+                FileInfo[] files = refdir.GetFiles("*.dll");
+                foreach (FileInfo file in files) {
+                    yield return file.FullName;
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Globalization;
 using System.ComponentModel;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -64,6 +65,8 @@ namespace Pluton
                 return;
             }
 
+            LoadReferences();
+
             Assembly assembly = Assembly.Load(bin);
             Type classType = assembly.GetType(Name + "." + Name);
             if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract)
@@ -80,6 +83,31 @@ namespace Pluton
             State = PluginState.Loaded;
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
+        }
+
+        public void LoadReferences()
+        {
+            List<string> dllpaths = GetRefDllPaths().ToList();
+            foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (dllpaths.Contains(ass.FullName)) {
+                    dllpaths.Remove(ass.FullName);
+                }
+            }
+            dllpaths.ForEach(path => {
+                Assembly.LoadFile(path);
+            });
+        }
+
+        IEnumerable<string> GetRefDllPaths()
+        {
+            string refpath = Path.Combine(RootDir.FullName, "References");
+            if (Directory.Exists(refpath)) {
+                DirectoryInfo refdir = new DirectoryInfo(refpath);
+                FileInfo[] files = refdir.GetFiles("*.dll");
+                foreach (FileInfo file in files) {
+                    yield return file.FullName;
+                }
+            }
         }
     }
 }
