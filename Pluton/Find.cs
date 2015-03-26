@@ -52,7 +52,7 @@ namespace Pluton
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
                 where block.LookupPrefabName() == name ||
                 block.LookupShortPrefabName() == name ||
-                block.blockDefinition.fullname == name
+                block.blockDefinition.fullName == name
                 select new BuildingPart(block)).ToList<BuildingPart>();
         }
 

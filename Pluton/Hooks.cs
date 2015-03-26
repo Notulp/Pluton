@@ -442,16 +442,16 @@ namespace Pluton
         }
 
         // Construiction.Common.CreateConstruction()
-        public static BuildingBlock DoPlacement(Construction.Common common, Construction.Target target, bool bNeedsValidPlacement)
+        public static BuildingBlock DoPlacement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
         {
             try {
-                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(common.prefab);
+                GameObject gameObject = GameManager.server.CreatePrefab (construction.fullName, default(Vector3), default(Quaternion), true);
                 BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
 
-                BuildingEvent be = new BuildingEvent(common, target, component, bNeedsValidPlacement);
+                BuildingEvent be = new BuildingEvent(construction, target, component, bNeedsValidPlacement);
                 OnPlacement.OnNext(be);
 
-                bool flag = Construction.UpdatePlacement(gameObject.transform, common, target);
+                bool flag = Construction.UpdatePlacement(gameObject.transform, construction, target);
                 if (bNeedsValidPlacement && !flag) {
                     UnityEngine.Object.Destroy(gameObject);
                     return null;

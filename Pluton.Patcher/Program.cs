@@ -111,7 +111,7 @@ namespace Pluton.Patcher
 
         private static void DoPlacementPatch()
         {
-            TypeDefinition construction = rustAssembly.MainModule.GetType("Construction/Common");
+            TypeDefinition construction = rustAssembly.MainModule.GetType("Construction");
             MethodDefinition createConstruction = construction.GetMethod("CreateConstruction");
             MethodDefinition doPlacement = hooksClass.GetMethod("DoPlacement");
 

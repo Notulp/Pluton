@@ -7,18 +7,18 @@ namespace Pluton.Events
     {
         public BuildingPart BuildingPart;
         public readonly Player Builder;
-        public readonly Construction.Common Common;
+        public readonly Construction Construction;
         public readonly Construction.Target Target;
         public bool NeedsValidPlacement;
 
         public string DestroyReason = String.Empty;
         public bool DoDestroy = false;
 
-        public BuildingEvent(Construction.Common common, Construction.Target target, BuildingBlock bb, bool bNeedsValidPlacement)
+        public BuildingEvent(Construction construction, Construction.Target target, BuildingBlock bb, bool bNeedsValidPlacement)
         {
             Builder = Server.GetPlayer(target.player);
             BuildingPart = new BuildingPart(bb);
-            Common = common;
+            Construction = construction;
             Target = target;
             NeedsValidPlacement = bNeedsValidPlacement;
         }

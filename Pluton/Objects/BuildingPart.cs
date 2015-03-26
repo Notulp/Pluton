@@ -27,7 +27,7 @@ namespace Pluton
             _buildingBlock = bb;
         }
 
-        public Construction.Socket FindSocket(string name)
+        public Socket_Base FindSocket(string name)
         {
             return buildingBlock.FindSocket(name);
         }
