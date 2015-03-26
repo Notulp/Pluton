@@ -645,7 +645,9 @@ namespace Pluton
             if (re.ChangePos && re.SpawnPos != Vector3.zero) {
                 player.transform.position = re.SpawnPos;
             }
+            player.SetPlayerFlag(BasePlayer.PlayerFlags.Wounded, false);
             player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+            player.CancelInvoke ("DieFromWounds");
             player.StopSpectating();
             player.UpdateNetworkGroup();
             player.UpdatePlayerCollider(true, false);
@@ -661,11 +663,6 @@ namespace Pluton
 
             if (re.GiveDefault)
                 player.inventory.GiveDefaultItems();
-
-            player.SendNetworkUpdateImmediate(false);
-            player.SendFullSnapshot();
-
-            player.ClientRPC(null, player, "StartLoading", new object[0]);
 
             if (re.WakeUp)
                 player.EndSleeping();
