@@ -442,14 +442,16 @@ namespace Pluton
         }
 
         // Construiction.Common.CreateConstruction()
-        public static BuildingBlock DoPlacement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
+        public static BaseEntity DoPlacement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
         {
             try {
                 GameObject gameObject = GameManager.server.CreatePrefab (construction.fullName, default(Vector3), default(Quaternion), true);
                 BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
-
-                BuildingEvent be = new BuildingEvent(construction, target, component, bNeedsValidPlacement);
-                OnPlacement.OnNext(be);
+                BuildingEvent be = null;
+                if (component != null) {
+                    be = new BuildingEvent(construction, target, component, bNeedsValidPlacement);
+                    OnPlacement.OnNext(be);
+                }
 
                 bool flag = Construction.UpdatePlacement(gameObject.transform, construction, target);
                 if (bNeedsValidPlacement && !flag) {
@@ -457,13 +459,13 @@ namespace Pluton
                     return null;
                 }
 
-                if (be.DoDestroy) {
+                if (be != null && be.DoDestroy) {
                     be.Builder.Message(be.DestroyReason);
                     UnityEngine.Object.Destroy(gameObject);
                     return null;
                 }
 
-                return component;
+                return gameObject.GetComponent<BaseEntity>();
             } catch (Exception ex) {
                 Logger.LogException(ex);
                 return null;
