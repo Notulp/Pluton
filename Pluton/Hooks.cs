@@ -752,7 +752,7 @@ namespace Pluton
             } else {
                 World.GetInstance().Timescale = Single.Parse(Config.GetInstance().GetValue("Config", "timescale", "30"), System.Globalization.CultureInfo.InvariantCulture);
             }
-            if (Server.GetInstance().Loaded == true) return;
+            if (Server.GetInstance().Loaded) return;
 
             Server.GetInstance().Loaded = true;
             OnServerInit.OnNext("");
