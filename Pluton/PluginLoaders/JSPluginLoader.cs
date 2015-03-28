@@ -122,6 +122,12 @@ namespace Pluton
             PluginLoader.GetInstance().PluginLoaders.Add(Type, this);
             LoadPlugins();
         }
+
+        public bool CheckDependencies()
+        {
+            return CoreConfig.GetInstance().GetBoolValue("javascript", "enabled") &&
+                File.Exists(Path.Combine(Path.Combine(Util.GetServerFolder(), "Managed"), "Jint.dll"));
+        }
     }
 }
 

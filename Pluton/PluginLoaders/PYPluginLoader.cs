@@ -121,6 +121,12 @@ namespace Pluton
             PluginLoader.GetInstance().PluginLoaders.Add(Type, this);
             LoadPlugins();
         }
+
+        public bool CheckDependencies()
+        {
+            return CoreConfig.GetInstance().GetBoolValue("python", "enabled") &&
+                File.Exists(Path.Combine(Path.Combine(Util.GetServerFolder(), "Managed"), "IronPython.Deps.dll"));
+        }
     }
 }
 

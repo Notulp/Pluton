@@ -232,6 +232,11 @@
             LoadZones();
         }
 
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+
         [Obsolete("Util.GetUtil() is obsolete, use Util.GetInstance() instead.", false)]
         public static Util GetUtil()
         {

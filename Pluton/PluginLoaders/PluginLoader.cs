@@ -29,6 +29,11 @@
             ReloadPlugins();
         }
 
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+
         #region re/un/loadplugin(s)
 
         public void OnPluginLoaded(BasePlugin plugin)

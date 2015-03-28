@@ -732,6 +732,11 @@ namespace Pluton
     {
         public void Initialize() {}
 
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+
         /// <summary>
         /// GET request.
         /// </summary>

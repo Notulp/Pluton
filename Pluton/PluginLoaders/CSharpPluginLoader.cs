@@ -133,6 +133,11 @@ namespace Pluton
             PluginLoader.GetInstance().PluginLoaders.Add(Type, this);
             LoadPlugins();
         }
+
+        public bool CheckDependencies()
+        {
+            return CoreConfig.GetInstance().GetBoolValue("csharp", "enabled");
+        }
     }
 }
 

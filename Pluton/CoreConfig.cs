@@ -29,6 +29,12 @@ namespace Pluton
             }
         }
 
+        public bool CheckDependencies()
+        {
+            return SingletonEx.IsInitialzed<DirectoryConfig>() &&
+                File.Exists(DirectoryConfig.GetInstance().GetConfigPath("Core"));
+        }
+
         public void GenerateConfig()
         {
             ConfigFile.AddSetting("csharp", "enabled", "false");

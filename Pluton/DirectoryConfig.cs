@@ -33,6 +33,11 @@ namespace Pluton
             }
         }
 
+        public bool CheckDependencies()
+        {
+            return File.Exists(Path.Combine(Util.GetServerFolder(), "DirectoryConfig.cfg"));
+        }
+
         public string GetConfigPath(string config)
         {
             string path = DirConfig.GetSetting("Directories", config);

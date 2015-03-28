@@ -14,7 +14,10 @@ namespace Pluton
         static Singleton()
         {
             Singleton<T>.Instance = Activator.CreateInstance<T>();
-            Singleton<T>.Instance.Initialize();
+            if (Singleton<T>.Instance.CheckDependencies())
+                Singleton<T>.Instance.Initialize();
+            else
+                Logger.LogWarning(String.Format("Couldn't initialite Singleton<{0}>, is one of it's dependencies missing?", Instance.GetType()));
         }
     }
 }

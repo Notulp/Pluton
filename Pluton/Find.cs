@@ -8,6 +8,11 @@ namespace Pluton
     {
         public void Initialize(){}
 
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+
         public List<ItemBlueprint> BluePrints()
         {
             return ItemManager.Instance.bpList;

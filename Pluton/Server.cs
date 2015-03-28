@@ -78,6 +78,11 @@
             Instance.LoadOfflinePlayers();
         }
 
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+
         [Obsolete("Server.GetServer() is obsolete, use Server.GetInstance() instead.", false)]
         public static Pluton.Server GetServer()
         {

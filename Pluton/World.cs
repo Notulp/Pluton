@@ -217,6 +217,11 @@ namespace Pluton
 
         public void Initialize() {}
 
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+
         [Obsolete("World.GetWorld() is obsolete, use World.GetInstance() instead.", false)]
         public static World GetWorld()
         {

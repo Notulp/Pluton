@@ -29,6 +29,12 @@ namespace Pluton
             pluton.enabled = GetBoolValue("Config", "enabled", true);
         }
 
+        public bool CheckDependencies()
+        {
+            return SingletonEx.IsInitialzed<DirectoryConfig>() &&
+                File.Exists(DirectoryConfig.GetInstance().GetConfigPath("Pluton"));
+        }
+
         public string GetValue(string Section, string Setting, string defaultValue = "")
         {
             if (!PlutonConfig.ContainsSetting(Section, Setting)) {

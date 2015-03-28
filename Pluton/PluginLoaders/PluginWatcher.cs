@@ -23,6 +23,11 @@ namespace Pluton
         public void Initialize()
         {
         }
+
+        public bool CheckDependencies()
+        {
+            return true;
+        }
     }
 
     public class PluginTypeWatcher : CountedInstance
