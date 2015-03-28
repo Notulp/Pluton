@@ -7,7 +7,7 @@
     using System.Linq;
     using UnityEngine;
 
-    public class DataStore
+    public class DataStore : CountedInstance
     {
         public readonly Hashtable datastore;
         private static DataStore instance;
