@@ -85,9 +85,11 @@ namespace Pluton
         public void ReloadPlugins()
         {
             foreach (BasePlugin plugin in PluginLoader.GetInstance().Plugins.Values) {
-                if (plugin.Type == Type) {
-                    UnloadPlugin(plugin.Name);
-                    LoadPlugin(plugin.Name);
+                if (!plugin.DontReload) {
+                    if (plugin.Type == Type) {
+                        UnloadPlugin(plugin.Name);
+                        LoadPlugin(plugin.Name);
+                    }
                 }
             }
         }
@@ -98,6 +100,8 @@ namespace Pluton
 
             if (PluginLoader.GetInstance().Plugins.ContainsKey(name)) {
                 BasePlugin plugin = PluginLoader.GetInstance().Plugins[name];
+                if (plugin.DontReload)
+                    return;
 
                 plugin.KillTimers();
                 PluginLoader.GetInstance().RemoveHooks(plugin);

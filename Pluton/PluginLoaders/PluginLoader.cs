@@ -26,7 +26,6 @@
             if (!Directory.Exists(pluginDirectory.FullName)) {
                 Directory.CreateDirectory(pluginDirectory.FullName);
             }
-            ReloadPlugins();
         }
 
         public bool CheckDependencies()
@@ -80,8 +79,9 @@
 
         public void ReloadPlugins()
         {
-            UnloadPlugins();
-            LoadPlugins();
+            foreach (IPluginLoader loader in PluginLoaders.Values) {
+                loader.ReloadPlugins();
+            }
         }
 
         public void ReloadPlugin(string name)

@@ -12,6 +12,11 @@ namespace Pluton
     public class BasePlugin : CountedInstance, IPlugin
     {
         /// <summary>
+        /// Makes pluginloader ignore this plugin at 'pluton.reload'.
+        /// </summary>
+        public bool DontReload = false;
+
+        /// <summary>
         /// Name of the Plugin.
         /// </summary>
         /// <value>The name.</value>
