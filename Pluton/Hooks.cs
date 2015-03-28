@@ -511,9 +511,17 @@ namespace Pluton
         // ItemCrafter.CraftItem()
         public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null)
         {
-            CraftEvent ce = new CraftEvent(self, bp, owner, instanceData);
+            ItemBlueprint bpcopy = new ItemBlueprint();
+            bpcopy.amountToCreate = bp.amountToCreate;
+            bpcopy.defaultBlueprint = bp.defaultBlueprint;
+            bpcopy.ingredients = bp.ingredients;
+            bpcopy.rarity = bp.rarity;
+            bpcopy.targetItem = bp.targetItem;
+            bpcopy.time = bp.time;
+            bpcopy.userCraftable = bp.userCraftable;
+            CraftEvent ce = new CraftEvent(self, bpcopy, owner, instanceData);
             OnPlayerStartCrafting.OnNext(ce);
-            if (!self.CanCraft(bp, 1)) {
+            if (!self.CanCraft(bpcopy, 1)) {
                 return false;
             }
             if (ce.Cancel) {
@@ -524,9 +532,9 @@ namespace Pluton
 
             self.taskUID++;
             ItemCraftTask itemCraftTask = new ItemCraftTask();
-            itemCraftTask.blueprint = bp;
+            itemCraftTask.blueprint = bpcopy;
             if (!ce.FreeCraft) {
-                foreach (ItemAmount current in bp.ingredients) {
+                foreach (ItemAmount current in bpcopy.ingredients) {
                     float amount = current.amount;
                     foreach (ItemContainer current2 in self.containers) {
                         amount -= current2.Take(itemCraftTask.ingredients, current.itemid, (int)amount);
