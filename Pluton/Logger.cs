@@ -16,6 +16,8 @@ namespace Pluton
 
         private static string LogsFolder;
         private static Writer LogWriter;
+        private static Writer WarnWriter;
+        private static Writer ErrorWriter;
         private static Writer ChatWriter;
         private static bool showChat = false;
         private static bool showDebug = false;
@@ -68,6 +70,34 @@ namespace Pluton
             }
         }
 
+        private static void WarnWriterInit()
+        {
+            try {
+                if (WarnWriter.LogWriter != null)
+                    WarnWriter.LogWriter.Close();
+
+                WarnWriter.DateTime = DateTime.Now.ToString("dd_MM_yyyy");
+                WarnWriter.LogWriter = new StreamWriter(Path.Combine(LogsFolder, "Warning " + WarnWriter.DateTime + ".txt"), true);
+                WarnWriter.LogWriter.AutoFlush = true;
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+        }
+
+        private static void ErrorWriterInit()
+        {
+            try {
+                if (ErrorWriter.LogWriter != null)
+                    ErrorWriter.LogWriter.Close();
+
+                ErrorWriter.DateTime = DateTime.Now.ToString("dd_MM_yyyy");
+                ErrorWriter.LogWriter = new StreamWriter(Path.Combine(LogsFolder, "Error " + ErrorWriter.DateTime + ".txt"), true);
+                ErrorWriter.LogWriter.AutoFlush = true;
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+        }
+
         private static void ChatWriterInit()
         {
             try {
@@ -98,6 +128,28 @@ namespace Pluton
             }
         }
 
+        private static void WriteWarn(string Message)
+        {
+            try {
+                if (WarnWriter.DateTime != DateTime.Now.ToString("dd_MM_yyyy"))
+                    WarnWriterInit();
+                WarnWriter.LogWriter.WriteLine(LogFormat(Message));
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+        }
+
+        private static void WriteError(string Message)
+        {
+            try {
+                if (ErrorWriter.DateTime != DateTime.Now.ToString("dd_MM_yyyy"))
+                    ErrorWriterInit();
+                ErrorWriter.LogWriter.WriteLine(LogFormat(Message));
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+        }
+
         private static void WriteChat(string Message)
         {
             try {
@@ -121,7 +173,7 @@ namespace Pluton
         {
             Message = "[Warning] " + Message;
             Debug.LogWarning(Message, Context);
-            WriteLog(Message);
+            WriteWarn(Message);
         }
 
         public static void LogError(string Message, UnityEngine.Object Context = null)
@@ -133,7 +185,7 @@ namespace Pluton
             if (!logErrors)
                 return;
 
-            WriteLog(Message);
+            WriteError(Message);
         }
 
         public static void LogException(Exception Ex, UnityEngine.Object Context = null)
@@ -150,7 +202,7 @@ namespace Pluton
                 Trace += stackTrace.GetFrame(i).GetMethod().DeclaringType.Name + "->" + stackTrace.GetFrame(i).GetMethod().Name + " | ";
 
             string Message = "[Exception] [ " + Trace + "]\r\n" + (Ex == null ? "(null) exception" : Ex.ToString());
-            WriteLog(Message);
+            WriteError(Message);
         }
 
         public static void LogDebug(string Message, UnityEngine.Object Context = null)
