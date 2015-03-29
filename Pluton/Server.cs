@@ -18,7 +18,6 @@
         public DataStore serverData;
         public static string server_message_name = "Pluton";
         private float craftTimeScale = 1f;
-        public List<ItemBlueprint> blueprints = new List<ItemBlueprint>();
 
         public void Broadcast(string arg)
         {
@@ -94,20 +93,9 @@
                 return craftTimeScale;
             }
             set {
-                if(blueprints.Count > 0)
-                     Hooks.blueprintsLoaded = true; // used so reloading blueprints won't re-hook in an infinite loop!
                 craftTimeScale = value;
-                //ReloadBlueprints();
             }
         }
-
-        /*public void ReloadBlueprints() {
-            foreach (ItemBlueprint p in blueprints) {
-                p.ingredients.Clear();
-                p.Init();
-                p.time = p.time / CraftingTimeScale;
-            }
-        }*/
 
         public void LoadLoadouts()
         {

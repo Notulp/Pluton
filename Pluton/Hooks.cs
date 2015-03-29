@@ -187,14 +187,6 @@ namespace Pluton
             }
         }
 
-        public static bool blueprintsLoaded = false;
-        public static void CraftingTime(ItemBlueprint ibp) {
-            if (!blueprintsLoaded) {
-                ibp.ingredients.Clear();
-                Server.GetInstance().blueprints.Add(ibp);
-            }
-        }
-
         // chat.say().Hooks.Chat()
         public static void Command(ConsoleSystem.Arg arg)
         {
@@ -517,7 +509,7 @@ namespace Pluton
             bpcopy.ingredients = bp.ingredients;
             bpcopy.rarity = bp.rarity;
             bpcopy.targetItem = bp.targetItem;
-            bpcopy.time = bp.time;
+            bpcopy.time = bp.time / Server.GetInstance().CraftingTimeScale;
             bpcopy.userCraftable = bp.userCraftable;
             CraftEvent ce = new CraftEvent(self, bpcopy, owner, instanceData);
             OnPlayerStartCrafting.OnNext(ce);
@@ -749,7 +741,7 @@ namespace Pluton
 
         public static void ServerInit()
         {
-            float craft = Single.Parse(Config.GetInstance().GetValue("Config", "craftTimescale", "1.0"), System.Globalization.CultureInfo.InvariantCulture) / 10;
+            float craft = Single.Parse(Config.GetInstance().GetValue("Config", "craftTimescale", "1.0"), System.Globalization.CultureInfo.InvariantCulture);
             Server.GetInstance().CraftingTimeScale = craft;
             float resource = Single.Parse(Config.GetInstance().GetValue("Config", "resourceGatherMultiplier", "1.0"), System.Globalization.CultureInfo.InvariantCulture);
             World.GetInstance().ResourceGatherMultiplier = resource;
