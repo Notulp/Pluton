@@ -227,5 +227,44 @@ namespace Pluton
 
             WriteChat(Msg);
         }
+
+        static Windows.ConsoleInput input = null;
+        static List<string> AlreadyLogged = new List<string>();
+
+        public static void LogRecieved(string condition, string stackTrace, LogType type)
+        {
+            AlreadyLogged.Add(condition);
+        }
+
+        public static void ThreadedLogRecieved(string condition, string stackTrace, LogType type)
+        {
+            if (input == null) {
+                ServerConsole con = SingletonComponent<ServerConsole>.Instance;
+                if (con == null)
+                    return;
+
+                input = (Windows.ConsoleInput)SingletonComponent<ServerConsole>.Instance.GetFieldValue("input");
+            }
+            if (!AlreadyLogged.Contains(condition)) {
+                switch (type) {
+                case LogType.Log:
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case LogType.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogType.Error:
+                case LogType.Exception:
+                case LogType.Assert:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                }
+                input.ClearLine(input.statusText.Length);
+                Console.WriteLine(condition);
+                input.RedrawInputLine();
+            } else {
+                AlreadyLogged.Remove(condition);
+            }
+        }
     }
 }

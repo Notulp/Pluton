@@ -89,7 +89,10 @@ namespace Pluton
         public static void InstallThreadedOutput()
         {
             Application.logMessageReceivedThreaded += new Application.LogCallback(delegate(string condition, string stackTrace, LogType type) {
-                ReflectionExtensions.CallStaticMethod(typeof(Facepunch.Output), "LogHandler", condition, stackTrace, type);
+                Logger.ThreadedLogRecieved(condition, stackTrace, type);
+            });
+            Application.logMessageReceived += new Application.LogCallback(delegate(string condition, string stackTrace, LogType type) {
+                Logger.LogRecieved(condition, stackTrace, type);
             });
         }
 
