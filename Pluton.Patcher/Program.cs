@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.37";
+        private static string version = "1.0.0.38";
 
         #region patches
 
@@ -222,9 +222,11 @@ namespace Pluton.Patcher
 
             CloneMethod(die);
             ILProcessor iLProcessor = die.Body.GetILProcessor();
-            iLProcessor.InsertBefore(die.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(die.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(die.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied)));
+            Instruction self = Instruction.Create(OpCodes.Ldarg_0);
+            iLProcessor.InsertAfter(die.Body.Instructions[0x08], self);
+            iLProcessor.InsertAfter(die.Body.Instructions[0x09], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(die.Body.Instructions[0x0a], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied)));
+            die.Body.Instructions[0x07] = Instruction.Create(OpCodes.Brfalse, self);
         }
 
         private static void PlayerDisconnectedPatch()

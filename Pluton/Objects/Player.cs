@@ -411,6 +411,12 @@ namespace Pluton
             }
         }
 
+        public bool IsWounded {
+            get {
+                return basePlayer.HasPlayerFlag(BasePlayer.PlayerFlags.Wounded);
+            }
+        }
+
         public override Vector3 Location {
             get {
                 return basePlayer.transform.position;
