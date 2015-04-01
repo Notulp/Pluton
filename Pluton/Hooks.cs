@@ -439,16 +439,17 @@ namespace Pluton
             try {
                 GameObject gameObject = GameManager.server.CreatePrefab (construction.fullName, default(Vector3), default(Quaternion), true);
                 BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
-                BuildingEvent be = null;
-                if (component != null) {
-                    be = new BuildingEvent(construction, target, component, bNeedsValidPlacement);
-                    OnPlacement.OnNext(be);
-                }
 
                 bool flag = Construction.UpdatePlacement(gameObject.transform, construction, target);
                 if (bNeedsValidPlacement && !flag) {
                     UnityEngine.Object.Destroy(gameObject);
                     return null;
+                }
+
+                BuildingEvent be = null;
+                if (component != null) {
+                    be = new BuildingEvent(construction, target, component, bNeedsValidPlacement);
+                    OnPlacement.OnNext(be);
                 }
 
                 if (be != null && be.DoDestroy) {
