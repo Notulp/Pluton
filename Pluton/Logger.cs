@@ -57,6 +57,8 @@ namespace Pluton
                 
                 LogWriterInit();
                 ChatWriterInit();
+                ErrorWriterInit();
+                WarnWriterInit();
 
                 Initialized = true;
             } catch (Exception ex) {
