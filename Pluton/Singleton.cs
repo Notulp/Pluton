@@ -17,7 +17,7 @@ namespace Pluton
             if (Singleton<T>.Instance.CheckDependencies())
                 Singleton<T>.Instance.Initialize();
             else
-                Logger.LogWarning(String.Format("Couldn't initialite Singleton<{0}>, is one of it's dependencies missing?", Instance.GetType()));
+                UnityEngine.Debug.LogWarning(String.Format("Couldn't initialite Singleton<{0}>, is one of it's dependencies missing?", Instance.GetType()));
         }
     }
 }
