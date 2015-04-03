@@ -243,10 +243,16 @@ namespace Pluton
         }
 
         static Windows.ConsoleInput input = null;
-        static List<string> AlreadyLogged = new List<string>();
+        static List<string> AlreadyLogged = new List<string>(250);
+
+        DateTime loggedlistCleared = DateTime.Now;
 
         public static void LogRecieved(string condition, string stackTrace, LogType type)
         {
+            if (loggedlistCleared.AddSeconds(2) < DateTime.Now) {
+                AlreadyLogged.Clear();
+                loggedlistCleared = DateTime.Now;
+            }
             AlreadyLogged.Add(condition);
         }
 
