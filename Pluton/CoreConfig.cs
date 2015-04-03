@@ -31,8 +31,7 @@ namespace Pluton
 
         public bool CheckDependencies()
         {
-            return SingletonEx.IsInitialzed<DirectoryConfig>() &&
-                File.Exists(DirectoryConfig.GetInstance().GetConfigPath("Core"));
+            return SingletonEx.IsInitialzed<DirectoryConfig>();
         }
 
         public void GenerateConfig()
