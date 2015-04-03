@@ -23,10 +23,14 @@ namespace Pluton
         private static bool showDebug = false;
         private static bool showErrors = false;
         private static bool showException = false;
+        private static bool showWarnings = false;
         private static bool logChat = false;
         private static bool logDebug = false;
         private static bool logErrors = false;
         private static bool logException = false;
+        private static bool logWarnings = false;
+
+        private static bool Initialized = false;
 
         public static void Init()
         {
@@ -35,11 +39,13 @@ namespace Pluton
                 logDebug = Config.GetInstance().GetBoolValue("Logging", "debugInLog", true);
                 logErrors = Config.GetInstance().GetBoolValue("Logging", "errorInLog", true);
                 logException = Config.GetInstance().GetBoolValue("Logging", "exceptionInLog", true);
+                logException = Config.GetInstance().GetBoolValue("Logging", "warningInLog", true);
 
                 showChat = Config.GetInstance().GetBoolValue("Logging", "chatInConsole", true);
                 showDebug = Config.GetInstance().GetBoolValue("Logging", "debugInConsole", true);
                 showErrors = Config.GetInstance().GetBoolValue("Logging", "errorInConsole", true);
                 showException = Config.GetInstance().GetBoolValue("Logging", "exceptionInConsole", true);
+                showException = Config.GetInstance().GetBoolValue("Logging", "warningInConsole", true);
             } catch (Exception ex) {
                 Debug.LogException(ex);
             }
@@ -51,6 +57,8 @@ namespace Pluton
                 
                 LogWriterInit();
                 ChatWriterInit();
+
+                Initialized = true;
             } catch (Exception ex) {
                 Debug.LogException(ex);
             }
@@ -166,13 +174,19 @@ namespace Pluton
         {
             Message = "[Console] " + Message;
             Debug.Log(Message, Context);
-            WriteLog(Message);
+            if (Initialized)
+                WriteLog(Message);
         }
 
         public static void LogWarning(string Message, UnityEngine.Object Context = null)
         {
             Message = "[Warning] " + Message;
-            Debug.LogWarning(Message, Context);
+            if (showWarnings)
+                Debug.LogWarning(Message, Context);
+
+            if (!logWarnings || !Initialized)
+                return;
+
             WriteWarn(Message);
         }
 
@@ -182,7 +196,7 @@ namespace Pluton
             if (showErrors)
                 Debug.LogError(Message, Context);
 
-            if (!logErrors)
+            if (!logErrors || !Initialized)
                 return;
 
             WriteError(Message);
@@ -193,7 +207,7 @@ namespace Pluton
             if (showException)
                 Debug.LogException(Ex, Context);
 
-            if (!logException)
+            if (!logException || !Initialized)
                 return;
 
             string Trace = "";
@@ -211,7 +225,7 @@ namespace Pluton
             if (showDebug)
                 Debug.Log(Message, Context);
 
-            if (!logDebug)
+            if (!logDebug || !Initialized)
                 return;
 
             WriteLog(Message);
@@ -222,7 +236,7 @@ namespace Pluton
             Msg = "[CHAT] " + Sender + ": " + Msg;
             if (showChat)
                 Debug.Log(Msg);
-            if (!logChat)
+            if (!logChat || !Initialized)
                 return;
 
             WriteChat(Msg);
