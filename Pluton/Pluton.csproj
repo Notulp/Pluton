@@ -143,6 +143,7 @@
     <Compile Include="PluginLoaders\PYPluginLoader.cs" />
     <Compile Include="SingletonEx.cs" />
     <Compile Include="Events\PlayerKickEvent.cs" />
+    <Compile Include="plugins.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
