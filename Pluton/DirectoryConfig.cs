@@ -35,7 +35,7 @@ namespace Pluton
 
         public bool CheckDependencies()
         {
-            return File.Exists(Path.Combine(Util.GetServerFolder(), "DirectoryConfig.cfg"));
+            return true;
         }
 
         public string GetConfigPath(string config)
