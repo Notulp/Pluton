@@ -69,39 +69,43 @@ namespace Pluton
 
         public override void Load(string code = "")
         {
-            LoadReferences();
+            try {
+                LoadReferences();
 
-            Assembly plugin = Compile();
+                Assembly plugin = Compile();
 
-            /*//For C# plugins code is the dll path
-            byte[] bin = File.ReadAllBytes(code);
-            if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
-                Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
-                State = PluginState.HashNotFound;
-                return;
-            }*/
-            if (plugin == null) {
+                /*//For C# plugins code is the dll path
+                byte[] bin = File.ReadAllBytes(code);
+                if (CoreConfig.GetInstance().GetBoolValue("csharp", "checkHash") && !bin.VerifyMD5Hash()) {
+                    Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
+                    State = PluginState.HashNotFound;
+                    return;
+                }*/
+                if (plugin == null) {
+                    State = PluginState.FailedToLoad;
+                    return;
+                }
+
+                Type classType = plugin.GetType(Name + "." + Name);
+
+                if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract) {
+                    throw new TypeLoadException("Main module class not found: " + Name);
+                }
+
+                Engine = (CSharpPlugin)Activator.CreateInstance(classType);
+
+                Engine.Plugin = this;
+                Engine.Commands = chatCommands;
+                Engine.ServerConsoleCommands = consoleCommands;
+
+                Globals = (from method in classType.GetMethods()
+                    select method.Name).ToList<string>();
+
+                State = PluginState.Loaded;
+            } catch (Exception ex) {
+                Logger.LogException(ex);
                 State = PluginState.FailedToLoad;
-                return;
             }
-
-            Type classType = plugin.GetType(Name + "." + Name);
-
-            if (classType == null || !classType.IsSubclassOf(typeof(CSharpPlugin)) || !classType.IsPublic || classType.IsAbstract) {
-                State = PluginState.FailedToLoad;
-                throw new TypeLoadException("Main module class not found: " + Name);
-            }
-
-            Engine = (CSharpPlugin)Activator.CreateInstance(classType);
-
-            Engine.Plugin = this;
-            Engine.Commands = chatCommands;
-            Engine.ServerConsoleCommands = consoleCommands;
-
-            Globals = (from method in classType.GetMethods()
-                select method.Name).ToList<string>();
-
-            State = PluginState.Loaded;
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
         }

@@ -76,14 +76,19 @@ namespace Pluton
                 .SetParameter("World", World.GetInstance())
                 .SetFunction("importClass", new importit(importClass));
 
-            Program = JintEngine.Compile(code, false);
+            try {
+                Program = JintEngine.Compile(code, false);
 
-            Globals = (from statement in Program.Statements
-                where statement.GetType() == typeof(FunctionDeclarationStatement)
-                select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
+                Globals = (from statement in Program.Statements
+                    where statement.GetType() == typeof(FunctionDeclarationStatement)
+                    select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
 
-            Engine.Run(Program);
-            State = PluginState.Loaded;
+                Engine.Run(Program);
+                State = PluginState.Loaded;
+            } catch (Exception ex) {
+                Logger.LogException(ex);
+                State = PluginState.FailedToLoad;
+            }
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
         }

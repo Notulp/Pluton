@@ -90,11 +90,15 @@ namespace Pluton
             Scope.SetVariable("Util", Util.GetInstance());
             Scope.SetVariable("Web", Web.GetInstance());
             Scope.SetVariable("World", World.GetInstance());
-            Engine.Execute(code, Scope);
-            Class = Engine.Operations.Invoke(Scope.GetVariable(Name));
-            Globals = Engine.Operations.GetMemberNames(Class);
-
-            State = PluginState.Loaded;
+            try {
+                Engine.Execute(code, Scope);
+                Class = Engine.Operations.Invoke(Scope.GetVariable(Name));
+                Globals = Engine.Operations.GetMemberNames(Class);
+                State = PluginState.Loaded;
+            } catch (Exception ex) {
+                Logger.LogException(ex);
+                State = PluginState.FailedToLoad;
+            }
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
         }
