@@ -334,37 +334,42 @@ namespace Pluton
 
         public bool Teleport(float x, float y, float z)
         {
-            if (teleporting)
-                return false;
+            try {
+                if (teleporting)
+                    return false;
 
-            teleporting = true;
+                teleporting = true;
 
-            Vector3 firstloc = Vector3.zero;
-            foreach (Vector3 v3 in firstLocations) {
-                if (Vector3.Distance(Location, v3) > 1000f && Vector3.Distance(new Vector3(x, y, z), v3) > 1000f) {
-                    firstloc = v3;
+                Vector3 firstloc = Vector3.zero;
+                foreach (Vector3 v3 in firstLocations) {
+                    if (Vector3.Distance(Location, v3) > 1000f && Vector3.Distance(new Vector3(x, y, z), v3) > 1000f) {
+                        firstloc = v3;
+                    }
                 }
+
+                basePlayer.transform.position = firstloc;
+                //basePlayer.UpdateNetworkGroup();
+
+                basePlayer.StartSleeping();
+                basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+
+                basePlayer.transform.position = new UnityEngine.Vector3(x, y, z);
+                basePlayer.UpdateNetworkGroup();
+                basePlayer.UpdatePlayerCollider(true, false);
+                basePlayer.SendNetworkUpdateImmediate(false);
+                basePlayer.SendFullSnapshot();
+                basePlayer.inventory.SendSnapshot();
+
+                basePlayer.CallMethod("SendNetworkUpdate_Position");
+                basePlayer.ClientRPC(null, basePlayer, "StartLoading", new object[0]);
+                basePlayer.Invoke("EndSleeping", 0.5f);
+                teleporting = false;
+
+                return true;
+            } catch (Exception ex) {
+                Logger.LogException(ex);
+                return false;
             }
-
-            basePlayer.transform.position = firstloc;
-            //basePlayer.UpdateNetworkGroup();
-
-            basePlayer.StartSleeping();
-            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
-
-            basePlayer.transform.position = new UnityEngine.Vector3(x, y, z);
-            basePlayer.UpdateNetworkGroup();
-            basePlayer.UpdatePlayerCollider(true, false);
-            basePlayer.SendNetworkUpdateImmediate(false);
-            basePlayer.SendFullSnapshot();
-            basePlayer.inventory.SendSnapshot();
-
-            basePlayer.CallMethod("SendNetworkUpdate_Position");
-            basePlayer.ClientRPC(null, basePlayer, "StartLoading", new object[0]);
-            basePlayer.Invoke("EndSleeping", 0.5f);
-            teleporting = false;
-
-            return true;
         }
 
         public bool Admin {
