@@ -341,6 +341,8 @@ namespace Pluton
 
             basePlayer.ClientRPC(null, basePlayer, "ForcePositionTo", new Vector3(x, y, z));
 
+            teleporting = false;
+
             return true;
         }
 
