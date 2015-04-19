@@ -338,8 +338,15 @@ namespace Pluton
                 return false;
 
             teleporting = true;
+            bool wassleeping = basePlayer.IsSleeping();
+
+            if (!wassleeping)
+                basePlayer.StartSleeping();
 
             basePlayer.ClientRPC(null, basePlayer, "ForcePositionTo", new Vector3(x, y, z));
+
+            if (!wassleeping)
+                basePlayer.Invoke("EndSleeping", 0.3f);
 
             teleporting = false;
 
