@@ -1,3 +1,2 @@
 Assembly-CSharp.dll
-Facepunch.dll
 UnityEngine.dll
