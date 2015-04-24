@@ -188,7 +188,7 @@ namespace Pluton
                 playerInfo.blueprints.complete.Add(itemID);
                 Persistence.SetPlayerInfo(GameID, playerInfo);
                 basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemID);
+                basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
             }
             return false;
@@ -202,7 +202,7 @@ namespace Pluton
                 playerInfo.blueprints.complete.Add(itemID);
                 Persistence.SetPlayerInfo(GameID, playerInfo);
                 basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemID);
+                basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
             }
             return false;
@@ -216,7 +216,7 @@ namespace Pluton
                 playerInfo.blueprints.complete.Add(itemID);
                 Persistence.SetPlayerInfo(GameID, playerInfo);
                 basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemID);
+                basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
             }
             return false;
@@ -230,7 +230,7 @@ namespace Pluton
                     playerInfo.blueprints.complete.Add(itemid);
                     Persistence.SetPlayerInfo(GameID, playerInfo);
                     basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                    basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemid);
+                    basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
             }
         }
@@ -244,7 +244,7 @@ namespace Pluton
                     playerInfo.blueprints.complete.Add(itemid);
                     Persistence.SetPlayerInfo(GameID, playerInfo);
                     basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                    basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemid);
+                    basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
             }
         }
@@ -258,7 +258,7 @@ namespace Pluton
                     playerInfo.blueprints.complete.Add(itemid);
                     Persistence.SetPlayerInfo(GameID, playerInfo);
                     basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                    basePlayer.ClientRPC(null, basePlayer, "UnlockedBlueprint", itemid);
+                    basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
             }
         }
@@ -343,7 +343,7 @@ namespace Pluton
             if (!wassleeping)
                 basePlayer.StartSleeping();
 
-            basePlayer.ClientRPC(null, basePlayer, "ForcePositionTo", new Vector3(x, y, z));
+            basePlayer.ClientRPCPlayer(null, basePlayer, "ForcePositionTo", new Vector3(x, y, z));
 
             if (!wassleeping)
                 basePlayer.Invoke("EndSleeping", 0.3f);
