@@ -650,6 +650,7 @@ namespace Pluton
             }
             player.SetPlayerFlag(BasePlayer.PlayerFlags.Wounded, false);
             player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+            player.SetFieldValue("lastTickTime", 0f);
             player.CancelInvoke ("DieFromWounds");
             player.StopSpectating();
             player.UpdateNetworkGroup();

@@ -282,7 +282,7 @@ namespace Pluton.Patcher
             MethodDefinition respawn = bPlayer.GetMethod("Respawn");
             MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
 
-            for (var l = 53; l >= 0; l--) {
+            for (var l = respawn.Body.Instructions.Count - 16; l >= 0; l--) {
                 respawn.Body.Instructions.RemoveAt(l);
             }
 
