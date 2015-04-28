@@ -11,7 +11,7 @@
 
         private Dictionary<string, object> _args;
         private readonly string _name;
-        private readonly System.Timers.Timer _timer;
+        private readonly Timer _timer;
         private long lastTick;
         private int _elapsedCount;
 
@@ -22,7 +22,7 @@
         public TimedEvent(string name, double interval)
         {
             this._name = name;
-            this._timer = new System.Timers.Timer();
+            this._timer = new Timer();
             this._timer.Interval = interval;
             this._timer.Elapsed += new ElapsedEventHandler(this._timer_Elapsed);
             this._elapsedCount = 0;
