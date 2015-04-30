@@ -27,7 +27,7 @@ namespace Pluton
         public void AirDrop()
         {
             float speed = UnityEngine.Random.Range(30f, 55f);
-            float height = UnityEngine.Random.Range(global::World.Height - (global::World.Height / 10), global::World.Height);
+            float height = UnityEngine.Random.Range(900f, 1000f);
             AirDrop(speed, height);
         }
 
@@ -92,7 +92,7 @@ namespace Pluton
         public float GetGround(float x, float z)
         {
             RaycastHit hit;
-            var origin = new Vector3(x, global::World.HighestPoint.y + 1, z);
+            var origin = new Vector3(x, 1000f, z);
             float ground = 0f;
             if (Physics.Raycast(origin, Vector3.down, out hit, Vector3.Distance(origin, new Vector3(origin.x, -100f, origin.z)), 1 << 23)) {
                 ground = hit.point.y;
