@@ -205,6 +205,8 @@
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
+                case "On_PluginDeinit":
+                    break;
                 default:
                     foundHook = false;
                     break;
@@ -311,6 +313,8 @@
                     break;
                 case "On_PluginUnload":
                     plugin.Invoke("On_PluginUnload");
+                    break;
+                case "On_PluginDeinit":
                     break;
                 default:
                     foundHook = false;

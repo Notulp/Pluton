@@ -102,6 +102,9 @@ namespace Pluton
                 if (plugin.DontReload)
                     return;
 
+                if (plugin.Globals.Contains("On_PluginDeinit"))
+                    plugin.Invoke("On_PluginDeinit");
+
                 plugin.KillTimers();
                 PluginLoader.GetInstance().RemoveHooks(plugin);
                 PluginLoader.GetInstance().Plugins.TryRemove(name, out plugin);
