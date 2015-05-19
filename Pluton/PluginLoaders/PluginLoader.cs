@@ -311,9 +311,7 @@
                 case "On_Respawn":
                     plugin.OnRespawnHook.Dispose();
                     break;
-                case "On_PluginUnload":
-                    plugin.Invoke("On_PluginUnload");
-                    break;
+                case "On_PluginInit":
                 case "On_PluginDeinit":
                     break;
                 default:

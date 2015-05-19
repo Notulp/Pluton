@@ -118,7 +118,6 @@ namespace Pluton
 
                 plugin.KillTimers();
                 PluginLoader.GetInstance().RemoveHooks(plugin);
-
                 PluginLoader.GetInstance().Plugins.TryRemove(name, out plugin);
 
                 Logger.LogDebug("[CSScriptPluginLoader] " + name + " plugin was unloaded successfuly.");
