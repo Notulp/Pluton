@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.38";
+        private static string version = "1.0.0.39";
 
         #region patches
 
@@ -357,7 +357,7 @@ namespace Pluton.Patcher
 
             ILProcessor il = giveFromItem.Body.GetILProcessor();
             int count = il.Body.Instructions.Count;
-            for (int i = count - 1; i > count - 14; i--) {
+            for (int i = count - 1; i > count - 15; i--) {
                 il.Body.Instructions.RemoveAt(i);
             }
             il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
