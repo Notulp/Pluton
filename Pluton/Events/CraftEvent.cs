@@ -25,6 +25,11 @@ namespace Pluton.Events
         public ItemBlueprint bluePrint;
 
         /// <summary>
+        /// Amount of crafting item.
+        /// </summary>
+        public int Amount;
+
+        /// <summary>
         /// Cancels teh event.
         /// </summary>
         public bool Cancel = false;
@@ -34,11 +39,12 @@ namespace Pluton.Events
         /// </summary>
         public string cancelReason = "A plugin stops you from crafting that!";
 
-        public CraftEvent(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData)
+        public CraftEvent(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData, int amount)
         {
             Crafter = Server.GetPlayer(owner);
             Target = bp.targetItem;
             itemCrafter = self;
+            Amount = amount;
             bluePrint = bp;
         }
 
