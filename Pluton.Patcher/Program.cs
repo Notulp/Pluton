@@ -105,6 +105,7 @@ namespace Pluton.Patcher
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_3));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[3]));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftHook)));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }

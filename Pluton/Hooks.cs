@@ -502,7 +502,7 @@ namespace Pluton
         }
 
         // ItemCrafter.CraftItem()
-        public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null)
+        public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1)
         {
             ItemBlueprint bpcopy = new ItemBlueprint();
             bpcopy.amountToCreate = bp.amountToCreate;
@@ -512,7 +512,7 @@ namespace Pluton
             bpcopy.targetItem = bp.targetItem;
             bpcopy.time = bp.time / Server.GetInstance().CraftingTimeScale;
             bpcopy.userCraftable = bp.userCraftable;
-            CraftEvent ce = new CraftEvent(self, bpcopy, owner, instanceData);
+            CraftEvent ce = new CraftEvent(self, bpcopy, owner, instanceData, amount);
             OnPlayerStartCrafting.OnNext(ce);
             if (!self.CanCraft(bpcopy, 1)) {
                 return false;
@@ -522,27 +522,34 @@ namespace Pluton
                     owner.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), ce.cancelReason));
                 return false;
             }
-
+ 
             self.taskUID++;
             ItemCraftTask itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bpcopy;
             if (!ce.FreeCraft) {
-                foreach (ItemAmount current in bpcopy.ingredients) {
-                    float amount = current.amount;
+                List<Item> list = new List<Item>();
+                foreach (ItemAmount current in bp.ingredients) {
+                    int amount2 = (int)current.amount * amount;
                     foreach (ItemContainer current2 in self.containers) {
-                        amount -= current2.Take(itemCraftTask.ingredients, current.itemid, (int)amount);
-                    }
+                        amount2 -= current2.Take(list, current.itemid, amount2);
+		            }
+                }
+                foreach (Item current2 in list) {
+                    current2.Remove(0f);
                 }
             }
             itemCraftTask.endTime = 0;
             itemCraftTask.taskUID = self.taskUID;
             itemCraftTask.owner = owner;
             itemCraftTask.instanceData = instanceData;
+            itemCraftTask.amount = amount;
             self.queue.Enqueue (itemCraftTask);
             if (itemCraftTask.owner != null) {
-                itemCraftTask.owner.Command(String.Format("note.craft_add {0} {1}",
-                    itemCraftTask.taskUID,
-                    itemCraftTask.blueprint.targetItem.itemid));
+                itemCraftTask.owner.Command("note.craft_add", new object[] {
+				    itemCraftTask.taskUID,
+				    itemCraftTask.blueprint.targetItem.itemid,
+				    amount
+			    });
             }
             return true;
         }
