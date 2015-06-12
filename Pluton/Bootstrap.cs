@@ -83,7 +83,7 @@ namespace Pluton
             InstallThreadedOutput();
 
             ReloadTimers();
-            server.official = false;
+            ConVar.Server.official = false;
         }
 
         public static void InstallThreadedOutput()
