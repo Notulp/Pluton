@@ -196,7 +196,7 @@
 
         public static string GetIdentityFolder()
         {
-            return Path.Combine(GetRootFolder(), Path.Combine("server", server.identity));
+            return Path.Combine(GetRootFolder(), Path.Combine("server", ConVar.Server.identity));
         }
 
         public static string GetLoadoutFolder()
