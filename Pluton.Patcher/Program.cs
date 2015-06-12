@@ -32,7 +32,7 @@ namespace Pluton.Patcher
 
         private static void ChatPatch()
         {
-            TypeDefinition chat = rustAssembly.MainModule.GetType("chat");
+            TypeDefinition chat = rustAssembly.MainModule.GetType("ConVar.Chat");
             MethodDefinition say = chat.GetMethod("say");
             MethodDefinition onchat = hooksClass.GetMethod("Chat");
 

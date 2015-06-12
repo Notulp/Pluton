@@ -84,7 +84,7 @@ namespace Pluton
                 return;
             }
 
-            if (!chat.enabled) {
+            if (!ConVar.Chat.enabled) {
                 arg.ReplyWith("Chat is disabled.");
             } else {
                 if (arg.ArgsStr == "\"\"") {
@@ -106,14 +106,14 @@ namespace Pluton
                 if (str.Length <= 0) return;
 
 
-                if (chat.serverlog) {
+                if (ConVar.Chat.serverlog) {
                     ServerConsole.PrintColoured (new object[] {
                         ConsoleColor.DarkYellow,
                         basePlayer.displayName + ": ",
                         ConsoleColor.DarkGreen,
                         str
                     });
-                    server.Log ("Log.Chat.txt", string.Format ("{0}/{1}: {2}\r\n", basePlayer.userID, basePlayer.displayName, str));
+                    ConVar.Server.Log ("Log.Chat.txt", string.Format ("{0}/{1}: {2}\r\n", basePlayer.userID, basePlayer.displayName, str));
                     Debug.Log (string.Format ("[CHAT] {0}: {1}", basePlayer.displayName, str));
                 }
 
@@ -134,7 +134,7 @@ namespace Pluton
                     Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
                     arg.ReplyWith(pChat.Reply);
 
-                    if (server.globalchat) {
+                    if (ConVar.Server.globalchat) {
                         ConsoleSystem.Broadcast("chat.add", basePlayer.userID, text2, 1);
                     } else {
                         float num = 2500;
@@ -313,13 +313,13 @@ namespace Pluton
                 if (!SkinnedMeshCollider.ScaleDamage (info)) {
                     if (combatEnt.baseProtection != null) {
                         combatEnt.baseProtection.Scale (info.damageTypes);
-                        if (ConsoleGlobal.developer > 1) {
+                        if (ConVar.Global.developer > 1) {
                             Debug.Log ("BaseProtection Scaling for entity :" + combatEnt.name);
                         }
                     }
                 }
                 else {
-                    if (ConsoleGlobal.developer > 1) {
+                    if (ConVar.Global.developer > 1) {
                         Debug.Log ("SMC scaling damage for entity :" + combatEnt.name);
                     }
                 }
@@ -347,7 +347,7 @@ namespace Pluton
                 }
 
                 // the DebugHurt() method
-                if (vis.attack) {
+                if (ConVar.Vis.attack) {
                     if (info.PointStart != info.PointEnd) {
                         ConsoleSystem.Broadcast("ddraw.arrow", new object[] {
                             60, Color.cyan, info.PointStart, info.PointEnd, 0.1
@@ -384,7 +384,7 @@ namespace Pluton
                 }
 
                 combatEnt.health -= info.damageTypes.Total();
-                if (ConsoleGlobal.developer > 1) {
+                if (ConVar.Global.developer > 1) {
                     Debug.Log("[Combat]".PadRight(10) +
                         combatEnt.gameObject.name + " hurt " +
                         info.damageTypes.GetMajorityDamageType() + "/" +
@@ -782,7 +782,7 @@ namespace Pluton
             try {
                 if (pluton.enabled) {
                     string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded",
-                        new object[] { server.maxplayers, BasePlayer.activePlayerList.Count, Rust.Protocol.network, global::World.Seed, global::World.Size });
+                        new object[] { ConVar.Server.maxplayers, BasePlayer.activePlayerList.Count, Rust.Protocol.network, global::World.Seed, global::World.Size });
 
                     Steamworks.SteamGameServer.SetGameTags(pchGameTags);
                 }

@@ -334,19 +334,24 @@ namespace Pluton
 
         public bool Teleport(float x, float y, float z)
         {
-            if (teleporting)
+            if (teleporting || basePlayer.IsDead())
                 return false;
 
             teleporting = true;
-            bool wassleeping = basePlayer.IsSleeping();
 
-            if (!wassleeping)
+            if (!basePlayer.IsSleeping())
                 basePlayer.StartSleeping();
 
-            basePlayer.ClientRPCPlayer(null, basePlayer, "ForcePositionTo", new Vector3(x, y, z));
-
-            if (!wassleeping)
-                basePlayer.Invoke("EndSleeping", 0.3f);
+            basePlayer.transform.position = new Vector3(x, y + 0.05f, z);
+            basePlayer.ClientRPCPlayer(null, basePlayer, "ForcePositionTo", new Vector3(x, y + 0.05f, z));
+            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
+            basePlayer.UpdateNetworkGroup();
+            basePlayer.UpdatePlayerCollider(true, false);
+            basePlayer.SendNetworkUpdateImmediate(false);
+            basePlayer.ClientRPCPlayer(null, basePlayer, "StartLoading");
+            basePlayer.SendFullSnapshot();
+            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, false);
+            basePlayer.ClientRPCPlayer(null, basePlayer, "FinishLoading");
 
             teleporting = false;
 
