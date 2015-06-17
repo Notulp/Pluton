@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 
 namespace Pluton.Events
 {
-    public class ChatEvent : CountedInstance
-    {
-
+    	public class ChatEvent : CountedInstance
+    	{
 		public readonly ConsoleSystem.Arg _arg;
 		public readonly string OriginalText;
 		public readonly Player User;
@@ -13,7 +12,7 @@ namespace Pluton.Events
 		public string Reply;
 
 		public ChatEvent(Player player, ConsoleSystem.Arg args)
-        {
+		{
 			User = player;
 			_arg = args;
 			if (args.connection != null)
@@ -25,10 +24,10 @@ namespace Pluton.Events
 			Reply = "chat.say was executed";
 		}
 
-        public void ReplyWith(string msg)
-        {
-            Reply = msg;
-        }
+        	public void ReplyWith(string msg)
+        	{
+        		Reply = msg;
+		}
 	}
 }
 
