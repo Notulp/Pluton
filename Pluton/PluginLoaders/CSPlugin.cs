@@ -80,7 +80,7 @@ namespace Pluton
                 Engine.ServerConsoleCommands = consoleCommands;
 
                 Globals = (from method in classType.GetMethods()
-                    select method.Name).ToList<string>();
+                                       select method.Name).ToList<string>();
 
                 State = PluginState.Loaded;
             } catch (Exception ex) {

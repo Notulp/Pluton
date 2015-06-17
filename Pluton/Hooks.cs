@@ -91,7 +91,7 @@ namespace Pluton
                     return;
                 }
 
-                BasePlayer basePlayer = arg.Player ();
+                BasePlayer basePlayer = arg.Player();
                 if (!basePlayer) {
                     return;
                 }
@@ -103,32 +103,33 @@ namespace Pluton
                 if (str.Length > 128)
                     str = str.Substring(0, 128);
 
-                if (str.Length <= 0) return;
+                if (str.Length <= 0)
+                    return;
 
 
                 if (ConVar.Chat.serverlog) {
-                    ServerConsole.PrintColoured (new object[] {
+                    ServerConsole.PrintColoured(new object[] {
                         ConsoleColor.DarkYellow,
                         basePlayer.displayName + ": ",
                         ConsoleColor.DarkGreen,
                         str
                     });
-                    ConVar.Server.Log ("Log.Chat.txt", string.Format ("{0}/{1}: {2}\r\n", basePlayer.userID, basePlayer.displayName, str));
-                    Debug.Log (string.Format ("[CHAT] {0}: {1}", basePlayer.displayName, str));
+                    ConVar.Server.Log("Log.Chat.txt", string.Format("{0}/{1}: {2}\r\n", basePlayer.userID, basePlayer.displayName, str));
+                    Debug.Log(string.Format("[CHAT] {0}: {1}", basePlayer.displayName, str));
                 }
 
                 string arg2 = "#5af";
-                if (basePlayer.IsAdmin ()) {
+                if (basePlayer.IsAdmin()) {
                     arg2 = "#af5";
                 }
 
-                if (DeveloperList.IsDeveloper (basePlayer)) {
+                if (DeveloperList.IsDeveloper(basePlayer)) {
                     arg2 = "#fa5";
                 }
 
                 OnChat.OnNext(pChat);
 
-                string text2 = string.Format ("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText.Replace('<', '[').Replace('>', ']'), arg2);
+                string text2 = string.Format("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText.Replace('<', '[').Replace('>', ']'), arg2);
 
                 if (pChat.FinalText != "") {
                     Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
@@ -191,14 +192,14 @@ namespace Pluton
         public static void Command(ConsoleSystem.Arg arg)
         {
             Player player = Server.GetPlayer(arg.Player());
-            string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{" "}, StringSplitOptions.None);
+            string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{ " " }, StringSplitOptions.None);
 
             CommandEvent cmd = new CommandEvent(player, args);
 
             if (cmd.cmd == "")
                 return;
 
-            foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+            foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
                 ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.cmd);
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
@@ -206,7 +207,7 @@ namespace Pluton
 
                     CommandPermissionEvent permission = new CommandPermissionEvent(player, args, chatCmd);
                     OnCommandPermission.OnNext(permission);
-                    if(permission.blocked) {
+                    if (permission.blocked) {
                         player.Message(permission.Reply);
                         continue;
                     }
@@ -244,7 +245,7 @@ namespace Pluton
                     return;
                 }
                 if (cmd.cmd == Config.GetInstance().GetValue("Commands", "ShowOnlinePlayers", "players")) {
-                    string msg = Server.GetInstance().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetInstance().Players.Count) ;
+                    string msg = Server.GetInstance().Players.Count == 1 ? "You are alone!" : String.Format("There are: {0} players online!", Server.GetInstance().Players.Count);
                     player.Message(msg);
                     return;
                 }
@@ -273,7 +274,7 @@ namespace Pluton
                         foreach (ChatCommands cm in cc) {
                             list.AddRange(cm.getDescriptions(cmd.args[0]));
                         }
-                        if(list.Count > 0)
+                        if (list.Count > 0)
                             player.Message(String.Join("\r\n", list.ToArray()));
                     }
                 }
@@ -301,7 +302,7 @@ namespace Pluton
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {
-                Assert.Test (combatEnt.isServer, "This should be called serverside only");
+                Assert.Test(combatEnt.isServer, "This should be called serverside only");
                 if (combatEnt.IsDead()) {
                     return;
                 }
@@ -310,17 +311,16 @@ namespace Pluton
                 BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
                 BasePlayer player = combatEnt.GetComponent<BasePlayer>();
 
-                if (!SkinnedMeshCollider.ScaleDamage (info)) {
+                if (!SkinnedMeshCollider.ScaleDamage(info)) {
                     if (combatEnt.baseProtection != null) {
-                        combatEnt.baseProtection.Scale (info.damageTypes);
+                        combatEnt.baseProtection.Scale(info.damageTypes);
                         if (ConVar.Global.developer > 1) {
-                            Debug.Log ("BaseProtection Scaling for entity :" + combatEnt.name);
+                            Debug.Log("BaseProtection Scaling for entity :" + combatEnt.name);
                         }
                     }
-                }
-                else {
+                } else {
                     if (ConVar.Global.developer > 1) {
-                        Debug.Log ("SMC scaling damage for entity :" + combatEnt.name);
+                        Debug.Log("SMC scaling damage for entity :" + combatEnt.name);
                     }
                 }
 
@@ -358,10 +358,10 @@ namespace Pluton
                     }
                     string text = String.Empty;
                     for (int i = 0; i < info.damageTypes.types.Length; i++) {
-                        float num = info.damageTypes.types [i];
+                        float num = info.damageTypes.types[i];
                         if (num != 0) {
                             string text2 = text;
-                            text = String.Concat (new string[] {
+                            text = String.Concat(new string[] {
                                 text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
                             });
                         }
@@ -370,9 +370,9 @@ namespace Pluton
                         "<color=lightblue>Damage:</color>".PadRight(10),
                         info.damageTypes.Total().ToString("0.00"),
                         "\r\n<color=lightblue>Health:</color>".PadRight(10),
-                        combatEnt.health.ToString ("0.00"), " / ",
-                        (combatEnt.health - info.damageTypes.Total () > 0) ? "<color=green>" : "<color=red>",
-                        (combatEnt.health - info.damageTypes.Total ()).ToString ("0.00"), "</color>",
+                        combatEnt.health.ToString("0.00"), " / ",
+                        (combatEnt.health - info.damageTypes.Total() > 0) ? "<color=green>" : "<color=red>",
+                        (combatEnt.health - info.damageTypes.Total()).ToString("0.00"), "</color>",
                         "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
                         "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
                         "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
@@ -386,10 +386,10 @@ namespace Pluton
                 combatEnt.health -= info.damageTypes.Total();
                 if (ConVar.Global.developer > 1) {
                     Debug.Log("[Combat]".PadRight(10) +
-                        combatEnt.gameObject.name + " hurt " +
-                        info.damageTypes.GetMajorityDamageType() + "/" +
-                        info.damageTypes.Total() + " - " +
-                        combatEnt.health.ToString("0") + " health left"
+                    combatEnt.gameObject.name + " hurt " +
+                    info.damageTypes.GetMajorityDamageType() + "/" +
+                    info.damageTypes.Total() + " - " +
+                    combatEnt.health.ToString("0") + " health left"
                     );
                 }
                 combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
@@ -437,7 +437,7 @@ namespace Pluton
         public static BaseEntity DoPlacement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
         {
             try {
-                GameObject gameObject = GameManager.server.CreatePrefab (construction.fullName, default(Vector3), default(Quaternion), true);
+                GameObject gameObject = GameManager.server.CreatePrefab(construction.fullName, default(Vector3), default(Quaternion), true);
                 BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
 
                 bool flag = Construction.UpdatePlacement(gameObject.transform, construction, target);
@@ -532,7 +532,7 @@ namespace Pluton
                     int amount2 = (int)current.amount * amount;
                     foreach (ItemContainer current2 in self.containers) {
                         amount2 -= current2.Take(list, current.itemid, amount2);
-		            }
+                    }
                 }
                 foreach (Item current2 in list) {
                     current2.Remove(0f);
@@ -543,13 +543,13 @@ namespace Pluton
             itemCraftTask.owner = owner;
             itemCraftTask.instanceData = instanceData;
             itemCraftTask.amount = amount;
-            self.queue.Enqueue (itemCraftTask);
+            self.queue.Enqueue(itemCraftTask);
             if (itemCraftTask.owner != null) {
                 itemCraftTask.owner.Command("note.craft_add", new object[] {
-				    itemCraftTask.taskUID,
-				    itemCraftTask.blueprint.targetItem.itemid,
-				    amount
-			    });
+                    itemCraftTask.taskUID,
+                    itemCraftTask.blueprint.targetItem.itemid,
+                    amount
+                });
             }
             return true;
         }
@@ -658,7 +658,7 @@ namespace Pluton
             player.SetPlayerFlag(BasePlayer.PlayerFlags.Wounded, false);
             player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             player.SetFieldValue("lastTickTime", 0f);
-            player.CancelInvoke ("DieFromWounds");
+            player.CancelInvoke("DieFromWounds");
             player.StopSpectating();
             player.UpdateNetworkGroup();
             player.UpdatePlayerCollider(true, false);
@@ -719,14 +719,15 @@ namespace Pluton
         }
 
         // Facepunch.ConsoleSystem.SystemRealm.Normal
-        public static void ServerConsoleCommand(ConsoleSystem.Arg arg, string cmd) {
+        public static void ServerConsoleCommand(ConsoleSystem.Arg arg, string cmd)
+        {
             try {
                 if (!Bootstrap.PlutonLoaded)
                     return;
 
                 ServerConsoleEvent ssc = new ServerConsoleEvent(arg, cmd);
 
-                foreach(KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
+                foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
                     ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ssc.cmd);
                     foreach (ConsoleCommand cc in commands) {
                         if (cc.callback == null)
@@ -761,7 +762,8 @@ namespace Pluton
             } else {
                 World.GetInstance().Timescale = Single.Parse(Config.GetInstance().GetValue("Config", "timescale", "30"), System.Globalization.CultureInfo.InvariantCulture);
             }
-            if (Server.GetInstance().Loaded) return;
+            if (Server.GetInstance().Loaded)
+                return;
 
             Server.GetInstance().Loaded = true;
             OnServerInit.OnNext("");
@@ -782,7 +784,13 @@ namespace Pluton
             try {
                 if (pluton.enabled) {
                     string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded",
-                        new object[] { ConVar.Server.maxplayers, BasePlayer.activePlayerList.Count, Rust.Protocol.network, global::World.Seed, global::World.Size });
+                                             new object[] {
+                            ConVar.Server.maxplayers,
+                            BasePlayer.activePlayerList.Count,
+                            Rust.Protocol.network,
+                            global::World.Seed,
+                            global::World.Size
+                        });
 
                     Steamworks.SteamGameServer.SetGameTags(pchGameTags);
                 }
@@ -796,8 +804,7 @@ namespace Pluton
 
         public static void Advertise()
         {
-            foreach (string arg in Config.GetInstance().PlutonConfig.EnumSection("BroadcastMessages"))
-            {
+            foreach (string arg in Config.GetInstance().PlutonConfig.EnumSection("BroadcastMessages")) {
                 Server.GetInstance().Broadcast(Config.GetInstance().GetValue("BroadcastMessages", arg));
             }
         }

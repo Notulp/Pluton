@@ -92,25 +92,25 @@ namespace Pluton
         public List<InvItem> AllItems()
         {
             return (from item in _inv.AllItems()
-                    select new InvItem(item)).ToList();
+                             select new InvItem(item)).ToList();
         }
 
         public List<InvItem> BeltItems()
         {
             return (from item in _inv.containerBelt.itemList
-                    select new InvItem(item)).ToList();
+                             select new InvItem(item)).ToList();
         }
 
         public List<InvItem> MainItems()
         {
             return (from item in _inv.containerMain.itemList
-                    select new InvItem(item)).ToList();
+                             select new InvItem(item)).ToList();
         }
 
         public List<InvItem> WearItems()
         {
             return (from item in _inv.containerWear.itemList
-                    select new InvItem(item)).ToList();
+                             select new InvItem(item)).ToList();
         }
     }
 }

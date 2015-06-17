@@ -313,7 +313,7 @@ namespace Pluton
         {
             return Teleport(x, World.GetInstance().GetGround(x, z), z);
         }
-        
+
         public bool GroundTeleport(Vector3 v3)
         {
             return Teleport(v3.x, World.GetInstance().GetGround(v3.x, v3.z), v3.z);
@@ -325,7 +325,7 @@ namespace Pluton
         }
 
         public static float worldSizeHalf = (float)global::World.Size / 2;
-        public static Vector3[] firstLocations = new Vector3[]{
+        public static Vector3[] firstLocations = new Vector3[] {
             new Vector3(worldSizeHalf, 0, worldSizeHalf),
             new Vector3(-worldSizeHalf, 0, worldSizeHalf),
             new Vector3(worldSizeHalf, 0, -worldSizeHalf),

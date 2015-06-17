@@ -133,13 +133,12 @@ namespace Pluton
                     perms = true;
 
                 if (perms)
-                    foreach (LoadOutItem item in items.Values)
-                    {
+                    foreach (LoadOutItem item in items.Values) {
                         if (notify)
                             inv.Notice(item);
                         inv.Add(item.invItem);
                     }
-				
+                
             } catch (Exception ex) {
                 Logger.LogException(ex);
             }

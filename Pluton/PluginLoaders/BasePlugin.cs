@@ -84,7 +84,9 @@ namespace Pluton
             }
         }
 
-        public virtual void Load(string code = ""){}
+        public virtual void Load(string code = "")
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.BasePlugin"/> class.
@@ -411,143 +413,199 @@ namespace Pluton
         #region hooks
 
         public IDisposable OnAllPluginsLoadedHook;
-        public void OnAllPluginsLoaded(string s = "") {
+
+        public void OnAllPluginsLoaded(string s = "")
+        {
             this.Invoke("On_AllPluginsLoaded");
         }
 
         public IDisposable OnBuildingCompleteHook;
-        public void OnBuildingComplete(BuildingPart bp) {
+
+        public void OnBuildingComplete(BuildingPart bp)
+        {
             this.Invoke("On_BuildingComplete", bp);
         }
 
         public IDisposable OnPlacementHook;
-        public void OnPlacement(BuildingEvent be) {
+
+        public void OnPlacement(BuildingEvent be)
+        {
             this.Invoke("On_Placement", be);
         }
 
         public IDisposable OnChatHook;
-        public void OnChat(ChatEvent arg) {
+
+        public void OnChat(ChatEvent arg)
+        {
             this.Invoke("On_Chat", arg);
         }
 
         public IDisposable OnClientAuthHook;
-        public void OnClientAuth(AuthEvent ae) {
+
+        public void OnClientAuth(AuthEvent ae)
+        {
             this.Invoke("On_ClientAuth", ae);
         }
 
         public IDisposable OnClientConsoleHook;
-        public void OnClientConsole(ClientConsoleEvent ce) {
+
+        public void OnClientConsole(ClientConsoleEvent ce)
+        {
             ce.ReplyWith(ce.cmd + " " + String.Join(" ", ce.Args.ToArray()) + " was executed!");
             this.Invoke("On_ClientConsole", ce);
         }
 
         public IDisposable OnCommandHook;
-        public void OnCommand(CommandEvent cmd) {
+
+        public void OnCommand(CommandEvent cmd)
+        {
             this.Invoke("On_Command", cmd);
         }
 
         public IDisposable OnCommandPermissionHook;
-        public void OnCommandPermission(CommandPermissionEvent perm) {
+
+        public void OnCommandPermission(CommandPermissionEvent perm)
+        {
             this.Invoke("On_CommandPermission", perm);
         }
 
         public IDisposable OnCorpseHurtHook;
-        public void OnCorpseHurt(CorpseHurtEvent he) {
+
+        public void OnCorpseHurt(CorpseHurtEvent he)
+        {
             this.Invoke("On_CorpseHurt", he);
         }
 
         public IDisposable OnDoorCodeHook;
-        public void OnDoorCode(DoorCodeEvent dc) {
+
+        public void OnDoorCode(DoorCodeEvent dc)
+        {
             this.Invoke("On_DoorCode", dc);
         }
 
         public IDisposable OnDoorUseHook;
-        public void OnDoorUse(DoorUseEvent due) {
+
+        public void OnDoorUse(DoorUseEvent due)
+        {
             this.Invoke("On_DoorUse", due);
         }
 
         public IDisposable OnLootingEntityHook;
-        public void OnLootingEntity(EntityLootEvent le) {
+
+        public void OnLootingEntity(EntityLootEvent le)
+        {
             this.Invoke("On_LootingEntity", le);
         }
 
         public IDisposable OnLootingItemHook;
-        public void OnLootingItem(ItemLootEvent le) {
+
+        public void OnLootingItem(ItemLootEvent le)
+        {
             this.Invoke("On_LootingItem", le);
         }
 
         public IDisposable OnLootingPlayerHook;
-        public void OnLootingPlayer(PlayerLootEvent le) {
+
+        public void OnLootingPlayer(PlayerLootEvent le)
+        {
             this.Invoke("On_LootingPlayer", le);
         }
 
         public IDisposable OnNPCHurtHook;
-        public void OnNPCHurt(NPCHurtEvent he) {
+
+        public void OnNPCHurt(NPCHurtEvent he)
+        {
             this.Invoke("On_NPCHurt", he);
         }
 
         public IDisposable OnNPCKilledHook;
-        public void OnNPCKilled(NPCDeathEvent de) {
+
+        public void OnNPCKilled(NPCDeathEvent de)
+        {
             this.Invoke("On_NPCKilled", de);
         }
 
         public IDisposable OnPlayerHurtHook;
-        public void OnPlayerHurt(PlayerHurtEvent he) {
+
+        public void OnPlayerHurt(PlayerHurtEvent he)
+        {
             this.Invoke("On_PlayerHurt", he);
         }
 
         public IDisposable OnCombatEntityHurtHook;
-        public void OnCombatEntityHurt(CombatEntityHurtEvent he) {
+
+        public void OnCombatEntityHurt(CombatEntityHurtEvent he)
+        {
             this.Invoke("On_CombatEntityHurt", he);
         }
 
         public IDisposable OnPlayerConnectedHook;
-        public void OnPlayerConnected(Player player) {
+
+        public void OnPlayerConnected(Player player)
+        {
             this.Invoke("On_PlayerConnected", player);
         }
 
         public IDisposable OnPlayerDiedHook;
-        public void OnPlayerDied(PlayerDeathEvent de) {
+
+        public void OnPlayerDied(PlayerDeathEvent de)
+        {
             this.Invoke("On_PlayerDied", de);
         }
 
         public IDisposable OnPlayerDisconnectedHook;
-        public void OnPlayerDisconnected(Player player) {
+
+        public void OnPlayerDisconnected(Player player)
+        {
             this.Invoke("On_PlayerDisconnected", player);
         }
 
         public IDisposable OnPlayerGatheringHook;
-        public void OnPlayerGathering(GatherEvent ge) {
+
+        public void OnPlayerGathering(GatherEvent ge)
+        {
             this.Invoke("On_PlayerGathering", ge);
         }
 
         public IDisposable OnPlayerStartCraftingHook;
-        public void OnPlayerStartCrafting(CraftEvent ce) {
+
+        public void OnPlayerStartCrafting(CraftEvent ce)
+        {
             this.Invoke("On_PlayerStartCrafting", ce);
         }
 
         public IDisposable OnPlayerTakeRadiationHook;
-        public void OnPlayerTakeRadiation(PlayerTakeRadsEvent re) {
+
+        public void OnPlayerTakeRadiation(PlayerTakeRadsEvent re)
+        {
             this.Invoke("On_PlayerTakeRadiation", re);
         }
 
         public IDisposable OnRespawnHook;
-        public void OnRespawn(RespawnEvent re) {
+
+        public void OnRespawn(RespawnEvent re)
+        {
             this.Invoke("On_Respawn", re);
         }
 
         public IDisposable OnServerConsoleHook;
-        public void OnServerConsole(ServerConsoleEvent ce) {
+
+        public void OnServerConsole(ServerConsoleEvent ce)
+        {
             this.Invoke("On_ServerConsole", ce);
         }
 
         public IDisposable OnServerInitHook;
-        public void OnServerInit(string s = "") {
+
+        public void OnServerInit(string s = "")
+        {
             this.Invoke("On_ServerInit");
         }
 
         public IDisposable OnServerShutdownHook;
-        public void OnServerShutdown(string s = "") {
+
+        public void OnServerShutdown(string s = "")
+        {
             this.Invoke("On_ServerShutdown");
         }
 
@@ -671,8 +729,8 @@ namespace Pluton
         public List<TimedEvent> GetParallelTimer(string name)
         {
             return (from timer in ParallelTimers
-                where timer.Name == name
-                select timer).ToList();
+                             where timer.Name == name
+                             select timer).ToList();
         }
 
         /// <summary>
@@ -735,7 +793,9 @@ namespace Pluton
 
     public class Web : Singleton<Web>, ISingleton
     {
-        public void Initialize() {}
+        public void Initialize()
+        {
+        }
 
         public bool CheckDependencies()
         {
@@ -748,8 +808,7 @@ namespace Pluton
         /// <param name="url">URL.</param>
         public string GET(string url)
         {
-            using (System.Net.WebClient client = new System.Net.WebClient())
-            {
+            using (System.Net.WebClient client = new System.Net.WebClient()) {
                 return client.DownloadString(url);
             }
         }
@@ -761,8 +820,7 @@ namespace Pluton
         /// <param name="data">Data.</param>
         public string POST(string url, string data)
         {
-            using (WebClient client = new WebClient())
-            {
+            using (WebClient client = new WebClient()) {
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 byte[] bytes = client.UploadData(url, "POST", Encoding.ASCII.GetBytes(data));
                 return Encoding.ASCII.GetString(bytes);
@@ -776,8 +834,7 @@ namespace Pluton
         /// <param name="json">Json.</param>
         public string POSTJSON(string url, string json)
         {
-            using (WebClient client = new WebClient())
-            {
+            using (WebClient client = new WebClient()) {
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
                 byte[] bytes = client.UploadData(url, "POST", Encoding.UTF8.GetBytes(json));
                 return Encoding.UTF8.GetString(bytes);

@@ -124,7 +124,7 @@ namespace Pluton
 
         private static string LogFormat(string Text)
         {
-            return String.Format("[{0}] {1}" , DateTime.Now, Text);
+            return String.Format("[{0}] {1}", DateTime.Now, Text);
         }
 
         private static void WriteLog(string Message)
@@ -269,17 +269,17 @@ namespace Pluton
             }
             if (!AlreadyLogged.Contains(condition)) {
                 switch (type) {
-                case LogType.Log:
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    break;
-                case LogType.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogType.Error:
-                case LogType.Exception:
-                case LogType.Assert:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
+                    case LogType.Log:
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        break;
+                    case LogType.Warning:
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        break;
+                    case LogType.Error:
+                    case LogType.Exception:
+                    case LogType.Assert:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
                 }
                 input.ClearLine(input.statusText.Length);
                 Console.WriteLine(condition);

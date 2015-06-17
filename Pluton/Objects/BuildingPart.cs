@@ -45,8 +45,7 @@ namespace Pluton
         public void Rotate()
         {
             var blockDefinition = buildingBlock.blockDefinition;
-            if (!blockDefinition.canRotate)
-            {
+            if (!blockDefinition.canRotate) {
                 return;
             }
             buildingBlock.transform.localRotation *= Quaternion.Euler(blockDefinition.rotationAmount);
@@ -59,9 +58,9 @@ namespace Pluton
                 if (_buildingBlock == null) {
                     Vector3 v3pos = position.ToVector3();
                     _buildingBlock = (from bb in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                              where this.Prefab == bb.LookupPrefabName() &&
-                                  v3pos == bb.transform.position
-                              select bb).FirstOrDefault();
+                                                     where this.Prefab == bb.LookupPrefabName() &&
+                                                         v3pos == bb.transform.position
+                                                     select bb).FirstOrDefault();
                 }
                 return _buildingBlock;
             }

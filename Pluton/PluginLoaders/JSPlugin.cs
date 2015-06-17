@@ -80,8 +80,8 @@ namespace Pluton
                 Program = JintEngine.Compile(code, false);
 
                 Globals = (from statement in Program.Statements
-                    where statement.GetType() == typeof(FunctionDeclarationStatement)
-                    select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
+                                       where statement.GetType() == typeof(FunctionDeclarationStatement)
+                                       select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
 
                 Engine.Run(Program);
                 State = PluginState.Loaded;

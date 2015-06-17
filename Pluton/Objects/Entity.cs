@@ -77,7 +77,7 @@ namespace Pluton
 
         public virtual string Name {
             get {
-                return baseEntity.name == "player/player" ? (baseEntity as BasePlayer).displayName  : baseEntity.name;
+                return baseEntity.name == "player/player" ? (baseEntity as BasePlayer).displayName : baseEntity.name;
             }
         }
 

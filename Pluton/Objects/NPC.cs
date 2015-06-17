@@ -7,7 +7,7 @@ namespace Pluton
     {
         public readonly BaseNPC baseNPC;
 
-        public NPC(BaseNPC npc) :base(npc)
+        public NPC(BaseNPC npc) : base(npc)
         {
             baseNPC = npc;
         }

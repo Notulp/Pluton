@@ -19,8 +19,8 @@ namespace Pluton
                 File.AppendAllText(path, "// empty");
 
             TrustedHashes = (from line in File.ReadAllLines(path)
-                             where !String.IsNullOrEmpty(line) && !line.StartsWith("//")
-                             select line).ToList<string>();
+                                      where !String.IsNullOrEmpty(line) && !line.StartsWith("//")
+                                      select line).ToList<string>();
         }
 
         public static string GetMD5Hash(MD5 md5Hash, string input)
