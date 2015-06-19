@@ -27,7 +27,7 @@ namespace Pluton.Patcher
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
             MethodDefinition init = serverInit.GetMethod("Initialization");
 
-            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 12], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void ChatPatch()
