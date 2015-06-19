@@ -471,17 +471,16 @@ namespace Pluton
             BaseEntity from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
             GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
             OnGathering.OnNext(ge);
-
+ 
             if (ge.Amount > 0) {
-                amount = Mathf.RoundToInt(Mathf.Min((float)ge.Amount, itemAmt.amount));
-
+ 
                 if (amount > 0) {
-
+ 
                     itemAmt.amount -= amount;
                     if (itemAmt.amount < 0)
                         itemAmt.amount = 0;
-
-                    Item item = ItemManager.CreateByItemID(itemAmt.itemid, amount, false);
+ 
+                    Item item = ItemManager.CreateByItemID(itemAmt.itemid, ge.Amount, false);
                     if (item == null) {
                         return;
                     }
