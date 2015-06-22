@@ -13,7 +13,15 @@ namespace Pluton.Events
             string bonename = StringPool.Get(info.HitBone);
             HitBone = bonename == "" ? "unknown" : bonename;
         }
-
+        
+        public enum DamageTypes
+        {
+            Generic, Hunger, Thirst, Cold, 
+            Drowned, Heat, Bleeding, Poison, 
+            Suicide, Bullet, Slash, Blunt,
+            Fall, Radiation, Bite, Stab
+        }
+        
         /******************
         *                 *
         * Generic      0  *
