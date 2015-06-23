@@ -92,16 +92,12 @@
 
         public void ConsoleLog(string str, bool adminOnly = false)
         {
-            try
-            {
-                foreach (Player player in Server.GetInstance().Players.Values)
-                {
+            try {
+                foreach (Player player in Server.GetInstance().Players.Values) {
                     if (!adminOnly || (adminOnly && player.Admin))
                         player.ConsoleMessage(str);
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Logger.LogDebug("ConsoleLog ex");
                 Logger.LogException(ex);
             }
@@ -344,7 +340,7 @@
         {
             return (q *= Quaternion.Euler(0f, 0f, angle));
         }
-                
+
         public bool TryFindType(string typeName, out System.Type t)
         {
             lock (this.typeCache) {

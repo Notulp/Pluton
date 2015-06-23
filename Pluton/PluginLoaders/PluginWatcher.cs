@@ -9,12 +9,15 @@ namespace Pluton
     {
         public List<PluginTypeWatcher> Watchers = new List<PluginTypeWatcher>();
 
-        public PluginWatcher() {}
+        public PluginWatcher()
+        {
+        }
 
         public void AddWatcher(PluginType type, string filter)
         {
             foreach (PluginTypeWatcher watch in Watchers)
-                if (watch.Type == type) return;
+                if (watch.Type == type)
+                    return;
 
             PluginTypeWatcher watcher = new PluginTypeWatcher(type, filter);
             Watchers.Add(watcher);
@@ -69,7 +72,7 @@ namespace Pluton
             }
         }
 
-        void OnPluginCreated (object sender, FileSystemEventArgs e)
+        void OnPluginCreated(object sender, FileSystemEventArgs e)
         {
             string filename = Path.GetFileNameWithoutExtension(e.Name);
             string dir = Path.GetDirectoryName(e.FullPath).Split(Path.DirectorySeparatorChar).Last();
@@ -81,7 +84,7 @@ namespace Pluton
             }
         }
 
-        void OnPluginChanged (object sender, FileSystemEventArgs e)
+        void OnPluginChanged(object sender, FileSystemEventArgs e)
         {
             string filename = Path.GetFileNameWithoutExtension(e.Name);
             string dir = Path.GetDirectoryName(e.FullPath).Split(Path.DirectorySeparatorChar).Last();

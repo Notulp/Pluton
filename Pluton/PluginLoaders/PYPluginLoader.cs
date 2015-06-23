@@ -132,7 +132,7 @@ namespace Pluton
         public bool CheckDependencies()
         {
             return CoreConfig.GetInstance().GetBoolValue("python", "enabled") &&
-                File.Exists(Path.Combine(Path.Combine(Util.GetServerFolder(), "Managed"), "IronPython.Deps.dll"));
+            File.Exists(Path.Combine(Path.Combine(Util.GetServerFolder(), "Managed"), "IronPython.Deps.dll"));
         }
     }
 }

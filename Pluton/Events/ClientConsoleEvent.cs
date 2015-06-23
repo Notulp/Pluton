@@ -19,7 +19,7 @@ namespace Pluton.Events
 
             Reply = "Command not found!";
 
-            if(String.IsNullOrEmpty(rconCmd))
+            if (String.IsNullOrEmpty(rconCmd))
                 return;
 
             foreach (string str in rconCmd.Split(' '))

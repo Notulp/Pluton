@@ -14,12 +14,14 @@ namespace Pluton
         public BasePlugin plugin;
         public CallbackDelegate callback;
 
-        public ConsoleCommand setCallback(CallbackDelegate function) {
+        public ConsoleCommand setCallback(CallbackDelegate function)
+        {
             callback = function;
             return this;
         }
 
-        public ConsoleCommand setCallback(string function) {
+        public ConsoleCommand setCallback(string function)
+        {
             callback = new CallbackDelegate(cmd => {
                 try {
                     plugin.Invoke(function, (object)cmd);
@@ -31,17 +33,20 @@ namespace Pluton
             return this;
         }
 
-        public ConsoleCommand setUsage(string usage) {
+        public ConsoleCommand setUsage(string usage)
+        {
             _usage = usage;
             return this;
         }
 
-        public ConsoleCommand setDescription(string description) {
+        public ConsoleCommand setDescription(string description)
+        {
             _description = description;
             return this;
         }
 
-        public ConsoleCommand setCommand(string command) {
+        public ConsoleCommand setCommand(string command)
+        {
             _command = command;
             return this;
         }
@@ -88,28 +93,28 @@ namespace Pluton
         public List<string> getCommands()
         {
             return (from c in Commands.Values
-                select c._command).ToList<string>();
+                             select c._command).ToList<string>();
         }
 
-        public ConsoleCommand[] getConsoleCommands(string command) 
+        public ConsoleCommand[] getConsoleCommands(string command)
         {
             return (from c in Commands.Values
-                where c._command == command
-                select c).ToArray<ConsoleCommand>();
+                             where c._command == command
+                             select c).ToArray<ConsoleCommand>();
         }
 
         public string[] getDescriptions(string command)
         {
             return (from c in Commands.Values
-                where c._command == command
-                select c._description).ToArray<string>();
+                             where c._command == command
+                             select c._description).ToArray<string>();
         }
 
         public string[] getUsages(string command)
         {
             return (from c in Commands.Values
-                where c._command == command
-                select c._usage).ToArray<string>();
+                             where c._command == command
+                             select c._usage).ToArray<string>();
         }
     }
 }

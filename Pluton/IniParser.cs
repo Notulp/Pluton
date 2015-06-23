@@ -106,9 +106,9 @@ public class IniParser : Pluton.CountedInstance
     public string[] Sections {
         get {
             return (from pair in this.tmpList
-                    group pair by pair.Section into bySection
-                    from IGrouping<string, SectionPair> g in bySection
-                    select g.Key).ToArray<string>();
+                             group pair by pair.Section into bySection
+                             from IGrouping<string, SectionPair> g in bySection
+                             select g.Key).ToArray<string>();
         }
     }
 
@@ -187,7 +187,8 @@ public class IniParser : Pluton.CountedInstance
         }
     }
 
-    public bool ContainsSetting(string sectionName, string settingName) {
+    public bool ContainsSetting(string sectionName, string settingName)
+    {
         SectionPair pair;
         pair.Section = sectionName;
         pair.Key = settingName;

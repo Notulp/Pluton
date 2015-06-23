@@ -24,20 +24,20 @@ namespace Pluton
             CountedInstance.InstanceTypes = new Dictionary<Type, CountedInstance.Counts>();
         }
 
-        internal static void AddCount (Type type)
+        internal static void AddCount(Type type)
         {
             CountedInstance.Counts counts;
-            if (CountedInstance.InstanceTypes.TryGetValue (type, out counts)) {
+            if (CountedInstance.InstanceTypes.TryGetValue(type, out counts)) {
                 counts.Created++;
                 return;
             }
-            CountedInstance.InstanceTypes.Add (type, new CountedInstance.Counts ());
+            CountedInstance.InstanceTypes.Add(type, new CountedInstance.Counts());
         }
 
-        internal static void RemoveCount (Type type)
+        internal static void RemoveCount(Type type)
         {
             CountedInstance.Counts counts;
-            if (CountedInstance.InstanceTypes.TryGetValue (type, out counts)) {
+            if (CountedInstance.InstanceTypes.TryGetValue(type, out counts)) {
                 counts.Destroyed++;
             }
         }

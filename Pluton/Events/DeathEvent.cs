@@ -12,7 +12,7 @@ namespace Pluton.Events
         {
             _info = info;
             string bonename = StringPool.Get(info.HitBone);
-            HitBone = bonename==""?"unknown":bonename;
+            HitBone = bonename == "" ? "unknown" : bonename;
         }
 
         /******************

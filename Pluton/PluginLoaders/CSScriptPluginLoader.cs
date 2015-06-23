@@ -143,7 +143,7 @@ namespace Pluton
         public bool CheckDependencies()
         {
             return CoreConfig.GetInstance().GetBoolValue("csscript", "enabled") &&
-                File.Exists(Path.Combine(Path.Combine(Util.GetServerFolder(), "Managed"), "mcs.exe"));
+            File.Exists(Path.Combine(Path.Combine(Util.GetServerFolder(), "Managed"), "mcs.exe"));
         }
     }
 }

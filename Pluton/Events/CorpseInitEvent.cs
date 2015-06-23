@@ -5,14 +5,14 @@ namespace Pluton.Events
     public class CorpseInitEvent : CountedInstance
     {
 
-		public readonly BaseCorpse Corpse;
-		public readonly Entity Parent;
+        public readonly BaseCorpse Corpse;
+        public readonly Entity Parent;
 
-		public CorpseInitEvent(BaseCorpse c, BaseEntity p)
+        public CorpseInitEvent(BaseCorpse c, BaseEntity p)
         {
-			Corpse = c;
+            Corpse = c;
             Parent = new Entity(p);
-		}
-	}
+        }
+    }
 }
 

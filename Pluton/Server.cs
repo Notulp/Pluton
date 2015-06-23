@@ -184,14 +184,14 @@
         public List<Player> ActivePlayers {
             get {
                 return (from player in BasePlayer.activePlayerList
-                        select GetPlayer(player)).ToList();
+                                    select GetPlayer(player)).ToList();
             }
         }
 
         public List<Player> SleepingPlayers {
             get {
                 return (from player in BasePlayer.sleepingPlayerList
-                        select GetPlayer(player)).ToList();
+                                    select GetPlayer(player)).ToList();
             }
         }
     }

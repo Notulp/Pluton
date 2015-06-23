@@ -5,9 +5,9 @@ using System.Text;
 using System.Reflection;
 
 namespace Pluton
-{   
+{
     public static class ReflectionExtensions
-    {  
+    {
         //Instanced
         public static object CallMethod(this object obj, string methodName, params object[] args)
         {
@@ -16,8 +16,7 @@ namespace Pluton
             if (metInf == null)
                 throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
 
-            if (metInf is MethodInfo)
-            {
+            if (metInf is MethodInfo) {
                 MethodInfo meta = metInf.As<MethodInfo>();
                 return meta.Invoke(obj, args);
             }
@@ -54,11 +53,11 @@ namespace Pluton
             else
                 throw new System.Exception();
         }
-       
+
         private static MethodInfo GetMethodInfo(Type classType, string methodName)
         {
             return classType.GetMethod(methodName,
-                                           BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static );
+                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static);
         }
 
         private static MethodInfo GetMethodInfo(object obj, string methodName)
@@ -66,12 +65,12 @@ namespace Pluton
             return GetMethodInfo(obj.GetType(), methodName);
         }
 
-        private static MemberInfo GetFieldInfo(Type objType, string fieldName)        
+        private static MemberInfo GetFieldInfo(Type objType, string fieldName)
         {
             var prps = new List<System.Reflection.PropertyInfo>();
 
             prps.Add(objType.GetProperty(fieldName,
-                                               BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static ));
+                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static));
 
             prps = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(prps, i => !ReferenceEquals(i, null)));
 
@@ -81,7 +80,7 @@ namespace Pluton
             var flds = new System.Collections.Generic.List<System.Reflection.FieldInfo>();
 
             flds.Add(objType.GetField(fieldName,
-                                            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static ));          
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static));          
 
             flds = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(flds, i => !ReferenceEquals(i, null)));
 
@@ -104,8 +103,7 @@ namespace Pluton
             if (metInf == null)
                 throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
 
-            if (metInf is MethodInfo)
-            {
+            if (metInf is MethodInfo) {
                 MethodInfo meta = metInf.As<MethodInfo>();
                 meta.Invoke(null, args);
             }

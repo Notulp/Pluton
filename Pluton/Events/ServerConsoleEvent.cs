@@ -15,7 +15,7 @@ namespace Pluton.Events
 
         public ServerConsoleEvent(ConsoleSystem.Arg args, string rconCmd)
         {
-            if(String.IsNullOrEmpty(rconCmd))
+            if (String.IsNullOrEmpty(rconCmd))
                 return;
 
             this._args = args;

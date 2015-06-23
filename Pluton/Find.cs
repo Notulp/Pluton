@@ -6,7 +6,9 @@ namespace Pluton
 {
     public class Find : Singleton<Find>, ISingleton
     {
-        public void Initialize(){}
+        public void Initialize()
+        {
+        }
 
         public bool CheckDependencies()
         {
@@ -49,16 +51,16 @@ namespace Pluton
         public List<BuildingPart> BuildingParts()
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                select new BuildingPart(block)).ToList<BuildingPart>();
+                             select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
         public List<BuildingPart> BuildingPartsByName(string name)
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                where block.LookupPrefabName() == name ||
-                block.LookupShortPrefabName() == name ||
-                block.blockDefinition.fullName == name
-                select new BuildingPart(block)).ToList<BuildingPart>();
+                             where block.LookupPrefabName() == name ||
+                                 block.LookupShortPrefabName() == name ||
+                                 block.blockDefinition.fullName == name
+                             select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
         /// <summary>
@@ -69,8 +71,8 @@ namespace Pluton
         public List<BuildingPart> BuildingPartsByGrade(BuildingGrade.Enum grade)
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                where block.grade == grade
-                select new BuildingPart(block)).ToList<BuildingPart>();
+                             where block.grade == grade
+                             select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
         /// <summary>
@@ -81,8 +83,8 @@ namespace Pluton
         public List<BuildingPart> BuildingPartsByGrade(int grade)
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                where (int)block.grade == grade
-                select new BuildingPart(block)).ToList<BuildingPart>();
+                             where (int)block.grade == grade
+                             select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
         /// <summary>
@@ -93,8 +95,8 @@ namespace Pluton
         public List<BuildingPart> BuildingPartsByGrade(string grade)
         {
             return (from block in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                where block.grade.ToString() == grade
-                select new BuildingPart(block)).ToList<BuildingPart>();
+                             where block.grade.ToString() == grade
+                             select new BuildingPart(block)).ToList<BuildingPart>();
         }
 
         public List<TriggerComfort> ComfortZones()
@@ -105,7 +107,7 @@ namespace Pluton
         public List<Entity> CupBoards()
         {
             return (from board in UnityEngine.Object.FindObjectsOfType<BuildingPrivlidge>()
-                select new Entity(board)).ToList<Entity>();
+                             select new Entity(board)).ToList<Entity>();
         }
 
         // not tested...
@@ -119,7 +121,7 @@ namespace Pluton
         public List<Entity> Doors()
         {
             return (from door in UnityEngine.Object.FindObjectsOfType<Door>()
-                select new Entity(door as BaseEntity)).ToList<Entity>();
+                             select new Entity(door as BaseEntity)).ToList<Entity>();
         }
 
         /// <summary>
@@ -128,7 +130,7 @@ namespace Pluton
         public List<Entity> Entities()
         {
             return (from ent in BaseNetworkable.serverEntities.All()
-                select new Entity(ent as BaseEntity)).ToList<Entity>();
+                             select new Entity(ent as BaseEntity)).ToList<Entity>();
         }
 
         /// <summary>
@@ -138,10 +140,10 @@ namespace Pluton
         public List<Entity> Entities(string name)
         {
             return (from ent in BaseNetworkable.serverEntities.All()
-                where ent.LookupPrefabName().Contains(name) ||
-                ent.LookupShortPrefabName().Contains(name) ||
-                ent.name.Contains(name)
-                select new Entity(ent as BaseEntity)).ToList<Entity>();
+                             where ent.LookupPrefabName().Contains(name) ||
+                                 ent.LookupShortPrefabName().Contains(name) ||
+                                 ent.name.Contains(name)
+                             select new Entity(ent as BaseEntity)).ToList<Entity>();
         }
 
         public List<ItemDefinition> ItemDefinitions()
@@ -152,42 +154,42 @@ namespace Pluton
         public List<ItemDefinition> ItemDefinitionsByCategory(string cat)
         {
             return (from item in ItemManager.Instance.itemList
-                where item.category.ToString() == cat
-                select item).ToList<ItemDefinition>();
+                             where item.category.ToString() == cat
+                             select item).ToList<ItemDefinition>();
         }
 
         public List<ItemDefinition> ItemDefinitionsByCategory(ItemCategory cat)
         {
             return (from item in ItemManager.Instance.itemList
-                where item.category == cat
-                select item).ToList<ItemDefinition>();
+                             where item.category == cat
+                             select item).ToList<ItemDefinition>();
         }
 
         public ItemDefinition ItemDefinition(string name)
         {
             return (from item in ItemManager.Instance.itemList
-                where item.shortname == name ||
-                item.displayName.english == name
-                select item).FirstOrDefault<ItemDefinition>();
+                             where item.shortname == name ||
+                                 item.displayName.english == name
+                             select item).FirstOrDefault<ItemDefinition>();
         }
 
         public List<Entity> Locks()
         {
             return (from _lock in UnityEngine.Object.FindObjectsOfType<BaseLock>()
-                select new Entity(_lock as BaseEntity)).ToList<Entity>();
+                             select new Entity(_lock as BaseEntity)).ToList<Entity>();
         }
 
         public List<Entity> LocksByAuthorizedUserID(ulong steamid)
         {
             return (from _lock in UnityEngine.Object.FindObjectsOfType<CodeLock>()
-                where ((List<ulong>)_lock.GetFieldValue("whitelistPlayers")).Contains(steamid)
-                select new Entity(_lock as BaseEntity)).ToList<Entity>();
+                             where ((List<ulong>)_lock.GetFieldValue("whitelistPlayers")).Contains(steamid)
+                             select new Entity(_lock as BaseEntity)).ToList<Entity>();
         }
 
         public List<Entity> Loot()
         {
             return (from loot in UnityEngine.Object.FindObjectsOfType<LootContainer>()
-                select new Entity(loot as BaseEntity)).ToList<Entity>();
+                             select new Entity(loot as BaseEntity)).ToList<Entity>();
         }
 
         /// <summary>
@@ -197,7 +199,7 @@ namespace Pluton
         public List<NPC> NPCs()
         {
             return (from npc in UnityEngine.Object.FindObjectsOfType<BaseNPC>()
-                select new NPC(npc)).ToList<NPC>();
+                             select new NPC(npc)).ToList<NPC>();
         }
 
         /// <summary>
@@ -208,8 +210,8 @@ namespace Pluton
         public List<NPC> NPCs(string name)
         {
             return (from npc in UnityEngine.Object.FindObjectsOfType<BaseNPC>()
-                where npc.name.Contains(name) 
-                select new NPC(npc)).ToList<NPC>();
+                             where npc.name.Contains(name)
+                             select new NPC(npc)).ToList<NPC>();
         }
 
         /// <summary>
@@ -219,10 +221,10 @@ namespace Pluton
         public Player Player(string nameorIPorID)
         {
             return (from player in Server.GetInstance().Players.Values
-                where player.Name == nameorIPorID ||
-                player.IP == nameorIPorID ||
-                player.SteamID == nameorIPorID
-                select player).FirstOrDefault<Player>();
+                             where player.Name == nameorIPorID ||
+                                 player.IP == nameorIPorID ||
+                                 player.SteamID == nameorIPorID
+                             select player).FirstOrDefault<Player>();
         }
 
         /// <summary>
@@ -232,9 +234,9 @@ namespace Pluton
         public List<Player> Players(string nameorIP)
         {
             return (from player in Server.GetInstance().Players.Values
-                where player.Name.Contains(nameorIP) ||
-                player.IP.Contains(nameorIP)
-                select player).ToList<Player>();
+                             where player.Name.Contains(nameorIP) ||
+                                 player.IP.Contains(nameorIP)
+                             select player).ToList<Player>();
         }
 
         public List<TriggerRadiation> RadZones()
@@ -245,7 +247,7 @@ namespace Pluton
         public List<Entity> Storage()
         {
             return (from storage in UnityEngine.Object.FindObjectsOfType<StorageContainer>()
-                select new Entity(storage as BaseEntity)).ToList<Entity>();
+                             select new Entity(storage as BaseEntity)).ToList<Entity>();
         }
 
         public List<TriggerTemperature> TemperatureZones()

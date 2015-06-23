@@ -14,9 +14,12 @@
         public int MaxDepth = 3;
         public bool UseFullClassNames = false;
 
-        public DumpSettings() {}
+        public DumpSettings()
+        {
+        }
 
-        public DumpSettings(int maxItem, int maxDepth, bool disPrivate, bool useFullClassName) {
+        public DumpSettings(int maxItem, int maxDepth, bool disPrivate, bool useFullClassName)
+        {
             MaxItems = maxItem;
             MaxDepth = maxDepth;
             DisplayPrivate = disPrivate;
@@ -262,19 +265,19 @@
         {
             Dictionary<string, bool> ret = new Dictionary<string, bool>();
             foreach (string s in new string[] {"System.DateTime",
-				"System.Type",
-				"System.Guid",
-				"System.Security.Principal.SecurityIdentifier",
-				"System.Xml.Linq.XElement",
-				"System.Xml.Linq.XDocument",
-				"System.Reflection.RuntimeConstructorInfo",
-				"System.Reflection.RuntimePropertyInfo",
-				"System.Reflection.RuntimeMethodInfo",
-				"System.RuntimeType",
-				"System.Reflection.MethodBase",
-				"System.Security.Policy.Evidence",
-				"System.Globalization.CultureInfo",
-				"System.Version"})
+                "System.Type",
+                "System.Guid",
+                "System.Security.Principal.SecurityIdentifier",
+                "System.Xml.Linq.XElement",
+                "System.Xml.Linq.XDocument",
+                "System.Reflection.RuntimeConstructorInfo",
+                "System.Reflection.RuntimePropertyInfo",
+                "System.Reflection.RuntimeMethodInfo",
+                "System.RuntimeType",
+                "System.Reflection.MethodBase",
+                "System.Security.Policy.Evidence",
+                "System.Globalization.CultureInfo",
+                "System.Version"})
                 ret[s] = true;
             return ret;
         }
@@ -350,7 +353,7 @@
 
             if (t.IsPrimitive || t.IsEnum || (t.IsValueType && props.Length == 0 && fi.Length == 0) || s_bloatTypes.ContainsKey(t.FullName) || t == typeof(decimal)) {
                 if ((t == typeof(int)) || (t == typeof(byte)) || (t == typeof(uint)) || t == typeof(long) ||
-                t == typeof(ulong))
+                    t == typeof(ulong))
                     _out.AppendFormat(" {0} (0x{0:x})", o);
                 else if (t == typeof(DateTime) || t == typeof(DateTime?))
                     _out.AppendFormat("{0:o} ({1})", o, ((DateTime)o).Kind);

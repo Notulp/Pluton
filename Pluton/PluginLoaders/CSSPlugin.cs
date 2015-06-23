@@ -99,7 +99,7 @@ namespace Pluton
                 Engine.ServerConsoleCommands = consoleCommands;
 
                 Globals = (from method in classType.GetMethods()
-                    select method.Name).ToList<string>();
+                                       select method.Name).ToList<string>();
 
                 State = PluginState.Loaded;
             } catch (Exception ex) {
@@ -171,7 +171,7 @@ namespace Pluton
             }
         }
 
-        void MCSReturnedOutputData (object sender, DataReceivedEventArgs e)
+        void MCSReturnedOutputData(object sender, DataReceivedEventArgs e)
         {
             if (e.Data != null) {
                 mutex.WaitOne();
@@ -180,12 +180,12 @@ namespace Pluton
             }
         }
 
-        void MCSExited (object sender, EventArgs e)
+        void MCSExited(object sender, EventArgs e)
         {
             Compiled = true;
         }
 
-        void MCSReturnedErrorData (object sender, DataReceivedEventArgs e)
+        void MCSReturnedErrorData(object sender, DataReceivedEventArgs e)
         {
             if (e.Data != null) {
                 mutex.WaitOne();

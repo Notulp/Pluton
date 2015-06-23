@@ -21,8 +21,7 @@ namespace Pluton
                 CoreConfig.GetInstance();
                 Config.GetInstance();
 
-                if (!pluton.enabled)
-                {
+                if (!pluton.enabled) {
                     Debug.Log("[Bootstrap] Pluton is disabled!");
                     return;
                 }
@@ -56,7 +55,7 @@ namespace Pluton
 
             var saver = Config.GetInstance().GetValue("Config", "saveInterval", "180000");
             var broadcast = Config.GetInstance().GetValue("Config", "broadcastInterval", "600000");
-            if(saver != null && broadcast != null) {
+            if (saver != null && broadcast != null) {
                 double save = Double.Parse(saver);
                 double ads = Double.Parse(broadcast);
 

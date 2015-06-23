@@ -93,8 +93,8 @@ namespace Pluton
                 arg.ReplyWith("Pluton reloaded!");
 
                 var planes = (from plane in UnityEngine.Object.FindObjectsOfType<CargoPlane>()
-                                  where plane.transform.position.x == 0f && plane.transform.position.z == 0f
-                                  select plane).ToList();
+                                          where plane.transform.position.x == 0f && plane.transform.position.z == 0f
+                                          select plane).ToList();
                 planes.ForEach(p => p.SendMessage("KillMessage", UnityEngine.SendMessageOptions.DontRequireReceiver));
                 if (planes.Count != 0) {
                     Pluton.Logger.LogWarning(String.Format("Destroyed {0} plane at Vector3.zero", planes.Count));

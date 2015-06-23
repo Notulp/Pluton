@@ -8,7 +8,7 @@ namespace Pluton.Events
         public readonly ChatCommand chatCommand;
 
         public CommandPermissionEvent(Player player, string[] command, ChatCommand chatCmd)
-            :base(player, command)
+            : base(player, command)
         {
             chatCommand = chatCmd;
         }
