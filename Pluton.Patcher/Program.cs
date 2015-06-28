@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.39";
+        private static string version = "1.0.0.43";
 
         #region patches
 
@@ -25,9 +25,9 @@ namespace Pluton.Patcher
             TypeDefinition plutonBootstrap = plutonAssembly.MainModule.GetType("Pluton.Bootstrap");
             TypeDefinition serverInit = rustAssembly.MainModule.GetType("Bootstrap");
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
-            MethodDefinition init = serverInit.GetMethod("Initialization");
+            MethodDefinition init = serverInit.GetMethod("Init_Config");
 
-            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 3], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void ChatPatch()
