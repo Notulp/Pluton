@@ -415,15 +415,15 @@ namespace Pluton
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
         public static void DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
         {
+            DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
+            OnDoorUse.OnNext(due);
+
             BaseLock baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
-            if (baseLock != null) {
+            if (baseLock != null && !due.IgnoreLock) {
                 bool TryCloseOpen = open ? !baseLock.OnTryToOpen(rpc.player) : !baseLock.OnTryToClose(rpc.player);
                 if (TryCloseOpen)
                     return;
             }
-
-            DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
-            OnDoorUse.OnNext(due);
 
             door.SetFlag(BaseEntity.Flags.Open, due.Open);
             door.Invoke("UpdateLayer", 0f);
@@ -635,7 +635,6 @@ namespace Pluton
             int newAmt = amount;
             if (receiver.ToPlayer() != null)
                 newAmt = (int)((double)amount * World.GetInstance().ResourceGatherMultiplier);
-
             Item item = ItemManager.CreateByItemID(itemAmt.itemid, newAmt);
             receiver.GiveItem(item);
         }*/
