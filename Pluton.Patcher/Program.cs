@@ -132,16 +132,11 @@ namespace Pluton.Patcher
             MethodDefinition codeUnlock = codeLock.GetMethod("UnlockWithCode");
             MethodDefinition doorCode = hooksClass.GetMethod("DoorCode");
 
-            ILProcessor il = codeUnlock.Body.GetILProcessor();
-            int count = il.Body.Instructions.Count;
-            for (int i = count - 1; i > 0; i--)
-            {
-                il.Body.Instructions.RemoveAt(i);
-            }
-            il.InsertBefore(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            il.InsertBefore(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
-            il.InsertBefore(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
-            il.InsertBefore(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ret));
+            codeUnlock.Body.Instructions.Clear();
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void DoorUsePatch()
