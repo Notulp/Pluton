@@ -403,7 +403,7 @@ namespace Pluton
             }
         }
 
-        public static void DoorCode(CodeLock doorLock, global::BaseEntity.RPCMessage rpc)
+        public static void DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
         {
             if (!doorLock.IsLocked())
                 return;
@@ -417,8 +417,8 @@ namespace Pluton
                 return;
             }
             Effect.server.Run(doorLock.effectUnlocked, doorLock, 0u, Vector3.zero, Vector3.forward);
-            doorLock.SetFlag(global::BaseEntity.Flags.Locked, false);
-            doorLock.SendNetworkUpdate(global::BasePlayer.NetworkQueue.Update);
+            doorLock.SetFlag(BaseEntity.Flags.Locked, false);
+            doorLock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
             List<ulong> whitelist = new List<ulong>();
             whitelist = (List<ulong>)doorLock.GetFieldValue("whitelistPlayers");
             if (!whitelist.Contains(rpc.player.userID))
