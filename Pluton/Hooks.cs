@@ -403,13 +403,29 @@ namespace Pluton
             }
         }
 
-        public static void DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
+        public static void DoorCode(CodeLock doorLock, global::BaseEntity.RPCMessage rpc)
         {
             if (!doorLock.IsLocked())
                 return;
-
-            /*DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc);
-            OnDoorCode.OnNext(dc);*/
+            string a = rpc.read.String();
+            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, a);
+            OnDoorCode.OnNext(dc);
+            if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
+            {
+                Effect.server.Run(doorLock.effectDenied, doorLock, 0u, Vector3.zero, Vector3.forward);
+                rpc.player.Hurt(1f, Rust.DamageType.ElectricShock, doorLock, true);
+                return;
+            }
+            Effect.server.Run(doorLock.effectUnlocked, doorLock, 0u, Vector3.zero, Vector3.forward);
+            doorLock.SetFlag(global::BaseEntity.Flags.Locked, false);
+            doorLock.SendNetworkUpdate(global::BasePlayer.NetworkQueue.Update);
+            List<ulong> whitelist = new List<ulong>();
+            whitelist = (List<ulong>)doorLock.GetFieldValue("whitelistPlayers");
+            if (!whitelist.Contains(rpc.player.userID))
+            {
+                whitelist.Add(rpc.player.userID);
+                doorLock.SetFieldValue("whitelistPlayers", whitelist);
+            }
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
