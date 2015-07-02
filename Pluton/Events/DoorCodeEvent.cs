@@ -38,7 +38,7 @@ namespace Pluton.Events
         {
             codeLock.SetFieldValue("code", "");
             codeLock.SetFieldValue("hasCode", false);
-            codeLock.SetFlag(global::BaseEntity.Flags.Locked, false);
+            codeLock.SetFlag(BaseEntity.Flags.Locked, false);
             Allow();
         }
 
@@ -46,7 +46,7 @@ namespace Pluton.Events
         {
             codeLock.SetFieldValue("code", "");
             codeLock.SetFieldValue("hasCode", false);
-            codeLock.SetFlag(global::BaseEntity.Flags.Locked, false);
+            codeLock.SetFlag(BaseEntity.Flags.Locked, false);
             codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
         }
 
