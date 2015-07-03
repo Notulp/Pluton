@@ -194,6 +194,12 @@
                                     select GetPlayer(player)).ToList();
             }
         }
+        
+        public int MaxPlayers{
+            get{
+                return ConVar.Server.maxplayers;
+            }
+        }
     }
 }
 
