@@ -194,6 +194,11 @@ public class IniParser : Pluton.CountedInstance
         pair.Key = settingName;
         return this.keyPairs.Contains(pair);
     }
+    
+    public bool ContainsValue(string valueName)
+    {
+        return this.keyPairs.ContainsValue(valueName);
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct SectionPair
