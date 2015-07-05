@@ -299,6 +299,42 @@ namespace Pluton
 
         }
 
+        //TODO: Creation of Event classes, and calling methods
+        public static void OnShoot(BaseProjectile basePlojectile, BaseEntity.RPCMessage msg)
+        {
+            Debug.LogWarning("OnShoot works");
+        }
+
+        public static void UseItem(Item item, int amountToConsume)
+        {
+            Debug.LogWarning("UseItem works");
+        }
+
+        public static void ProcessResources(MiningQuarry miningQuarry)
+        {
+            Debug.LogWarning("ProcessResources works");
+        }
+
+        public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
+        {
+            Debug.LogWarning("DoThrow works");
+        }
+
+        public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
+        {
+            Debug.LogWarning("OnRocketShoot works");
+        }
+
+        public static void Pickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
+        {
+            Debug.LogWarning("Pickup works");
+        }
+
+        public static void ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
+        {
+            Debug.LogWarning("ConsumeFuel works");
+        }
+
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {

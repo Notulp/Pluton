@@ -82,7 +82,8 @@ namespace Pluton
         Python,
         JavaScript,
         CSharp,
-        CSScript
+        CSScript,
+        Lua
     }
 }
 
