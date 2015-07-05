@@ -299,6 +299,42 @@ namespace Pluton
 
         }
 
+        //TODO: Creation of Event classes, and calling methods
+        public static void OnShoot(BaseProjectile basePlojectile, BaseEntity.RPCMessage msg)
+        {
+            Debug.LogWarning("OnShoot works");
+        }
+
+        public static void UseItem(Item item, int amountToConsume)
+        {
+            Debug.LogWarning("UseItem works");
+        }
+
+        public static void ProcessResources(MiningQuarry miningQuarry)
+        {
+            Debug.LogWarning("ProcessResources works");
+        }
+
+        public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
+        {
+            Debug.LogWarning("DoThrow works");
+        }
+
+        public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
+        {
+            Debug.LogWarning("OnRocketShoot works");
+        }
+
+        public static void Pickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
+        {
+            Debug.LogWarning("Pickup works");
+        }
+
+        public static void ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
+        {
+            Debug.LogWarning("ConsumeFuel works");
+        }
+
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {
@@ -403,7 +439,7 @@ namespace Pluton
             }
         }
 
-        public static void DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
+        public static void DoorCode(CodeLock doorLock, global::BaseEntity.RPCMessage rpc)
         {
             if (!doorLock.IsLocked())
                 return;
@@ -417,8 +453,8 @@ namespace Pluton
                 return;
             }
             Effect.server.Run(doorLock.effectUnlocked, doorLock, 0u, Vector3.zero, Vector3.forward);
-            doorLock.SetFlag(BaseEntity.Flags.Locked, false);
-            doorLock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+            doorLock.SetFlag(global::BaseEntity.Flags.Locked, false);
+            doorLock.SendNetworkUpdate(global::BasePlayer.NetworkQueue.Update);
             List<ulong> whitelist = new List<ulong>();
             whitelist = (List<ulong>)doorLock.GetFieldValue("whitelistPlayers");
             if (!whitelist.Contains(rpc.player.userID))
