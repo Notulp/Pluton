@@ -416,6 +416,28 @@ namespace Pluton.Patcher
             bPlayer.GetField("buildingPrivlidges").SetPublic(true);
         }
 
+        private static void PlayerStartSleeping()
+        {
+            MethodDefinition StartSleeping = bPlayer.GetMethod("StartSleeping");
+            MethodDefinition method = hooksClass.GetMethod("StartSleeping");
+
+            int Position = StartSleeping.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = StartSleeping.Body.GetILProcessor();
+            iLProcessor.InsertBefore(StartSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(StartSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void PlayerWakeUp()
+        {
+            MethodDefinition EndSleeping = bPlayer.GetMethod("EndSleeping");
+            MethodDefinition method = hooksClass.GetMethod("EndSleeping");
+
+            int Position = EndSleeping.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = EndSleeping.Body.GetILProcessor();
+            iLProcessor.InsertBefore(EndSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(EndSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -518,6 +540,8 @@ namespace Pluton.Patcher
             PlayerStartLootingPatch();
             PlayerTakeRadiationPatch();
             PlayerDiedPatch();
+            PlayerStartSleeping();
+            PlayerWakeUp(); 
 
             NPCDiedPatch();
 
