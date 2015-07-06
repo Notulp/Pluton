@@ -70,6 +70,10 @@ namespace Pluton
 
         public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
 
+        public static Subject<Player> OnPlayerSleep = new Subject<Player>();
+
+        public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
+
         #endregion
 
 
@@ -333,6 +337,16 @@ namespace Pluton
         public static void ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
         {
             Debug.LogWarning("ConsumeFuel works");
+        }
+
+        public static void PlayerSleep(BasePlayer bp)
+        {
+            Debug.LogWarning("PlayerSleep works");
+        }
+
+        public static void PlayerWakeUp(BasePlayer bp)
+        {
+            Debug.LogWarning("PlayerWakeUp works");
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
