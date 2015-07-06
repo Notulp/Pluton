@@ -335,6 +335,16 @@ namespace Pluton
             Debug.LogWarning("ConsumeFuel works");
         }
 
+        public static void StartSleeping(BasePlayer bp)
+        {
+            Debug.LogWarning("StartSleeping works");
+        }
+
+        public static void EndSleeping(BasePlayer bp)
+        {
+            Debug.LogWarning("EndSleeping works");
+        }
+
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {
