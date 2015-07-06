@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -15,7 +16,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.39";
+        private static string version = "1.0.0.43";
 
         #region patches
 
@@ -25,9 +26,9 @@ namespace Pluton.Patcher
             TypeDefinition plutonBootstrap = plutonAssembly.MainModule.GetType("Pluton.Bootstrap");
             TypeDefinition serverInit = rustAssembly.MainModule.GetType("Bootstrap");
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
-            MethodDefinition init = serverInit.GetMethod("Initialization");
+            MethodDefinition init = serverInit.GetMethod("Init_Config");
 
-            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 3], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void ChatPatch()
@@ -132,12 +133,11 @@ namespace Pluton.Patcher
             MethodDefinition codeUnlock = codeLock.GetMethod("UnlockWithCode");
             MethodDefinition doorCode = hooksClass.GetMethod("DoorCode");
 
-            CloneMethod(codeUnlock);
-            ILProcessor iLProcessor = codeUnlock.Body.GetILProcessor();
-
-            iLProcessor.InsertBefore(codeUnlock.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(codeUnlock.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(codeUnlock.Body.Instructions[1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
+            codeUnlock.Body.Instructions.Clear();
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
+            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void DoorUsePatch()
@@ -311,6 +311,111 @@ namespace Pluton.Patcher
             }
         }
 
+        private static void ShootEvent()
+        {
+            TypeDefinition BaseProjectile = rustAssembly.MainModule.GetType("BaseProjectile");
+            MethodDefinition CLProject = BaseProjectile.GetMethod("CLProject");
+            MethodDefinition method = hooksClass.GetMethod("OnShoot");
+            CloneMethod(CLProject);
+
+            ILProcessor iLProcessor = CLProject.Body.GetILProcessor();
+            int Position = CLProject.Body.Instructions.Count - 1;
+            iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void ItemConsumed()
+        {
+            TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
+            MethodDefinition UseItem = Item.GetMethod("UseItem");
+            MethodDefinition method = hooksClass.GetMethod("UseItem");
+            CloneMethod(UseItem);
+
+            ILProcessor iLProcessor = UseItem.Body.GetILProcessor();
+            iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void Mining()
+        {
+            TypeDefinition MiningQuarry = rustAssembly.MainModule.GetType("MiningQuarry");
+            MethodDefinition ProcessResources = MiningQuarry.GetMethod("ProcessResources");
+            MethodDefinition method = hooksClass.GetMethod("ProcessResources");
+            CloneMethod(ProcessResources);
+
+            int Position = ProcessResources.Body.Instructions.Count - 6;
+            ILProcessor iLProcessor = ProcessResources.Body.GetILProcessor();
+            iLProcessor.InsertBefore(ProcessResources.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(ProcessResources.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void WeaponThrown()
+        {
+            TypeDefinition ThrownWeapon = rustAssembly.MainModule.GetType("ThrownWeapon");
+            MethodDefinition DoThrow = ThrownWeapon.GetMethod("DoThrow");
+            MethodDefinition method = hooksClass.GetMethod("DoThrow");
+            CloneMethod(DoThrow);
+
+            int Position = DoThrow.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = DoThrow.Body.GetILProcessor();
+            iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void RocketShootEvent()
+        {
+            TypeDefinition BaseLauncher = rustAssembly.MainModule.GetType("BaseLauncher");
+            MethodDefinition SV_Launch = BaseLauncher.GetMethod("SV_Launch");
+            MethodDefinition method = hooksClass.GetMethod("OnRocketShoot");
+            CloneMethod(SV_Launch);
+
+            ILProcessor iLProcessor = SV_Launch.Body.GetILProcessor();
+            int Position = SV_Launch.Body.Instructions.Count - 22;
+            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldloc_S, SV_Launch.Body.Variables[7]));
+            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void ConsumeFuel()
+        {
+            TypeDefinition ThrownWeapon = rustAssembly.MainModule.GetType("BaseOven");
+            MethodDefinition ConsumeFuel = ThrownWeapon.GetMethod("ConsumeFuel");
+            MethodDefinition method = hooksClass.GetMethod("ConsumeFuel");
+            CloneMethod(ConsumeFuel);
+
+            ILProcessor iLProcessor = ConsumeFuel.Body.GetILProcessor();
+            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+      }
+
+        private static void ItemPickup()
+        {
+            TypeDefinition CollectibleEntity = rustAssembly.MainModule.GetType("CollectibleEntity");
+            MethodDefinition Pickup = CollectibleEntity.GetMethod("Pickup");
+            MethodDefinition method = hooksClass.GetMethod("Pickup");
+            CloneMethod(Pickup);
+
+            int Position = Pickup.Body.Instructions.Count - 36;
+            ILProcessor iLProcessor = Pickup.Body.GetILProcessor();
+            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position],
+                Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position],
+                Instruction.Create(OpCodes.Ldloc_S, Pickup.Body.Variables[3]));
+            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void FieldsUpdate()
+        {
+            bPlayer.GetField("buildingPrivlidges").SetPublic(true);
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -395,10 +500,16 @@ namespace Pluton.Patcher
             ClientAuthPatch();
             CombatEntityHurtPatch();
             CraftingStartPatch();
-            DoPlacementPatch();
+            ConsumeFuel();
 
+            DoPlacementPatch();
             DoorCodePatch();
             DoorUsePatch();
+
+            ItemPickup();
+            ItemConsumed();
+
+            FieldsUpdate();
 
             GiveItemsPatch();
 
@@ -411,6 +522,7 @@ namespace Pluton.Patcher
             NPCDiedPatch();
 
             RespawnPatch();
+            RocketShootEvent();
 
             ServerShutdownPatch();
             ServerInitPatch();
@@ -418,6 +530,11 @@ namespace Pluton.Patcher
 
             ClientConsoleCommandPatch();
             ServerConsoleCommandPatch();
+            ShootEvent();
+
+            Mining();
+
+            WeaponThrown();
 
             TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
             rustAssembly.MainModule.Types.Add(plutonClass);

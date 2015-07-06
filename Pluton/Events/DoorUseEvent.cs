@@ -5,6 +5,7 @@ namespace Pluton.Events
     public class DoorUseEvent : CountedInstance
     {
         public bool Open;
+        public bool IgnoreLock = false;
         public Player Player;
         public Entity Door;
 

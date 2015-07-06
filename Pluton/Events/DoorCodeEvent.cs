@@ -1,49 +1,101 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Pluton.Events
 {
     public class DoorCodeEvent
     {
+        public Player Player;
         public CodeLock codeLock;
-        public BaseEntity.RPCMessage msg;
 
-        public readonly string doorCode;
+        public bool allowed = true;
+        public bool forceAllow = false;
 
-        public DoorCodeEvent(CodeLock doorLock, BaseEntity.RPCMessage msg)
+        private string entered;
+
+        public DoorCodeEvent(CodeLock doorLock, BasePlayer player, string entered)
         {
-            this.msg = msg;
             codeLock = doorLock;
-            doorCode = (string)doorLock.GetFieldValue("code");
+            this.entered = entered;
+            Player = Server.GetPlayer(player);
         }
-        // FIXME: needs some rework
-        /*
+
+        public void Whitelist()
+        {
+            List<ulong> whitelist = new List<ulong>();
+            whitelist = (List<ulong>)codeLock.GetFieldValue("whitelistPlayers");
+            whitelist.Add(Player.GameID);
+            codeLock.SetFieldValue("whitelistPlayers", whitelist);
+        }
+
+        public void ClearWhitelist()
+        {
+            codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
+        }
+
+        public void RemoveCode()
+        {
+            codeLock.SetFieldValue("code", "");
+            codeLock.SetFieldValue("hasCode", false);
+            codeLock.SetFlag(BaseEntity.Flags.Locked, false);
+            Allow();
+        }
+
+        public void ResetLock()
+        {
+            codeLock.SetFieldValue("code", "");
+            codeLock.SetFieldValue("hasCode", false);
+            codeLock.SetFlag(BaseEntity.Flags.Locked, false);
+            codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
+        }
+
         public void Deny()
         {
-            if (doorCode == "0000")
-                msg.dataString = "0001";
-            else
-                msg.dataString = "0000";
+            allowed = false;
         }
 
-        public string Code {
-            get {
-                return msg.dataString;
+        public void Allow()
+        {
+            forceAllow = true;
+        }
+
+        public string Code
+        {
+            get
+            {
+                return (string)codeLock.GetFieldValue("code");
             }
-            set {
-                msg.dataString = value;
+            set
+            {
+                int nothing;
+                if (value.Length == 4 && int.TryParse(value, out nothing))
+                {
+                    codeLock.SetFieldValue("code", value);
+                }
             }
         }
 
-        public Player Player {
-            get {
-                return Server.GetPlayer(msg.player);
+        public string Entered
+        {
+            get
+            {
+                return entered;
+            }
+            set
+            {
+                int nothing;
+                if (value.Length == 4 && int.TryParse(value, out nothing))
+                {
+                    entered = value;
+                }
             }
         }
 
         public bool IsCorrect()
         {
-            return msg.dataString == doorCode;
-        }*/
+            return entered == (string)codeLock.GetFieldValue("code");
+        }
     }
 }
 

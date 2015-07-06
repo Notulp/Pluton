@@ -124,25 +124,25 @@ namespace Pluton
 
         public bool KnowsBlueprint(int itemID)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             return playerInfo.blueprints.complete.Contains(itemID);
         }
 
         public bool KnowsBlueprint(ItemBlueprint itembp)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             return playerInfo.blueprints.complete.Contains(itembp.targetItem.itemid);
         }
 
         public bool KnowsBlueprint(ItemDefinition itemdef)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             return playerInfo.blueprints.complete.Contains(itemdef.itemid);
         }
 
         public Dictionary<int, bool> KnowsBlueprints(IEnumerable<int> itemIDs)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             Dictionary<int, bool> result = new Dictionary<int, bool>();
             foreach (int itemid in itemIDs) {
                 if (!result.ContainsKey(itemid))
@@ -153,7 +153,7 @@ namespace Pluton
 
         public Dictionary<ItemBlueprint, bool> KnowsBlueprints(IEnumerable<ItemBlueprint> itemBPs)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             Dictionary<ItemBlueprint, bool> result = new Dictionary<ItemBlueprint, bool>();
             foreach (ItemBlueprint itembp in itemBPs) {
                 int itemid = itembp.targetItem.itemid;
@@ -165,7 +165,7 @@ namespace Pluton
 
         public Dictionary<ItemDefinition, bool> KnowsBlueprints(IEnumerable<ItemDefinition> itemdefs)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             Dictionary<ItemDefinition, bool> result = new Dictionary<ItemDefinition, bool>();
             foreach (ItemDefinition itemdef in itemdefs) {
                 int itemid = itemdef.itemid;
@@ -177,16 +177,16 @@ namespace Pluton
 
         public List<int> KnownBlueprints()
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             return playerInfo.blueprints.complete;
         }
 
         public bool LearnBlueprint(int itemID)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             if (!playerInfo.blueprints.complete.Contains(itemID)) {
                 playerInfo.blueprints.complete.Add(itemID);
-                Persistence.SetPlayerInfo(GameID, playerInfo);
+                ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
                 basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
@@ -196,11 +196,11 @@ namespace Pluton
 
         public bool LearnBlueprint(ItemBlueprint itembp)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             int itemID = itembp.targetItem.itemid;
             if (!playerInfo.blueprints.complete.Contains(itemID)) {
                 playerInfo.blueprints.complete.Add(itemID);
-                Persistence.SetPlayerInfo(GameID, playerInfo);
+                ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
                 basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
@@ -210,11 +210,11 @@ namespace Pluton
 
         public bool LearnBlueprint(ItemDefinition itemdef)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             int itemID = itemdef.itemid;
             if (!playerInfo.blueprints.complete.Contains(itemID)) {
                 playerInfo.blueprints.complete.Add(itemID);
-                Persistence.SetPlayerInfo(GameID, playerInfo);
+                ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
                 basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
@@ -224,11 +224,11 @@ namespace Pluton
 
         public void LearnBlueprints(IEnumerable<int> itemIDs)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             foreach (int itemid in itemIDs) {
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
-                    Persistence.SetPlayerInfo(GameID, playerInfo);
+                    ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
                     basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                     basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
@@ -237,12 +237,12 @@ namespace Pluton
 
         public void LearnBlueprints(IEnumerable<ItemBlueprint> itembps)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             foreach (ItemBlueprint itembp in itembps) {
                 int itemid = itembp.targetItem.itemid;
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
-                    Persistence.SetPlayerInfo(GameID, playerInfo);
+                    ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
                     basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                     basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
@@ -251,12 +251,12 @@ namespace Pluton
 
         public void LearnBlueprints(IEnumerable<ItemDefinition> itemdefs)
         {
-            ProtoBuf.PersistantPlayer playerInfo = Persistence.GetPlayerInfo(GameID);
+            ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
             foreach (ItemDefinition itemdef in itemdefs) {
                 int itemid = itemdef.itemid;
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
-                    Persistence.SetPlayerInfo(GameID, playerInfo);
+                    ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
                     basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                     basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }

@@ -70,6 +70,10 @@ namespace Pluton
 
         public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
 
+        public static Subject<Player> OnPlayerSleep = new Subject<Player>();
+
+        public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
+
         #endregion
 
 
@@ -299,6 +303,52 @@ namespace Pluton
 
         }
 
+        //TODO: Creation of Event classes, and calling methods
+        public static void OnShoot(BaseProjectile basePlojectile, BaseEntity.RPCMessage msg)
+        {
+            Debug.LogWarning("OnShoot works");
+        }
+
+        public static void UseItem(Item item, int amountToConsume)
+        {
+            Debug.LogWarning("UseItem works");
+        }
+
+        public static void ProcessResources(MiningQuarry miningQuarry)
+        {
+            Debug.LogWarning("ProcessResources works");
+        }
+
+        public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
+        {
+            Debug.LogWarning("DoThrow works");
+        }
+
+        public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
+        {
+            Debug.LogWarning("OnRocketShoot works");
+        }
+
+        public static void Pickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
+        {
+            Debug.LogWarning("Pickup works");
+        }
+
+        public static void ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
+        {
+            Debug.LogWarning("ConsumeFuel works");
+        }
+
+        public static void PlayerSleep(BasePlayer bp)
+        {
+            Debug.LogWarning("PlayerSleep works");
+        }
+
+        public static void PlayerWakeUp(BasePlayer bp)
+        {
+            Debug.LogWarning("PlayerWakeUp works");
+        }
+
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {
@@ -407,23 +457,39 @@ namespace Pluton
         {
             if (!doorLock.IsLocked())
                 return;
-
-            /*DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc);
-            OnDoorCode.OnNext(dc);*/
+            string a = rpc.read.String();
+            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, a);
+            OnDoorCode.OnNext(dc);
+            if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
+            {
+                Effect.server.Run(doorLock.effectDenied, doorLock, 0u, Vector3.zero, Vector3.forward);
+                rpc.player.Hurt(1f, Rust.DamageType.ElectricShock, doorLock, true);
+                return;
+            }
+            Effect.server.Run(doorLock.effectUnlocked, doorLock, 0u, Vector3.zero, Vector3.forward);
+            doorLock.SetFlag(BaseEntity.Flags.Locked, false);
+            doorLock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+            List<ulong> whitelist = new List<ulong>();
+            whitelist = (List<ulong>)doorLock.GetFieldValue("whitelistPlayers");
+            if (!whitelist.Contains(rpc.player.userID))
+            {
+                whitelist.Add(rpc.player.userID);
+                doorLock.SetFieldValue("whitelistPlayers", whitelist);
+            }
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
         public static void DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
         {
+            DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
+            OnDoorUse.OnNext(due);
+
             BaseLock baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
-            if (baseLock != null) {
+            if (baseLock != null && !due.IgnoreLock) {
                 bool TryCloseOpen = open ? !baseLock.OnTryToOpen(rpc.player) : !baseLock.OnTryToClose(rpc.player);
                 if (TryCloseOpen)
                     return;
             }
-
-            DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
-            OnDoorUse.OnNext(due);
 
             door.SetFlag(BaseEntity.Flags.Open, due.Open);
             door.Invoke("UpdateLayer", 0f);
@@ -634,7 +700,6 @@ namespace Pluton
             int newAmt = amount;
             if (receiver.ToPlayer() != null)
                 newAmt = (int)((double)amount * World.GetInstance().ResourceGatherMultiplier);
-
             Item item = ItemManager.CreateByItemID(itemAmt.itemid, newAmt);
             receiver.GiveItem(item);
         }*/

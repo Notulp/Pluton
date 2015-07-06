@@ -29,6 +29,12 @@ namespace Pluton.Events
         {
             Reply = msg;
         }
+        
+        public void Cancel(string reply = "Your message was not sent")
+        {
+            FinalText = "";
+            Reply = reply;
+        }
     }
 }
 
