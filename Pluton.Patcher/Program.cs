@@ -438,6 +438,17 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(EndSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void PlayerLoaded()
+        {
+            MethodDefinition EnteredGame = bPlayer.GetMethod("EnteredGame");
+            MethodDefinition method = hooksClass.GetMethod("PlayerLoaded");
+
+            int Position = EnteredGame.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = EnteredGame.Body.GetILProcessor();
+            iLProcessor.InsertBefore(EnteredGame.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(EnteredGame.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -542,6 +553,7 @@ namespace Pluton.Patcher
             PlayerDiedPatch();
             PlayerSleep();
             PlayerWakeUp();
+            PlayerLoaded();
 
             NPCDiedPatch();
 

@@ -196,6 +196,9 @@
                 case "On_PlayerWakeUp":
                     plugin.OnPlayerWakeUpHook = Hooks.OnPlayerWakeUp.Subscribe(p => plugin.OnPlayerWakeUp(p));
                     break;
+                case "On_PlayerLoaded":
+                    plugin.OnPlayerLoadedHook = Hooks.OnPlayerLoaded.Subscribe(p => plugin.OnPlayerLoaded(p));
+                    break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
                     break;
