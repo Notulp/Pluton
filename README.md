@@ -48,8 +48,6 @@ Our sponsors:
 
 [Streamlines Servers](http://www.streamline-servers.com)
 
-[Revolt Servers](http://revoltservers.com)
-
 [FPS Players](http://fpsplayers.com)
 
 Links:
