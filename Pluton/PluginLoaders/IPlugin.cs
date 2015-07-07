@@ -57,6 +57,10 @@ namespace Pluton
 
         void OnPlayerTakeRadiation(PlayerTakeRadsEvent re);
 
+        void OnPlayerSleep(Player player);
+
+        void OnPlayerWakeUp(Player player);
+
         void OnRespawn(RespawnEvent re);
 
         void OnServerConsole(ServerConsoleEvent ce);

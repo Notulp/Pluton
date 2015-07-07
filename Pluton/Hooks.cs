@@ -70,6 +70,20 @@ namespace Pluton
 
         public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
 
+        public static Subject<ShootEvent> OnShooting = new Subject<ShootEvent>();
+
+        public static Subject<UseItemEvent> OnUseItem = new Subject<UseItemEvent>();
+
+        public static Subject<RocketShootEvent> OnRocketShooting = new Subject<RocketShootEvent>();
+
+        public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
+
+        public static Subject<WeaponThrow> OnWeaponThrow = new Subject<WeaponThrow>();
+
+        public static Subject<ItemPickupEvent> OnItemPickup = new Subject<ItemPickupEvent>();
+
+        public static Subject<ConsumeFuelEvent> OnConsumeFuel = new Subject<ConsumeFuelEvent>();
+
         public static Subject<Player> OnPlayerSleep = new Subject<Player>();
 
         public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
@@ -303,50 +317,49 @@ namespace Pluton
 
         }
 
-        //TODO: Creation of Event classes, and calling methods
-        public static void OnShoot(BaseProjectile basePlojectile, BaseEntity.RPCMessage msg)
+        public static void OnShoot(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
         {
-            Debug.LogWarning("OnShoot works");
+            OnShooting.OnNext(new ShootEvent(baseProjectile, msg));
         }
 
         public static void UseItem(Item item, int amountToConsume)
         {
-            Debug.LogWarning("UseItem works");
+            OnUseItem.OnNext(new UseItemEvent(item, amountToConsume));
         }
 
         public static void ProcessResources(MiningQuarry miningQuarry)
         {
-            Debug.LogWarning("ProcessResources works");
+            OnMining.OnNext(miningQuarry);
         }
 
         public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
-            Debug.LogWarning("DoThrow works");
+            OnWeaponThrow.OnNext(new WeaponThrow(thrownWeapon, msg));
         }
 
         public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
         {
-            Debug.LogWarning("OnRocketShoot works");
+            OnRocketShooting.OnNext(new RocketShootEvent(baseLauncher, msg, baseEntity));
         }
 
         public static void Pickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
         {
-            Debug.LogWarning("Pickup works");
+            OnItemPickup.OnNext(new ItemPickupEvent(ce, msg, i));
         }
 
         public static void ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
         {
-            Debug.LogWarning("ConsumeFuel works");
+            OnConsumeFuel.OnNext(new ConsumeFuelEvent(bo, fuel, burn));
         }
 
         public static void PlayerSleep(BasePlayer bp)
         {
-            Debug.LogWarning("PlayerSleep works");
+            OnPlayerSleep.OnNext(new Player(bp));
         }
 
         public static void PlayerWakeUp(BasePlayer bp)
         {
-            Debug.LogWarning("PlayerWakeUp works");
+            OnPlayerWakeUp.OnNext(new Player(bp));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)

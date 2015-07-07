@@ -190,6 +190,12 @@
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                     break;
+                case "On_PlayerSleep":
+                    plugin.OnPlayerSleepHook = Hooks.OnPlayerSleep.Subscribe(p => plugin.OnPlayerSleep(p));
+                    break;
+                case "On_PlayerWakeUp":
+                    plugin.OnPlayerWakeUpHook = Hooks.OnPlayerWakeUp.Subscribe(p => plugin.OnPlayerWakeUp(p));
+                    break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
                     break;
@@ -298,6 +304,12 @@
                     break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook.Dispose();
+                    break;
+                case "On_PlayerSleep":
+                    plugin.OnPlayerSleepHook.Dispose();
+                    break;
+                case "On_PlayerWakeUp":
+                    plugin.OnPlayerWakeUpHook.Dispose();
                     break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook.Dispose();
