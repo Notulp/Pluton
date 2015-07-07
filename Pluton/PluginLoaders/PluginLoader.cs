@@ -335,6 +335,9 @@
                 case "On_PlayerWakeUp":
                     plugin.OnPlayerWakeUpHook.Dispose();
                     break;
+                case "On_PlayerLoaded":
+                    plugin.OnPlayerLoadedHook.Dispose();
+                    break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook.Dispose();
                     break;
