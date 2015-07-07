@@ -440,13 +440,13 @@ namespace Pluton.Patcher
 
         private static void PlayerLoaded()
         {
-            MethodDefinition EnteredGame = bPlayer.GetMethod("EnteredGame");
+            MethodDefinition EnterGame = bPlayer.GetMethod("EnterGame");
             MethodDefinition method = hooksClass.GetMethod("PlayerLoaded");
 
-            int Position = EnteredGame.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = EnteredGame.Body.GetILProcessor();
-            iLProcessor.InsertBefore(EnteredGame.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(EnteredGame.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            int Position = EnterGame.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = EnterGame.Body.GetILProcessor();
+            iLProcessor.InsertBefore(EnterGame.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(EnterGame.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
         private static void ServerInitPatch()
