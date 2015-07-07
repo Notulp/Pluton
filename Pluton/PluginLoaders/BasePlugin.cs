@@ -581,6 +581,20 @@ namespace Pluton
             this.Invoke("On_PlayerTakeRadiation", re);
         }
 
+        public IDisposable OnPlayerSleepHook;
+
+        public void OnPlayerSleep(Player player)
+        {
+            this.Invoke("On_PlayerSleep", player);
+        }
+
+        public IDisposable OnPlayerWakeUpHook;
+
+        public void OnPlayerWakeUp(Player player)
+        {
+            this.Invoke("On_PlayerWakeUp", player);
+        }
+
         public IDisposable OnRespawnHook;
 
         public void OnRespawn(RespawnEvent re)

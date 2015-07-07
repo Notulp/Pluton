@@ -341,12 +341,12 @@ namespace Pluton
 
         public static void PlayerSleep(BasePlayer bp)
         {
-            Debug.LogWarning("PlayerSleep works");
+            OnPlayerSleep.OnNext(new Player(bp));
         }
 
         public static void PlayerWakeUp(BasePlayer bp)
         {
-            Debug.LogWarning("PlayerWakeUp works");
+            OnPlayerWakeUp.OnNext(new Player(bp));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
