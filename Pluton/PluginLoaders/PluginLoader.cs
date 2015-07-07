@@ -344,6 +344,27 @@
                 case "On_Respawn":
                     plugin.OnRespawnHook.Dispose();
                     break;
+                case "On_Shooting":
+                    plugin.OnShootingHook.Dispose();
+                    break;
+                case "On_UseItem":
+                    plugin.OnUseItemHook.Dispose();
+                    break;
+                case "On_RocketShooting":
+                    plugin.OnRocketShootingHook.Dispose();
+                    break;
+                case "On_Mining":
+                    plugin.OnMiningHook.Dispose();
+                    break;
+                case "On_WeaponThrow":
+                    plugin.OnWeaponThrowHook.Dispose();
+                    break;
+                case "On_ItemPickup":
+                    plugin.OnItemPickupHook.Dispose();
+                    break;
+                case "On_ConsumeFuel":
+                    plugin.OnConsumeFuelHook.Dispose();
+                    break;
                 case "On_PluginInit":
                 case "On_PluginDeinit":
                     break;
