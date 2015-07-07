@@ -190,6 +190,12 @@
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                     break;
+                case "On_PlayerSleep":
+                    plugin.OnPlayerSleepHook = Hooks.OnPlayerSleep.Subscribe(p => plugin.OnPlayerSleep(p));
+                    break;
+                case "On_PlayerWakeUp":
+                    plugin.OnPlayerWakeUpHook = Hooks.OnPlayerWakeUp.Subscribe(p => plugin.OnPlayerWakeUp(p));
+                    break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
                     break;
@@ -201,6 +207,27 @@
                     break;
                 case "On_Respawn":
                     plugin.OnRespawnHook = Hooks.OnRespawn.Subscribe(r => plugin.OnRespawn(r));
+                    break;
+                case "On_Shooting":
+                    plugin.OnShootingHook = Hooks.OnShooting.Subscribe(p => plugin.OnShooting(p));
+                    break;
+                case "On_UseItem":
+                    plugin.OnUseItemHook = Hooks.OnUseItem.Subscribe(p => plugin.OnUseItem(p));
+                    break;
+                case "On_RocketShooting":
+                    plugin.OnRocketShootingHook = Hooks.OnRocketShooting.Subscribe(p => plugin.OnRocketShooting(p));
+                    break;
+                case "On_Mining":
+                    plugin.OnMiningHook = Hooks.OnMining.Subscribe(p => plugin.OnMining(p));
+                    break;
+                case "On_WeaponThrow":
+                    plugin.OnWeaponThrowHook = Hooks.OnWeaponThrow.Subscribe(p => plugin.OnWeaponThrow(p));
+                    break;
+                case "On_ItemPickup":
+                    plugin.OnItemPickupHook = Hooks.OnItemPickup.Subscribe(p => plugin.OnItemPickup(p));
+                    break;
+                case "On_ConsumeFuel":
+                    plugin.OnConsumeFuelHook = Hooks.OnConsumeFuel.Subscribe(p => plugin.OnConsumeFuel(p));
                     break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
@@ -298,6 +325,12 @@
                     break;
                 case "On_PlayerTakeRadiation":
                     plugin.OnPlayerTakeRadiationHook.Dispose();
+                    break;
+                case "On_PlayerSleep":
+                    plugin.OnPlayerSleepHook.Dispose();
+                    break;
+                case "On_PlayerWakeUp":
+                    plugin.OnPlayerWakeUpHook.Dispose();
                     break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook.Dispose();
