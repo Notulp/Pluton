@@ -88,6 +88,8 @@ namespace Pluton
 
         public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
 
+        public static Subject<Player> OnPlayerLoaded = new Subject<Player>();
+
         #endregion
 
 
@@ -360,6 +362,11 @@ namespace Pluton
         public static void PlayerWakeUp(BasePlayer bp)
         {
             OnPlayerWakeUp.OnNext(new Player(bp));
+        }
+
+        public static void PlayerLoaded(BasePlayer bp)
+        {
+            OnPlayerLoaded.OnNext(new Player(bp));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
