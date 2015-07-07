@@ -580,7 +580,6 @@ namespace Pluton
         {
             this.Invoke("On_PlayerTakeRadiation", re);
         }
-        // new
 
         public IDisposable OnShootingHook;
 
@@ -643,6 +642,13 @@ namespace Pluton
         public void OnPlayerWakeUp(Player player)
         {
             this.Invoke("On_PlayerWakeUp", player);
+        }
+
+        public IDisposable OnPlayerLoadedHook;
+
+        public void OnPlayerLoaded(Player player)
+        {
+            this.Invoke("On_PlayerLoaded", player);
         }
 
         public IDisposable OnRespawnHook;
