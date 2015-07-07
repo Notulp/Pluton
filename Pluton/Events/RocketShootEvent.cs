@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pluton.Events
 {
-    public class RocketShootEvent
+    public class RocketShootEvent : CountedInstance
     {
         private BaseEntity.RPCMessage _rpcMessage;
         private BaseLauncher _launch;
