@@ -56,12 +56,26 @@ namespace Pluton
         void OnPlayerStartCrafting(CraftEvent ce);
 
         void OnPlayerTakeRadiation(PlayerTakeRadsEvent re);
+        
+        void OnRespawn(RespawnEvent re);
+
+        void OnShooting(ShootEvent se);
+
+        void OnUseItem(UseItemEvent uie);
+
+        void OnRocketShooting(RocketShootEvent rse);
+
+        void OnMining(MiningQuarry mq);
+
+        void OnWeaponThrow(WeaponThrow wt);
+
+        void OnItemPickup(ItemPickupEvent ipe);
+
+        void OnConsumeFuel(ConsumeFuelEvent cfe);
 
         void OnPlayerSleep(Player player);
 
         void OnPlayerWakeUp(Player player);
-
-        void OnRespawn(RespawnEvent re);
 
         void OnServerConsole(ServerConsoleEvent ce);
 

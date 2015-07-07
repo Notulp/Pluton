@@ -6,6 +6,7 @@ using Pluton.Events;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Mono.CSharp;
 
 namespace Pluton
 {
@@ -579,6 +580,56 @@ namespace Pluton
         public void OnPlayerTakeRadiation(PlayerTakeRadsEvent re)
         {
             this.Invoke("On_PlayerTakeRadiation", re);
+        }
+        // new
+
+        public IDisposable OnShootingHook;
+
+        public void OnShooting(ShootEvent se)
+        {
+            this.Invoke("On_Shooting", se);
+        }
+
+        public IDisposable OnUseItemHook;
+
+        public void OnUseItem(UseItemEvent uie)
+        {
+            this.Invoke("On_UseItem", uie);
+        }
+
+        public IDisposable OnRocketShootingHook;
+
+        public void OnRocketShooting(RocketShootEvent rse)
+        {
+            this.Invoke("On_RocketShooting", rse);
+        }
+
+        public IDisposable OnMiningHook;
+
+        public void OnMining(MiningQuarry mq)
+        {
+            this.Invoke("On_Mining", mq);
+        }
+
+        public IDisposable OnWeaponThrowHook;
+
+        public void OnWeaponThrow(WeaponThrow wt)
+        {
+            this.Invoke("On_WeaponThrow", wt);
+        }
+
+        public IDisposable OnItemPickupHook;
+
+        public void OnItemPickup(ItemPickupEvent ipe)
+        {
+            this.Invoke("On_ItemPickup", ipe);
+        }
+
+        public IDisposable OnConsumeFuelHook;
+
+        public void OnConsumeFuel(ConsumeFuelEvent cfe)
+        {
+            this.Invoke("On_ConsumeFuel", cfe);
         }
 
         public IDisposable OnPlayerSleepHook;
