@@ -580,6 +580,70 @@ namespace Pluton
         {
             this.Invoke("On_PlayerTakeRadiation", re);
         }
+        // new
+
+        public IDisposable OnShootingHook;
+
+        public void OnShooting(ShootEvent se)
+        {
+            this.Invoke("On_Shooting", se);
+        }
+
+        public IDisposable OnUseItemHook;
+
+        public void OnUseItem(UseItemEvent uie)
+        {
+            this.Invoke("On_UseItem", uie);
+        }
+
+        public IDisposable OnRocketShootingHook;
+
+        public void OnRocketShooting(RocketShootEvent rse)
+        {
+            this.Invoke("On_RocketShooting", rse);
+        }
+
+        public IDisposable OnMiningHook;
+
+        public void OnMining(MiningQuarry mq)
+        {
+            this.Invoke("On_Mining", mq);
+        }
+
+        public IDisposable OnWeaponThrowHook;
+
+        public void OnWeaponThrow(WeaponThrow wt)
+        {
+            this.Invoke("On_WeaponThrow", wt);
+        }
+
+        public IDisposable OnItemPickupHook;
+
+        public void OnItemPickup(ItemPickupEvent ipe)
+        {
+            this.Invoke("On_ItemPickup", ipe);
+        }
+
+        public IDisposable OnConsumeFuelHook;
+
+        public void OnConsumeFuel(ConsumeFuelEvent cfe)
+        {
+            this.Invoke("On_ConsumeFuel", cfe);
+        }
+
+        public IDisposable OnPlayerSleepHook;
+
+        public void OnPlayerSleep(Player player)
+        {
+            this.Invoke("On_PlayerSleep", player);
+        }
+
+        public IDisposable OnPlayerWakeUpHook;
+
+        public void OnPlayerWakeUp(Player player)
+        {
+            this.Invoke("On_PlayerWakeUp", player);
+        }
 
         public IDisposable OnRespawnHook;
 
