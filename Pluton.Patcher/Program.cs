@@ -373,7 +373,7 @@ namespace Pluton.Patcher
             CloneMethod(SV_Launch);
 
             ILProcessor iLProcessor = SV_Launch.Body.GetILProcessor();
-            int Position = SV_Launch.Body.Instructions.Count - 1;
+            int Position = SV_Launch.Body.Instructions.Count - 22;
             iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
             iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldloc_S, SV_Launch.Body.Variables[7]));
             iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
@@ -392,7 +392,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_2));
             iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
             iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
-        }
+      }
 
         private static void ItemPickup()
         {
