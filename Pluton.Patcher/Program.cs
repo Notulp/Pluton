@@ -471,6 +471,19 @@ namespace Pluton.Patcher
             ilProcessor.InsertBefore(WoundAssist.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void ItemRepaired()
+        {
+            TypeDefinition RepairBench = rustAssembly.MainModule.GetType("RepairBench");
+            MethodDefinition RepairItem = RepairBench.GetMethod("RepairItem");
+            MethodDefinition method = hooksClass.GetMethod("ItemRepaired");
+
+            int Position = RepairItem.Body.Instructions.Count - 1;
+            ILProcessor ilProcessor = RepairItem.Body.GetILProcessor();
+            ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -563,6 +576,7 @@ namespace Pluton.Patcher
 
             ItemPickup();
             ItemConsumed();
+            ItemRepaired();
 
             FieldsUpdate();
 

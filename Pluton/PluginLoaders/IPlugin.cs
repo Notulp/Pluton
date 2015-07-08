@@ -89,6 +89,8 @@ namespace Pluton
 
         void OnServerShutdown(string s);
 
+        void OnItemRepaired(ItemRepairEvent ire);
+
         void OnTimerCB(TimedEvent evt);
     }
 

@@ -238,6 +238,9 @@
                 case "On_ConsumeFuel":
                     plugin.OnConsumeFuelHook = Hooks.OnConsumeFuel.Subscribe(p => plugin.OnConsumeFuel(p));
                     break;
+                case "On_ItemRepaired":
+                    plugin.OnItemRepairedHook = Hooks.OnItemRepaired.Subscribe(p => plugin.OnItemRepaired(p));
+                    break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
@@ -382,6 +385,9 @@
                     break;
                 case "On_ConsumeFuel":
                     plugin.OnConsumeFuelHook.Dispose();
+                    break;
+                case "On_ItemRepaired":
+                    plugin.OnItemRepairedHook.Dispose();
                     break;
                 case "On_PluginInit":
                 case "On_PluginDeinit":

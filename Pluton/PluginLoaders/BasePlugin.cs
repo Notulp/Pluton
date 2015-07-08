@@ -581,6 +581,13 @@ namespace Pluton
             this.Invoke("On_PlayerTakeRadiation", re);
         }
 
+        public IDisposable OnRespawnHook;
+
+        public void OnRespawn(RespawnEvent re)
+        {
+            this.Invoke("On_Respawn", re);
+        }
+
         public IDisposable OnShootingHook;
 
         public void OnShooting(ShootEvent se)
@@ -665,11 +672,11 @@ namespace Pluton
             this.Invoke("On_PlayerAssisted", player);
         }
 
-        public IDisposable OnRespawnHook;
+        public IDisposable OnItemRepairedHook;
 
-        public void OnRespawn(RespawnEvent re)
+        public void OnItemRepaired(ItemRepairEvent ire)
         {
-            this.Invoke("On_Respawn", re);
+            this.Invoke("On_ItemRepaired", ire);
         }
 
         public IDisposable OnServerConsoleHook;
