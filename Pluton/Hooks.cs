@@ -94,6 +94,8 @@ namespace Pluton
 
         public static Subject<Player> OnPlayerAssisted = new Subject<Player>();
 
+        public static Subject<ItemRepairEvent> OnItemRepaired = new Subject<ItemRepairEvent>();
+
         #endregion
 
 
@@ -381,6 +383,11 @@ namespace Pluton
         public static void PlayerAssisted(BasePlayer bp)
         {
             OnPlayerAssisted.OnNext(new Player(bp));
+        }
+
+        public static void ItemRepaired(RepairBench rb, BaseEntity.RPCMessage msg)
+        {
+            OnItemRepaired.OnNext(new ItemRepairEvent(rb, msg));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
