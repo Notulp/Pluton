@@ -651,6 +651,20 @@ namespace Pluton
             this.Invoke("On_PlayerLoaded", player);
         }
 
+        public IDisposable OnPlayerWoundedHook;
+
+        public void OnPlayerWounded(Player player)
+        {
+            this.Invoke("On_PlayerWounded", player);
+        }
+
+        public IDisposable OnPlayerAssistedHook;
+
+        public void OnPlayerAssisted(Player player)
+        {
+            this.Invoke("On_PlayerAssisted", player);
+        }
+
         public IDisposable OnRespawnHook;
 
         public void OnRespawn(RespawnEvent re)
