@@ -199,6 +199,12 @@
                 case "On_PlayerLoaded":
                     plugin.OnPlayerLoadedHook = Hooks.OnPlayerLoaded.Subscribe(p => plugin.OnPlayerLoaded(p));
                     break;
+                case "On_PlayerWounded":
+                    plugin.OnPlayerWoundedHook = Hooks.OnPlayerWounded.Subscribe(p => plugin.OnPlayerWounded(p));
+                    break;
+                case "On_PlayerAssisted":
+                    plugin.OnPlayerAssistedHook = Hooks.OnPlayerAssisted.Subscribe(p => plugin.OnPlayerAssisted(p));
+                    break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
                     break;
@@ -337,6 +343,12 @@
                     break;
                 case "On_PlayerLoaded":
                     plugin.OnPlayerLoadedHook.Dispose();
+                    break;
+                case "On_PlayerWounded":
+                    plugin.OnPlayerWoundedHook.Dispose();
+                    break;
+                case "On_PlayerAssisted":
+                    plugin.OnPlayerAssistedHook.Dispose();
                     break;
                 case "On_ServerConsole":
                     plugin.OnServerConsoleHook.Dispose();

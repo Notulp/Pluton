@@ -79,6 +79,10 @@ namespace Pluton
 
         void OnPlayerLoaded(Player player);
 
+        void OnPlayerWounded(Player player);
+
+        void OnPlayerAssisted(Player player);
+
         void OnServerConsole(ServerConsoleEvent ce);
 
         void OnServerInit(string s);

@@ -449,6 +449,28 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(EnterGame.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void PlayerWounded()
+        {
+            MethodDefinition StartWounded = bPlayer.GetMethod("StartWounded");
+            MethodDefinition method = hooksClass.GetMethod("PlayerWounded");
+
+            int Position = StartWounded.Body.Instructions.Count - 1;
+            ILProcessor ilProcessor = StartWounded.Body.GetILProcessor();
+            ilProcessor.InsertBefore(StartWounded.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            ilProcessor.InsertBefore(StartWounded.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
+        private static void PlayerAssisted()
+        {
+            MethodDefinition WoundAssist = bPlayer.GetMethod("WoundAssist");
+            MethodDefinition method = hooksClass.GetMethod("PlayerAssisted");
+
+            int Position = WoundAssist.Body.Instructions.Count - 1;
+            ILProcessor ilProcessor = WoundAssist.Body.GetILProcessor();
+            ilProcessor.InsertBefore(WoundAssist.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            ilProcessor.InsertBefore(WoundAssist.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -554,6 +576,8 @@ namespace Pluton.Patcher
             PlayerSleep();
             PlayerWakeUp();
             PlayerLoaded();
+            PlayerWounded();
+            PlayerAssisted();
 
             NPCDiedPatch();
 
