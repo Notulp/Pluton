@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pluton.Events
 {
-    public class UseItemEvent
+    public class UseItemEvent : CountedInstance
     {
         private InvItem _item;
         private int _amount;
