@@ -1,6 +1,8 @@
 Pluton
 ======
 
+[![Build Status](http://ftpix.pixe-life.org:8080/job/Pluton/badge/icon)](http://ftpix.pixe-life.org:8080/job/Pluton/)
+
 Pluton is a mod for the active branch of the survival sandbox game Rust
 
 Get started:
