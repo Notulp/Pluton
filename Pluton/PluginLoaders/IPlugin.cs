@@ -63,6 +63,10 @@ namespace Pluton
 
         void OnItemUsed(ItemUsedEvent uie);
 
+        void OnItemAdded(InventoryModEvent ime);
+
+        void OnItemRemoved(InventoryModEvent ime);
+
         void OnRocketShooting(RocketShootEvent rse);
 
         void OnMining(MiningQuarry mq);

@@ -496,6 +496,30 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void InventoryModificationPatch()
+        {
+            TypeDefinition ItemContainer = rustAssembly.MainModule.GetType("ItemContainer");
+            MethodDefinition Insert = ItemContainer.GetMethod("Insert");
+            MethodDefinition Remove = ItemContainer.GetMethod("Remove");
+            MethodDefinition method = hooksClass.GetMethod("ItemAdded");
+            MethodDefinition method2 = hooksClass.GetMethod("ItemRemoved");
+
+            int Position = Insert.Body.Instructions.Count - 2;
+            int Position2 = Remove.Body.Instructions.Count - 2;
+
+            ILProcessor iLProcessor = Insert.Body.GetILProcessor();
+            iLProcessor.InsertBefore(Insert.Body.Instructions[Position],
+                Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(Insert.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(Insert.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+
+            iLProcessor = Remove.Body.GetILProcessor();
+            iLProcessor.InsertBefore(Remove.Body.Instructions[Position2],
+                Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method2)));
+            iLProcessor.InsertBefore(Remove.Body.Instructions[Position2], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(Remove.Body.Instructions[Position2], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -605,6 +629,8 @@ namespace Pluton.Patcher
             PlayerWounded();
             PlayerAssisted();
             PlayerSyringeSelf();
+
+            InventoryModificationPatch();
 
             NPCDiedPatch();
 
