@@ -220,8 +220,8 @@
                 case "On_Shooting":
                     plugin.OnShootingHook = Hooks.OnShooting.Subscribe(p => plugin.OnShooting(p));
                     break;
-                case "On_UseItem":
-                    plugin.OnUseItemHook = Hooks.OnUseItem.Subscribe(p => plugin.OnUseItem(p));
+                case "On_ItemUsed":
+                    plugin.OnItemUsedHook = Hooks.OnItemUsed.Subscribe(p => plugin.OnItemUsed(p));
                     break;
                 case "On_RocketShooting":
                     plugin.OnRocketShootingHook = Hooks.OnRocketShooting.Subscribe(p => plugin.OnRocketShooting(p));
@@ -368,8 +368,8 @@
                 case "On_Shooting":
                     plugin.OnShootingHook.Dispose();
                     break;
-                case "On_UseItem":
-                    plugin.OnUseItemHook.Dispose();
+                case "On_ItemUsed":
+                    plugin.OnItemUsedHook.Dispose();
                     break;
                 case "On_RocketShooting":
                     plugin.OnRocketShootingHook.Dispose();

@@ -61,7 +61,7 @@ namespace Pluton
 
         void OnShooting(ShootEvent se);
 
-        void OnUseItem(UseItemEvent uie);
+        void OnItemUsed(ItemUsedEvent uie);
 
         void OnRocketShooting(RocketShootEvent rse);
 

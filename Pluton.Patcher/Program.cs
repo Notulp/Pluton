@@ -325,11 +325,11 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ItemConsumed()
+        private static void ItemUsed()
         {
             TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
             MethodDefinition UseItem = Item.GetMethod("UseItem");
-            MethodDefinition method = hooksClass.GetMethod("UseItem");
+            MethodDefinition method = hooksClass.GetMethod("ItemUsed");
             CloneMethod(UseItem);
 
             ILProcessor iLProcessor = UseItem.Body.GetILProcessor();
@@ -575,7 +575,7 @@ namespace Pluton.Patcher
             DoorUsePatch();
 
             ItemPickup();
-            ItemConsumed();
+            ItemUsed();
             ItemRepaired();
 
             FieldsUpdate();

@@ -72,7 +72,7 @@ namespace Pluton
 
         public static Subject<ShootEvent> OnShooting = new Subject<ShootEvent>();
 
-        public static Subject<UseItemEvent> OnUseItem = new Subject<UseItemEvent>();
+        public static Subject<ItemUsedEvent> OnItemUsed = new Subject<ItemUsedEvent>();
 
         public static Subject<RocketShootEvent> OnRocketShooting = new Subject<RocketShootEvent>();
 
@@ -330,9 +330,9 @@ namespace Pluton
             OnShooting.OnNext(new ShootEvent(baseProjectile, msg));
         }
 
-        public static void UseItem(Item item, int amountToConsume)
+        public static void ItemUsed(Item item, int amountToConsume)
         {
-            OnUseItem.OnNext(new UseItemEvent(item, amountToConsume));
+            OnItemUsed.OnNext(new ItemUsedEvent(item, amountToConsume));
         }
 
         public static void ProcessResources(MiningQuarry miningQuarry)

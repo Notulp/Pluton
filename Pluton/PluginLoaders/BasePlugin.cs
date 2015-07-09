@@ -595,11 +595,11 @@ namespace Pluton
             this.Invoke("On_Shooting", se);
         }
 
-        public IDisposable OnUseItemHook;
+        public IDisposable OnItemUsedHook;
 
-        public void OnUseItem(UseItemEvent uie)
+        public void OnItemUsed(ItemUsedEvent uie)
         {
-            this.Invoke("On_UseItem", uie);
+            this.Invoke("On_ItemUsed", uie);
         }
 
         public IDisposable OnRocketShootingHook;

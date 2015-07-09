@@ -64,7 +64,7 @@
     <Compile Include="Events\ItemRepairEvent.cs" />
     <Compile Include="Events\RocketShootEvent.cs" />
     <Compile Include="Events\ShootEvent.cs" />
-    <Compile Include="Events\UseItemEvent.cs" />
+    <Compile Include="Events\ItemUsedEvent.cs" />
     <Compile Include="Events\WeaponThrowEvent.cs" />
     <Compile Include="PluginLoaders\LUAPlugin.cs" />
     <Compile Include="PluginLoaders\LUAPluginLoader.cs" />
