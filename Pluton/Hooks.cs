@@ -72,13 +72,13 @@ namespace Pluton
 
         public static Subject<ShootEvent> OnShooting = new Subject<ShootEvent>();
 
-        public static Subject<UseItemEvent> OnUseItem = new Subject<UseItemEvent>();
+        public static Subject<ItemUsedEvent> OnItemUsed = new Subject<ItemUsedEvent>();
 
         public static Subject<RocketShootEvent> OnRocketShooting = new Subject<RocketShootEvent>();
 
         public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
 
-        public static Subject<WeaponThrow> OnWeaponThrow = new Subject<WeaponThrow>();
+        public static Subject<WeaponThrowEvent> OnWeaponThrow = new Subject<WeaponThrowEvent>();
 
         public static Subject<ItemPickupEvent> OnItemPickup = new Subject<ItemPickupEvent>();
 
@@ -95,6 +95,8 @@ namespace Pluton
         public static Subject<Player> OnPlayerAssisted = new Subject<Player>();
 
         public static Subject<ItemRepairEvent> OnItemRepaired = new Subject<ItemRepairEvent>();
+
+        public static Subject<SyringeUseEvent> OnPlayerSyringeSelf = new Subject<SyringeUseEvent>();
 
         #endregion
 
@@ -330,9 +332,9 @@ namespace Pluton
             OnShooting.OnNext(new ShootEvent(baseProjectile, msg));
         }
 
-        public static void UseItem(Item item, int amountToConsume)
+        public static void ItemUsed(Item item, int amountToConsume)
         {
-            OnUseItem.OnNext(new UseItemEvent(item, amountToConsume));
+            OnItemUsed.OnNext(new ItemUsedEvent(item, amountToConsume));
         }
 
         public static void ProcessResources(MiningQuarry miningQuarry)
@@ -342,7 +344,7 @@ namespace Pluton
 
         public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
-            OnWeaponThrow.OnNext(new WeaponThrow(thrownWeapon, msg));
+            OnWeaponThrow.OnNext(new WeaponThrowEvent(thrownWeapon, msg));
         }
 
         public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
@@ -388,6 +390,11 @@ namespace Pluton
         public static void ItemRepaired(RepairBench rb, BaseEntity.RPCMessage msg)
         {
             OnItemRepaired.OnNext(new ItemRepairEvent(rb, msg));
+        }
+
+        public static void PlayerSyringeSelf(SyringeWeapon sw, BaseEntity.RPCMessage msg)
+        {
+            OnPlayerSyringeSelf.OnNext(new SyringeUseEvent(sw, msg, true));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)

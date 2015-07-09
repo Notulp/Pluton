@@ -595,11 +595,11 @@ namespace Pluton
             this.Invoke("On_Shooting", se);
         }
 
-        public IDisposable OnUseItemHook;
+        public IDisposable OnItemUsedHook;
 
-        public void OnUseItem(UseItemEvent uie)
+        public void OnItemUsed(ItemUsedEvent uie)
         {
-            this.Invoke("On_UseItem", uie);
+            this.Invoke("On_ItemUsed", uie);
         }
 
         public IDisposable OnRocketShootingHook;
@@ -618,9 +618,9 @@ namespace Pluton
 
         public IDisposable OnWeaponThrowHook;
 
-        public void OnWeaponThrow(WeaponThrow wt)
+        public void OnWeaponThrow(WeaponThrowEvent wte)
         {
-            this.Invoke("On_WeaponThrow", wt);
+            this.Invoke("On_WeaponThrow", wte);
         }
 
         public IDisposable OnItemPickupHook;
@@ -677,6 +677,13 @@ namespace Pluton
         public void OnItemRepaired(ItemRepairEvent ire)
         {
             this.Invoke("On_ItemRepaired", ire);
+        }
+
+        public IDisposable OnPlayerSyringeSelfHook;
+
+        public void OnPlayerSyringeSelf(SyringeUseEvent sue)
+        {
+            this.Invoke("On_PlayerSyringeSelf", sue);
         }
 
         public IDisposable OnServerConsoleHook;
