@@ -1,7 +1,7 @@
 Pluton
 ======
 
-[![Build Status](http://jenkins.pluton-team.org/job/Pluton/badge/icon)](http://jenkins.pluton-team.org/job/Pluton/)
+<a href='http://jenkins.pluton-team.org/job/Pluton/'><img src='http://jenkins.pluton-team.org/job/Pluton/badge/icon'></a>
 
 Pluton is a mod for the active branch of the survival sandbox game Rust
 
