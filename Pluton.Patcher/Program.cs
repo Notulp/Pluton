@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
