@@ -91,6 +91,8 @@ namespace Pluton
 
         void OnItemRepaired(ItemRepairEvent ire);
 
+        void OnPlayerSyringeSelf(SyringeUseEvent sue);
+
         void OnTimerCB(TimedEvent evt);
     }
 

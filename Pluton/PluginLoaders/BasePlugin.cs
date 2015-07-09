@@ -679,6 +679,13 @@ namespace Pluton
             this.Invoke("On_ItemRepaired", ire);
         }
 
+        public IDisposable OnPlayerSyringeSelfHook;
+
+        public void OnPlayerSyringeSelf(SyringeUseEvent sue)
+        {
+            this.Invoke("On_PlayerSyringeSelf", sue);
+        }
+
         public IDisposable OnServerConsoleHook;
 
         public void OnServerConsole(ServerConsoleEvent ce)

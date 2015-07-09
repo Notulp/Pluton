@@ -484,6 +484,19 @@ namespace Pluton.Patcher
             ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void PlayerSyringeSelf()
+        {
+            TypeDefinition SyringeWeapon = rustAssembly.MainModule.GetType("SyringeWeapon");
+            MethodDefinition InjectedSelf = SyringeWeapon.GetMethod("InjectedSelf");
+            MethodDefinition method = hooksClass.GetMethod("PlayerSyringeSelf");
+
+            int Position = InjectedSelf.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = InjectedSelf.Body.GetILProcessor();
+            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -592,6 +605,7 @@ namespace Pluton.Patcher
             PlayerLoaded();
             PlayerWounded();
             PlayerAssisted();
+            PlayerSyringeSelf();
 
             NPCDiedPatch();
 

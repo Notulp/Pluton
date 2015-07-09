@@ -96,6 +96,8 @@ namespace Pluton
 
         public static Subject<ItemRepairEvent> OnItemRepaired = new Subject<ItemRepairEvent>();
 
+        public static Subject<SyringeUseEvent> OnPlayerSyringeSelf = new Subject<SyringeUseEvent>();
+
         #endregion
 
 
@@ -388,6 +390,11 @@ namespace Pluton
         public static void ItemRepaired(RepairBench rb, BaseEntity.RPCMessage msg)
         {
             OnItemRepaired.OnNext(new ItemRepairEvent(rb, msg));
+        }
+
+        public static void PlayerSyringeSelf(SyringeWeapon sw, BaseEntity.RPCMessage msg)
+        {
+            OnPlayerSyringeSelf.OnNext(new SyringeUseEvent(sw, msg, true));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)

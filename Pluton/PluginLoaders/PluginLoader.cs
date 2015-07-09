@@ -241,6 +241,9 @@
                 case "On_ItemRepaired":
                     plugin.OnItemRepairedHook = Hooks.OnItemRepaired.Subscribe(p => plugin.OnItemRepaired(p));
                     break;
+                case "On_PlayerSyringeSelf":
+                    plugin.OnPlayerSyringeSelfHook = Hooks.OnPlayerSyringeSelf.Subscribe(p => plugin.OnPlayerSyringeSelf(p));
+                    break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
@@ -388,6 +391,9 @@
                     break;
                 case "On_ItemRepaired":
                     plugin.OnItemRepairedHook.Dispose();
+                    break;
+                case "On_PlayerSyringeSelf":
+                    plugin.OnPlayerSyringeSelfHook.Dispose();
                     break;
                 case "On_PluginInit":
                 case "On_PluginDeinit":
