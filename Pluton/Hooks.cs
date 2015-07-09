@@ -78,7 +78,7 @@ namespace Pluton
 
         public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
 
-        public static Subject<WeaponThrow> OnWeaponThrow = new Subject<WeaponThrow>();
+        public static Subject<WeaponThrowEvent> OnWeaponThrow = new Subject<WeaponThrowEvent>();
 
         public static Subject<ItemPickupEvent> OnItemPickup = new Subject<ItemPickupEvent>();
 
@@ -342,7 +342,7 @@ namespace Pluton
 
         public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
-            OnWeaponThrow.OnNext(new WeaponThrow(thrownWeapon, msg));
+            OnWeaponThrow.OnNext(new WeaponThrowEvent(thrownWeapon, msg));
         }
 
         public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)

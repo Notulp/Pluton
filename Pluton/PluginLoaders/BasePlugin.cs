@@ -618,9 +618,9 @@ namespace Pluton
 
         public IDisposable OnWeaponThrowHook;
 
-        public void OnWeaponThrow(WeaponThrow wt)
+        public void OnWeaponThrow(WeaponThrowEvent wte)
         {
-            this.Invoke("On_WeaponThrow", wt);
+            this.Invoke("On_WeaponThrow", wte);
         }
 
         public IDisposable OnItemPickupHook;

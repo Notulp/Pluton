@@ -67,7 +67,7 @@ namespace Pluton
 
         void OnMining(MiningQuarry mq);
 
-        void OnWeaponThrow(WeaponThrow wt);
+        void OnWeaponThrow(WeaponThrowEvent wte);
 
         void OnItemPickup(ItemPickupEvent ipe);
 

@@ -1,12 +1,12 @@
 namespace Pluton.Events
 {
-    public class WeaponThrow : CountedInstance
+    public class WeaponThrowEvent : CountedInstance
     {
         private ThrownWeapon _w;
         private BaseEntity.RPCMessage _msg;
         private Player _player;
 
-        public WeaponThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
+        public WeaponThrowEvent(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
             this._msg = msg;
             this._w = thrownWeapon;
