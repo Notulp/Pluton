@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\ConsumeFuelEvent.cs" />
+    <Compile Include="Events\InventoryModEvent.cs" />
     <Compile Include="Events\ItemPickupEvent.cs" />
     <Compile Include="Events\ItemRepairEvent.cs" />
     <Compile Include="Events\RocketShootEvent.cs" />
