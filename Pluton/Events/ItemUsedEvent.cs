@@ -2,12 +2,12 @@
 
 namespace Pluton.Events
 {
-    public class UseItemEvent : CountedInstance
+    public class ItemUsedEvent : CountedInstance
     {
         private InvItem _item;
         private int _amount;
 
-        public UseItemEvent(Item item, int amountToConsume)
+        public ItemUsedEvent(Item item, int amountToConsume)
         {
             this._item = new InvItem(item);
             this._amount = amountToConsume;

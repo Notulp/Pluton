@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -325,11 +324,11 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ItemConsumed()
+        private static void ItemUsed()
         {
             TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
             MethodDefinition UseItem = Item.GetMethod("UseItem");
-            MethodDefinition method = hooksClass.GetMethod("UseItem");
+            MethodDefinition method = hooksClass.GetMethod("ItemUsed");
             CloneMethod(UseItem);
 
             ILProcessor iLProcessor = UseItem.Body.GetILProcessor();
@@ -484,6 +483,19 @@ namespace Pluton.Patcher
             ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void PlayerSyringeSelf()
+        {
+            TypeDefinition SyringeWeapon = rustAssembly.MainModule.GetType("SyringeWeapon");
+            MethodDefinition InjectedSelf = SyringeWeapon.GetMethod("InjectedSelf");
+            MethodDefinition method = hooksClass.GetMethod("PlayerSyringeSelf");
+
+            int Position = InjectedSelf.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = InjectedSelf.Body.GetILProcessor();
+            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -575,7 +587,7 @@ namespace Pluton.Patcher
             DoorUsePatch();
 
             ItemPickup();
-            ItemConsumed();
+            ItemUsed();
             ItemRepaired();
 
             FieldsUpdate();
@@ -592,6 +604,7 @@ namespace Pluton.Patcher
             PlayerLoaded();
             PlayerWounded();
             PlayerAssisted();
+            PlayerSyringeSelf();
 
             NPCDiedPatch();
 

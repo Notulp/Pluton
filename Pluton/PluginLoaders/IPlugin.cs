@@ -61,13 +61,13 @@ namespace Pluton
 
         void OnShooting(ShootEvent se);
 
-        void OnUseItem(UseItemEvent uie);
+        void OnItemUsed(ItemUsedEvent uie);
 
         void OnRocketShooting(RocketShootEvent rse);
 
         void OnMining(MiningQuarry mq);
 
-        void OnWeaponThrow(WeaponThrow wt);
+        void OnWeaponThrow(WeaponThrowEvent wte);
 
         void OnItemPickup(ItemPickupEvent ipe);
 
@@ -90,6 +90,8 @@ namespace Pluton
         void OnServerShutdown(string s);
 
         void OnItemRepaired(ItemRepairEvent ire);
+
+        void OnPlayerSyringeSelf(SyringeUseEvent sue);
 
         void OnTimerCB(TimedEvent evt);
     }
