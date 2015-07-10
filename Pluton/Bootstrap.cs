@@ -121,11 +121,6 @@ namespace Pluton
                 _savetimer.Stop();
             }
 
-            private void _adstimer_Elapsed(object sender, ElapsedEventArgs e)
-            {
-                Hooks.Advertise();
-            }
-
             private void _savetimer_Elapsed(object sender, ElapsedEventArgs e)
             {
                 Bootstrap.SaveAll();
