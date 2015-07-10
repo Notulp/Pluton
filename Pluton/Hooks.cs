@@ -430,12 +430,10 @@ namespace Pluton
                             Debug.Log("BaseProtection Scaling for entity :" + combatEnt.name);
                         }
                     }
-                } else {
-                    if (ConVar.Global.developer > 1) {
-                        Debug.Log("SMC scaling damage for entity :" + combatEnt.name);
-                    }
                 }
-
+                else if (ConVar.Global.developer > 1) {
+                    Debug.Log("SMC scaling damage for entity :" + combatEnt.name);
+                }
                 HurtEvent he;
                 if (player != null) {
                     Player p = Server.GetPlayer(player);
@@ -494,21 +492,42 @@ namespace Pluton
                         60, Color.white, info.HitPositionWorld, text3
                     });
                 }
-
+                if (combatEnt.skeletonProperties) {
+                    combatEnt.skeletonProperties.ScaleDamage(info);
+                }
+                if (info.PointStart != Vector3.zero) {
+                    DirectionProperties[] directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
+                    for (int i = 0; i < directionProperties.Length; i++) {
+                        if (!(directionProperties[i].extraProtection == null)) {
+                            if (directionProperties[i].IsPointWithinRadius(combatEnt.transform, info.PointStart)) {
+                                directionProperties[i].extraProtection.Scale(info.damageTypes);
+                            }
+                        }
+                    }
+                }
+                combatEnt.CallMethod("DebugHurt", info);
                 combatEnt.health -= info.damageTypes.Total();
+                combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 if (ConVar.Global.developer > 1) {
-                    Debug.Log("[Combat]".PadRight(10) +
-                    combatEnt.gameObject.name + " hurt " +
-                    info.damageTypes.GetMajorityDamageType() + "/" +
-                    info.damageTypes.Total() + " - " +
-                    combatEnt.health.ToString("0") + " health left"
-                    );
+                    Debug.Log(string.Concat(new object[]
+		            {
+			            "[Combat]".PadRight(10),
+			            combatEnt.gameObject.name,
+			            " hurt ",
+			            info.damageTypes.GetMajorityDamageType(),
+			            "/",
+			            info.damageTypes.Total(),
+			            " - ",
+			            combatEnt.health.ToString("0"),
+			            " health left"
+		            }));
                 }
                 combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
-                if (combatEnt.health <= 0) {
+                combatEnt.lastAttacker = info.Initiator;
+                combatEnt.SetFieldValue("_lastAttackedTime", UnityEngine.Time.time);
+                if (combatEnt.health <= 0f) {
                     combatEnt.Die(info);
                 }
-
             } catch (Exception ex) {
                 Logger.LogError("[Hooks] Error in CombatEntityHurt hook.");
                 Logger.LogException(ex);
@@ -568,7 +587,7 @@ namespace Pluton
                 GameObject gameObject = GameManager.server.CreatePrefab(construction.fullName, default(Vector3), default(Quaternion), true);
                 BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
 
-                bool flag = Construction.UpdatePlacement(gameObject.transform, construction, target);
+                bool flag = construction.UpdatePlacement(gameObject.transform, construction, target);
                 if (bNeedsValidPlacement && !flag) {
                     UnityEngine.Object.Destroy(gameObject);
                     return null;
