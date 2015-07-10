@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Timers;
 using UnityEngine;
@@ -54,12 +54,10 @@ namespace Pluton
                 timers.Dispose();
 
             var saver = Config.GetInstance().GetValue("Config", "saveInterval", "180000");
-            var broadcast = Config.GetInstance().GetValue("Config", "broadcastInterval", "600000");
-            if (saver != null && broadcast != null) {
+            if (saver != null) {
                 double save = Double.Parse(saver);
-                double ads = Double.Parse(broadcast);
 
-                timers = new ServerTimers(save, ads);
+                timers = new ServerTimers(save);
                 timers.Start();
             }
         }
@@ -98,35 +96,29 @@ namespace Pluton
         public class ServerTimers
         {
             public readonly Timer _savetimer;
-            public readonly Timer _adstimer;
 
-            public ServerTimers(double save, double ads)
+            public ServerTimers(double save)
             {
                 _savetimer = new Timer(save);
-                _adstimer = new Timer(ads);
                
                 Debug.Log("Server timers started!");
                 _savetimer.Elapsed += new ElapsedEventHandler(this._savetimer_Elapsed);
-                _adstimer.Elapsed += new ElapsedEventHandler(this._adstimer_Elapsed);
             }
 
             public void Dispose()
             {
                 Stop();
                 _savetimer.Dispose();
-                _adstimer.Dispose();
             }
 
             public void Start()
             {
                 _savetimer.Start();
-                _adstimer.Start();
             }
 
             public void Stop()
             {
                 _savetimer.Stop();
-                _adstimer.Stop();
             }
 
             private void _adstimer_Elapsed(object sender, ElapsedEventArgs e)
