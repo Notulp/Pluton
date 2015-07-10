@@ -13,8 +13,14 @@ namespace Pluton.Events
         {
             this._item = new InvItem(i);
             this._ic = ic;
-            this._enity = new Entity(ic.entityOwner);
-            this._owner = new Player(ic.playerOwner);
+            if (ic.entityOwner != null)
+            {
+                this._enity = new Entity(ic.entityOwner);
+            }
+            if (ic.playerOwner != null)
+            {
+                this._owner = new Player(ic.playerOwner);
+            }
         }
 
         public InvItem Item
