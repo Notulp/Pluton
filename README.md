@@ -1,6 +1,8 @@
 Pluton
 ======
 
+<a href='http://jenkins.pluton-team.org/job/Pluton/'><img src='http://jenkins.pluton-team.org/buildStatus/icon?job=Pluton'></a>
+
 Pluton is a mod for the active branch of the survival sandbox game Rust
 
 Get started:
