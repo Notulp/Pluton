@@ -700,6 +700,13 @@ namespace Pluton
             this.Invoke("On_PlayerSyringeSelf", sue);
         }
 
+        public IDisposable OnPlayerSyringeOtherHook;
+
+        public void OnPlayerSyringeOther(SyringeUseEvent sue)
+        {
+            this.Invoke("On_PlayerSyringeOther", sue);
+        }
+
         public IDisposable OnServerConsoleHook;
 
         public void OnServerConsole(ServerConsoleEvent ce)

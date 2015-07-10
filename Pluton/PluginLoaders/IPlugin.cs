@@ -97,6 +97,8 @@ namespace Pluton
 
         void OnPlayerSyringeSelf(SyringeUseEvent sue);
 
+        void OnPlayerSyringeOther(SyringeUseEvent sue);
+
         void OnTimerCB(TimedEvent evt);
     }
 
