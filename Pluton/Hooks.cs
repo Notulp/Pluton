@@ -505,7 +505,6 @@ namespace Pluton
                         }
                     }
                 }
-                combatEnt.CallMethod("DebugHurt", info);
                 combatEnt.health -= info.damageTypes.Total();
                 combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 if (ConVar.Global.developer > 1) {
