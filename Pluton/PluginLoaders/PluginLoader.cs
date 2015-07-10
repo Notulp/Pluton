@@ -244,6 +244,9 @@
                 case "On_PlayerSyringeSelf":
                     plugin.OnPlayerSyringeSelfHook = Hooks.OnPlayerSyringeSelf.Subscribe(p => plugin.OnPlayerSyringeSelf(p));
                     break;
+                case "On_PlayerSyringeOther":
+                    plugin.OnPlayerSyringeOtherHook = Hooks.OnPlayerSyringeOther.Subscribe(p => plugin.OnPlayerSyringeOther(p));
+                    break;
                 case "On_ItemAdded":
                     plugin.OnItemAddedHook = Hooks.OnItemAdded.Subscribe(p => plugin.OnItemAdded(p));
                     break;
@@ -400,6 +403,9 @@
                     break;
                 case "On_PlayerSyringeSelf":
                     plugin.OnPlayerSyringeSelfHook.Dispose();
+                    break;
+                case "On_PlayerSyringeOther":
+                    plugin.OnPlayerSyringeOtherHook.Dispose();
                     break;
                 case "On_ItemAdded":
                     plugin.OnItemAddedHook.Dispose();

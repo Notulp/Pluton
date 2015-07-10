@@ -98,6 +98,8 @@ namespace Pluton
 
         public static Subject<SyringeUseEvent> OnPlayerSyringeSelf = new Subject<SyringeUseEvent>();
 
+        public static Subject<SyringeUseEvent> OnPlayerSyringeOther = new Subject<SyringeUseEvent>();
+
         public static Subject<InventoryModEvent> OnItemAdded = new Subject<InventoryModEvent>();
 
         public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
@@ -326,6 +328,11 @@ namespace Pluton
         public static void PlayerSyringeSelf(SyringeWeapon sw, BaseEntity.RPCMessage msg)
         {
             OnPlayerSyringeSelf.OnNext(new SyringeUseEvent(sw, msg, true));
+        }
+
+        public static void PlayerSyringeOther(SyringeWeapon sw, BaseEntity.RPCMessage msg)
+        {
+            OnPlayerSyringeOther.OnNext(new SyringeUseEvent(sw, msg, false));
         }
 
         public static void ItemAdded(ItemContainer ic, Item i)
