@@ -105,6 +105,5 @@ namespace Pluton
             PluginLoader.GetInstance().OnPluginLoaded(this);
         }
     }
-    }
 }
 
