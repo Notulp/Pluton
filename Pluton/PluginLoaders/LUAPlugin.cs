@@ -77,7 +77,7 @@ namespace Pluton
         {
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             script = new Script();
-            script.Globals.Set("Util", UserData.Create(Util.GetInstance()));
+            script.Globals.Set("Util", UserData.Create(Util.GetUtil()));
             script.Globals.Set("Plugin", UserData.Create(this));
             script.Globals.Set("Server", UserData.Create(Server.GetInstance()));
             script.Globals.Set("DataStore", UserData.Create(DataStore.GetInstance()));
@@ -86,15 +86,15 @@ namespace Pluton
             script.Globals.Set("ServerConsoleCommands", UserData.Create(consoleCommands));
             script.Globals.Set("Web", UserData.Create(Web.GetInstance()));
             script.Globals.Set("World", UserData.Create(World.GetInstance()));
-            foreach (DynValue v in script.Globals.Keys)
-            {
-                Globals.Add(v.ToString().Replace('"'.ToString(), ""));
-            }
-            Tables = script.Globals;
             try
             {
                 script.DoString(code);
                 State = PluginState.Loaded;
+                foreach (DynValue v in script.Globals.Keys)
+                {
+                    Globals.Add(v.ToString().Replace('"'.ToString(), ""));
+                }
+                Tables = script.Globals;
             }
             catch (Exception ex)
             {
@@ -104,6 +104,7 @@ namespace Pluton
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
         }
+    }
     }
 }
 
