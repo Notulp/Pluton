@@ -75,11 +75,19 @@
             //Instance.LoadStructures();
             //Instance.ReloadBlueprints();
             Instance.LoadOfflinePlayers();
+            Instance.CheckPluginsFolder();
         }
 
         public bool CheckDependencies()
         {
             return true;
+        }
+
+        public void CheckPluginsFolder()
+        {
+            string path = Util.GetPluginsFolder();
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
         }
 
         [Obsolete("Server.GetServer() is obsolete, use Server.GetInstance() instead.", false)]

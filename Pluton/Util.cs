@@ -200,6 +200,11 @@
             return Path.Combine(GetPublicFolder(), "LoadOuts");
         }
 
+        public static string GetPluginsFolder()
+        {
+            return Path.Combine(GetPublicFolder(), "Plugins");
+        }
+
         public static string GetPublicFolder()
         {
             return Path.Combine(GetIdentityFolder(), "Pluton");
