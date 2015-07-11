@@ -707,6 +707,13 @@ namespace Pluton
             this.Invoke("On_PlayerSyringeOther", sue);
         }
 
+        public IDisposable OnPlayerClothingChangedHook;
+
+        public void OnPlayerClothingChanged(PlayerClothingEvent pce)
+        {
+            this.Invoke("On_PlayerClothingChanged", pce);
+        }
+
         public IDisposable OnServerConsoleHook;
 
         public void OnServerConsole(ServerConsoleEvent ce)

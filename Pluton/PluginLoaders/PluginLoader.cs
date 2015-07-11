@@ -247,6 +247,9 @@
                 case "On_PlayerSyringeOther":
                     plugin.OnPlayerSyringeOtherHook = Hooks.OnPlayerSyringeOther.Subscribe(p => plugin.OnPlayerSyringeOther(p));
                     break;
+                case "On_PlayerClothingChanged":
+                    plugin.OnPlayerClothingChangedHook = Hooks.OnPlayerClothingChanged.Subscribe(p => plugin.OnPlayerClothingChanged(p));
+                    break;
                 case "On_ItemAdded":
                     plugin.OnItemAddedHook = Hooks.OnItemAdded.Subscribe(p => plugin.OnItemAdded(p));
                     break;
@@ -406,6 +409,9 @@
                     break;
                 case "On_PlayerSyringeOther":
                     plugin.OnPlayerSyringeOtherHook.Dispose();
+                    break;
+                case "On_On_PlayerClothingChanged":
+                    plugin.OnPlayerClothingChangedHook.Dispose();
                     break;
                 case "On_ItemAdded":
                     plugin.OnItemAddedHook.Dispose();
