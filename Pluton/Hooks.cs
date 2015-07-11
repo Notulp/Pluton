@@ -679,11 +679,6 @@ namespace Pluton
                 Server.GetInstance().Players.Add(player.userID, p);
 
             OnPlayerConnected.OnNext(p);
-            if (Config.GetInstance().GetBoolValue("Config", "welcomeMessage", true)) {
-                p.Message("Welcome " + p.Name + "!");
-                p.Message(String.Format("This server is powered by Pluton[v{0}]!", Bootstrap.Version));
-                p.Message("Visit pluton-team.org for more information or to report bugs!");
-            }
         }
 
         // BasePlayer.OnDisconnected()
