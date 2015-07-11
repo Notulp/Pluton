@@ -42,6 +42,9 @@ namespace Pluton
 
             ConfigFile.AddSetting("javascript", "enabled", "true");
             ConfigFile.AddSetting("javascript", "checkHash", "false");
+            
+            ConfigFile.AddSetting("lua", "enabled", "true");
+            ConfigFile.AddSetting("lua", "checkHash", "false");
         }
 
         public string GetValue(string Section, string Setting)
