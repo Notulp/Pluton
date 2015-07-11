@@ -99,6 +99,8 @@ namespace Pluton
 
         void OnPlayerSyringeOther(SyringeUseEvent sue);
 
+        void OnPlayerClothingChanged(PlayerClothingEvent pce);
+
         void OnTimerCB(TimedEvent evt);
     }
 

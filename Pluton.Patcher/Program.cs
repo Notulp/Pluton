@@ -509,6 +509,19 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(InjectedOther.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void PlayerClothingChanged()
+        {
+            TypeDefinition PlayerInventory = rustAssembly.MainModule.GetType("PlayerInventory");
+            MethodDefinition OnClothingChanged = PlayerInventory.GetMethod("OnClothingChanged");
+            MethodDefinition method = hooksClass.GetMethod("PlayerClothingChanged");
+
+            int Position = OnClothingChanged.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = OnClothingChanged.Body.GetILProcessor();
+            iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void InventoryModificationPatch()
         {
             TypeDefinition ItemContainer = rustAssembly.MainModule.GetType("ItemContainer");
@@ -643,6 +656,7 @@ namespace Pluton.Patcher
             PlayerAssisted();
             PlayerSyringeSelf();
             PlayerSyringeOther();
+            PlayerClothingChanged();
 
             InventoryModificationPatch();
 

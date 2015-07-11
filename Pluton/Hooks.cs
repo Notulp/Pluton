@@ -104,6 +104,8 @@ namespace Pluton
 
         public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
 
+        public static Subject<PlayerClothingEvent> OnPlayerClothingChanged = new Subject<PlayerClothingEvent>();
+
         #endregion
 
 
@@ -343,6 +345,11 @@ namespace Pluton
         public static void ItemRemoved(ItemContainer ic, Item i)
         {
             OnItemRemoved.OnNext(new InventoryModEvent(ic, i));
+        }
+
+        public static void PlayerClothingChanged(PlayerInventory pi, Item i)
+        {
+            OnPlayerClothingChanged.OnNext(new PlayerClothingEvent(pi, i));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
