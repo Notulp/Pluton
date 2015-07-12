@@ -113,6 +113,7 @@ namespace Pluton
         {
             Name = name;
             RootDir = rootdir;
+            Globals = new List<string>();
 
             Timers = new Dictionary<string, TimedEvent>();
             ParallelTimers = new List<TimedEvent>();
