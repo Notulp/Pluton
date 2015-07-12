@@ -95,14 +95,21 @@ namespace Pluton.Patcher
         private static void BuildingBlockDemolishedPatch()
         {
             TypeDefinition BuildingBlock = rustAssembly.MainModule.GetType("BuildingBlock");
+            MethodDefinition DoDemolish = BuildingBlock.GetMethod("DoDemolish");
             MethodDefinition DoImmediateDemolish = BuildingBlock.GetMethod("DoImmediateDemolish");
             MethodDefinition method = hooksClass.GetMethod("BuildingPartDemolished");
 
+            CloneMethod(DoDemolish);
+            ILProcessor ilProcessor = DoDemolish.Body.GetILProcessor();
+            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+
             CloneMethod(DoImmediateDemolish);
-            ILProcessor ilProcessor = DoImmediateDemolish.Body.GetILProcessor();
-            ilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            ilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
-            ilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            ILProcessor iilProcessor = DoImmediateDemolish.Body.GetILProcessor();
+            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
         }
 
         private static void CraftingStartPatch()
