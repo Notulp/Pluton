@@ -95,9 +95,9 @@ namespace Pluton
                 Class = Engine.Operations.Invoke(Scope.GetVariable(Name));
                 Globals = Engine.Operations.GetMemberNames(Class);
 
-                object author = Scope.GetVariable<string>("__author__");
-                object about = Scope.GetVariable<string>("__about__");
-                object version = Scope.GetVariable<string>("__version__");
+                object author = GetGlobalObject("__author__");
+                object about = GetGlobalObject("__about__");
+                object version = GetGlobalObject("__version__");
                 Author = author == null ? "" : author.ToString();
                 About = about == null ? "" : about.ToString();
                 Version = version == null ? "" : version.ToString();
