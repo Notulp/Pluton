@@ -347,6 +347,8 @@ namespace Pluton
                 if (path == null)
                     return (IniParser)null;
 
+                if (IniExists(path)) return GetIni(path);
+
                 File.WriteAllText(path, "");
                 return new IniParser(path);
             } catch (Exception ex) {
