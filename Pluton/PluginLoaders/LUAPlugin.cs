@@ -103,7 +103,7 @@ namespace Pluton
                 State = PluginState.Loaded;
                 foreach (DynValue v in script.Globals.Keys)
                 {
-                    Globals.Add(v.ToString());
+                    Globals.Add(v.ToString().Replace("\"", ""));
                 }
                 Tables = script.Globals;
             }
