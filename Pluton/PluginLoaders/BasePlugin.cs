@@ -12,6 +12,21 @@ namespace Pluton
     public class BasePlugin : CountedInstance, IPlugin
     {
         /// <summary>
+        /// The author.
+        /// </summary>
+        public string Author;
+
+        /// <summary>
+        /// The about.
+        /// </summary>
+        public string About;
+
+        /// <summary>
+        /// The version.
+        /// </summary>
+        public string Version;
+
+        /// <summary>
         /// Makes pluginloader ignore this plugin at 'pluton.reload'.
         /// </summary>
         public bool DontReload = false;
@@ -98,6 +113,7 @@ namespace Pluton
         {
             Name = name;
             RootDir = rootdir;
+            Globals = new List<string>();
 
             Timers = new Dictionary<string, TimedEvent>();
             ParallelTimers = new List<TimedEvent>();

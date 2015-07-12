@@ -84,6 +84,14 @@ namespace Pluton
                                        select ((FunctionDeclarationStatement)statement).Name).ToList<string>();
 
                 Engine.Run(Program);
+
+                object author = GetGlobalObject("Author");
+                object about = GetGlobalObject("About");
+                object version = GetGlobalObject("Version");
+                Author = author == null ? "" : author.ToString();
+                About = about == null ? "" : about.ToString();
+                Version = version == null ? "" : version.ToString();
+
                 State = PluginState.Loaded;
             } catch (Exception ex) {
                 Logger.LogException(ex);
@@ -91,6 +99,11 @@ namespace Pluton
             }
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
+        }
+
+        public object GetGlobalObject(string identifier)
+        {
+            return Engine.Run(String.Format("return {0};", identifier));
         }
 
         public delegate Jint.Native.JsInstance importit(string t);

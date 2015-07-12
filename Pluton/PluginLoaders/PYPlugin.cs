@@ -94,6 +94,14 @@ namespace Pluton
                 Engine.Execute(code, Scope);
                 Class = Engine.Operations.Invoke(Scope.GetVariable(Name));
                 Globals = Engine.Operations.GetMemberNames(Class);
+
+                object author = Scope.GetVariable<string>("__author__");
+                object about = Scope.GetVariable<string>("__about__");
+                object version = Scope.GetVariable<string>("__version__");
+                Author = author == null ? "" : author.ToString();
+                About = about == null ? "" : about.ToString();
+                Version = version == null ? "" : version.ToString();
+
                 State = PluginState.Loaded;
             } catch (Exception ex) {
                 Logger.LogException(ex);
@@ -101,6 +109,16 @@ namespace Pluton
             }
 
             PluginLoader.GetInstance().OnPluginLoaded(this);
+        }
+
+        public object GetGlobalObject(string identifier)
+        {
+            try {
+                object obj = Scope.GetVariable(identifier);
+                return obj;
+            } catch {
+                return null;
+            }
         }
     }
 }
