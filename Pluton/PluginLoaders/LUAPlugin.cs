@@ -55,7 +55,7 @@ namespace Pluton
 
                     using (new Stopper(Name, func))
                     {
-                        result = script.Call(func, args);
+                        result = script.Call(script.Globals[func], args);
                     }
                     return result;
                 }
@@ -73,26 +73,32 @@ namespace Pluton
             }
         }
 
+        public override string FormatException(Exception ex)
+        {
+            return base.FormatException(ex) +
+                (ex is ScriptRuntimeException ? Environment.NewLine + (ex as ScriptRuntimeException).DecoratedMessage : "");
+        }
+
         public override void Load(string code = "")
         {
             try
             {
                 UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
                 script = new Script();
-                script.Globals.Set("Util", UserData.Create(Util.GetInstance()));
-                script.Globals.Set("Plugin", UserData.Create(this));
-                script.Globals.Set("Server", UserData.Create(Server.GetInstance()));
-                script.Globals.Set("DataStore", UserData.Create(DataStore.GetInstance()));
-                script.Globals.Set("Commands", UserData.Create(chatCommands));
-                script.Globals.Set("GlobalData", UserData.Create(GlobalData));
-                script.Globals.Set("ServerConsoleCommands", UserData.Create(consoleCommands));
-                script.Globals.Set("Web", UserData.Create(Web.GetInstance()));
-                script.Globals.Set("World", UserData.Create(World.GetInstance()));
+                script.Globals["Plugin"] = this;
+                script.Globals["Util"] = Util.GetInstance();
+                script.Globals["Server"] = Server.GetInstance();
+                script.Globals["DataStore"] = DataStore.GetInstance();
+                script.Globals["Commands"] = chatCommands;
+                script.Globals["GlobalData"] = GlobalData;
+                script.Globals["ServerConsoleCommands"] = consoleCommands;
+                script.Globals["Web"] = Web.GetInstance();
+                script.Globals["World"] = World.GetInstance();
                 script.DoString(code);
                 State = PluginState.Loaded;
                 foreach (DynValue v in script.Globals.Keys)
                 {
-                    Globals.Add(v.ToString().Replace('"'.ToString(), ""));
+                    Globals.Add(v.ToString().Replace("\"", ""));
                 }
                 Tables = script.Globals;
             }
