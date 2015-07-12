@@ -211,6 +211,9 @@
                 case "On_ServerInit":
                     plugin.OnServerInitHook = Hooks.OnServerInit.Subscribe(s => plugin.OnServerInit(s));
                     break;
+                case "On_ServerSaved":
+                    plugin.OnServerSavedHook = Hooks.OnServerSaved.Subscribe(s => plugin.OnServerSaved(s));
+                    break;
                 case "On_ServerShutdown":
                     plugin.OnServerShutdownHook = Hooks.OnServerShutdown.Subscribe(s => plugin.OnServerShutdown(s));
                     break;
@@ -249,6 +252,12 @@
                     break;
                 case "On_PlayerClothingChanged":
                     plugin.OnPlayerClothingChangedHook = Hooks.OnPlayerClothingChanged.Subscribe(p => plugin.OnPlayerClothingChanged(p));
+                    break;
+                case "On_BuildingPartDestroyed":
+                    plugin.OnBuildingPartDestroyedHook = Hooks.OnBuildingPartDestroyed.Subscribe(p => plugin.OnBuildingPartDestroyed(p));
+                    break;
+                case "On_BuildingPartDemolished":
+                    plugin.OnBuildingPartDemolishedHook = Hooks.OnBuildingPartDemolished.Subscribe(p => plugin.OnBuildingPartDemolished(p));
                     break;
                 case "On_ItemAdded":
                     plugin.OnItemAddedHook = Hooks.OnItemAdded.Subscribe(p => plugin.OnItemAdded(p));
@@ -374,6 +383,9 @@
                 case "On_ServerInit":
                     plugin.OnServerInitHook.Dispose();
                     break;
+                case "On_ServerSaved":
+                    plugin.OnServerSavedHook.Dispose();
+                    break;
                 case "On_ServerShutdown":
                     plugin.OnServerShutdownHook.Dispose();
                     break;
@@ -412,6 +424,12 @@
                     break;
                 case "On_On_PlayerClothingChanged":
                     plugin.OnPlayerClothingChangedHook.Dispose();
+                    break;
+                case "On_BuildingPartDestroyed":
+                    plugin.OnBuildingPartDestroyedHook.Dispose();
+                    break;
+                case "On_BuildingPartDemolished":
+                    plugin.OnBuildingPartDemolishedHook.Dispose();
                     break;
                 case "On_ItemAdded":
                     plugin.OnItemAddedHook.Dispose();

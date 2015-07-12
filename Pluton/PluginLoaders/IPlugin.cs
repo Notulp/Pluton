@@ -91,6 +91,8 @@ namespace Pluton
 
         void OnServerInit(string s);
 
+        void OnServerSaved(string s);
+
         void OnServerShutdown(string s);
 
         void OnItemRepaired(ItemRepairEvent ire);
@@ -100,6 +102,10 @@ namespace Pluton
         void OnPlayerSyringeOther(SyringeUseEvent sue);
 
         void OnPlayerClothingChanged(PlayerClothingEvent pce);
+
+        void OnBuildingPartDestroyed(BuildingPartDestroyedEvent bpde);
+
+        void OnBuildingPartDemolished(BuildingPartDemolishedEvent bpde);
 
         void OnTimerCB(TimedEvent evt);
     }

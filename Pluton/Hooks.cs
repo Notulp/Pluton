@@ -66,6 +66,8 @@ namespace Pluton
 
         public static Subject<string> OnServerInit = new Subject<string>();
 
+        public static Subject<string> OnServerSaved = new Subject<string>();
+
         public static Subject<string> OnServerShutdown = new Subject<string>();
 
         public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
@@ -105,6 +107,10 @@ namespace Pluton
         public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
 
         public static Subject<PlayerClothingEvent> OnPlayerClothingChanged = new Subject<PlayerClothingEvent>();
+
+        public static Subject<BuildingPartDestroyedEvent> OnBuildingPartDestroyed = new Subject<BuildingPartDestroyedEvent>();
+
+        public static Subject<BuildingPartDemolishedEvent> OnBuildingPartDemolished = new Subject<BuildingPartDemolishedEvent>();
 
         #endregion
 
@@ -352,6 +358,11 @@ namespace Pluton
             OnPlayerClothingChanged.OnNext(new PlayerClothingEvent(pi, i));
         }
 
+        public static void BuildingPartDemolished(BuildingBlock bb, BaseEntity.RPCMessage msg)
+        {
+            OnBuildingPartDemolished.OnNext(new BuildingPartDemolishedEvent(bb, msg.player));
+        }
+
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {
@@ -466,6 +477,11 @@ namespace Pluton
                 combatEnt.lastAttacker = info.Initiator;
                 if (combatEnt.health <= 0f) {
                     combatEnt.Die(info);
+                    BuildingBlock bb = combatEnt.GetComponent<BuildingBlock>();
+                    if (bb != null)
+                    {
+                        OnBuildingPartDestroyed.OnNext(new BuildingPartDestroyedEvent(bb, info));
+                    }
                 }
             } catch (Exception ex) {
                 Logger.LogError("[Hooks] Error in CombatEntityHurt hook.");
@@ -835,6 +851,11 @@ namespace Pluton
 
             Server.GetInstance().Loaded = true;
             OnServerInit.OnNext("");
+        }
+
+        public static void ServerSaved()
+        {
+            OnServerSaved.OnNext("");
         }
 
         public static void ServerShutdown()

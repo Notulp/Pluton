@@ -92,6 +92,19 @@ namespace Pluton.Patcher
             }
         }
 
+        private static void BuildingBlockDemolishedPatch()
+        {
+            TypeDefinition BuildingBlock = rustAssembly.MainModule.GetType("BuildingBlock");
+            MethodDefinition DoImmediateDemolish = BuildingBlock.GetMethod("DoImmediateDemolish");
+            MethodDefinition method = hooksClass.GetMethod("BuildingPartDemolished");
+
+            CloneMethod(DoImmediateDemolish);
+            ILProcessor ilProcessor = DoImmediateDemolish.Body.GetILProcessor();
+            ilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            ilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            ilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+        }
+
         private static void CraftingStartPatch()
         {
             MethodDefinition craftit = itemCrafter.GetMethod("CraftItem");
@@ -557,6 +570,17 @@ namespace Pluton.Patcher
             il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
         }
 
+        private static void ServerSavedPatch()
+        {
+            TypeDefinition saverestore = rustAssembly.MainModule.GetType("SaveRestore");
+            MethodDefinition serverSaved = saverestore.GetMethod("DoAutomatedSave");
+            MethodDefinition onServerSaved = hooksClass.GetMethod("ServerSaved");
+
+            CloneMethod(serverSaved);
+            ILProcessor il = serverSaved.Body.GetILProcessor();
+            il.InsertBefore(serverSaved.Body.Instructions[serverSaved.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerSaved)));
+        }
+
         private static void ServerShutdownPatch()
         {
             TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
@@ -628,6 +652,7 @@ namespace Pluton.Patcher
 
             ChatPatch();
             ClientAuthPatch();
+            BuildingBlockDemolishedPatch();
             CombatEntityHurtPatch();
             CraftingStartPatch();
             ConsumeFuel();
@@ -666,6 +691,7 @@ namespace Pluton.Patcher
             RocketShootEvent();
 
             ServerShutdownPatch();
+            ServerSavedPatch();
             ServerInitPatch();
             SetModdedPatch();
 

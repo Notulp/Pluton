@@ -59,6 +59,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\BuildingPartDemolishedEvent.cs" />
+    <Compile Include="Events\BuildingPartDestroyedEvent.cs" />
     <Compile Include="Events\ConsumeFuelEvent.cs" />
     <Compile Include="Events\InventoryModEvent.cs" />
     <Compile Include="Events\ItemPickupEvent.cs" />
