@@ -72,6 +72,7 @@ namespace Pluton
             DataStore.GetInstance().Load();
             Server.GetInstance();
 
+            LuaPluginLoader.GetInstance();
             CSharpPluginLoader.GetInstance();
             CSScriptPluginLoader.GetInstance();
             JSPluginLoader.GetInstance();

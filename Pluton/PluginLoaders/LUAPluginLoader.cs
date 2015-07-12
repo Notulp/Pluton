@@ -139,6 +139,10 @@ namespace Pluton
 
         public void Initialize()
         {
+            ReflectionExtensions.SetFieldValueValue(typeof(MoonSharp.Interpreter.Platforms.PlatformAutoDetector), "m_AutoDetectionsDone", true);
+            ReflectionExtensions.SetFieldValueValue(typeof(MoonSharp.Interpreter.Platforms.PlatformAutoDetector), "<IsRunningOnUnity>k__BackingField", true);
+            ReflectionExtensions.SetFieldValueValue(typeof(MoonSharp.Interpreter.Platforms.PlatformAutoDetector), "<IsRunningOnMono>k__BackingField", true);
+            ReflectionExtensions.SetFieldValueValue(typeof(MoonSharp.Interpreter.Platforms.PlatformAutoDetector), "<IsRunningOnClr4>k__BackingField", true);
             PluginWatcher.GetInstance().AddWatcher(Type, Extension);
             PluginLoader.GetInstance().PluginLoaders.Add(Type, this);
             LoadPlugins();
