@@ -8,6 +8,45 @@ namespace Pluton
     public class CSharpPlugin
     {
         /// <summary>
+        /// Gets or sets the author.
+        /// </summary>
+        /// <value>The author.</value>
+        public string Author {
+            get {
+                return Plugin.Author;
+            }
+            set {
+                Plugin.Author = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the about.
+        /// </summary>
+        /// <value>The about.</value>
+        public string About {
+            get {
+                return Plugin.About;
+            }
+            set {
+                Plugin.About = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the version.
+        /// </summary>
+        /// <value>The version.</value>
+        public string Version {
+            get {
+                return Plugin.Version;
+            }
+            set {
+                Plugin.Version = value;
+            }
+        }
+
+        /// <summary>
         /// The commands.
         /// </summary>
         public ChatCommands Commands;

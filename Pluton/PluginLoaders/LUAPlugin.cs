@@ -95,10 +95,15 @@ namespace Pluton
                 script.Globals["Web"] = Web.GetInstance();
                 script.Globals["World"] = World.GetInstance();
                 script.DoString(code);
+
+                Author = script.Globals.Get("Author").String;
+                About = script.Globals.Get("About").String;
+                Version = script.Globals.Get("Version").String;
+
                 State = PluginState.Loaded;
                 foreach (DynValue v in script.Globals.Keys)
                 {
-                    Globals.Add(v.ToString().Replace("\"", ""));
+                    Globals.Add(v.ToString());
                 }
                 Tables = script.Globals;
             }
