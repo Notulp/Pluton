@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
@@ -9,7 +8,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("Pluton.Patcher")]
-[assembly: AssemblyCopyright ("Pluton team")]
+[assembly: AssemblyCopyright ("Pluton Team")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

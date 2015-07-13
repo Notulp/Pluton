@@ -7,19 +7,19 @@ namespace Pluton.Patcher
 {
     class MainClass
     {
-        private static AssemblyDefinition plutonAssembly;
-        private static AssemblyDefinition rustAssembly;
-        private static TypeDefinition bNPC;
-        private static TypeDefinition bPlayer;
-        private static TypeDefinition codeLock;
-        private static TypeDefinition hooksClass;
-        private static TypeDefinition itemCrafter;
-        private static TypeDefinition pLoot;
-        private static string version = "1.0.0.43";
+        static AssemblyDefinition plutonAssembly;
+        static AssemblyDefinition rustAssembly;
+        static TypeDefinition bNPC;
+        static TypeDefinition bPlayer;
+        static TypeDefinition codeLock;
+        static TypeDefinition hooksClass;
+        static TypeDefinition itemCrafter;
+        static TypeDefinition pLoot;
+        static readonly string version = "1.0.0.43";
 
         #region patches
 
-        private static void BootstrapAttachPatch()
+        static void BootstrapAttachPatch()
         {
             // Call our AttachBootstrap from their, Bootstrap.Start()
             TypeDefinition plutonBootstrap = plutonAssembly.MainModule.GetType("Pluton.Bootstrap");
@@ -30,7 +30,7 @@ namespace Pluton.Patcher
             init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 3], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
-        private static void ChatPatch()
+        static void ChatPatch()
         {
             TypeDefinition chat = rustAssembly.MainModule.GetType("ConVar.Chat");
             MethodDefinition say = chat.GetMethod("say");
@@ -43,7 +43,7 @@ namespace Pluton.Patcher
             il.InsertBefore(say.Body.Instructions[2], Instruction.Create(OpCodes.Ret));
         }
 
-        private static void ClientAuthPatch()
+        static void ClientAuthPatch()
         {
             TypeDefinition connAuth = rustAssembly.MainModule.GetType("ConnectionAuth");
             MethodDefinition cAuth = hooksClass.GetMethod("ClientAuth");
@@ -57,7 +57,7 @@ namespace Pluton.Patcher
             approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void ClientConsoleCommandPatch()
+        static void ClientConsoleCommandPatch()
         {
             TypeDefinition consoleSystem = rustAssembly.MainModule.GetType("ConsoleSystem");
             MethodDefinition onClientCmd = consoleSystem.GetMethod("OnClientCommand");
@@ -73,7 +73,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(onClientCmd.Body.Instructions[12], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));
         }
 
-        private static void CombatEntityHurtPatch()
+        static void CombatEntityHurtPatch()
         {
             TypeDefinition combatEnt = rustAssembly.MainModule.GetType("BaseCombatEntity");
             MethodDefinition hurtHook = hooksClass.GetMethod("CombatEntityHurt");
@@ -92,7 +92,7 @@ namespace Pluton.Patcher
             }
         }
 
-        private static void CraftingStartPatch()
+        static void CraftingStartPatch()
         {
             MethodDefinition craftit = itemCrafter.GetMethod("CraftItem");
             MethodDefinition craftHook = hooksClass.GetMethod("PlayerStartCrafting");
@@ -110,7 +110,7 @@ namespace Pluton.Patcher
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void DoPlacementPatch()
+        static void DoPlacementPatch()
         {
             TypeDefinition construction = rustAssembly.MainModule.GetType("Construction");
             MethodDefinition createConstruction = construction.GetMethod("CreateConstruction");
@@ -127,7 +127,7 @@ namespace Pluton.Patcher
             iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void DoorCodePatch()
+        static void DoorCodePatch()
         {
             MethodDefinition codeUnlock = codeLock.GetMethod("UnlockWithCode");
             MethodDefinition doorCode = hooksClass.GetMethod("DoorCode");
@@ -139,7 +139,7 @@ namespace Pluton.Patcher
             codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void DoorUsePatch()
+        static void DoorUsePatch()
         {
             TypeDefinition door = rustAssembly.MainModule.GetType("Door");
             MethodDefinition close = door.GetMethod("RPC_CloseDoor");
@@ -169,7 +169,7 @@ namespace Pluton.Patcher
             iLO.InsertAfter(open.Body.Instructions[8], Instruction.Create(OpCodes.Ret));
         }
 
-        private static void GatherPatch()
+        static void GatherPatch()
         {
             TypeDefinition bRes = rustAssembly.MainModule.GetType("BaseResource");
             MethodDefinition gather = bRes.GetMethod("OnAttacked");
@@ -192,7 +192,7 @@ namespace Pluton.Patcher
             gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void NPCDiedPatch()
+        static void NPCDiedPatch()
         {
             MethodDefinition npcdie = bNPC.GetMethod("OnKilled");
             MethodDefinition npcDied = hooksClass.GetMethod("NPCDied");
@@ -204,7 +204,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(npcdie.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(npcDied)));
         }
 
-        private static void PlayerConnectedPatch()
+        static void PlayerConnectedPatch()
         {
             MethodDefinition bpInit = bPlayer.GetMethod("PlayerInit");
             MethodDefinition playerConnected = hooksClass.GetMethod("PlayerConnected");
@@ -215,7 +215,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
         }
 
-        private static void PlayerDiedPatch()
+        static void PlayerDiedPatch()
         {
             MethodDefinition die = bPlayer.GetMethod("Die");
             MethodDefinition playerDied = hooksClass.GetMethod("PlayerDied");
@@ -229,7 +229,7 @@ namespace Pluton.Patcher
             die.Body.Instructions[0x07] = Instruction.Create(OpCodes.Brfalse, self);
         }
 
-        private static void PlayerDisconnectedPatch()
+        static void PlayerDisconnectedPatch()
         {
             MethodDefinition bpDisconnected = bPlayer.GetMethod("OnDisconnected");
             MethodDefinition playerDisconnected = hooksClass.GetMethod("PlayerDisconnected");
@@ -240,7 +240,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDisconnected)));
         }
 
-        private static void PlayerTakeRadiationPatch()
+        static void PlayerTakeRadiationPatch()
         {
             MethodDefinition getRadiated = bPlayer.GetMethod("UpdateRadiation");
             MethodDefinition playerTakeRAD = hooksClass.GetMethod("PlayerTakeRadiation");
@@ -252,7 +252,7 @@ namespace Pluton.Patcher
             getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
-        private static void PlayerStartLootingPatch()
+        static void PlayerStartLootingPatch()
         {
             MethodDefinition plEntity = pLoot.GetMethod("StartLootingEntity");
             MethodDefinition lootEntity = hooksClass.GetMethod("StartLootingEntity");
@@ -277,7 +277,7 @@ namespace Pluton.Patcher
             iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
         }
 
-        private static void RespawnPatch()
+        static void RespawnPatch()
         {
             MethodDefinition respawn = bPlayer.GetMethod("Respawn");
             MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
@@ -293,7 +293,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertAfter(respawn.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
         }
 
-        private static void ServerConsoleCommandPatch()
+        static void ServerConsoleCommandPatch()
         {
             TypeDefinition consoleSystem = rustAssembly.MainModule.GetType("ConsoleSystem");
             foreach (var i in consoleSystem.GetNestedType("SystemRealm").GetMethods()) {
@@ -310,7 +310,7 @@ namespace Pluton.Patcher
             }
         }
 
-        private static void ShootEvent()
+        static void ShootEvent()
         {
             TypeDefinition BaseProjectile = rustAssembly.MainModule.GetType("BaseProjectile");
             MethodDefinition CLProject = BaseProjectile.GetMethod("CLProject");
@@ -324,7 +324,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ItemUsed()
+        static void ItemUsed()
         {
             TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
             MethodDefinition UseItem = Item.GetMethod("UseItem");
@@ -337,7 +337,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void Mining()
+        static void Mining()
         {
             TypeDefinition MiningQuarry = rustAssembly.MainModule.GetType("MiningQuarry");
             MethodDefinition ProcessResources = MiningQuarry.GetMethod("ProcessResources");
@@ -350,7 +350,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(ProcessResources.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void WeaponThrown()
+        static void WeaponThrown()
         {
             TypeDefinition ThrownWeapon = rustAssembly.MainModule.GetType("ThrownWeapon");
             MethodDefinition DoThrow = ThrownWeapon.GetMethod("DoThrow");
@@ -364,7 +364,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void RocketShootEvent()
+        static void RocketShootEvent()
         {
             TypeDefinition BaseLauncher = rustAssembly.MainModule.GetType("BaseLauncher");
             MethodDefinition SV_Launch = BaseLauncher.GetMethod("SV_Launch");
@@ -379,7 +379,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ConsumeFuel()
+        static void ConsumeFuel()
         {
             TypeDefinition ThrownWeapon = rustAssembly.MainModule.GetType("BaseOven");
             MethodDefinition ConsumeFuel = ThrownWeapon.GetMethod("ConsumeFuel");
@@ -393,7 +393,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ItemPickup()
+        static void ItemPickup()
         {
             TypeDefinition CollectibleEntity = rustAssembly.MainModule.GetType("CollectibleEntity");
             MethodDefinition Pickup = CollectibleEntity.GetMethod("Pickup");
@@ -410,12 +410,12 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(Pickup.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void FieldsUpdate()
+        static void FieldsUpdate()
         {
             bPlayer.GetField("buildingPrivlidges").SetPublic(true);
         }
 
-        private static void PlayerSleep()
+        static void PlayerSleep()
         {
             MethodDefinition StartSleeping = bPlayer.GetMethod("StartSleeping");
             MethodDefinition method = hooksClass.GetMethod("PlayerSleep");
@@ -426,7 +426,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(StartSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerWakeUp()
+        static void PlayerWakeUp()
         {
             MethodDefinition EndSleeping = bPlayer.GetMethod("EndSleeping");
             MethodDefinition method = hooksClass.GetMethod("PlayerWakeUp");
@@ -437,7 +437,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(EndSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerLoaded()
+        static void PlayerLoaded()
         {
             MethodDefinition EnterGame = bPlayer.GetMethod("EnterGame");
             MethodDefinition method = hooksClass.GetMethod("PlayerLoaded");
@@ -448,7 +448,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(EnterGame.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerWounded()
+        static void PlayerWounded()
         {
             MethodDefinition StartWounded = bPlayer.GetMethod("StartWounded");
             MethodDefinition method = hooksClass.GetMethod("PlayerWounded");
@@ -459,7 +459,7 @@ namespace Pluton.Patcher
             ilProcessor.InsertBefore(StartWounded.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerAssisted()
+        static void PlayerAssisted()
         {
             MethodDefinition WoundAssist = bPlayer.GetMethod("WoundAssist");
             MethodDefinition method = hooksClass.GetMethod("PlayerAssisted");
@@ -470,7 +470,7 @@ namespace Pluton.Patcher
             ilProcessor.InsertBefore(WoundAssist.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ItemRepaired()
+        static void ItemRepaired()
         {
             TypeDefinition RepairBench = rustAssembly.MainModule.GetType("RepairBench");
             MethodDefinition RepairItem = RepairBench.GetMethod("RepairItem");
@@ -483,7 +483,7 @@ namespace Pluton.Patcher
             ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerSyringeSelf()
+        static void PlayerSyringeSelf()
         {
             TypeDefinition SyringeWeapon = rustAssembly.MainModule.GetType("SyringeWeapon");
             MethodDefinition InjectedSelf = SyringeWeapon.GetMethod("InjectedSelf");
@@ -496,7 +496,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerSyringeOther()
+        static void PlayerSyringeOther()
         {
             TypeDefinition SyringeWeapon = rustAssembly.MainModule.GetType("SyringeWeapon");
             MethodDefinition InjectedOther = SyringeWeapon.GetMethod("InjectedOther");
@@ -509,7 +509,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(InjectedOther.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void PlayerClothingChanged()
+        static void PlayerClothingChanged()
         {
             TypeDefinition PlayerInventory = rustAssembly.MainModule.GetType("PlayerInventory");
             MethodDefinition OnClothingChanged = PlayerInventory.GetMethod("OnClothingChanged");
@@ -522,7 +522,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void InventoryModificationPatch()
+        static void InventoryModificationPatch()
         {
             TypeDefinition ItemContainer = rustAssembly.MainModule.GetType("ItemContainer");
             MethodDefinition Insert = ItemContainer.GetMethod("Insert");
@@ -546,7 +546,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(Remove.Body.Instructions[Position2], Instruction.Create(OpCodes.Ldarg_0));
         }
 
-        private static void ServerInitPatch()
+        static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
             MethodDefinition serverInit = servermgr.GetMethod("Initialize");
@@ -557,7 +557,7 @@ namespace Pluton.Patcher
             il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
         }
 
-        private static void ServerShutdownPatch()
+        static void ServerShutdownPatch()
         {
             TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
             MethodDefinition disable = serverMGR.GetMethod("OnDisable");
@@ -568,7 +568,7 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(disable.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(shutdown)));
         }
 
-        private static void SetModdedPatch()
+        static void SetModdedPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
             MethodDefinition servUpdate = servermgr.GetMethod("UpdateServerInformation");
@@ -582,7 +582,7 @@ namespace Pluton.Patcher
             il.InsertAfter(servUpdate.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
         }
 
-        private static void GiveItemsPatch()
+        static void GiveItemsPatch()
         {
             TypeDefinition disp = rustAssembly.MainModule.GetType("ResourceDispenser");
             //TypeDefinition entComp = rustAssembly.MainModule.GetType("EntityComponent`1");
@@ -607,9 +607,9 @@ namespace Pluton.Patcher
         #endregion
 
         // from fougerite.patcher
-        private static MethodDefinition CloneMethod(MethodDefinition orig)
+        static MethodDefinition CloneMethod(MethodDefinition orig)
         {
-            MethodDefinition definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
+            var definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
             foreach (VariableDefinition definition2 in orig.Body.Variables) {
                 definition.Body.Variables.Add(definition2);
             }
@@ -622,7 +622,7 @@ namespace Pluton.Patcher
             return definition;
         }
 
-        private static void PatchASMCSharp()
+        static void PatchASMCSharp()
         {
             BootstrapAttachPatch();
 
@@ -677,15 +677,13 @@ namespace Pluton.Patcher
 
             WeaponThrown();
 
-            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
+            var plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
             rustAssembly.MainModule.Types.Add(plutonClass);
         }
 
         public static int Main(string[] args)
         {
-            bool interactive = true;
-            if (args.Length > 0)
-                interactive = false;
+            bool interactive = true && args.Length <= 0;
             
             Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", version));
             try {
@@ -700,7 +698,7 @@ namespace Pluton.Patcher
                 return (int)ExitCode.DLL_MISSING;
             } catch (Exception ex) {
                 Console.WriteLine("An error occured while reading the assemblies :");
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex);
                 if (interactive) {
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
@@ -725,11 +723,11 @@ namespace Pluton.Patcher
                     interactive = true;
                     Console.WriteLine("An error occured while patching Assembly-CSharp :");
                     Console.WriteLine();
-                    Console.WriteLine(ex.Message.ToString());
+                    Console.WriteLine(ex.Message);
 
                     //Normal handle for the others
                     Console.WriteLine();
-                    Console.WriteLine(ex.StackTrace.ToString());
+                    Console.WriteLine(ex.StackTrace);
                     Console.WriteLine();
 
                     if (interactive) {
