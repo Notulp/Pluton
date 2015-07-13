@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ namespace Pluton
     public class BuildingPart : Entity
     {
         [NonSerialized]
-        private BuildingBlock _buildingBlock;
+        BuildingBlock _buildingBlock;
 
         SerializedVector3 position;
 
@@ -50,7 +49,7 @@ namespace Pluton
             }
             buildingBlock.transform.localRotation *= Quaternion.Euler(blockDefinition.rotationAmount);
             buildingBlock.ClientRPC(null, "UpdateConditionalModels", new object[0]);
-            buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+            buildingBlock.SendNetworkUpdate();
         }
 
         public BuildingBlock buildingBlock {
@@ -58,7 +57,7 @@ namespace Pluton
                 if (_buildingBlock == null) {
                     Vector3 v3pos = position.ToVector3();
                     _buildingBlock = (from bb in UnityEngine.Object.FindObjectsOfType<BuildingBlock>()
-                                                     where this.Prefab == bb.LookupPrefabName() &&
+                                                     where Prefab == bb.LookupPrefabName() &&
                                                          v3pos == bb.transform.position
                                                      select bb).FirstOrDefault();
                 }
@@ -76,7 +75,7 @@ namespace Pluton
             set {
                 buildingBlock.SetGrade(value);
                 buildingBlock.SetHealthToMax();
-                buildingBlock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                buildingBlock.SendNetworkUpdate();
             }
         }
 

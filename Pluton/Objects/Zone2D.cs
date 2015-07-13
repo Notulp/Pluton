@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,7 +18,7 @@ namespace Pluton
         public static float max = 1000f;
 
         public int[] Tris;
-        public int TrisCount = 0;
+        public int TrisCount;
 
         public void ResetTris()
         {
@@ -171,7 +169,7 @@ namespace Pluton
         public SerializedZone2D Serialize()
         {
             Debug.LogWarning("Serializing '" + Name + "' zone.");
-            SerializedZone2D result = new SerializedZone2D();
+            var result = new SerializedZone2D();
             result.Tris = Tris;
             result.TrisCount = TrisCount;
             result.Verts = Verts.Select(x => x.Serialize()).ToList();

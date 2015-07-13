@@ -1,7 +1,4 @@
-﻿using System;
-using UnityEngine;
-
-namespace Pluton
+﻿namespace Pluton
 {
     public class NPC : Entity
     {
@@ -16,7 +13,7 @@ namespace Pluton
         {
             var info = new HitInfo();
             info.damageTypes.Add(Rust.DamageType.Suicide, 100f);
-            info.Initiator = baseNPC as BaseEntity;
+            info.Initiator = baseNPC;
             baseNPC.Die(info);
         }
 

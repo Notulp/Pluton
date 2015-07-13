@@ -31,7 +31,7 @@ namespace Pluton
 
         public InvItem(string name)
         {
-            var item = ItemManager.CreateByItemID(GetItemID(name), 1);
+            var item = ItemManager.CreateByItemID(GetItemID(name));
             if (item == null) {
                 Logger.LogDebug(String.Format("[InvItem] Couldn't create item: {0}x{1}", 1, name));
                 _item = null;

@@ -19,12 +19,12 @@ namespace Pluton
             callback = function;
             return this;
         }
-
         public ChatCommand setCallback(string function)
         {
-            callback = new CallbackDelegate((cmd, player) => {
-                plugin.Invoke(function, new[] { (object)cmd, player });
-            });
+            callback = new CallbackDelegate((cmd, player) => plugin.Invoke(function, new[] {
+                (object)cmd,
+                player
+            }));
             return this;
         }
 
@@ -73,7 +73,7 @@ namespace Pluton
             if (String.IsNullOrEmpty(command))
                 return (ChatCommand)null;
 
-            ChatCommand c = new ChatCommand(command);
+            var c = new ChatCommand(command);
             c.plugin = plugin;
 
             return Register(c);
@@ -81,7 +81,7 @@ namespace Pluton
         
         public List<ChatCommand> RegisterWithMultipleNames(string[] commands, string callback, string usage, string description)
         {
-            List<ChatCommand> chatCommands = new List<ChatCommand>();
+            var chatCommands = new List<ChatCommand>();
             foreach (string command in commands)
             {
                 ChatCommand chatCommand = Register(command).setCallback(callback).setUsage(usage).setDescription(description);
