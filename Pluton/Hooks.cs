@@ -1,13 +1,9 @@
 using System;
 using Network;
-using ProtoBuf;
 using UnityEngine;
 using Pluton.Events;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
 
 namespace Pluton
 {
@@ -115,7 +111,7 @@ namespace Pluton
         // chat.say()
         public static void Chat(ConsoleSystem.Arg arg)
         {
-            if (arg.ArgsStr.StartsWith("\"/") && !arg.ArgsStr.StartsWith("\"/ ")) {
+            if (arg.ArgsStr.StartsWith("\"/", StringComparison.Ordinal) && !arg.ArgsStr.StartsWith("\"/ ", StringComparison.Ordinal)) {
                 Command(arg);
                 return;
             }
@@ -132,7 +128,7 @@ namespace Pluton
                     return;
                 }
 
-                ChatEvent pChat = new ChatEvent(Server.GetPlayer(basePlayer), arg);
+                var pChat = new ChatEvent(Server.GetPlayer(basePlayer), arg);
 
                 string str = arg.GetString(0, "text");
 
@@ -174,7 +170,7 @@ namespace Pluton
                     if (ConVar.Server.globalchat) {
                         ConsoleSystem.Broadcast("chat.add", basePlayer.userID, text2, 1);
                     } else {
-                        float num = 2500;
+                        const float num = 2500;
                         foreach (Connection current in Net.sv.connections) {
                             if (current.player != null) {
                                 float sqrMagnitude = (current.player.transform.position - basePlayer.transform.position).sqrMagnitude;
@@ -191,7 +187,7 @@ namespace Pluton
         // ConnectionAuth.Approve()
         public static void ClientAuth(ConnectionAuth ca, Connection connection)
         {
-            var ae = new Events.AuthEvent(connection);
+            var ae = new AuthEvent(connection);
 
             OnClientAuth.OnNext(ae);
 
@@ -206,7 +202,7 @@ namespace Pluton
         // ConsoleSystem.OnClientCommand()
         public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
         {
-            ClientConsoleEvent ce = new ClientConsoleEvent(arg, rconCmd);
+            var ce = new ClientConsoleEvent(arg, rconCmd);
             if (arg.connection != null) {
                 OnClientConsole.OnNext(ce);
 
@@ -230,7 +226,7 @@ namespace Pluton
             Player player = Server.GetPlayer(arg.Player());
             string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{ " " }, StringSplitOptions.None);
 
-            CommandEvent cmd = new CommandEvent(player, args);
+            var cmd = new CommandEvent(player, args);
 
             if (cmd.cmd == "")
                 return;
@@ -241,7 +237,7 @@ namespace Pluton
                     if (chatCmd.callback == null)
                         continue;
 
-                    CommandPermissionEvent permission = new CommandPermissionEvent(player, args, chatCmd);
+                    var permission = new CommandPermissionEvent(player, args, chatCmd);
                     OnCommandPermission.OnNext(permission);
                     if (permission.blocked) {
                         player.Message(permission.Reply);
@@ -412,7 +408,7 @@ namespace Pluton
                         float num = info.damageTypes.types[i];
                         if (num != 0) {
                             string text2 = text;
-                            text = String.Concat(new string[] {
+                            text = String.Concat(new [] {
                                 text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
                             });
                         }
@@ -437,9 +433,9 @@ namespace Pluton
                     combatEnt.skeletonProperties.ScaleDamage(info);
                 }
                 if (info.PointStart != Vector3.zero) {
-                    DirectionProperties[] directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
+                    var directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
                     for (int i = 0; i < directionProperties.Length; i++) {
-                        if (!(directionProperties[i].extraProtection == null)) {
+                        if (directionProperties[i].extraProtection != null) {
                             if (directionProperties[i].IsPointWithinRadius(combatEnt.transform, info.PointStart)) {
                                 directionProperties[i].extraProtection.Scale(info.damageTypes);
                             }
@@ -447,7 +443,7 @@ namespace Pluton
                     }
                 }
                 combatEnt.health -= info.damageTypes.Total();
-                combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                combatEnt.SendNetworkUpdate();
                 if (ConVar.Global.developer > 1) {
                     Debug.Log(string.Concat(new object[]
 		            {
@@ -478,18 +474,18 @@ namespace Pluton
             if (!doorLock.IsLocked())
                 return;
             string a = rpc.read.String();
-            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, a);
+            var dc = new DoorCodeEvent(doorLock, rpc.player, a);
             OnDoorCode.OnNext(dc);
             if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
             {
                 Effect.server.Run(doorLock.effectDenied, doorLock, 0u, Vector3.zero, Vector3.forward);
-                rpc.player.Hurt(1f, Rust.DamageType.ElectricShock, doorLock, true);
+                rpc.player.Hurt(1f, Rust.DamageType.ElectricShock, doorLock);
                 return;
             }
             Effect.server.Run(doorLock.effectUnlocked, doorLock, 0u, Vector3.zero, Vector3.forward);
             doorLock.SetFlag(BaseEntity.Flags.Locked, false);
-            doorLock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-            List<ulong> whitelist = new List<ulong>();
+            doorLock.SendNetworkUpdate();
+            List<ulong> whitelist;
             whitelist = (List<ulong>)doorLock.GetFieldValue("whitelistPlayers");
             if (!whitelist.Contains(rpc.player.userID))
             {
@@ -501,10 +497,10 @@ namespace Pluton
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
         public static void DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
         {
-            DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
+            var due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
             OnDoorUse.OnNext(due);
 
-            BaseLock baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
+            var baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
             if (baseLock != null && !due.IgnoreLock) {
                 bool TryCloseOpen = open ? !baseLock.OnTryToOpen(rpc.player) : !baseLock.OnTryToClose(rpc.player);
                 if (TryCloseOpen)
@@ -513,7 +509,7 @@ namespace Pluton
 
             door.SetFlag(BaseEntity.Flags.Open, due.Open);
             door.Invoke("UpdateLayer", 0f);
-            door.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+            door.SendNetworkUpdate();
 
             if (due.DenyReason != "")
                 rpc.player.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), due.DenyReason));
@@ -523,7 +519,7 @@ namespace Pluton
         public static BaseEntity DoPlacement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
         {
             try {
-                GameObject gameObject = GameManager.server.CreatePrefab(construction.fullName, default(Vector3), default(Quaternion), true);
+                GameObject gameObject = GameManager.server.CreatePrefab(construction.fullName);
                 BuildingBlock component = gameObject.GetComponent<BuildingBlock>();
 
                 bool flag = construction.UpdatePlacement(gameObject.transform, construction, target);
@@ -554,8 +550,8 @@ namespace Pluton
         public static void Gathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
         {
             itemAmt.amount += amount;
-            BaseEntity from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
-            GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
+            var from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
+            var ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
             OnGathering.OnNext(ge);
  
             if (ge.Amount > 0) {
@@ -566,7 +562,7 @@ namespace Pluton
                     if (itemAmt.amount < 0)
                         itemAmt.amount = 0;
  
-                    Item item = ItemManager.CreateByItemID(itemAmt.itemid, ge.Amount, false);
+                    Item item = ItemManager.CreateByItemID(itemAmt.itemid, ge.Amount);
                     if (item == null) {
                         return;
                     }
@@ -583,13 +579,13 @@ namespace Pluton
             }
 
             var npc = new NPC(bnpc);
-            OnNPCDied.OnNext(new Events.NPCDeathEvent(npc, info));
+            OnNPCDied.OnNext(new NPCDeathEvent(npc, info));
         }
 
         // ItemCrafter.CraftItem()
         public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1)
         {
-            ItemBlueprint bpcopy = new ItemBlueprint();
+            var bpcopy = new ItemBlueprint();
             bpcopy.amountToCreate = bp.amountToCreate;
             bpcopy.defaultBlueprint = bp.defaultBlueprint;
             bpcopy.ingredients = bp.ingredients;
@@ -597,9 +593,9 @@ namespace Pluton
             bpcopy.targetItem = bp.targetItem;
             bpcopy.time = bp.time / Server.GetInstance().CraftingTimeScale;
             bpcopy.userCraftable = bp.userCraftable;
-            CraftEvent ce = new CraftEvent(self, bpcopy, owner, instanceData, amount);
+            var ce = new CraftEvent(self, bpcopy, owner, instanceData, amount);
             OnPlayerStartCrafting.OnNext(ce);
-            if (!self.CanCraft(bpcopy, 1)) {
+            if (!self.CanCraft(bpcopy)) {
                 return false;
             }
             if (ce.Cancel) {
@@ -609,10 +605,10 @@ namespace Pluton
             }
  
             self.taskUID++;
-            ItemCraftTask itemCraftTask = new ItemCraftTask();
+            var itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bpcopy;
             if (!ce.FreeCraft) {
-                List<Item> list = new List<Item>();
+                var list = new List<Item>();
                 foreach (ItemAmount current in bp.ingredients) {
                     int amount2 = (int)current.amount * amount;
                     foreach (ItemContainer current2 in self.containers) {
@@ -645,23 +641,23 @@ namespace Pluton
             if (info == null) {
                 info = new HitInfo();
                 info.damageTypes.Add(player.lastDamage, Single.MaxValue);
-                info.Initiator = player as BaseEntity;
+                info.Initiator = player;
             }
 
             Player victim = Server.GetPlayer(player);
 
             if (info.Initiator != null) {
-                PlayerStats statsV = victim.Stats;
 
-                if (info.Initiator is BasePlayer) {
-                    Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
+                var basePlayer = info.Initiator as BasePlayer;
+                if (basePlayer != null) {
+                    Server.GetPlayer(basePlayer).Stats.AddKill(true, false);
                     victim.Stats.AddDeath(true, false);
                 } else if (info.Initiator is BaseNPC) {
                     victim.Stats.AddDeath(false, true);
                 }
             }
 
-            Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
+            var pde = new PlayerDeathEvent(victim, info);
             OnPlayerDied.OnNext(pde);
 
             if (!pde.dropLoot)
@@ -669,7 +665,7 @@ namespace Pluton
         }
 
 
-        public static void PlayerConnected(Network.Connection connection)
+        public static void PlayerConnected(Connection connection)
         {
             var player = connection.player as BasePlayer;
             var p = new Player(player);
@@ -691,7 +687,7 @@ namespace Pluton
                 op.Update(p);
                 Server.GetInstance().OfflinePlayers[player.userID] = op;
             } else {
-                OfflinePlayer op = new OfflinePlayer(p);
+                var op = new OfflinePlayer(p);
                 Server.GetInstance().OfflinePlayers.Add(player.userID, op);
             }
 
@@ -722,7 +718,7 @@ namespace Pluton
         public static void Respawn(BasePlayer player, bool newPos)
         {
             Player p = Server.GetPlayer(player);
-            RespawnEvent re = new RespawnEvent(p);
+            var re = new RespawnEvent(p);
             OnRespawn.OnNext(re);
 
             ++ServerPerformance.spawns;
@@ -762,7 +758,7 @@ namespace Pluton
         public static void StartLootingEntity(PlayerLoot playerLoot)
         {
             BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
-            var ele = new Events.EntityLootEvent(playerLoot, Server.GetPlayer(looter), new Entity(playerLoot.entitySource));
+            var ele = new EntityLootEvent(playerLoot, Server.GetPlayer(looter), new Entity(playerLoot.entitySource));
             OnLootingEntity.OnNext(ele);
 
             if (ele.Cancel) {
@@ -775,7 +771,7 @@ namespace Pluton
         public static void StartLootingPlayer(PlayerLoot playerLoot)
         {
             BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
-            var ple = new Events.PlayerLootEvent(playerLoot, Server.GetPlayer(looter), Server.GetPlayer(playerLoot.entitySource as BasePlayer));
+            var ple = new PlayerLootEvent(playerLoot, Server.GetPlayer(looter), Server.GetPlayer(playerLoot.entitySource as BasePlayer));
             OnLootingPlayer.OnNext(ple);
 
             if (ple.Cancel) {
@@ -788,7 +784,7 @@ namespace Pluton
         public static void StartLootingItem(PlayerLoot playerLoot)
         {
             BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
-            var ile = new Events.ItemLootEvent(playerLoot, Server.GetPlayer(looter), playerLoot.itemSource);
+            var ile = new ItemLootEvent(playerLoot, Server.GetPlayer(looter), playerLoot.itemSource);
             OnLootingItem.OnNext(ile);
 
             if (ile.Cancel) {
@@ -804,7 +800,7 @@ namespace Pluton
                 if (!Bootstrap.PlutonLoaded)
                     return;
 
-                ServerConsoleEvent ssc = new ServerConsoleEvent(arg, cmd);
+                var ssc = new ServerConsoleEvent(arg, cmd);
 
                 foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
                     ConsoleCommand[] commands = pl.Value.consoleCommands.getConsoleCommands(ssc.cmd);
@@ -839,7 +835,7 @@ namespace Pluton
 
         public static void ServerShutdown()
         {
-            Bootstrap.timers.Dispose();
+            Bootstrap.Timers.Dispose();
             OnServerShutdown.OnNext("");
 
             PluginLoader.GetInstance().UnloadPlugins();

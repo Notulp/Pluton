@@ -10,9 +10,9 @@
     public class DumpSettings
     {
         public int MaxItems = 30;
-        public bool DisplayPrivate = false;
+        public bool DisplayPrivate;
         public int MaxDepth = 3;
-        public bool UseFullClassNames = false;
+        public bool UseFullClassNames;
 
         public DumpSettings()
         {
@@ -165,7 +165,7 @@
             if (type.IsGenericParameter || type.IsPrimitive || !type.IsGenericType || type == typeof(decimal))
                 return name;
 
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             int index = name.IndexOf('`');
             if (index == -1)
                 builder.Append(name);
@@ -220,15 +220,15 @@
 
         #region Implementation details
 
-        private readonly object _object;
-        private readonly Type _type;
-        private readonly string _name;
-        private readonly int _level;
-        private readonly DumpSettings _settings;
-        private static readonly DumpSettings s_defaultSettings = new DumpSettings();
+        readonly object _object;
+        readonly Type _type;
+        readonly string _name;
+        readonly int _level;
+        readonly DumpSettings _settings;
+        static readonly DumpSettings s_defaultSettings = new DumpSettings();
 
 
-        private static void addProperty(Type type, string propertyName, bool sideEffect)
+        static void addProperty(Type type, string propertyName, bool sideEffect)
         {
             lock (s_propertyHints) {
                 Dictionary<string, bool> prop;
@@ -240,7 +240,7 @@
             }
         }
 
-        private class ReferenceComparer : IEqualityComparer<object>
+        class ReferenceComparer : IEqualityComparer<object>
         {
             bool IEqualityComparer<object>.Equals(object x, object y)
             {
@@ -249,22 +249,20 @@
 
             int IEqualityComparer<object>.GetHashCode(object obj)
             {
-                if (ReferenceEquals(obj, null))
-                    return 0;
-                return obj.GetHashCode();
+                return ReferenceEquals(obj, null) ? 0 : obj.GetHashCode();
             }
         }
 
-        private static readonly Dictionary<string, bool> s_bloatTypes = initBloatTypes();
+        static readonly Dictionary<string, bool> s_bloatTypes = initBloatTypes();
 
         // For each special store true=side effect, false=bloat
-        private static readonly Dictionary<Type, Dictionary<string, bool>> s_propertyHints = initPropertyHints();
-        private static readonly Dictionary<Type, string> s_friendlyName = initFriendlyNames();
+        static readonly Dictionary<Type, Dictionary<string, bool>> s_propertyHints = initPropertyHints();
+        static readonly Dictionary<Type, string> s_friendlyName = initFriendlyNames();
 
-        private static Dictionary<string, bool> initBloatTypes()
+        static Dictionary<string, bool> initBloatTypes()
         {
-            Dictionary<string, bool> ret = new Dictionary<string, bool>();
-            foreach (string s in new string[] {"System.DateTime",
+            var ret = new Dictionary<string, bool>();
+            foreach (string s in new [] {"System.DateTime",
                 "System.Type",
                 "System.Guid",
                 "System.Security.Principal.SecurityIdentifier",
@@ -282,9 +280,9 @@
             return ret;
         }
 
-        private static Dictionary<Type, string> initFriendlyNames()
+        static Dictionary<Type, string> initFriendlyNames()
         {
-            Dictionary<Type, string> r = new Dictionary<Type, string>();
+            var r = new Dictionary<Type, string>();
             r.Add(typeof(string), "string");
             r.Add(typeof(int), "int");
             r.Add(typeof(uint), "uint");
@@ -301,21 +299,21 @@
             return r;
         }
 
-        private static Dictionary<Type, Dictionary<string, bool>> initPropertyHints()
+        static Dictionary<Type, Dictionary<string, bool>> initPropertyHints()
         {
-            Dictionary<Type, Dictionary<string, bool>> s = new Dictionary<Type, Dictionary<string, bool>>();
+            var s = new Dictionary<Type, Dictionary<string, bool>>();
 
             // FileSystemInfo Parent and Root properties are examples of "bloat" properties and should be dumped with ToString
-            Dictionary<string, bool> data = new Dictionary<string, bool>();
+            var data = new Dictionary<string, bool>();
             data["Parent"] = false;
             data["Root"] = false;
             s[typeof(FileSystemInfo)] = data;
             return s;
         }
 
-        private readonly StringBuilder _out = new StringBuilder(10000);
+        readonly StringBuilder _out = new StringBuilder(10000);
         readonly Dictionary<object, int> _usedMap = new Dictionary<object, int>(new ReferenceComparer());
-        private int _counter = 0;
+        int _counter;
 
         void process2(string name, Type t, object o, int depth)
         {
@@ -377,10 +375,9 @@
             }
             if (t.IsArray && ((Array)o).Rank == 1) {
                 Array arr;
-                if (t.IsArray)
-                    arr = (o as Array);
-                else
-                    arr = t.GetMethod("ToArray").Invoke(o, new object[] { }) as Array;
+                arr = t.IsArray ? (o as Array) : t.GetMethod("ToArray").Invoke(o, new object[] {
+
+                }) as Array;
                 processArray(t, arr, depth);
             } else if (o as IEnumerable != null) {
                 writeBrace(o);
@@ -416,18 +413,18 @@
 
         }
 
-        private static string toEscapedString(object o)
+        static string toEscapedString(object o)
         {
             return o.ToString().Replace("\r", "\\r").Replace("\n", "\\n").Replace("\b", "\\b").Replace("\t", "\\t");
         }
 
-        private void writeBrace(object o)
+        void writeBrace(object o)
         {
             _out.Append("{");
             _out.AppendLine();
         }
 
-        private void dumpProperty(PropertyInfo p, object o, int level, bool asString)
+        void dumpProperty(PropertyInfo p, object o, int level, bool asString)
         {
             try {
                 if (p.GetIndexParameters().Length == 0) {
@@ -449,7 +446,7 @@
             }
         }
 
-        private void dumpField(FieldInfo p, object o, int level)
+        void dumpField(FieldInfo p, object o, int level)
         {
             try {
                 object obj = p.GetValue(o);
@@ -464,7 +461,7 @@
         }
 
 
-        private void processEnumerables(IEnumerable enumerable, int nLevel)
+        void processEnumerables(IEnumerable enumerable, int nLevel)
         {
             int index = 0;
             foreach (object info in enumerable) {
@@ -478,11 +475,11 @@
             }
         }
 
-        private void processArray(Type t, Array arr, int nLevel)
+        void processArray(Type t, Array arr, int nLevel)
         {
             Type tInside = t.GetElementType();
             if (tInside == typeof(byte)) {
-                byte[] b = (byte[])arr;
+                var b = (byte[])arr;
                 _out.AppendFormat(" {0} bytes [ ", arr.Length);
                 for (int i = 0; i < b.Length; ++i) {
                     if (i != 0)

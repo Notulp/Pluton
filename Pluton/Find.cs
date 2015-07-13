@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 namespace Pluton
@@ -32,20 +31,12 @@ namespace Pluton
 
         public List<ItemBlueprint> BluePrintsByCategory(string cat)
         {
-            return ItemManager.Instance.bpList.FindAll(item => {
-                if (item.targetItem.category.ToString() == cat)
-                    return true;
-                return false;
-            });
+            return ItemManager.Instance.bpList.FindAll(item => item.targetItem.category.ToString() == cat);
         }
 
         public List<ItemBlueprint> BluePrintsByCategory(ItemCategory cat)
         {
-            return ItemManager.Instance.bpList.FindAll(item => {
-                if (item.targetItem.category == cat)
-                    return true;
-                return false;
-            });
+            return ItemManager.Instance.bpList.FindAll(item => item.targetItem.category == cat);
         }
 
         public List<BuildingPart> BuildingParts()
@@ -121,7 +112,7 @@ namespace Pluton
         public List<Entity> Doors()
         {
             return (from door in UnityEngine.Object.FindObjectsOfType<Door>()
-                             select new Entity(door as BaseEntity)).ToList<Entity>();
+                             select new Entity(door)).ToList<Entity>();
         }
 
         /// <summary>
@@ -176,20 +167,20 @@ namespace Pluton
         public List<Entity> Locks()
         {
             return (from _lock in UnityEngine.Object.FindObjectsOfType<BaseLock>()
-                             select new Entity(_lock as BaseEntity)).ToList<Entity>();
+                             select new Entity(_lock)).ToList<Entity>();
         }
 
         public List<Entity> LocksByAuthorizedUserID(ulong steamid)
         {
             return (from _lock in UnityEngine.Object.FindObjectsOfType<CodeLock>()
                              where ((List<ulong>)_lock.GetFieldValue("whitelistPlayers")).Contains(steamid)
-                             select new Entity(_lock as BaseEntity)).ToList<Entity>();
+                             select new Entity(_lock)).ToList<Entity>();
         }
 
         public List<Entity> Loot()
         {
             return (from loot in UnityEngine.Object.FindObjectsOfType<LootContainer>()
-                             select new Entity(loot as BaseEntity)).ToList<Entity>();
+                             select new Entity(loot)).ToList<Entity>();
         }
 
         /// <summary>
@@ -247,7 +238,7 @@ namespace Pluton
         public List<Entity> Storage()
         {
             return (from storage in UnityEngine.Object.FindObjectsOfType<StorageContainer>()
-                             select new Entity(storage as BaseEntity)).ToList<Entity>();
+                             select new Entity(storage)).ToList<Entity>();
         }
 
         public List<TriggerTemperature> TemperatureZones()

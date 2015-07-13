@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton
+﻿namespace Pluton
 {
     /// <summary>
     /// C# engine.
@@ -123,10 +121,6 @@ namespace Pluton
             get {
                 return BasePlugin.GlobalData;
             }
-        }
-
-        public CSharpPlugin()
-        {
         }
     }
 }

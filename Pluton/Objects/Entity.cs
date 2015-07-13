@@ -41,25 +41,19 @@ namespace Pluton
         public BuildingPart ToBuildingPart()
         {
             BuildingBlock b = baseEntity.GetComponent<BuildingBlock>();
-            if (b == null)
-                return null;
-            return new BuildingPart(b);
+            return b == null ? null : new BuildingPart(b);
         }
 
         public NPC ToNPC()
         {
             BaseNPC a = baseEntity.GetComponent<BaseNPC>();
-            if (a == null)
-                return null;
-            return new NPC(a);
+            return a == null ? null : new NPC(a);
         }
 
         public Player ToPlayer()
         {
             BasePlayer p = baseEntity.ToPlayer();
-            if (p == null)
-                return null;
-            return Server.GetPlayer(p);
+            return p == null ? null : Server.GetPlayer(p);
         }
 
         public virtual Vector3 Location {

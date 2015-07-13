@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CraftEvent : CountedInstance
     {
@@ -32,7 +30,7 @@ namespace Pluton.Events
         /// <summary>
         /// Cancels teh event.
         /// </summary>
-        public bool Cancel = false;
+        public bool Cancel;
 
         /// <summary>
         /// Notify the Crafter about the action.

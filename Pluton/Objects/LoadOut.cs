@@ -49,7 +49,6 @@ namespace Pluton
                     items.Add(i, current);
                 }
             }
-            ini = null;
             if (Server.GetInstance().LoadOuts.ContainsKey(Name))
                 Server.GetInstance().LoadOuts.Remove(Name);
             Server.GetInstance().LoadOuts.Add(Name, this);
@@ -129,8 +128,8 @@ namespace Pluton
                     perms = true;
                 else if (ModeratorUse && inv.owner.Moderator)
                     perms = true;
-                else if (OwnerUse && inv.owner.Owner)
-                    perms = true;
+                else
+                    perms |= OwnerUse && inv.owner.Owner;
 
                 if (perms)
                     foreach (LoadOutItem item in items.Values) {

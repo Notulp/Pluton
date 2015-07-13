@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Pluton
 {
@@ -34,7 +33,7 @@ namespace Pluton
         {
             OfflinePlayer op = Server.GetInstance().OfflinePlayers[steamID];
             if (op == null) {
-                Logger.LogDebug("[OfflinePlayer] Couldn't find OfflinePlayer: " + steamID.ToString());
+                Logger.LogDebug("[OfflinePlayer] Couldn't find OfflinePlayer: " + steamID);
                 return null;
             }
             return op;

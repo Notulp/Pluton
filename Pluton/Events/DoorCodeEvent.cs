@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Pluton.Events
 {
@@ -10,9 +8,9 @@ namespace Pluton.Events
         public CodeLock codeLock;
 
         public bool allowed = true;
-        public bool forceAllow = false;
+        public bool forceAllow;
 
-        private string entered;
+        string entered;
 
         public DoorCodeEvent(CodeLock doorLock, BasePlayer player, string entered)
         {
@@ -23,7 +21,7 @@ namespace Pluton.Events
 
         public void Whitelist()
         {
-            List<ulong> whitelist = new List<ulong>();
+            List<ulong> whitelist;
             whitelist = (List<ulong>)codeLock.GetFieldValue("whitelistPlayers");
             whitelist.Add(Player.GameID);
             codeLock.SetFieldValue("whitelistPlayers", whitelist);

@@ -9,17 +9,13 @@ namespace Pluton
     {
         public List<PluginTypeWatcher> Watchers = new List<PluginTypeWatcher>();
 
-        public PluginWatcher()
-        {
-        }
-
         public void AddWatcher(PluginType type, string filter)
         {
             foreach (PluginTypeWatcher watch in Watchers)
                 if (watch.Type == type)
                     return;
 
-            PluginTypeWatcher watcher = new PluginTypeWatcher(type, filter);
+            var watcher = new PluginTypeWatcher(type, filter);
             Watchers.Add(watcher);
         }
 
@@ -55,7 +51,7 @@ namespace Pluton
             return String.Format("PluginTypeWatcher<{0}>", Type);
         }
 
-        bool TryLoadPlugin(string name, PluginType type)
+        static bool TryLoadPlugin(string name, PluginType type)
         {
             try {
                 BasePlugin plugin = null;
@@ -67,7 +63,7 @@ namespace Pluton
                 return true;
 
             } catch (Exception ex) {
-                Pluton.Logger.LogException(ex);
+                Logger.LogException(ex);
                 return false;
             }
         }
@@ -79,7 +75,7 @@ namespace Pluton
 
             if (filename == dir) {
                 if (!TryLoadPlugin(filename, Type)) {
-                    Pluton.Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
+                    Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
                 }
             }
         }
@@ -94,12 +90,12 @@ namespace Pluton
             if (filename == dir) {
                 if (File.Exists(e.FullPath)) {
                     if (!TryLoadPlugin(filename, Type)) {
-                        Pluton.Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
+                        Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
                     }
                 }
             } else if (File.Exists(assumedPluginPathFromDir)) {
                 if (!TryLoadPlugin(dir, Type)) {
-                    Pluton.Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
+                    Logger.Log(String.Format("[PluginWatcher] Couldn't load: {0}{3}{1}.{2}", dir, filename, Type, Path.DirectorySeparatorChar));
                 }
             }
         }

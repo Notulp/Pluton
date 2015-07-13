@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -8,10 +7,6 @@ namespace Pluton
     {
         public PluginType Type = PluginType.CSScript;
         public readonly string Extension = ".cs";
-
-        public CSScriptPluginLoader()
-        {
-        }
 
         public string GetExtension()
         {
@@ -57,7 +52,7 @@ namespace Pluton
             }
 
             try {
-                DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+                var path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
 
                 PluginLoader.GetInstance().CurrentlyLoadingPlugins.Add(name);
 

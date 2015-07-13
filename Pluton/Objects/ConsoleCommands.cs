@@ -24,7 +24,7 @@ namespace Pluton
         {
             callback = new CallbackDelegate(cmd => {
                 try {
-                    plugin.Invoke(function, (object)cmd);
+                    plugin.Invoke(function, cmd);
                 } catch (Exception ex) {
                     Logger.Log("there");
                     Logger.Log(ex.ToString());
@@ -78,7 +78,7 @@ namespace Pluton
             if (String.IsNullOrEmpty(command))
                 return (ConsoleCommand)null;
 
-            ConsoleCommand c = new ConsoleCommand(command);
+            var c = new ConsoleCommand(command);
             c.plugin = plugin;
 
             return Register(c);

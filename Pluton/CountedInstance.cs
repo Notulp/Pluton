@@ -11,12 +11,12 @@ namespace Pluton
 
         ~CountedInstance()
         {
-            CountedInstance.RemoveCount(base.GetType());
+            CountedInstance.RemoveCount(GetType());
         }
 
         public CountedInstance()
         {
-            CountedInstance.AddCount(base.GetType());
+            CountedInstance.AddCount(GetType());
         }
 
         static CountedInstance()

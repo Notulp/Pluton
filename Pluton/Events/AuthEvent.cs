@@ -1,5 +1,4 @@
-﻿using System;
-using Network;
+﻿using Network;
 
 namespace Pluton.Events
 {

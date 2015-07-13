@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -8,10 +7,6 @@ namespace Pluton
     {
         public PluginType Type = PluginType.JavaScript;
         public readonly string Extension = ".js";
-
-        public JSPluginLoader()
-        {
-        }
 
         public string GetExtension()
         {
@@ -54,7 +49,7 @@ namespace Pluton
             try {
                 string code = GetSource(name);
 
-                DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+                var path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
                 new JSPlugin(name, code, path);
 
             } catch (Exception ex) {

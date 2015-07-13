@@ -5,11 +5,11 @@ using System.Timers;
 
 namespace Pluton
 {
-    public class World : Singleton<Pluton.World>, ISingleton
+    public class World : Singleton<World>, ISingleton
     {
         public float ResourceGatherMultiplier = 1.0f;
         public Timer freezeTimeTimer;
-        private float frozenTime = -1;
+        float frozenTime = -1;
 
         public BaseEntity AttachParachute(Player p)
         {
@@ -18,10 +18,10 @@ namespace Pluton
 
         public BaseEntity AttachParachute(BaseEntity e)
         {
-            BaseEntity parachute = GameManager.server.CreateEntity("parachute", default(Vector3), default(Quaternion));
+            BaseEntity parachute = GameManager.server.CreateEntity("parachute");
             if (parachute) {
                 parachute.SetParent(e, "parachute_attach");
-                parachute.Spawn(true);
+                parachute.Spawn();
             }
             return parachute;
         }
@@ -35,13 +35,13 @@ namespace Pluton
 
         public void AirDrop(float speed, float height = 400f)
         {
-            BaseEntity baseEntity = GameManager.server.CreateEntity("events/cargo_plane", default(Vector3), default(Quaternion));
+            BaseEntity baseEntity = GameManager.server.CreateEntity("events/cargo_plane");
             if (baseEntity) {
-                baseEntity.Spawn(true);
+                baseEntity.Spawn();
             }
             CargoPlane cp = baseEntity.GetComponent<CargoPlane>();
-            Vector3 start = (Vector3)cp.GetFieldValue("startPos");
-            Vector3 end = (Vector3)cp.GetFieldValue("endPos");
+            var start = (Vector3)cp.GetFieldValue("startPos");
+            var end = (Vector3)cp.GetFieldValue("endPos");
             start.y = height;
             end.y = height;
             cp.SetFieldValue("secondsToTake", Vector3.Distance(start, end) / speed);
@@ -54,16 +54,16 @@ namespace Pluton
             float worldSize = (float)(global::World.Size - (global::World.Size / 7));
             Vector3 zero = Vector3.zero;
 
-            BaseEntity baseEntity = GameManager.server.CreateEntity("events/cargo_plane", default(Vector3), default(Quaternion));
+            BaseEntity baseEntity = GameManager.server.CreateEntity("events/cargo_plane");
             if (baseEntity) {
-                baseEntity.Spawn(true);
+                baseEntity.Spawn();
             }
             CargoPlane cp = baseEntity.GetComponent<CargoPlane>();
 
             Vector3 startPos = zero, endPos = zero;
             float secsToTake;
 
-            float rand = (float)(worldSize * UnityEngine.Random.Range(0.4f, 1.2f));
+            float rand = (worldSize * UnityEngine.Random.Range(0.4f, 1.2f));
 
             while (startPos.x == 0 || startPos.z == 0)
                 startPos = Vector3Ex.Range(-rand, rand);
@@ -78,7 +78,7 @@ namespace Pluton
             cp.SetFieldValue("secondsToTake", secsToTake);
             cp.transform.rotation = Quaternion.LookRotation(endPos - startPos);
             
-            baseEntity.Spawn(true);
+            baseEntity.Spawn();
         }
 
         public void AirDropAt(float x, float y, float z, float speed = 50f, float height = 400f)
@@ -109,7 +109,7 @@ namespace Pluton
 
         public System.Collections.Generic.List<string> GetPrefabNames()
         {
-            System.Collections.Generic.Dictionary<uint, string> pool = (System.Collections.Generic.Dictionary<uint, string>)ReflectionExtensions.GetStaticFieldValue(typeof(StringPool), "toString");
+            var pool = (System.Collections.Generic.Dictionary<uint, string>)ReflectionExtensions.GetStaticFieldValue(typeof(StringPool), "toString");
             return (from keyvaluepair in pool
                              orderby keyvaluepair.Value ascending
                              select keyvaluepair.Value).ToList<string>();
@@ -159,9 +159,9 @@ namespace Pluton
         public BaseEntity SpawnEvent(string evt, float x, float y, float z)
         {
             BaseEntity ent = GameManager.server.CreateEntity("events/" + evt, 
-                                 new UnityEngine.Vector3(x, y, z), 
-                                 new UnityEngine.Quaternion());
-            ent.Spawn(true);
+                                 new Vector3(x, y, z), 
+                                 new Quaternion());
+            ent.Spawn();
             return ent;
         }
 
@@ -169,9 +169,9 @@ namespace Pluton
         public BaseEntity SpawnAnimal(string name, float x, float y, float z)
         {
             BaseEntity ent = GameManager.server.CreateEntity("autospawn/animals/" + name, 
-                                 new UnityEngine.Vector3(x, y, z), 
-                                 new UnityEngine.Quaternion());
-            ent.Spawn(true);
+                                 new Vector3(x, y, z), 
+                                 new Quaternion());
+            ent.Spawn();
             return ent;
         }
 
@@ -179,7 +179,7 @@ namespace Pluton
         public BaseEntity SpawnMapEntity(string name, float x, float y, float z, Quaternion q)
         {
             BaseEntity ent = GameManager.server.CreateEntity(name, 
-                                 new UnityEngine.Vector3(x, y, z), 
+                                 new Vector3(x, y, z), 
                                  q);
             ent.SpawnAsMapEntity();
             return ent;
@@ -212,12 +212,12 @@ namespace Pluton
             if (freezeTimeTimer == null) {
                 frozenTime = Time;
                 freezeTimeTimer = new Timer(10000);
-                freezeTimeTimer.Elapsed += new ElapsedEventHandler(this.Freeze);
+                freezeTimeTimer.Elapsed += Freeze;
             }
             freezeTimeTimer.Start();
         }
 
-        private void Freeze(object sender, ElapsedEventArgs e)
+        void Freeze(object sender, ElapsedEventArgs e)
         {         
             if (frozenTime != -1)
                 Time = frozenTime;
@@ -245,7 +245,7 @@ namespace Pluton
             return Instance;
         }
 
-        System.Collections.ArrayList list = new System.Collections.ArrayList();
+        readonly System.Collections.ArrayList list = new System.Collections.ArrayList();
 
         public void PrintPrefabs()
         {

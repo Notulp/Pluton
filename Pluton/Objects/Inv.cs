@@ -46,12 +46,12 @@ namespace Pluton
 
         public bool Add(int itemID, int amount)
         {
-            return _inv.GiveItem(itemID, amount, true);
+            return _inv.GiveItem(itemID, amount);
         }
 
         public bool Add(string longNameOrShortNameOrPrefab, int amount)
         {
-            return _inv.GiveItem(InvItem.GetItemID(longNameOrShortNameOrPrefab), amount, true);
+            return _inv.GiveItem(InvItem.GetItemID(longNameOrShortNameOrPrefab), amount);
         }
 
         public void Notice(LoadOutItem loItem)

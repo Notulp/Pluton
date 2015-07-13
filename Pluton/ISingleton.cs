@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton
+﻿namespace Pluton
 {
     public interface ISingleton
     {

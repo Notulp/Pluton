@@ -19,11 +19,6 @@ namespace Pluton
             pluton.stopper = false;
         }
 
-        public pluton()
-            : base()
-        {
-        }
-
         [ConsoleSystem.Admin]
         public static void ban(ConsoleSystem.Arg arg)
         {

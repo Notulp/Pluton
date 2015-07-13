@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEngine;
 
 namespace Pluton
@@ -14,23 +13,23 @@ namespace Pluton
             public string DateTime;
         }
 
-        private static string LogsFolder;
-        private static Writer LogWriter;
-        private static Writer WarnWriter;
-        private static Writer ErrorWriter;
-        private static Writer ChatWriter;
-        private static bool showChat = false;
-        private static bool showDebug = false;
-        private static bool showErrors = false;
-        private static bool showException = false;
-        private static bool showWarnings = false;
-        private static bool logChat = false;
-        private static bool logDebug = false;
-        private static bool logErrors = false;
-        private static bool logException = false;
-        private static bool logWarnings = false;
+        static string LogsFolder;
+        static Writer LogWriter;
+        static Writer WarnWriter;
+        static Writer ErrorWriter;
+        static Writer ChatWriter;
+        static bool showChat;
+        static bool showDebug;
+        static bool showErrors;
+        static bool showException;
+        static bool showWarnings;
+        static bool logChat;
+        static bool logDebug;
+        static bool logErrors;
+        static bool logException;
+        static bool logWarnings;
 
-        private static bool Initialized = false;
+        static bool Initialized;
 
         public static void Init()
         {
@@ -66,7 +65,7 @@ namespace Pluton
             }
         }
 
-        private static void LogWriterInit()
+        static void LogWriterInit()
         {
             try {
                 if (LogWriter.LogWriter != null)
@@ -80,7 +79,7 @@ namespace Pluton
             }
         }
 
-        private static void WarnWriterInit()
+        static void WarnWriterInit()
         {
             try {
                 if (WarnWriter.LogWriter != null)
@@ -94,7 +93,7 @@ namespace Pluton
             }
         }
 
-        private static void ErrorWriterInit()
+        static void ErrorWriterInit()
         {
             try {
                 if (ErrorWriter.LogWriter != null)
@@ -108,7 +107,7 @@ namespace Pluton
             }
         }
 
-        private static void ChatWriterInit()
+        static void ChatWriterInit()
         {
             try {
                 if (ChatWriter.LogWriter != null)
@@ -122,12 +121,12 @@ namespace Pluton
             }
         }
 
-        private static string LogFormat(string Text)
+        static string LogFormat(string Text)
         {
             return String.Format("[{0}] {1}", DateTime.Now, Text);
         }
 
-        private static void WriteLog(string Message)
+        static void WriteLog(string Message)
         {
             try {
                 if (LogWriter.DateTime != DateTime.Now.ToString("dd_MM_yyyy"))
@@ -138,7 +137,7 @@ namespace Pluton
             }
         }
 
-        private static void WriteWarn(string Message)
+        static void WriteWarn(string Message)
         {
             try {
                 if (WarnWriter.DateTime != DateTime.Now.ToString("dd_MM_yyyy"))
@@ -149,7 +148,7 @@ namespace Pluton
             }
         }
 
-        private static void WriteError(string Message)
+        static void WriteError(string Message)
         {
             try {
                 if (ErrorWriter.DateTime != DateTime.Now.ToString("dd_MM_yyyy"))
@@ -160,7 +159,7 @@ namespace Pluton
             }
         }
 
-        private static void WriteChat(string Message)
+        static void WriteChat(string Message)
         {
             try {
                 if (ChatWriter.DateTime != DateTime.Now.ToString("dd_MM_yyyy"))
@@ -244,8 +243,8 @@ namespace Pluton
             WriteChat(Msg);
         }
 
-        static Windows.ConsoleInput input = null;
-        static List<string> AlreadyLogged = new List<string>(250);
+        static Windows.ConsoleInput input;
+        static readonly List<string> AlreadyLogged = new List<string>(250);
 
         static DateTime loggedlistCleared = DateTime.Now;
 

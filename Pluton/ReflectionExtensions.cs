@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace Pluton
@@ -16,7 +14,7 @@ namespace Pluton
             if (metInf == null)
                 throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
 
-            if (metInf is MethodInfo) {
+            if (metInf != null) {
                 MethodInfo meta = metInf.As<MethodInfo>();
                 return meta.Invoke(obj, args);
             }
@@ -30,11 +28,11 @@ namespace Pluton
             if (memInf == null)
                 throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));
 
-            if (memInf is System.Reflection.PropertyInfo)
-                return memInf.As<System.Reflection.PropertyInfo>().GetValue(obj, null);
+            if (memInf is PropertyInfo)
+                return memInf.As<PropertyInfo>().GetValue(obj, null);
 
-            if (memInf is System.Reflection.FieldInfo)
-                return memInf.As<System.Reflection.FieldInfo>().GetValue(obj);
+            if (memInf is FieldInfo)
+                return memInf.As<FieldInfo>().GetValue(obj);
 
             throw new Exception();
         }
@@ -46,28 +44,28 @@ namespace Pluton
             if (memInf == null)
                 throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));
 
-            if (memInf is System.Reflection.PropertyInfo)
-                memInf.As<System.Reflection.PropertyInfo>().SetValue(obj, newValue, null);
-            else if (memInf is System.Reflection.FieldInfo)
-                memInf.As<System.Reflection.FieldInfo>().SetValue(obj, newValue);
+            if (memInf is PropertyInfo)
+                memInf.As<PropertyInfo>().SetValue(obj, newValue, null);
+            else if (memInf is FieldInfo)
+                memInf.As<FieldInfo>().SetValue(obj, newValue);
             else
-                throw new System.Exception();
+                throw new Exception();
         }
 
-        private static MethodInfo GetMethodInfo(Type classType, string methodName)
+        static MethodInfo GetMethodInfo(IReflect classType, string methodName)
         {
             return classType.GetMethod(methodName,
                 BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static);
         }
 
-        private static MethodInfo GetMethodInfo(object obj, string methodName)
+        static MethodInfo GetMethodInfo(object obj, string methodName)
         {
             return GetMethodInfo(obj.GetType(), methodName);
         }
 
-        private static MemberInfo GetFieldInfo(Type objType, string fieldName)
+        static MemberInfo GetFieldInfo(IReflect objType, string fieldName)
         {
-            var prps = new List<System.Reflection.PropertyInfo>();
+            var prps = new List<PropertyInfo>();
 
             prps.Add(objType.GetProperty(fieldName,
                 BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static));
@@ -77,20 +75,18 @@ namespace Pluton
             if (prps.Count != 0)
                 return prps[0];
 
-            var flds = new System.Collections.Generic.List<System.Reflection.FieldInfo>();
+            var flds = new List<FieldInfo>();
 
             flds.Add(objType.GetField(fieldName,
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static));          
 
             flds = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(flds, i => !ReferenceEquals(i, null)));
 
-            if (flds.Count != 0)
-                return flds[0];
+            return flds.Count != 0 ? flds[0] : null;
 
-            return null;
         }
 
-        private static MemberInfo GetFieldInfo(object obj, string fieldName)
+        static MemberInfo GetFieldInfo(object obj, string fieldName)
         {
             return GetFieldInfo(obj.GetType(), fieldName);
         }
@@ -103,7 +99,7 @@ namespace Pluton
             if (metInf == null)
                 throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
 
-            if (metInf is MethodInfo) {
+            if (metInf != null) {
                 MethodInfo meta = metInf.As<MethodInfo>();
                 meta.Invoke(null, args);
             }
@@ -116,11 +112,11 @@ namespace Pluton
             if (memInf == null)
                 throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));
 
-            if (memInf is System.Reflection.PropertyInfo)
-                return memInf.As<System.Reflection.PropertyInfo>().GetValue(null, null);
+            if (memInf is PropertyInfo)
+                return memInf.As<PropertyInfo>().GetValue(null, null);
 
-            if (memInf is System.Reflection.FieldInfo)
-                return memInf.As<System.Reflection.FieldInfo>().GetValue(null);
+            if (memInf is FieldInfo)
+                return memInf.As<FieldInfo>().GetValue(null);
 
             throw new Exception();
         }
@@ -132,16 +128,16 @@ namespace Pluton
             if (memInf == null)
                 throw new Exception(String.Format("Couldn't find field '{0}' using reflection.", fieldName));           
 
-            if (memInf is System.Reflection.PropertyInfo)
-                memInf.As<System.Reflection.PropertyInfo>().SetValue(null, newValue, null);
-            else if (memInf is System.Reflection.FieldInfo)
-                memInf.As<System.Reflection.FieldInfo>().SetValue(null, newValue);
+            if (memInf is PropertyInfo)
+                memInf.As<PropertyInfo>().SetValue(null, newValue, null);
+            else if (memInf is FieldInfo)
+                memInf.As<FieldInfo>().SetValue(null, newValue);
             else
-                throw new System.Exception();
+                throw new Exception();
         }
 
         [System.Diagnostics.DebuggerHidden]
-        private static T As<T>(this object obj)
+        static T As<T>(this object obj)
         {
             return (T)obj;
         }

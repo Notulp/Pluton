@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Pluton.Events
 {
@@ -12,7 +11,7 @@ namespace Pluton.Events
         public bool NeedsValidPlacement;
 
         public string DestroyReason = String.Empty;
-        public bool DoDestroy = false;
+        public bool DoDestroy;
 
         public BuildingEvent(Construction construction, Construction.Target target, BuildingBlock bb, bool bNeedsValidPlacement)
         {

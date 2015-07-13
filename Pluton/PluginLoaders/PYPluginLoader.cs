@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -8,10 +7,6 @@ namespace Pluton
     {
         public PluginType Type = PluginType.Python;
         public readonly string Extension = ".py";
-
-        public PYPluginLoader()
-        {
-        }
 
         public string GetExtension()
         {
@@ -53,7 +48,7 @@ namespace Pluton
 
             try {
                 string code = GetSource(name);
-                DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+                var path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
                 new PYPlugin(name, code, path);
 
             } catch (Exception ex) {

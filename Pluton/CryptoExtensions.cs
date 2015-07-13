@@ -9,7 +9,7 @@ namespace Pluton
 {
     public static class CryptoExtensions
     {
-        private static List<string> TrustedHashes;
+        static List<string> TrustedHashes;
 
         public static void Init()
         {
@@ -19,7 +19,7 @@ namespace Pluton
                 File.AppendAllText(path, "// empty");
 
             TrustedHashes = (from line in File.ReadAllLines(path)
-                                      where !String.IsNullOrEmpty(line) && !line.StartsWith("//")
+                                      where !String.IsNullOrEmpty(line) && !line.StartsWith("//", StringComparison.Ordinal)
                                       select line).ToList<string>();
         }
 
@@ -32,7 +32,7 @@ namespace Pluton
         {
             byte[] data = md5Hash.ComputeHash(input);
 
-            StringBuilder sBuilder = new StringBuilder();
+            var sBuilder = new StringBuilder();
 
             for (int i = 0; i < data.Length; i++)
                 sBuilder.Append(data[i].ToString("x2"));
@@ -79,10 +79,7 @@ namespace Pluton
 
             StringComparer comparer = StringComparer.OrdinalIgnoreCase;
 
-            if (0 == comparer.Compare(hashOfInput, hash))
-                return true;
-            else
-                return false;
+            return 0 == comparer.Compare(hashOfInput, hash);
         }
     }
 }

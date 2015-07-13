@@ -10,7 +10,7 @@ namespace Pluton
     public class Player : Entity
     {
         [NonSerialized]
-        private BasePlayer _basePlayer;
+        BasePlayer _basePlayer;
 
         public readonly ulong GameID;
 
@@ -69,7 +69,7 @@ namespace Pluton
 
         public void Kick(string reason = "no reason")
         {
-            Network.Net.sv.Kick(basePlayer.net.connection, reason);
+            Net.sv.Kick(basePlayer.net.connection, reason);
         }
 
         public void Reject(string reason = "no reason")
@@ -143,7 +143,7 @@ namespace Pluton
         public Dictionary<int, bool> KnowsBlueprints(IEnumerable<int> itemIDs)
         {
             ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
-            Dictionary<int, bool> result = new Dictionary<int, bool>();
+            var result = new Dictionary<int, bool>();
             foreach (int itemid in itemIDs) {
                 if (!result.ContainsKey(itemid))
                     result[itemid] = playerInfo.blueprints.complete.Contains(itemid);
@@ -154,7 +154,7 @@ namespace Pluton
         public Dictionary<ItemBlueprint, bool> KnowsBlueprints(IEnumerable<ItemBlueprint> itemBPs)
         {
             ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
-            Dictionary<ItemBlueprint, bool> result = new Dictionary<ItemBlueprint, bool>();
+            var result = new Dictionary<ItemBlueprint, bool>();
             foreach (ItemBlueprint itembp in itemBPs) {
                 int itemid = itembp.targetItem.itemid;
                 if (!result.ContainsKey(itembp))
@@ -166,7 +166,7 @@ namespace Pluton
         public Dictionary<ItemDefinition, bool> KnowsBlueprints(IEnumerable<ItemDefinition> itemdefs)
         {
             ProtoBuf.PersistantPlayer playerInfo = ServerMgr.Instance.persistance.GetPlayerInfo(GameID);
-            Dictionary<ItemDefinition, bool> result = new Dictionary<ItemDefinition, bool>();
+            var result = new Dictionary<ItemDefinition, bool>();
             foreach (ItemDefinition itemdef in itemdefs) {
                 int itemid = itemdef.itemid;
                 if (!result.ContainsKey(itemdef))
@@ -187,7 +187,7 @@ namespace Pluton
             if (!playerInfo.blueprints.complete.Contains(itemID)) {
                 playerInfo.blueprints.complete.Add(itemID);
                 ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
-                basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                basePlayer.SendNetworkUpdate();
                 basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
             }
@@ -201,7 +201,7 @@ namespace Pluton
             if (!playerInfo.blueprints.complete.Contains(itemID)) {
                 playerInfo.blueprints.complete.Add(itemID);
                 ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
-                basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                basePlayer.SendNetworkUpdate();
                 basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
             }
@@ -215,7 +215,7 @@ namespace Pluton
             if (!playerInfo.blueprints.complete.Contains(itemID)) {
                 playerInfo.blueprints.complete.Add(itemID);
                 ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
-                basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                basePlayer.SendNetworkUpdate();
                 basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemID);
                 return true;
             }
@@ -229,7 +229,7 @@ namespace Pluton
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
                     ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
-                    basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    basePlayer.SendNetworkUpdate();
                     basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
             }
@@ -243,7 +243,7 @@ namespace Pluton
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
                     ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
-                    basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    basePlayer.SendNetworkUpdate();
                     basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
             }
@@ -257,7 +257,7 @@ namespace Pluton
                 if (!playerInfo.blueprints.complete.Contains(itemid)) {
                     playerInfo.blueprints.complete.Add(itemid);
                     ServerMgr.Instance.persistance.SetPlayerInfo(GameID, playerInfo);
-                    basePlayer.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    basePlayer.SendNetworkUpdate();
                     basePlayer.ClientRPCPlayer(null, basePlayer, "UnlockedBlueprint", itemid);
                 }
             }
@@ -325,7 +325,7 @@ namespace Pluton
         }
 
         public static float worldSizeHalf = (float)global::World.Size / 2;
-        public static Vector3[] firstLocations = new Vector3[] {
+        public static Vector3[] firstLocations = {
             new Vector3(worldSizeHalf, 0, worldSizeHalf),
             new Vector3(-worldSizeHalf, 0, worldSizeHalf),
             new Vector3(worldSizeHalf, 0, -worldSizeHalf),
@@ -347,7 +347,7 @@ namespace Pluton
             basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             basePlayer.UpdateNetworkGroup();
             basePlayer.UpdatePlayerCollider(true, false);
-            basePlayer.SendNetworkUpdateImmediate(false);
+            basePlayer.SendNetworkUpdateImmediate();
             basePlayer.ClientRPCPlayer(null, basePlayer, "StartLoading");
             basePlayer.SendFullSnapshot();
             basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, false);
@@ -372,9 +372,7 @@ namespace Pluton
 
         public BasePlayer basePlayer {
             get {
-                if (_basePlayer == null)
-                    return BasePlayer.FindByID(GameID);
-                return _basePlayer;
+                return _basePlayer ?? BasePlayer.FindByID(GameID);
             }
             private set {
                 _basePlayer = value;
@@ -474,7 +472,7 @@ namespace Pluton
             }
         }
 
-        private bool teleporting;
+        bool teleporting;
 
         public bool Teleporting {
             get {

@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class PlayerClothingEvent
     {
-        private InvItem _item;
-        private Player _player;
+        InvItem _item;
+        Player _player;
 
         public PlayerClothingEvent(PlayerInventory playerInventory, Item item)
         {
@@ -15,12 +13,12 @@ namespace Pluton.Events
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
     }
 }

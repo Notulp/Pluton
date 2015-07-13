@@ -30,10 +30,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="MoonSharp.Interpreter">
       <HintPath>ref\MoonSharp.Interpreter.dll</HintPath>
     </Reference>
@@ -53,9 +49,11 @@
     <Reference Include="mcs">
       <HintPath>ref\mcs.exe</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ref\UnityEngine.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -118,11 +116,8 @@
     <Compile Include="CountedInstance.cs" />
     <Compile Include="Objects\ChatCommands.cs" />
     <Compile Include="Objects\ConsoleCommands.cs" />
-    <Compile Include="StructureRecorder\Structure.cs" />
-    <Compile Include="StructureRecorder\StructureComponent.cs" />
     <Compile Include="Serialize\SerializedQuaternion.cs" />
     <Compile Include="Serialize\SerializedVector3.cs" />
-    <Compile Include="StructureRecorder\Origo.cs" />
     <Compile Include="Events\CommandPermissionEvent.cs" />
     <Compile Include="Events\ChatEvent.cs" />
     <Compile Include="Events\CommandEvent.cs" />

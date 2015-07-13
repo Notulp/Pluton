@@ -45,29 +45,23 @@ namespace Pluton
         /// <param name="method">Method.</param>
         /// <param name="args">Arguments.</param>
         /// <param name="func">Func.</param>
-        public override object Invoke(string func, params object[] args)
+        public override object Invoke(string method, params object[] args)
         {
-            try
-            {
-                if (State == PluginState.Loaded && Globals.Contains(func))
-                {
-                    object result = (object)null;
+            try {
+                if (State == PluginState.Loaded && Globals.Contains(method)) {
+                    object result;
 
-                    using (new Stopper(Name, func))
-                    {
-                        result = script.Call(script.Globals[func], args);
+                    using (new Stopper(Name, method)) {
+                        result = script.Call(script.Globals[method], args);
                     }
                     return result;
                 }
-                else
-                {
-                    Logger.LogWarning("[Plugin] Function: " + func + " not found in plugin: " + Name + ", or plugin is not loaded.");
-                    return null;
-                }
+                Logger.LogWarning("[Plugin] Function: " + method + " not found in plugin: " + Name + ", or plugin is not loaded.");
+                return null;
             }
             catch (Exception ex)
             {
-                string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, func) + Environment.NewLine);
+                string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, method) + Environment.NewLine);
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Globalization;
+﻿using System.IO;
 using UnityEngine;
 
 namespace Pluton
 {
     public class DirectoryConfig : Singleton<DirectoryConfig>, ISingleton
     {
-        private IniParser DirConfig;
+        IniParser DirConfig;
 
         public void Initialize()
         {
@@ -42,16 +37,16 @@ namespace Pluton
         {
             string path = DirConfig.GetSetting("Directories", config);
 
-            if (path.StartsWith("%public%"))
+            if (path.StartsWith("%public%", System.StringComparison.Ordinal))
                 path = path.Replace("%public%", Util.GetPublicFolder());
 
-            if (path.StartsWith("%data%"))
+            if (path.StartsWith("%data%", System.StringComparison.Ordinal))
                 path = path.Replace("%data%", Util.GetServerFolder());
 
-            if (path.StartsWith("%root%"))
+            if (path.StartsWith("%root%", System.StringComparison.Ordinal))
                 path = path.Replace("%root%", Util.GetRootFolder());
 
-            if (path.StartsWith("%identity%"))
+            if (path.StartsWith("%identity%", System.StringComparison.Ordinal))
                 path = path.Replace("%identity%", Util.GetIdentityFolder());
 
             return path;

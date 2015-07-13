@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class DoorUseEvent : CountedInstance
     {
         public bool Open;
-        public bool IgnoreLock = false;
+        public bool IgnoreLock;
         public Player Player;
         public Entity Door;
 
