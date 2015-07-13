@@ -92,7 +92,7 @@ namespace Pluton.Patcher
             }
         }
 
-        static void BuildingBlockDemolishedPatch()
+        private static void BuildingBlockDemolishedPatch()
         {
             TypeDefinition BuildingBlock = rustAssembly.MainModule.GetType("BuildingBlock");
             MethodDefinition DoDemolish = BuildingBlock.GetMethod("DoDemolish");
