@@ -92,6 +92,26 @@ namespace Pluton.Patcher
             }
         }
 
+        static void BuildingBlockDemolishedPatch()
+        {
+            TypeDefinition BuildingBlock = rustAssembly.MainModule.GetType("BuildingBlock");
+            MethodDefinition DoDemolish = BuildingBlock.GetMethod("DoDemolish");
+            MethodDefinition DoImmediateDemolish = BuildingBlock.GetMethod("DoImmediateDemolish");
+            MethodDefinition method = hooksClass.GetMethod("BuildingPartDemolished");
+
+            CloneMethod(DoDemolish);
+            ILProcessor ilProcessor = DoDemolish.Body.GetILProcessor();
+            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+
+            CloneMethod(DoImmediateDemolish);
+            ILProcessor iilProcessor = DoImmediateDemolish.Body.GetILProcessor();
+            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
+            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
+            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+        }
+
         private static void CraftingStartPatch()
         {
             MethodDefinition craftit = itemCrafter.GetMethod("CraftItem");
@@ -557,6 +577,17 @@ namespace Pluton.Patcher
             il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
         }
 
+        private static void ServerSavedPatch()
+        {
+            TypeDefinition saverestore = rustAssembly.MainModule.GetType("SaveRestore");
+            MethodDefinition serverSaved = saverestore.GetMethod("DoAutomatedSave");
+            MethodDefinition onServerSaved = hooksClass.GetMethod("ServerSaved");
+
+            CloneMethod(serverSaved);
+            ILProcessor il = serverSaved.Body.GetILProcessor();
+            il.InsertBefore(serverSaved.Body.Instructions[serverSaved.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerSaved)));
+        }
+
         private static void ServerShutdownPatch()
         {
             TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
@@ -628,6 +659,7 @@ namespace Pluton.Patcher
 
             ChatPatch();
             ClientAuthPatch();
+            BuildingBlockDemolishedPatch();
             CombatEntityHurtPatch();
             CraftingStartPatch();
             ConsumeFuel();
@@ -666,6 +698,7 @@ namespace Pluton.Patcher
             RocketShootEvent();
 
             ServerShutdownPatch();
+            ServerSavedPatch();
             ServerInitPatch();
             SetModdedPatch();
 

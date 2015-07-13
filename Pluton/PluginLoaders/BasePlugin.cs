@@ -732,6 +732,20 @@ namespace Pluton
             this.Invoke("On_PlayerClothingChanged", pce);
         }
 
+        public IDisposable OnBuildingPartDestroyedHook;
+
+        public void OnBuildingPartDestroyed(BuildingPartDestroyedEvent bpde)
+        {
+            this.Invoke("On_BuildingPartDestroyed", bpde);
+        }
+
+        public IDisposable OnBuildingPartDemolishedHook;
+
+        public void OnBuildingPartDemolished(BuildingPartDemolishedEvent bpde)
+        {
+            this.Invoke("On_BuildingPartDemolished", bpde);
+        }
+
         public IDisposable OnServerConsoleHook;
 
         public void OnServerConsole(ServerConsoleEvent ce)
@@ -744,6 +758,13 @@ namespace Pluton
         public void OnServerInit(string s = "")
         {
             this.Invoke("On_ServerInit");
+        }
+
+        public IDisposable OnServerSavedHook;
+
+        public void OnServerSaved(string s = "")
+        {
+            this.Invoke("On_ServerSaved");
         }
 
         public IDisposable OnServerShutdownHook;
