@@ -50,10 +50,10 @@
       <HintPath>ref\mcs.exe</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\ownCloud\rust\clean dll%27s\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\ownCloud\rust\clean dll%27s\UnityEngine.dll</HintPath>
+      <HintPath>..\ref\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
