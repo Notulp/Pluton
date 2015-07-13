@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -8,10 +7,6 @@ namespace Pluton
     {
         public PluginType Type = PluginType.Lua;
         public readonly string Extension = ".lua";
-
-        public LuaPluginLoader()
-        {
-        }
 
         public string GetExtension()
         {

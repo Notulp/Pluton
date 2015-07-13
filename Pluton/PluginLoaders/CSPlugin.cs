@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Globalization;
-using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -35,22 +33,21 @@ namespace Pluton
         /// <param name="method">Method.</param>
         /// <param name="args">Arguments.</param>
         /// <param name="func">Func.</param>
-        public override object Invoke(string func, params object[] args)
+        public override object Invoke(string method, params object[] args)
         {
             try {
-                if (State == PluginState.Loaded && Globals.Contains(func)) {
-                    object result = (object)null;
+                if (State == PluginState.Loaded && Globals.Contains(method)) {
+                    object result;
 
-                    using (new Stopper(Name, func)) {
-                        result = Engine.CallMethod(func, args);
+                    using (new Stopper(Name, method)) {
+                        result = Engine.CallMethod(method, args);
                     }
                     return result;
-                } else {
-                    Logger.LogWarning("[Plugin] Function: " + func + " not found in plugin: " + Name + ", or plugin is not loaded.");
-                    return null;
                 }
+                Logger.LogWarning("[Plugin] Function: " + method + " not found in plugin: " + Name + ", or plugin is not loaded.");
+                return null;
             } catch (Exception ex) {
-                string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, func) + Environment.NewLine);
+                string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, method) + Environment.NewLine);
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }
@@ -99,16 +96,14 @@ namespace Pluton
                     dllpaths.Remove(ass.FullName);
                 }
             }
-            dllpaths.ForEach(path => {
-                Assembly.LoadFile(path);
-            });
+            dllpaths.ForEach(path => Assembly.LoadFile(path));
         }
 
         IEnumerable<string> GetRefDllPaths()
         {
             string refpath = Path.Combine(RootDir.FullName, "References");
             if (Directory.Exists(refpath)) {
-                DirectoryInfo refdir = new DirectoryInfo(refpath);
+                var refdir = new DirectoryInfo(refpath);
                 FileInfo[] files = refdir.GetFiles("*.dll");
                 foreach (FileInfo file in files) {
                     yield return file.FullName;

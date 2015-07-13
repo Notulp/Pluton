@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Globalization;
-using System.ComponentModel;
 using System.Linq;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace Pluton
@@ -22,7 +19,7 @@ namespace Pluton
         string CompilePluginParams = "";
         string CompilationResults = "";
         System.Threading.Mutex mutex = new System.Threading.Mutex();
-        public bool Compiled = false;
+        public bool Compiled;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pluton.CSSPlugin"/> class.
@@ -46,22 +43,21 @@ namespace Pluton
         /// <param name="method">Method.</param>
         /// <param name="args">Arguments.</param>
         /// <param name="func">Func.</param>
-        public override object Invoke(string func, params object[] args)
+        public override object Invoke(string method, params object[] args)
         {
             try {
-                if (State == PluginState.Loaded && Globals.Contains(func)) {
-                    object result = (object)null;
+                if (State == PluginState.Loaded && Globals.Contains(method)) {
+                    object result;
 
-                    using (new Stopper(Name, func)) {
-                        result = Engine.CallMethod(func, args);
+                    using (new Stopper(Name, method)) {
+                        result = Engine.CallMethod(method, args);
                     }
                     return result;
-                } else {
-                    Logger.LogWarning("[Plugin] Function: " + func + " not found in plugin: " + Name + ", or plugin is not loaded.");
-                    return null;
                 }
+                Logger.LogWarning("[Plugin] Function: " + method + " not found in plugin: " + Name + ", or plugin is not loaded.");
+                return null;
             } catch (Exception ex) {
-                string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, func) + Environment.NewLine);
+                string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, method) + Environment.NewLine);
                 Logger.LogError(fileinfo + FormatException(ex));
                 return null;
             }
@@ -117,7 +113,7 @@ namespace Pluton
 
                 using (new Stopper("CSSPlugin", "Compile()")) {
 
-                    Process compiler = new Process();
+                    var compiler = new Process();
 
                     compiler.StartInfo.FileName = mcspath;
                     compiler.StartInfo.Arguments = CompilePluginParams;
@@ -149,7 +145,7 @@ namespace Pluton
 
                     compiler.WaitForExit();
 
-                    Logger.Log("Compile time: " + (compiler.ExitTime - start).ToString());
+                    Logger.Log("Compile time: " + (compiler.ExitTime - start));
 
                     compiler.Close();
 
@@ -161,10 +157,9 @@ namespace Pluton
                 File.WriteAllText(Path.Combine(RootDir.FullName, Name + "_result.txt"), CompilationResults);
                 if (File.Exists(path)) {
                     return Assembly.Load(File.ReadAllBytes(path));
-                } else {
-                    Logger.LogError("returning null for the assembly");
-                    return null;
                 }
+                Logger.LogError("returning null for the assembly");
+                return null;
             } catch (Exception ex) {
                 Logger.LogException(ex);
                 return null;
@@ -198,7 +193,7 @@ namespace Pluton
         {
             string refpath = Path.Combine(RootDir.FullName, "References");
             if (Directory.Exists(refpath)) {
-                DirectoryInfo refdir = new DirectoryInfo(refpath);
+                var refdir = new DirectoryInfo(refpath);
                 var files = refdir.GetFiles("*.dll");
                 foreach (var file in files) {
                     yield return "/r:" + file.FullName.QuoteSafe();
@@ -221,16 +216,14 @@ namespace Pluton
                     dllpaths.Remove(ass.FullName);
                 }
             }
-            dllpaths.ForEach(path => {
-                Assembly.LoadFile(path);
-            });
+            dllpaths.ForEach(path => Assembly.LoadFile(path));
         }
 
         IEnumerable<string> GetRefDllPaths()
         {
             string refpath = Path.Combine(RootDir.FullName, "References");
             if (Directory.Exists(refpath)) {
-                DirectoryInfo refdir = new DirectoryInfo(refpath);
+                var refdir = new DirectoryInfo(refpath);
                 FileInfo[] files = refdir.GetFiles("*.dll");
                 foreach (FileInfo file in files) {
                     yield return file.FullName;

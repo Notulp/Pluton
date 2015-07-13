@@ -16,8 +16,8 @@ namespace Pluton
         public Zone2D ToZone2D()
         {
             try {
-                GameObject obj = new GameObject(Name);
-                var gobj = GameObject.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
+                var obj = new GameObject(Name);
+                var gobj = UnityEngine.Object.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
                 var zone = gobj.AddComponent<Zone2D>();
                 zone.Name = Name;
                 zone.Tris = Tris;

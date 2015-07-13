@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Pluton
 {
@@ -8,10 +7,6 @@ namespace Pluton
     {
         public PluginType Type = PluginType.CSharp;
         public readonly string Extension = ".dll";
-
-        public CSharpPluginLoader()
-        {
-        }
 
         public string GetExtension()
         {
@@ -59,7 +54,7 @@ namespace Pluton
             try {
                 string code = GetSource(name);
 
-                DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+                var path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
 
                 PluginLoader.GetInstance().CurrentlyLoadingPlugins.Add(name);
 

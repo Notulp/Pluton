@@ -5,7 +5,6 @@
     using System.Collections.Concurrent;
     using System.IO;
     using System.Reactive.Subjects;
-    using System.Reflection;
 
     public class PluginLoader : Singleton<PluginLoader>, ISingleton
     {
@@ -42,8 +41,8 @@
             }
 
             if (plugin.State != PluginState.Loaded) {
-                throw new FileLoadException("Couldn't initialize " + plugin.Type.ToString() + " plugin.", 
-                    Path.Combine(Path.Combine(pluginDirectory.FullName, plugin.Name), plugin.Name + plugin.Type.ToString())
+                throw new FileLoadException("Couldn't initialize " + plugin.Type + " plugin.", 
+                    Path.Combine(Path.Combine(pluginDirectory.FullName, plugin.Name), plugin.Name + plugin.Type)
                 );
             }
 
@@ -62,7 +61,7 @@
 
         public void LoadPlugins()
         {
-            Logger.Log("number of loaders: " + PluginLoaders.Count.ToString());
+            Logger.Log("number of loaders: " + PluginLoaders.Count);
             foreach (IPluginLoader loader in PluginLoaders.Values) {
                 loader.LoadPlugins();
             }
@@ -97,7 +96,6 @@
                 var loader = PluginLoaders[plugin.Type];
                 string name = plugin.Name;
                 loader.UnloadPlugin(name);
-                plugin = null;
                 Plugins.TryRemove(name, out plugin);
                 loader.LoadPlugin(name);
             }
@@ -113,7 +111,7 @@
                 return;
 
             foreach (string method in plugin.Globals) {
-                if (!method.StartsWith("On_") && !method.EndsWith("Callback"))
+                if (!method.StartsWith("On_", StringComparison.Ordinal) && !method.EndsWith("Callback", StringComparison.Ordinal))
                     continue;
 
                 bool foundHook = true;
@@ -122,139 +120,139 @@
                     plugin.OnAllPluginsLoadedHook = OnAllLoaded.Subscribe(s => plugin.OnAllPluginsLoaded(""));
                     break;
                 case "On_Chat":
-                    plugin.OnChatHook = Hooks.OnChat.Subscribe(c => plugin.OnChat(c));
+                    plugin.OnChatHook = Hooks.OnChat.Subscribe(plugin.OnChat);
                     break;
                 case "On_ClientAuth":
-                    plugin.OnClientAuthHook = Hooks.OnClientAuth.Subscribe(a => plugin.OnClientAuth(a));
+                    plugin.OnClientAuthHook = Hooks.OnClientAuth.Subscribe(plugin.OnClientAuth);
                     break;
                 case "On_ClientConsole":
-                    plugin.OnClientConsoleHook = Hooks.OnClientConsole.Subscribe(c => plugin.OnClientConsole(c));
+                    plugin.OnClientConsoleHook = Hooks.OnClientConsole.Subscribe(plugin.OnClientConsole);
                     break;
                 case "On_Command":
-                    plugin.OnCommandHook = Hooks.OnCommand.Subscribe(c => plugin.OnCommand(c));
+                    plugin.OnCommandHook = Hooks.OnCommand.Subscribe(plugin.OnCommand);
                     break;
                 case "On_CommandPermission":
-                    plugin.OnCommandPermissionHook = Hooks.OnCommandPermission.Subscribe(c => plugin.OnCommandPermission(c));
+                    plugin.OnCommandPermissionHook = Hooks.OnCommandPermission.Subscribe(plugin.OnCommandPermission);
                     break;
                 case "On_CorpseHurt":
-                    plugin.OnCorpseHurtHook = Hooks.OnCorpseHurt.Subscribe(c => plugin.OnCorpseHurt(c));
+                    plugin.OnCorpseHurtHook = Hooks.OnCorpseHurt.Subscribe(plugin.OnCorpseHurt);
                     break;
                 case "On_BuildingComplete":
-                    plugin.OnBuildingCompleteHook = Hooks.OnBuildingComplete.Subscribe(b => plugin.OnBuildingComplete(b));
+                    plugin.OnBuildingCompleteHook = Hooks.OnBuildingComplete.Subscribe(plugin.OnBuildingComplete);
                     break;
                 case "On_Placement":
-                    plugin.OnPlacementHook = Hooks.OnPlacement.Subscribe(b => plugin.OnPlacement(b));
+                    plugin.OnPlacementHook = Hooks.OnPlacement.Subscribe(plugin.OnPlacement);
                     break;
                 case "On_DoorCode":
-                    plugin.OnDoorCodeHook = Hooks.OnDoorCode.Subscribe(b => plugin.OnDoorCode(b));
+                    plugin.OnDoorCodeHook = Hooks.OnDoorCode.Subscribe(plugin.OnDoorCode);
                     break;
                 case "On_DoorUse":
-                    plugin.OnDoorUseHook = Hooks.OnDoorUse.Subscribe(d => plugin.OnDoorUse(d));
+                    plugin.OnDoorUseHook = Hooks.OnDoorUse.Subscribe(plugin.OnDoorUse);
                     break;
                 case "On_NPCHurt":
-                    plugin.OnNPCHurtHook = Hooks.OnNPCHurt.Subscribe(n => plugin.OnNPCHurt(n));
+                    plugin.OnNPCHurtHook = Hooks.OnNPCHurt.Subscribe(plugin.OnNPCHurt);
                     break;
                 case "On_NPCKilled":
-                    plugin.OnNPCKilledHook = Hooks.OnNPCDied.Subscribe(n => plugin.OnNPCKilled(n));
+                    plugin.OnNPCKilledHook = Hooks.OnNPCDied.Subscribe(plugin.OnNPCKilled);
                     break;
                 case "On_LootingEntity":
-                    plugin.OnLootingEntityHook = Hooks.OnLootingEntity.Subscribe(l => plugin.OnLootingEntity(l));
+                    plugin.OnLootingEntityHook = Hooks.OnLootingEntity.Subscribe(plugin.OnLootingEntity);
                     break;
                 case "On_LootingPlayer":
-                    plugin.OnLootingPlayerHook = Hooks.OnLootingPlayer.Subscribe(l => plugin.OnLootingPlayer(l));
+                    plugin.OnLootingPlayerHook = Hooks.OnLootingPlayer.Subscribe(plugin.OnLootingPlayer);
                     break;
                 case "On_LootingItem":
-                    plugin.OnLootingItemHook = Hooks.OnLootingItem.Subscribe(l => plugin.OnLootingItem(l));
+                    plugin.OnLootingItemHook = Hooks.OnLootingItem.Subscribe(plugin.OnLootingItem);
                     break;
                 case "On_PlayerConnected":
-                    plugin.OnPlayerConnectedHook = Hooks.OnPlayerConnected.Subscribe(p => plugin.OnPlayerConnected(p));
+                    plugin.OnPlayerConnectedHook = Hooks.OnPlayerConnected.Subscribe(plugin.OnPlayerConnected);
                     break;
                 case "On_PlayerDisconnected":
-                    plugin.OnPlayerDisconnectedHook = Hooks.OnPlayerDisconnected.Subscribe(p => plugin.OnPlayerDisconnected(p));
+                    plugin.OnPlayerDisconnectedHook = Hooks.OnPlayerDisconnected.Subscribe(plugin.OnPlayerDisconnected);
                     break;
                 case "On_PlayerGathering":
-                    plugin.OnPlayerGatheringHook = Hooks.OnGathering.Subscribe(g => plugin.OnPlayerGathering(g));
+                    plugin.OnPlayerGatheringHook = Hooks.OnGathering.Subscribe(plugin.OnPlayerGathering);
                     break;
                 case "On_PlayerHurt":
-                    plugin.OnPlayerHurtHook = Hooks.OnPlayerHurt.Subscribe(p => plugin.OnPlayerHurt(p));
+                    plugin.OnPlayerHurtHook = Hooks.OnPlayerHurt.Subscribe(plugin.OnPlayerHurt);
                     break;
                 case "On_CombatEntityHurt":
-                    plugin.OnCombatEntityHurtHook = Hooks.OnCombatEntityHurt.Subscribe(c => plugin.OnCombatEntityHurt(c));
+                    plugin.OnCombatEntityHurtHook = Hooks.OnCombatEntityHurt.Subscribe(plugin.OnCombatEntityHurt);
                     break;
                 case "On_PlayerDied":
-                    plugin.OnPlayerDiedHook = Hooks.OnPlayerDied.Subscribe(p => plugin.OnPlayerDied(p));
+                    plugin.OnPlayerDiedHook = Hooks.OnPlayerDied.Subscribe(plugin.OnPlayerDied);
                     break;
                 case "On_PlayerStartCrafting":
-                    plugin.OnPlayerStartCraftingHook = Hooks.OnPlayerStartCrafting.Subscribe(p => plugin.OnPlayerStartCrafting(p));
+                    plugin.OnPlayerStartCraftingHook = Hooks.OnPlayerStartCrafting.Subscribe(plugin.OnPlayerStartCrafting);
                     break;
                 case "On_PlayerTakeRadiation":
-                    plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
+                    plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(plugin.OnPlayerTakeRadiation);
                     break;
                 case "On_PlayerSleep":
-                    plugin.OnPlayerSleepHook = Hooks.OnPlayerSleep.Subscribe(p => plugin.OnPlayerSleep(p));
+                    plugin.OnPlayerSleepHook = Hooks.OnPlayerSleep.Subscribe(plugin.OnPlayerSleep);
                     break;
                 case "On_PlayerWakeUp":
-                    plugin.OnPlayerWakeUpHook = Hooks.OnPlayerWakeUp.Subscribe(p => plugin.OnPlayerWakeUp(p));
+                    plugin.OnPlayerWakeUpHook = Hooks.OnPlayerWakeUp.Subscribe(plugin.OnPlayerWakeUp);
                     break;
                 case "On_PlayerLoaded":
-                    plugin.OnPlayerLoadedHook = Hooks.OnPlayerLoaded.Subscribe(p => plugin.OnPlayerLoaded(p));
+                    plugin.OnPlayerLoadedHook = Hooks.OnPlayerLoaded.Subscribe(plugin.OnPlayerLoaded);
                     break;
                 case "On_PlayerWounded":
-                    plugin.OnPlayerWoundedHook = Hooks.OnPlayerWounded.Subscribe(p => plugin.OnPlayerWounded(p));
+                    plugin.OnPlayerWoundedHook = Hooks.OnPlayerWounded.Subscribe(plugin.OnPlayerWounded);
                     break;
                 case "On_PlayerAssisted":
-                    plugin.OnPlayerAssistedHook = Hooks.OnPlayerAssisted.Subscribe(p => plugin.OnPlayerAssisted(p));
+                    plugin.OnPlayerAssistedHook = Hooks.OnPlayerAssisted.Subscribe(plugin.OnPlayerAssisted);
                     break;
                 case "On_ServerConsole":
-                    plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(c => plugin.OnServerConsole(c));
+                    plugin.OnServerConsoleHook = Hooks.OnServerConsole.Subscribe(plugin.OnServerConsole);
                     break;
                 case "On_ServerInit":
-                    plugin.OnServerInitHook = Hooks.OnServerInit.Subscribe(s => plugin.OnServerInit(s));
+                    plugin.OnServerInitHook = Hooks.OnServerInit.Subscribe(plugin.OnServerInit);
                     break;
                 case "On_ServerShutdown":
-                    plugin.OnServerShutdownHook = Hooks.OnServerShutdown.Subscribe(s => plugin.OnServerShutdown(s));
+                    plugin.OnServerShutdownHook = Hooks.OnServerShutdown.Subscribe(plugin.OnServerShutdown);
                     break;
                 case "On_Respawn":
-                    plugin.OnRespawnHook = Hooks.OnRespawn.Subscribe(r => plugin.OnRespawn(r));
+                    plugin.OnRespawnHook = Hooks.OnRespawn.Subscribe(plugin.OnRespawn);
                     break;
                 case "On_Shooting":
-                    plugin.OnShootingHook = Hooks.OnShooting.Subscribe(p => plugin.OnShooting(p));
+                    plugin.OnShootingHook = Hooks.OnShooting.Subscribe(plugin.OnShooting);
                     break;
                 case "On_ItemUsed":
-                    plugin.OnItemUsedHook = Hooks.OnItemUsed.Subscribe(p => plugin.OnItemUsed(p));
+                    plugin.OnItemUsedHook = Hooks.OnItemUsed.Subscribe(plugin.OnItemUsed);
                     break;
                 case "On_RocketShooting":
-                    plugin.OnRocketShootingHook = Hooks.OnRocketShooting.Subscribe(p => plugin.OnRocketShooting(p));
+                    plugin.OnRocketShootingHook = Hooks.OnRocketShooting.Subscribe(plugin.OnRocketShooting);
                     break;
                 case "On_Mining":
-                    plugin.OnMiningHook = Hooks.OnMining.Subscribe(p => plugin.OnMining(p));
+                    plugin.OnMiningHook = Hooks.OnMining.Subscribe(plugin.OnMining);
                     break;
                 case "On_WeaponThrow":
-                    plugin.OnWeaponThrowHook = Hooks.OnWeaponThrow.Subscribe(p => plugin.OnWeaponThrow(p));
+                    plugin.OnWeaponThrowHook = Hooks.OnWeaponThrow.Subscribe(plugin.OnWeaponThrow);
                     break;
                 case "On_ItemPickup":
-                    plugin.OnItemPickupHook = Hooks.OnItemPickup.Subscribe(p => plugin.OnItemPickup(p));
+                    plugin.OnItemPickupHook = Hooks.OnItemPickup.Subscribe(plugin.OnItemPickup);
                     break;
                 case "On_ConsumeFuel":
-                    plugin.OnConsumeFuelHook = Hooks.OnConsumeFuel.Subscribe(p => plugin.OnConsumeFuel(p));
+                    plugin.OnConsumeFuelHook = Hooks.OnConsumeFuel.Subscribe(plugin.OnConsumeFuel);
                     break;
                 case "On_ItemRepaired":
-                    plugin.OnItemRepairedHook = Hooks.OnItemRepaired.Subscribe(p => plugin.OnItemRepaired(p));
+                    plugin.OnItemRepairedHook = Hooks.OnItemRepaired.Subscribe(plugin.OnItemRepaired);
                     break;
                 case "On_PlayerSyringeSelf":
-                    plugin.OnPlayerSyringeSelfHook = Hooks.OnPlayerSyringeSelf.Subscribe(p => plugin.OnPlayerSyringeSelf(p));
+                    plugin.OnPlayerSyringeSelfHook = Hooks.OnPlayerSyringeSelf.Subscribe(plugin.OnPlayerSyringeSelf);
                     break;
                 case "On_PlayerSyringeOther":
-                    plugin.OnPlayerSyringeOtherHook = Hooks.OnPlayerSyringeOther.Subscribe(p => plugin.OnPlayerSyringeOther(p));
+                    plugin.OnPlayerSyringeOtherHook = Hooks.OnPlayerSyringeOther.Subscribe(plugin.OnPlayerSyringeOther);
                     break;
                 case "On_PlayerClothingChanged":
-                    plugin.OnPlayerClothingChangedHook = Hooks.OnPlayerClothingChanged.Subscribe(p => plugin.OnPlayerClothingChanged(p));
+                    plugin.OnPlayerClothingChangedHook = Hooks.OnPlayerClothingChanged.Subscribe(plugin.OnPlayerClothingChanged);
                     break;
                 case "On_ItemAdded":
-                    plugin.OnItemAddedHook = Hooks.OnItemAdded.Subscribe(p => plugin.OnItemAdded(p));
+                    plugin.OnItemAddedHook = Hooks.OnItemAdded.Subscribe(plugin.OnItemAdded);
                     break;
                 case "On_ItemRemoved":
-                    plugin.OnItemRemovedHook = Hooks.OnItemRemoved.Subscribe(p => plugin.OnItemRemoved(p));
+                    plugin.OnItemRemovedHook = Hooks.OnItemRemoved.Subscribe(plugin.OnItemRemoved);
                     break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
@@ -276,7 +274,7 @@
                 return;
 
             foreach (string method in plugin.Globals) {
-                if (!method.StartsWith("On_") && !method.EndsWith("Callback"))
+                if (!method.StartsWith("On_", StringComparison.Ordinal) && !method.EndsWith("Callback", StringComparison.Ordinal))
                     continue;
 
                 bool foundHook = true;
