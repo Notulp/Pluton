@@ -60,10 +60,8 @@ namespace Pluton.Events
                             return Server.GetPlayer(p);
 
                         BaseNPC n = ent.GetComponent<BaseNPC>();
-                        if (n != null)
-                            return new NPC(n);
+                        return n != null ? new NPC(n) : new Entity(ent);
 
-                        return new Entity(ent);
                     }
                     return null;
                 } catch (Exception ex) {
@@ -82,11 +80,8 @@ namespace Pluton.Events
                     uint itemUID = (uint)_info.Weapon.GetFieldValue("ownerItemUID");
 
                     BasePlayer ownerPlayer = _info.Weapon.ownerPlayer;
-                    if (ownerPlayer == null) {
-                        return null;
-                    }
+                    return ownerPlayer == null ? null : new InvItem(ownerPlayer.inventory.FindItemUID(itemUID));
 
-                    return new InvItem(ownerPlayer.inventory.FindItemUID(itemUID));
                 } catch (Exception ex) {
                     Logger.LogWarning("[HurtEvent] Got an exception instead of the weapon.");
                     Logger.LogException(ex);

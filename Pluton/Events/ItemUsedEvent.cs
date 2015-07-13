@@ -1,26 +1,24 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class ItemUsedEvent : CountedInstance
     {
-        private InvItem _item;
-        private int _amount;
+        InvItem _item;
+        int _amount;
 
         public ItemUsedEvent(Item item, int amountToConsume)
         {
-            this._item = new InvItem(item);
-            this._amount = amountToConsume;
+            _item = new InvItem(item);
+            _amount = amountToConsume;
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
 
         public int Amount
         {
-            get { return this._amount; }
+            get { return _amount; }
         }
 
     }

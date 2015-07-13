@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class ChatEvent : CountedInstance
     {
@@ -16,10 +14,7 @@ namespace Pluton.Events
         {
             User = player;
             _arg = args;
-            if (args.connection != null)
-                BroadcastName = args.connection.username;
-            else
-                BroadcastName = Server.server_message_name;
+            BroadcastName = args.connection != null ? args.connection.username : Server.server_message_name;
             OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
             FinalText = OriginalText;
             Reply = "chat.say was executed";

@@ -18,10 +18,10 @@ namespace Pluton.Events
             if (String.IsNullOrEmpty(rconCmd))
                 return;
 
-            this._args = args;
-            this.Args = args.Args != null ? args.Args.ToList() : new List<string>();
-            this.cmd = rconCmd.Split(' ')[0];
-            this.Reply = "Command not found!";
+            _args = args;
+            Args = args.Args != null ? args.Args.ToList() : new List<string>();
+            cmd = rconCmd.Split(' ')[0];
+            Reply = "Command not found!";
         }
 
         public void ReplyWith(string reply)

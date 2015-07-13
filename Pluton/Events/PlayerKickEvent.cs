@@ -1,11 +1,10 @@
-﻿using System;
-using Network;
+﻿using Network;
 
 namespace Pluton
 {
     public class PlayerKickEvent : CountedInstance
     {
-        public bool Kick = false;
+        public bool Kick;
         public string Reason;
 
         public Connection Connection;

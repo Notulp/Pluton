@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class LootEvent : CountedInstance
     {
-        public bool Cancel = false;
+        public bool Cancel;
         public string cancelReason = "A plugin stops you from looting that!";
         public readonly Player Looter;
         public readonly PlayerLoot pLoot;

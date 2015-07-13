@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class SyringeUseEvent
     {
-        private Player _user;
-        private Player _receiver;
-        private SyringeWeapon _syringeWeapon;
-        private bool _self;
+        Player _user;
+        Player _receiver;
+        SyringeWeapon _syringeWeapon;
+        readonly bool _self;
 
         public SyringeUseEvent(SyringeWeapon sw,  BaseEntity.RPCMessage msg, bool isSelf)
         {
@@ -15,30 +13,27 @@ namespace Pluton.Events
             _user = new Player(sw.ownerPlayer);
             _self = isSelf;
 
-            if (isSelf)
-                _receiver = _user;
-            else
-                _receiver = new Player(BaseNetworkable.serverEntities.Find(msg.read.UInt32()) as BasePlayer);
+            _receiver = isSelf ? _user : new Player(BaseNetworkable.serverEntities.Find(msg.read.UInt32()) as BasePlayer);
         }
 
         public Player User
         {
-            get { return this._user; }
+            get { return _user; }
         }
 
         public Player Receiver
         {
-            get { return this._receiver; }
+            get { return _receiver; }
         }
 
         public SyringeWeapon Syringe
         {
-            get { return this._syringeWeapon; }
+            get { return _syringeWeapon; }
         }
 
         public bool IsSelfUsage()
         {
-            return this._self;
+            return _self;
         }
     }
 }

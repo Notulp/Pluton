@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CommandPermissionEvent : CommandEvent
     {
-        public bool blocked = false;
+        public bool blocked;
         public readonly ChatCommand chatCommand;
 
         public CommandPermissionEvent(Player player, string[] command, ChatCommand chatCmd)

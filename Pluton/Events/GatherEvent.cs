@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class GatherEvent : CountedInstance
     {
@@ -9,12 +7,13 @@ namespace Pluton.Events
         public Entity Resource;
         public ItemAmount ItemAmount;
         public int Amount;
-        public readonly int origAmount;
+        //public readonly int origAmount;
 
         public GatherEvent(ResourceDispenser dispenser, BaseEntity from, BaseEntity to, ItemAmount itemAmt, int amount)
         {
-            if (to is BasePlayer) {
-                Gatherer = Server.GetPlayer(to as BasePlayer);
+            var basePlayer = to as BasePlayer;
+            if (basePlayer != null) {
+                Gatherer = Server.GetPlayer(basePlayer);
                 Resource = new Entity(from);
                 resourceDispenser = dispenser;
                 ItemAmount = itemAmt;
