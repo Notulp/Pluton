@@ -10,9 +10,9 @@ namespace Pluton
 
         public static string Version = "0.9.8";
 
-        public static ServerTimers timers;
+        public static ServerTimers Timers;
 
-        public static bool PlutonLoaded = false;
+        public static bool PlutonLoaded;
 
         public static void AttachBootstrap()
         {
@@ -50,15 +50,15 @@ namespace Pluton
 
         public static void ReloadTimers()
         {
-            if (timers != null)
-                timers.Dispose();
+            if (Timers != null)
+                Timers.Dispose();
 
             var saver = Config.GetInstance().GetValue("Config", "saveInterval", "180000");
             if (saver != null) {
                 double save = Double.Parse(saver);
 
-                timers = new ServerTimers(save);
-                timers.Start();
+                Timers = new ServerTimers(save);
+                Timers.Start();
             }
         }
 
@@ -86,12 +86,8 @@ namespace Pluton
 
         public static void InstallThreadedOutput()
         {
-            Application.logMessageReceivedThreaded += new Application.LogCallback(delegate(string condition, string stackTrace, LogType type) {
-                Logger.ThreadedLogRecieved(condition, stackTrace, type);
-            });
-            Application.logMessageReceived += new Application.LogCallback(delegate(string condition, string stackTrace, LogType type) {
-                Logger.LogRecieved(condition, stackTrace, type);
-            });
+            Application.logMessageReceivedThreaded += Logger.ThreadedLogRecieved;
+            Application.logMessageReceived += Logger.LogRecieved;
         }
 
         public class ServerTimers
@@ -103,7 +99,7 @@ namespace Pluton
                 _savetimer = new Timer(save);
                
                 Debug.Log("Server timers started!");
-                _savetimer.Elapsed += new ElapsedEventHandler(this._savetimer_Elapsed);
+                _savetimer.Elapsed += _savetimer_Elapsed;
             }
 
             public void Dispose()
@@ -122,7 +118,7 @@ namespace Pluton
                 _savetimer.Stop();
             }
 
-            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e)
+            void _savetimer_Elapsed(object sender, ElapsedEventArgs e)
             {
                 Bootstrap.SaveAll();
             }

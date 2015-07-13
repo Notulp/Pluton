@@ -7,11 +7,10 @@
     public class TimedEvent : CountedInstance
     {
 
-        private Dictionary<string, object> _args;
-        private readonly string _name;
-        private readonly Timer _timer;
-        private long lastTick;
-        private int _elapsedCount;
+        readonly string _name;
+        readonly Timer _timer;
+        long lastTick;
+        int _elapsedCount;
 
         public delegate void TimedEventFireDelegate(TimedEvent evt);
 
@@ -19,66 +18,66 @@
 
         public TimedEvent(string name, double interval)
         {
-            this._name = name;
-            this._timer = new Timer();
-            this._timer.Interval = interval;
-            this._timer.Elapsed += new ElapsedEventHandler(this._timer_Elapsed);
-            this._elapsedCount = 0;
+            _name = name;
+            _timer = new Timer();
+            _timer.Interval = interval;
+            _timer.Elapsed += _timer_Elapsed;
+            _elapsedCount = 0;
         }
 
         public TimedEvent(string name, double interval, Dictionary<string, object> args)
             : this(name, interval)
         {
-            this.Args = args;
+            Args = args;
         }
 
-        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (this.OnFire != null) {
-                this.OnFire(this);
+            if (OnFire != null) {
+                OnFire(this);
             }
 
-            this._elapsedCount += 1;
-            this.lastTick = DateTime.UtcNow.Ticks;
+            _elapsedCount += 1;
+            lastTick = DateTime.UtcNow.Ticks;
         }
 
         public void Start()
         {
-            this._timer.Start();
-            this.lastTick = DateTime.UtcNow.Ticks;
+            _timer.Start();
+            lastTick = DateTime.UtcNow.Ticks;
         }
 
         public void Stop()
         {
-            this._timer.Stop();
+            _timer.Stop();
         }
 
         public void Kill()
         {
-            this._timer.Stop();
-            this._timer.Dispose();
+            _timer.Stop();
+            _timer.Dispose();
         }
 
         public Dictionary<string, object> Args {
-            get { return this._args; }
-            set { this._args = value; }
+            get;
+            set;
         }
 
         public double Interval {
-            get { return this._timer.Interval; }
-            set { this._timer.Interval = value; }
+            get { return _timer.Interval; }
+            set { _timer.Interval = value; }
         }
 
         public string Name {
-            get { return this._name; }
+            get { return _name; }
         }
 
         public double TimeLeft {
-            get { return (this.Interval - ((DateTime.UtcNow.Ticks - this.lastTick) / 0x2710L)); }
+            get { return (Interval - ((DateTime.UtcNow.Ticks - lastTick) / 0x2710L)); }
         }
 
         public int ElapsedCount {
-            get { return this._elapsedCount; }
+            get { return _elapsedCount; }
         }
     }
 }

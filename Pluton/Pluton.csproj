@@ -30,10 +30,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="MoonSharp.Interpreter">
       <HintPath>ref\MoonSharp.Interpreter.dll</HintPath>
     </Reference>
@@ -53,9 +49,11 @@
     <Reference Include="mcs">
       <HintPath>ref\mcs.exe</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\ownCloud\rust\clean dll%27s\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\ref\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\ownCloud\rust\clean dll%27s\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

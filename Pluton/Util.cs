@@ -5,24 +5,21 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
-    using System.Runtime.InteropServices;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Text.RegularExpressions;
     using UnityEngine;
 
     public class Util : Singleton<Util>, ISingleton
     {
-        private readonly Dictionary<string, System.Type> typeCache = new Dictionary<string, System.Type>();
-        private static DirectoryInfo UtilPath;
+        readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>();
+        static DirectoryInfo UtilPath;
 
         public Dictionary<string, Zone2D> zones = new Dictionary<string, Zone2D>();
         public DataStore ZoneStore;
 
         public Zone2D GetZone(string name)
         {
-            if (zones.ContainsKey(name))
-                return zones[name];
-            return null;
+            return zones.ContainsKey(name) ? zones[name] : null;
         }
 
         public void SetZone(Zone2D zone)
@@ -35,8 +32,8 @@
         public Zone2D CreateZone(string name)
         {
             try {
-                GameObject obj = new GameObject(name);
-                var gobj = GameObject.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
+                var obj = new GameObject(name);
+                var gobj = UnityEngine.Object.Instantiate(obj, Vector3.zero, Quaternion.identity) as GameObject;
                 var zone = gobj.AddComponent<Zone2D>();
                 zone.Name = name;
                 zones[name] = zone;
@@ -71,7 +68,7 @@
         public void SaveZones()
         {
             try {
-                Logger.LogWarning("Saving " + zones.Count.ToString() + " zone.");
+                Logger.LogWarning("Saving " + zones.Count + " zone.");
                 foreach (var zone in zones.Values) {
                     ZoneStore.Add("Zones", zone.Name, zone.Serialize());
                 }
@@ -156,7 +153,7 @@
             if (path == null)
                 return false;
 
-            string result = string.Empty;
+            string result;
 
             var settings = new DumpSettings();
             settings.MaxDepth = depth;
@@ -166,12 +163,12 @@
             result = Dump.ToDump(obj, obj.GetType(), prefix, settings);
 
             string dumpHeader =
-                "Object type: " + obj.GetType().ToString() + "\r\n" +
+                "Object type: " + obj.GetType() + "\r\n" +
                 "TimeNow: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "\r\n" +
-                "Depth: " + depth.ToString() + "\r\n" +
-                "MaxItems: " + maxItems.ToString() + "\r\n" +
-                "ShowPrivate: " + disPrivate.ToString() + "\r\n" +
-                "UseFullClassName: " + fullClassName.ToString() + "\r\n\r\n";
+                "Depth: " + depth + "\r\n" +
+                "MaxItems: " + maxItems + "\r\n" +
+                "ShowPrivate: " + disPrivate + "\r\n" +
+                "UseFullClassName: " + fullClassName + "\r\n\r\n";
 
             File.AppendAllText(path, dumpHeader);
             File.AppendAllText(path, result + "\r\n\r\n");
@@ -253,14 +250,12 @@
         {
             bool inQuote = false;
             string current = "";
-            List<string> final = new List<string>();
+            var final = new List<string>();
 
             foreach (string str in sArr) {
-                if (str.StartsWith("\""))
-                    inQuote = true;
+                inQuote |= str.StartsWith("\"", StringComparison.Ordinal);
 
-                if (str.EndsWith("\""))
-                    inQuote = false;
+                inQuote &= !str.EndsWith("\"", StringComparison.Ordinal);
 
                 if (inQuote) {
                     if (current != "")
@@ -282,23 +277,23 @@
 
         public static Hashtable HashtableFromFile(string path)
         {
-            using (FileStream stream = new FileStream(path, FileMode.Open)) {
-                BinaryFormatter formatter = new BinaryFormatter();
+            using (var stream = new FileStream(path, FileMode.Open)) {
+                var formatter = new BinaryFormatter();
                 return (Hashtable)formatter.Deserialize(stream);
             }
         }
 
         public static void HashtableToFile(Hashtable ht, string path)
         {
-            using (FileStream stream = new FileStream(path, FileMode.Create)) {
-                BinaryFormatter formatter = new BinaryFormatter();
+            using (var stream = new FileStream(path, FileMode.Create)) {
+                var formatter = new BinaryFormatter();
                 formatter.Serialize(stream, ht);
             }
         }
 
         public Vector3 Infront(Player p, float length)
         {
-            return (p.Location + ((Vector3)(Vector3.forward * length)));
+            return (p.Location + (Vector3.forward * length));
         }
 
         public void Items()
@@ -328,7 +323,7 @@
 
         public Match Regex(string input, string match)
         {
-            return new System.Text.RegularExpressions.Regex(input).Match(match);
+            return new Regex(input).Match(match);
         }
 
         public Quaternion RotateX(Quaternion q, float angle)
@@ -346,26 +341,26 @@
             return (q *= Quaternion.Euler(0f, 0f, angle));
         }
 
-        public bool TryFindType(string typeName, out System.Type t)
+        public bool TryFindType(string typeName, out Type t)
         {
-            lock (this.typeCache) {
-                if (!this.typeCache.TryGetValue(typeName, out t)) {
+            lock (typeCache) {
+                if (!typeCache.TryGetValue(typeName, out t)) {
                     foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
                         t = assembly.GetType(typeName);
                         if (t != null) {
                             break;
                         }
                     }
-                    this.typeCache[typeName] = t;
+                    typeCache[typeName] = t;
                 }
             }
             return (t != null);
         }
 
-        public System.Type TryFindReturnType(string typeName)
+        public Type TryFindReturnType(string typeName)
         {
-            System.Type t;
-            if (this.TryFindType(typeName, out t))
+            Type t;
+            if (TryFindType(typeName, out t))
                 return t;
             throw new Exception("Type not found " + typeName);
         }

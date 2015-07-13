@@ -5,7 +5,7 @@ namespace Pluton
 {
     public class CoreConfig : Singleton<CoreConfig>, ISingleton
     {
-        private IniParser ConfigFile;
+        IniParser ConfigFile;
 
         public void Initialize()
         {

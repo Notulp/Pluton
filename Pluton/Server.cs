@@ -5,19 +5,16 @@
     using System.Linq;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using UnityEngine;
 
     public class Server : Singleton<Server>, ISingleton
     {
-        public bool Loaded = false;
+        public bool Loaded;
         public Dictionary<ulong, Player> Players;
         public Dictionary<ulong, OfflinePlayer> OfflinePlayers;
-        //public Dictionary<string, StructureRecorder.Structure> Structures;
         public Dictionary<string, LoadOut> LoadOuts;
         public DataStore serverData;
         public static string server_message_name = "Pluton";
-        private float craftTimeScale = 1f;
+        float craftTimeScale = 1f;
 
         public void Broadcast(string arg)
         {
@@ -37,25 +34,19 @@
         public Player FindPlayer(string s)
         {
             BasePlayer player = BasePlayer.Find(s);
-            if (player != null)
-                return new Player(player);
-            return null;
+            return player != null ? new Player(player) : null;
         }
 
         public Player FindPlayer(ulong steamid)
         {
-            if (Players.ContainsKey(steamid))
-                return Players[steamid];
-            return FindPlayer(steamid.ToString());
+            return Players.ContainsKey(steamid) ? Players[steamid] : FindPlayer(steamid.ToString());
         }
 
         public static Player GetPlayer(BasePlayer bp)
         {
             try {
                 Player p = GetInstance().FindPlayer(bp.userID);
-                if (p != null)
-                    return p;
-                return new Player(bp);
+                return p ?? new Player(bp);
             } catch (Exception ex) {
                 Logger.LogDebug("[Server] GetPlayer: " + ex.Message);
                 Logger.LogException(ex);
@@ -66,7 +57,6 @@
         public void Initialize()
         {
             Instance.LoadOuts = new Dictionary<string, LoadOut>();
-            //Instance.Structures = new Dictionary<string, StructureRecorder.Structure>();
             Instance.Players = new Dictionary<ulong, Player>();
             Instance.OfflinePlayers = new Dictionary<ulong, OfflinePlayer>();
             Instance.serverData = new DataStore("ServerData.ds");
@@ -91,7 +81,7 @@
         }
 
         [Obsolete("Server.GetServer() is obsolete, use Server.GetInstance() instead.", false)]
-        public static Pluton.Server GetServer()
+        public static Server GetServer()
         {
             return Instance;
         }
@@ -111,14 +101,14 @@
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            DirectoryInfo loadoutPath = new DirectoryInfo(path);
+            var loadoutPath = new DirectoryInfo(path);
 
             foreach (FileInfo file in loadoutPath.GetFiles()) {
                 if (file.Extension == ".ini") {
                     new LoadOut(file.Name.Replace(".ini", ""));
                 }
             }
-            Logger.Log("[Server] " + LoadOuts.Count.ToString() + " loadout loaded!");
+            Logger.Log("[Server] " + LoadOuts.Count + " loadout loaded!");
         }
 
         public void LoadOfflinePlayers()
@@ -131,7 +121,7 @@
             } else {
                 Logger.LogWarning("[Server] No OfflinePlayers found!");
             }
-            Logger.Log("[Server] " + Instance.OfflinePlayers.Count.ToString() + " offlineplayer loaded!");
+            Logger.Log("[Server] " + Instance.OfflinePlayers.Count + " offlineplayer loaded!");
         }
 
         /*public void LoadStructures()
@@ -172,11 +162,11 @@
         {
             foreach (Player player in Players.Values) {
                 if (serverData.ContainsKey("OfflinePlayers", player.SteamID)) {
-                    OfflinePlayer op = serverData.Get("OfflinePlayers", player.SteamID) as OfflinePlayer;
+                    var op = serverData.Get("OfflinePlayers", player.SteamID) as OfflinePlayer;
                     op.Update(player);
                     OfflinePlayers[player.GameID] = op;
                 } else {
-                    OfflinePlayer op = new OfflinePlayer(player);
+                    var op = new OfflinePlayer(player);
                     OfflinePlayers.Add(player.GameID, op);
                 }
             }
