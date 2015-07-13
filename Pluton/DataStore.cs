@@ -99,6 +99,44 @@
             return true;           
         }
 
+        public bool TableToIni(string tablename, string inipath)
+        {
+            Hashtable hashtable = (Hashtable)this.datastore[tablename];
+            if (hashtable != null)
+            {
+                if (!Path.HasExtension(inipath))
+                    inipath += ".ini";
+                File.WriteAllText(inipath, "");
+                IniParser ini = new IniParser(inipath);
+                ini.Save();
+
+                foreach (string setting in hashtable.Keys)
+                {
+                    ini.AddSetting(tablename, setting, hashtable[setting].ToString());
+                }
+                ini.Save();
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddFromIni(string inipath)
+        {
+            if (File.Exists(inipath))
+            {
+                IniParser ini = new IniParser(inipath);
+                foreach (string section in ini.Sections)
+                {
+                    foreach (string setting in ini.EnumSection(section))
+                    {
+                        this.Add(section, setting, ini.GetSetting(section, setting));
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
         public void Add(string tablename, object key, object val)
         {
             if (key == null)
