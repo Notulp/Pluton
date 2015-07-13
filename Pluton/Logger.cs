@@ -39,13 +39,13 @@ namespace Pluton
                 logDebug = Config.GetInstance().GetBoolValue("Logging", "debugInLog", true);
                 logErrors = Config.GetInstance().GetBoolValue("Logging", "errorInLog", true);
                 logException = Config.GetInstance().GetBoolValue("Logging", "exceptionInLog", true);
-                logException = Config.GetInstance().GetBoolValue("Logging", "warningInLog", true);
+                logWarnings = Config.GetInstance().GetBoolValue("Logging", "warningInLog", true);
 
                 showChat = Config.GetInstance().GetBoolValue("Logging", "chatInConsole", true);
                 showDebug = Config.GetInstance().GetBoolValue("Logging", "debugInConsole", true);
                 showErrors = Config.GetInstance().GetBoolValue("Logging", "errorInConsole", true);
                 showException = Config.GetInstance().GetBoolValue("Logging", "exceptionInConsole", true);
-                showException = Config.GetInstance().GetBoolValue("Logging", "warningInConsole", true);
+                showWarnings = Config.GetInstance().GetBoolValue("Logging", "warningInConsole", true);
             } catch (Exception ex) {
                 Debug.LogException(ex);
             }
