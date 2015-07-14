@@ -1,4 +1,4 @@
-﻿namespace Pluton
+namespace Pluton
 {
     using System;
     using System.Collections;
@@ -13,7 +13,7 @@
         private static DataStore instance;
         public string PATH;
 
-        private object StringifyIfVector3(object keyorval)
+        private static object StringifyIfVector3(object keyorval)
         {
             if (keyorval == null)
                 return keyorval;
@@ -31,14 +31,14 @@
             return keyorval;
         }
 
-        private object ParseIfVector3String(object keyorval)
+        private static object ParseIfVector3String(object keyorval)
         {
             if (keyorval == null)
                 return keyorval;
 
             try {
                 if (typeof(string).Equals(keyorval.GetType())) {
-                    if ((keyorval as string).StartsWith("Vector3,")) {
+                    if ((keyorval as string).StartsWith("Vector3,", StringComparison.Ordinal)) {
                         string[] v3array = (keyorval as string).Split(new char[] { ',' });
                         Vector3 parse = new Vector3(Single.Parse(v3array[1]), 
                                             Single.Parse(v3array[2]),
@@ -193,10 +193,7 @@
                 return null;
 
             Hashtable hashtable = (Hashtable)this.datastore[tablename];
-            if (hashtable == null) {
-                return null;
-            }
-            return ParseIfVector3String(hashtable[StringifyIfVector3(key)]);
+            return hashtable == null ? null : ParseIfVector3String(hashtable[StringifyIfVector3(key)]);
         }
 
         public static DataStore GetInstance()
