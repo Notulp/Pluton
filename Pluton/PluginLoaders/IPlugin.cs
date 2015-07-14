@@ -13,6 +13,10 @@ namespace Pluton
 
         void OnAllPluginsLoaded(string s);
 
+        void OnBuildingPartDemolished(BuildingPartDemolishedEvent bpde);
+
+        void OnBuildingPartDestroyed(BuildingPartDestroyedEvent bpde);
+
         void OnChat(ChatEvent arg);
 
         void OnClientAuth(AuthEvent ae);
@@ -25,11 +29,25 @@ namespace Pluton
 
         void OnCommandPermission(CommandPermissionEvent perm);
 
+        void OnConsumeFuel(ConsumeFuelEvent cfe);
+
         void OnCorpseHurt(CorpseHurtEvent he);
 
         void OnDoorCode(DoorCodeEvent dc);
 
         void OnDoorUse(DoorUseEvent due);
+
+        void OnItemAdded(InventoryModEvent ime);
+
+        void OnItemLoseCondition(ItemConditionEvent ice);
+
+        void OnItemPickup(ItemPickupEvent ipe);
+
+        void OnItemRemoved(InventoryModEvent ime);
+
+        void OnItemRepaired(ItemRepairEvent ire);
+
+        void OnItemUsed(ItemUsedEvent uie);
 
         void OnLootingEntity(EntityLootEvent le);
 
@@ -37,11 +55,17 @@ namespace Pluton
 
         void OnLootingPlayer(PlayerLootEvent le);
 
+        void OnMining(MiningQuarry mq);
+
         void OnNPCHurt(NPCHurtEvent he);
 
         void OnNPCKilled(NPCDeathEvent de);
 
         void OnPlacement(BuildingEvent be);
+
+        void OnPlayerAssisted(Player player);
+
+        void OnPlayerClothingChanged(PlayerClothingEvent pce);
 
         void OnPlayerConnected(Player player);
 
@@ -53,39 +77,27 @@ namespace Pluton
 
         void OnPlayerHurt(PlayerHurtEvent he);
 
-        void OnPlayerStartCrafting(CraftEvent ce);
-
-        void OnPlayerTakeRadiation(PlayerTakeRadsEvent re);
-        
-        void OnRespawn(RespawnEvent re);
-
-        void OnShooting(ShootEvent se);
-
-        void OnItemUsed(ItemUsedEvent uie);
-
-        void OnItemAdded(InventoryModEvent ime);
-
-        void OnItemRemoved(InventoryModEvent ime);
-
-        void OnRocketShooting(RocketShootEvent rse);
-
-        void OnMining(MiningQuarry mq);
-
-        void OnWeaponThrow(WeaponThrowEvent wte);
-
-        void OnItemPickup(ItemPickupEvent ipe);
-
-        void OnConsumeFuel(ConsumeFuelEvent cfe);
+        void OnPlayerLoaded(Player player);
 
         void OnPlayerSleep(Player player);
 
-        void OnPlayerWakeUp(Player player);
+        void OnPlayerStartCrafting(CraftEvent ce);
 
-        void OnPlayerLoaded(Player player);
+        void OnPlayerSyringeOther(SyringeUseEvent sue);
+
+        void OnPlayerSyringeSelf(SyringeUseEvent sue);
+
+        void OnPlayerTakeRadiation(PlayerTakeRadsEvent re);
+
+        void OnPlayerWakeUp(Player player);
 
         void OnPlayerWounded(Player player);
 
-        void OnPlayerAssisted(Player player);
+        void OnRespawn(RespawnEvent re);
+
+        void OnRocketShooting(RocketShootEvent rse);
+
+        void OnShooting(ShootEvent se);
 
         void OnServerConsole(ServerConsoleEvent ce);
 
@@ -95,21 +107,9 @@ namespace Pluton
 
         void OnServerShutdown(string s);
 
-        void OnItemRepaired(ItemRepairEvent ire);
-
-        void OnItemLoseCondition(ItemConditionEvent ice);
-
-        void OnPlayerSyringeSelf(SyringeUseEvent sue);
-
-        void OnPlayerSyringeOther(SyringeUseEvent sue);
-
-        void OnPlayerClothingChanged(PlayerClothingEvent pce);
-
-        void OnBuildingPartDestroyed(BuildingPartDestroyedEvent bpde);
-
-        void OnBuildingPartDemolished(BuildingPartDemolishedEvent bpde);
-
         void OnTimerCB(TimedEvent evt);
+
+        void OnWeaponThrow(WeaponThrowEvent wte);
     }
 
     public enum PluginState : sbyte
