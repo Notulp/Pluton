@@ -106,6 +106,8 @@ namespace Pluton
 
         public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
 
+        public static Subject<ItemConditionEvent> OnItemLoseCondition = new Subject<ItemConditionEvent>();
+
         public static Subject<PlayerClothingEvent> OnPlayerClothingChanged = new Subject<PlayerClothingEvent>();
 
         public static Subject<BuildingPartDestroyedEvent> OnBuildingPartDestroyed = new Subject<BuildingPartDestroyedEvent>();
@@ -351,6 +353,11 @@ namespace Pluton
         public static void ItemRemoved(ItemContainer ic, Item i)
         {
             OnItemRemoved.OnNext(new InventoryModEvent(ic, i));
+        }
+
+        public static void ItemLoseCondition(Item i, float f)
+        {
+            OnItemLoseCondition.OnNext(new ItemConditionEvent(i, f));
         }
 
         public static void PlayerClothingChanged(PlayerInventory pi, Item i)
