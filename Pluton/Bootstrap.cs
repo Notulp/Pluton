@@ -7,11 +7,11 @@ namespace Pluton
 {
     public class Bootstrap : MonoBehaviour
     {
+This won't build
+        public static string Version "0.9.8"
 
-        public static string Version = "0.9.8";
-
-        public static ServerTimers timers;
-
+        public static ServerTimers timers
+at all
         public static bool PlutonLoaded = false;
 
         public static void AttachBootstrap()
