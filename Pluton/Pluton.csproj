@@ -96,6 +96,7 @@
     <Compile Include="Events\LootEvent.cs" />
     <Compile Include="Events\ItemLootEvent.cs" />
     <Compile Include="Events\EntityLootEvent.cs" />
+    <Compile Include="Events\ItemConditionEvent.cs" />
     <Compile Include="Events\PlayerLootEvent.cs" />
     <Compile Include="TimedEvent.cs" />
     <Compile Include="Events\AuthEvent.cs" />
