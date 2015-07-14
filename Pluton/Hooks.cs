@@ -18,8 +18,10 @@ namespace Pluton
 
         public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
-        public static Subject<BuildingEvent> OnPlacement = new Subject<BuildingEvent>();
+        public static Subject<BuildingPartDemolishedEvent> OnBuildingPartDemolished = new Subject<BuildingPartDemolishedEvent>();
 
+        public static Subject<BuildingPartDestroyedEvent> OnBuildingPartDestroyed = new Subject<BuildingPartDestroyedEvent>();
+        
         public static Subject<ChatEvent> OnChat = new Subject<ChatEvent>();
 
         public static Subject<AuthEvent> OnClientAuth = new Subject<AuthEvent>();
@@ -27,10 +29,12 @@ namespace Pluton
         public static Subject<ClientConsoleEvent> OnClientConsole = new Subject<ClientConsoleEvent>();
 
         public static Subject<CombatEntityHurtEvent> OnCombatEntityHurt = new Subject<CombatEntityHurtEvent>();
-
+        
         public static Subject<CommandEvent> OnCommand = new Subject<CommandEvent>();
 
         public static Subject<CommandPermissionEvent> OnCommandPermission = new Subject<CommandPermissionEvent>();
+        
+        public static Subject<ConsumeFuelEvent> OnConsumeFuel = new Subject<ConsumeFuelEvent>();
 
         public static Subject<CorpseHurtEvent> OnCorpseHurt = new Subject<CorpseHurtEvent>();
 
@@ -38,29 +42,67 @@ namespace Pluton
 
         public static Subject<DoorUseEvent> OnDoorUse = new Subject<DoorUseEvent>();
 
-        public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
+        public static Subject<InventoryModEvent> OnItemAdded = new Subject<InventoryModEvent>();
 
-        public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
+        public static Subject<ItemConditionEvent> OnItemLoseCondition = new Subject<ItemConditionEvent>();
 
-        public static Subject<CraftEvent> OnPlayerStartCrafting = new Subject<CraftEvent>();
+        public static Subject<ItemPickupEvent> OnItemPickup = new Subject<ItemPickupEvent>();
 
-        public static Subject<Player> OnPlayerConnected = new Subject<Player>();
+        public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
 
-        public static Subject<Player> OnPlayerDisconnected = new Subject<Player>();
+        public static Subject<ItemRepairEvent> OnItemRepaired = new Subject<ItemRepairEvent>();
 
-        public static Subject<PlayerDeathEvent> OnPlayerDied = new Subject<PlayerDeathEvent>();
-
-        public static Subject<PlayerHurtEvent> OnPlayerHurt = new Subject<PlayerHurtEvent>();
-
-        public static Subject<PlayerTakeRadsEvent> OnPlayerTakeRads = new Subject<PlayerTakeRadsEvent>();
-
-        public static Subject<GatherEvent> OnGathering = new Subject<GatherEvent>();
+        public static Subject<ItemUsedEvent> OnItemUsed = new Subject<ItemUsedEvent>();
 
         public static Subject<EntityLootEvent> OnLootingEntity = new Subject<EntityLootEvent>();
 
+        public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
+
         public static Subject<PlayerLootEvent> OnLootingPlayer = new Subject<PlayerLootEvent>();
 
-        public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
+        public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
+
+        public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
+
+        public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
+
+        public static Subject<BuildingEvent> OnPlacement = new Subject<BuildingEvent>();
+
+        public static Subject<Player> OnPlayerAssisted = new Subject<Player>();
+
+        public static Subject<PlayerClothingEvent> OnPlayerClothingChanged = new Subject<PlayerClothingEvent>();
+
+        public static Subject<Player> OnPlayerConnected = new Subject<Player>();
+
+        public static Subject<PlayerDeathEvent> OnPlayerDied = new Subject<PlayerDeathEvent>();
+
+        public static Subject<Player> OnPlayerDisconnected = new Subject<Player>();
+
+        public static Subject<GatherEvent> OnGathering = new Subject<GatherEvent>();
+
+        public static Subject<PlayerHurtEvent> OnPlayerHurt = new Subject<PlayerHurtEvent>();
+
+        public static Subject<Player> OnPlayerLoaded = new Subject<Player>();
+
+        public static Subject<Player> OnPlayerSleep = new Subject<Player>();
+
+        public static Subject<CraftEvent> OnPlayerStartCrafting = new Subject<CraftEvent>();
+
+        public static Subject<SyringeUseEvent> OnPlayerSyringeOther = new Subject<SyringeUseEvent>();
+
+        public static Subject<SyringeUseEvent> OnPlayerSyringeSelf = new Subject<SyringeUseEvent>();
+
+        public static Subject<PlayerTakeRadsEvent> OnPlayerTakeRads = new Subject<PlayerTakeRadsEvent>();
+
+        public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
+
+        public static Subject<Player> OnPlayerWounded = new Subject<Player>();
+
+        public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
+
+        public static Subject<RocketShootEvent> OnRocketShooting = new Subject<RocketShootEvent>();
+
+        public static Subject<ShootEvent> OnShooting = new Subject<ShootEvent>();
 
         public static Subject<ServerConsoleEvent> OnServerConsole = new Subject<ServerConsoleEvent>();
 
@@ -70,49 +112,7 @@ namespace Pluton
 
         public static Subject<string> OnServerShutdown = new Subject<string>();
 
-        public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
-
-        public static Subject<ShootEvent> OnShooting = new Subject<ShootEvent>();
-
-        public static Subject<ItemUsedEvent> OnItemUsed = new Subject<ItemUsedEvent>();
-
-        public static Subject<RocketShootEvent> OnRocketShooting = new Subject<RocketShootEvent>();
-
-        public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
-
         public static Subject<WeaponThrowEvent> OnWeaponThrow = new Subject<WeaponThrowEvent>();
-
-        public static Subject<ItemPickupEvent> OnItemPickup = new Subject<ItemPickupEvent>();
-
-        public static Subject<ConsumeFuelEvent> OnConsumeFuel = new Subject<ConsumeFuelEvent>();
-
-        public static Subject<Player> OnPlayerSleep = new Subject<Player>();
-
-        public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
-
-        public static Subject<Player> OnPlayerLoaded = new Subject<Player>();
-
-        public static Subject<Player> OnPlayerWounded = new Subject<Player>();
-
-        public static Subject<Player> OnPlayerAssisted = new Subject<Player>();
-
-        public static Subject<ItemRepairEvent> OnItemRepaired = new Subject<ItemRepairEvent>();
-
-        public static Subject<SyringeUseEvent> OnPlayerSyringeSelf = new Subject<SyringeUseEvent>();
-
-        public static Subject<SyringeUseEvent> OnPlayerSyringeOther = new Subject<SyringeUseEvent>();
-
-        public static Subject<InventoryModEvent> OnItemAdded = new Subject<InventoryModEvent>();
-
-        public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
-
-        public static Subject<ItemConditionEvent> OnItemLoseCondition = new Subject<ItemConditionEvent>();
-
-        public static Subject<PlayerClothingEvent> OnPlayerClothingChanged = new Subject<PlayerClothingEvent>();
-
-        public static Subject<BuildingPartDestroyedEvent> OnBuildingPartDestroyed = new Subject<BuildingPartDestroyedEvent>();
-
-        public static Subject<BuildingPartDemolishedEvent> OnBuildingPartDemolished = new Subject<BuildingPartDemolishedEvent>();
 
         #endregion
 
