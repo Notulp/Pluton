@@ -38,7 +38,7 @@ namespace Pluton
 
             try {
                 if (typeof(string).Equals(keyorval.GetType())) {
-                    if ((keyorval as string).StartsWith("Vector3,", StringComparison.CurrentCulture)) {
+                    if ((keyorval as string).StartsWith("Vector3,", StringComparison.Ordinal)) {
                         string[] v3array = (keyorval as string).Split(new char[] { ',' });
                         Vector3 parse = new Vector3(Single.Parse(v3array[1]), 
                                             Single.Parse(v3array[2]),
