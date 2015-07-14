@@ -265,6 +265,9 @@
                 case "On_ItemRemoved":
                     plugin.OnItemRemovedHook = Hooks.OnItemRemoved.Subscribe(p => plugin.OnItemRemoved(p));
                     break;
+                case "On_ItemLoseCondition":
+                    plugin.OnItemLoseConditionHook = Hooks.OnItemLoseCondition.Subscribe(p => plugin.OnItemLoseCondition(p));
+                    break;
                 case "On_PluginInit":
                     plugin.Invoke("On_PluginInit");
                     break;
@@ -436,6 +439,9 @@
                     break;
                 case "On_ItemRemoved":
                     plugin.OnItemRemovedHook.Dispose();
+                    break;
+                case "On_ItemLoseCondition":
+                    plugin.OnItemLoseConditionHook.Dispose();
                     break;
                 case "On_PluginInit":
                 case "On_PluginDeinit":

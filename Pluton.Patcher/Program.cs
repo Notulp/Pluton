@@ -566,6 +566,20 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(Remove.Body.Instructions[Position2], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void ItemLoseCondition()
+        {
+            TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
+            MethodDefinition LoseCondition = Item.GetMethod("LoseCondition");
+            MethodDefinition method = hooksClass.GetMethod("ItemLoseCondition");
+            CloneMethod(LoseCondition);
+
+            ILProcessor iLProcessor = LoseCondition.Body.GetILProcessor();
+            int Position = LoseCondition.Body.Instructions.Count - 10;
+            iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -671,6 +685,7 @@ namespace Pluton.Patcher
             ItemPickup();
             ItemUsed();
             ItemRepaired();
+            ItemLoseCondition();
 
             FieldsUpdate();
 

@@ -710,6 +710,13 @@ namespace Pluton
         {
             this.Invoke("On_ItemRemoved", ime);
         }
+        
+        public IDisposable OnItemLoseConditionHook;
+
+        public void OnItemLoseCondition(ItemConditionEvent ice)
+        {
+            this.Invoke("On_ItemLoseCondition", ice);
+        }
 
         public IDisposable OnPlayerSyringeSelfHook;
 
