@@ -14,7 +14,7 @@ namespace Pluton.Events
         public ClientConsoleEvent(ConsoleSystem.Arg arg, string rconCmd)
         {
             this.Internal = arg;
-            this.User = Player.FindByGameID((arg.connection.player as BasePlayer).userID);
+            this.User = Server.GetPlayer((BasePlayer) arg.connection.player);
             this.Args = new List<string>();
 
             this.Reply = "Command not found!";

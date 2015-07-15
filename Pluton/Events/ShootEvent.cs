@@ -8,7 +8,7 @@
 
         public ShootEvent(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
         {
-            this._player = new Player(msg.player);
+            this._player = Server.GetPlayer(msg.player);
             this._rpcMessage = msg;
             this._projectile = baseProjectile;
         }

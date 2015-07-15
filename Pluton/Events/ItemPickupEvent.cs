@@ -11,7 +11,7 @@
         {
             this._entity = ce;
             this._msg = msg;
-            this._player = new Player(msg.player);
+            this._player = Server.GetPlayer(msg.player);
             this._item = new InvItem(i);
         }
 

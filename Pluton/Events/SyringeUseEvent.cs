@@ -10,7 +10,7 @@
         public SyringeUseEvent(SyringeWeapon sw,  BaseEntity.RPCMessage msg, bool isSelf)
         {
             this._syringeWeapon = sw;
-            this._user = new Player(sw.ownerPlayer);
+            this._user = Server.GetPlayer(sw.ownerPlayer);
             this._self = isSelf;
 
             if (isSelf)

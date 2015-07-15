@@ -8,7 +8,7 @@
         public BuildingPartDemolishedEvent(BuildingBlock bb, BasePlayer basePlayer)
         {
             this.buildingPart = new BuildingPart(bb);
-            this.player = new Player(basePlayer);
+            this.player = Server.GetPlayer(basePlayer);
         }
 
         public Player Player

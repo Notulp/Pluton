@@ -10,7 +10,7 @@ namespace Pluton.Events
         {
             this._msg = msg;
             this._thrownWeapon = thrownWeapon;
-            this._player = new Player(msg.player);
+            this._player = Server.GetPlayer(msg.player);
         }
 
         public BaseEntity.RPCMessage RPCMessage

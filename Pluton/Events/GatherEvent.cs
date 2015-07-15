@@ -11,7 +11,7 @@
         public GatherEvent(ResourceDispenser dispenser, BaseEntity from, BaseEntity to, ItemAmount itemAmt, int amount)
         {
             if (to is BasePlayer) {
-                this._gatherer = new Player((BasePlayer)to);
+                this._gatherer = Server.GetPlayer((BasePlayer) to);
                 this._resource = new Entity(from);
                 this._resourceDispenser = dispenser;
                 this._itemAmount = itemAmt;

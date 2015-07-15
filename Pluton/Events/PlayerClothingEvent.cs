@@ -8,7 +8,7 @@
         public PlayerClothingEvent(PlayerInventory playerInventory, Item item)
         {
             this._item = new InvItem(item);
-            this._player = new Player(playerInventory.GetComponent<BasePlayer>());
+            this._player = Server.GetPlayer(playerInventory.GetComponent<BasePlayer>());
         }
 
         public Player Player

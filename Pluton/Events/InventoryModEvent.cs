@@ -15,7 +15,7 @@
             if (ic.entityOwner != null)
                 this._entity = new Entity(ic.entityOwner);
             if (ic.playerOwner != null)
-                this._owner = new Player(ic.playerOwner);
+                this._owner = Server.GetPlayer(ic.playerOwner);
         }
 
         public InvItem Item

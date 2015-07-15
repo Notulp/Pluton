@@ -10,7 +10,7 @@
         public RocketShootEvent(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
         {
             this._entity = new Entity(baseEntity);
-            this._player = new Player(msg.player);
+            this._player = Server.GetPlayer(msg.player);
             this._msg = msg;
             this._launch = baseLauncher;
         }
