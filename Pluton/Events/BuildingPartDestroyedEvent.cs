@@ -10,35 +10,32 @@ namespace Pluton.Events
 
         public BuildingPartDestroyedEvent(BuildingBlock bb, HitInfo info)
         {
-            _info = info;
-            buildingPart = new BuildingPart(bb);
+            this._info = info;
+            this.buildingPart = new BuildingPart(bb);
             string bonename = StringPool.Get(info.HitBone);
-            HitBone = bonename == "" ? "unknown" : bonename;
+            this.HitBone = bonename == "" ? "unknown" : bonename;
         }
 
         public BuildingPart BuildingPart
         {
-            get { return buildingPart; }
+            get { return this.buildingPart; }
         }
 
         public float[] DamageAmounts
         {
             get
             {
-                return _info.damageTypes.types;
+                return this._info.damageTypes.types;
             }
             set
             {
-                _info.damageTypes.types = value;
+                this._info.damageTypes.types = value;
             }
         }
 
         public Rust.DamageType DamageType
         {
-            get
-            {
-                return _info.damageTypes.GetMajorityDamageType();
-            }
+            get { return this._info.damageTypes.GetMajorityDamageType(); }
         }
 
         public Entity Attacker

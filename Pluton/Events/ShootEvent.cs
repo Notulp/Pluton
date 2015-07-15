@@ -4,11 +4,11 @@
     {
         private BaseEntity.RPCMessage _rpcMessage;
         private BaseProjectile _projectile;
-        private Player _pl;
+        private Player _player;
 
         public ShootEvent(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
         {
-            this._pl = new Player(msg.player);
+            this._player = Server.GetPlayer(msg.player);
             this._rpcMessage = msg;
             this._projectile = baseProjectile;
         }
@@ -20,7 +20,7 @@
 
         public Player Player
         {
-            get { return this._pl; }
+            get { return this._player; }
         }
 
         public BaseEntity.RPCMessage RPCMessage

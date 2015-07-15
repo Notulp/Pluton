@@ -1,5 +1,3 @@
-using System;
-
 namespace Pluton.Events
 {
     public class ConsumeFuelEvent : CountedInstance

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class PlayerHurtEvent : HurtEvent
     {
@@ -9,7 +7,7 @@ namespace Pluton.Events
         public PlayerHurtEvent(Player player, HitInfo info)
             : base(info)
         {
-            Victim = player;
+            this.Victim = player;
         }
     }
 }

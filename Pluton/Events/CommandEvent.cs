@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Pluton.Events
 {
@@ -13,17 +12,17 @@ namespace Pluton.Events
 
         public CommandEvent(Player player, string[] command)
         {
-            User = player;
-            Reply = String.Format("/{0} executed!", String.Join(" ", command));
-            cmd = command[0];
-            args = new string[command.Length - 1];
+            this.User = player;
+            this.Reply = String.Format("/{0} executed!", String.Join(" ", command));
+            this.cmd = command[0];
+            this.args = new string[command.Length - 1];
             Array.Copy(command, 1, args, 0, command.Length - 1);
-            quotedArgs = Util.GetInstance().GetQuotedArgs(args);
+            this.quotedArgs = Util.GetInstance().GetQuotedArgs(args);
         }
 
         public void ReplyWith(string msg)
         {
-            Reply = msg;
+            this.Reply = msg;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class LootEvent : CountedInstance
     {
@@ -11,14 +9,14 @@ namespace Pluton.Events
 
         public LootEvent(PlayerLoot pl, Player looter)
         {
-            Looter = looter;
-            pLoot = pl;
+            this.Looter = looter;
+            this.pLoot = pl;
         }
 
         public void Stop(string reason = "A plugin stops you from looting that!")
         {
-            cancelReason = reason;
-            Cancel = true;
+            this.cancelReason = reason;
+            this.Cancel = true;
         }
     }
 }

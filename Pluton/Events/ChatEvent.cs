@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class ChatEvent : CountedInstance
     {
-
         public readonly ConsoleSystem.Arg _arg;
         public readonly string OriginalText;
         public readonly Player User;
@@ -14,26 +11,26 @@ namespace Pluton.Events
 
         public ChatEvent(Player player, ConsoleSystem.Arg args)
         {
-            User = player;
-            _arg = args;
+            this.User = player;
+            this._arg = args;
             if (args.connection != null)
-                BroadcastName = args.connection.username;
+                this.BroadcastName = args.connection.username;
             else
-                BroadcastName = Server.server_message_name;
-            OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
-            FinalText = OriginalText;
-            Reply = "chat.say was executed";
+                this.BroadcastName = Server.server_message_name;
+            this.OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
+            this.FinalText = OriginalText;
+            this.Reply = "chat.say was executed";
         }
 
         public void ReplyWith(string msg)
         {
-            Reply = msg;
+            this.Reply = msg;
         }
         
         public void Cancel(string reply = "Your message was not sent")
         {
-            FinalText = "";
-            Reply = reply;
+            this.FinalText = "";
+            this.Reply = reply;
         }
     }
 }

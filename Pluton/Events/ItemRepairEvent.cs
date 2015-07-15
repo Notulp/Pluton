@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class ItemRepairEvent : CountedInstance
     {
@@ -12,7 +10,7 @@ namespace Pluton.Events
         public ItemRepairEvent(RepairBench repairBench, BaseEntity.RPCMessage msg)
         {
             this._repairBench = repairBench;
-            this._player = new Player(msg.player);
+            this._player = Server.GetPlayer(msg.player);
             this._item = new InvItem(repairBench.inventory.GetSlot(0));
             this._msg = msg;
         }

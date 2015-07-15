@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class NPCDeathEvent : HurtEvent
     {
@@ -9,7 +7,7 @@ namespace Pluton.Events
         public NPCDeathEvent(NPC npc, HitInfo info)
             : base(info)
         {
-            Victim = npc;
+            this.Victim = npc;
         }
     }
 }
