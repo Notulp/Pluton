@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class PlayerTakeRadsEvent : CountedInstance
     {
@@ -12,11 +10,11 @@ namespace Pluton.Events
 
         public PlayerTakeRadsEvent(Player p, float current, float amount)
         {
-            RadAmount = amount;
-            Current = current;
+            this.RadAmount = amount;
+            this.Current = current;
             float next = UnityEngine.Mathf.Clamp(amount, p.basePlayer.metabolism.radiation_level.min, p.basePlayer.metabolism.radiation_level.max);
-            Next = next <= current ? current : next;
-            Victim = p;
+            this.Next = next <= current ? current : next;
+            this.Victim = p;
         }
     }
 }

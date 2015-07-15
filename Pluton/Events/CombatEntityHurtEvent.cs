@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CombatEntityHurtEvent : HurtEvent
     {
@@ -11,11 +9,10 @@ namespace Pluton.Events
         {
             var block = combatEnt.GetComponent<BuildingBlock>();
 
-            if (block != null) {
-                Victim = new BuildingPart(block);
-            } else {
-                Victim = new Entity(combatEnt);
-            }
+            if (block != null)
+                this.Victim = new BuildingPart(block);
+            else
+                this.Victim = new Entity(combatEnt);
         }
     }
 }

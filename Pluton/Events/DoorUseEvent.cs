@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class DoorUseEvent : CountedInstance
     {
@@ -13,15 +11,15 @@ namespace Pluton.Events
 
         public DoorUseEvent(Entity door, Player player, bool open)
         {
-            Door = door;
-            Open = open;
-            Player = player;
+            this.Door = door;
+            this.Open = open;
+            this.Player = player;
         }
 
         public void Deny(string reason = "")
         {
-            Open = !Open;
-            DenyReason = reason;
+            this.Open = !Open;
+            this.DenyReason = reason;
         }
     }
 }

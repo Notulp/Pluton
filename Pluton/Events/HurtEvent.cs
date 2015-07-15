@@ -9,9 +9,9 @@ namespace Pluton.Events
 
         public HurtEvent(HitInfo info)
         {
-            _info = info;
+            this._info = info;
             string bonename = StringPool.Get(info.HitBone);
-            HitBone = bonename == "" ? "unknown" : bonename;
+            this.HitBone = bonename == "" ? "unknown" : bonename;
         }
 
         /******************
@@ -35,19 +35,21 @@ namespace Pluton.Events
         *                 *
         ******************/
 
-        public float[] DamageAmounts {
-            get {
-                return _info.damageTypes.types;
+        public float[] DamageAmounts
+        {
+            get
+            {
+                return this._info.damageTypes.types;
             }
-            set {
-                _info.damageTypes.types = value;
+            set
+            {
+                this._info.damageTypes.types = value;
             }
         }
 
-        public Rust.DamageType DamageType {
-            get {
-                return _info.damageTypes.GetMajorityDamageType();
-            }
+        public Rust.DamageType DamageType
+        {
+            get { return this._info.damageTypes.GetMajorityDamageType(); }
         }
 
         public Entity Attacker {

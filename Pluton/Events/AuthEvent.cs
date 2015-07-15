@@ -1,5 +1,4 @@
-﻿using System;
-using Network;
+﻿using Network;
 
 namespace Pluton.Events
 {
@@ -11,44 +10,39 @@ namespace Pluton.Events
 
         public AuthEvent(Connection connection)
         {
-            con = connection;
-            approved = true;
+            this.con = connection;
+            this.approved = true;
         }
 
-        public Connection Connection {
-            get {
-                return con;
-            }
+        public Connection Connection
+        {
+            get { return this.con; }
         }
 
-        public ulong GameID {
-            get {
-                return con.userid;
-            }
+        public ulong GameID
+        {
+            get { return this.con.userid; }
         }
 
-        public string IP {
-            get {
-                return con.ipaddress;
-            }
+        public string IP
+        {
+            get { return this.con.ipaddress; }
         }
 
-        public string Name {
-            get {
-                return con.username;
-            }
+        public string Name
+        {
+            get { return this.con.username; }
         }
 
-        public string OS {
-            get {
-                return con.os;
-            }
+        public string OS
+        {
+            get { return this.con.os; }
         }
 
         public void Reject(string reason = "no reason")
         {
-            approved = false;
-            _reason = reason;
+            this.approved = false;
+            this._reason = reason;
         }
     }
 }

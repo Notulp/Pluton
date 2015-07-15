@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class RespawnEvent : CountedInstance
     {
@@ -13,11 +11,11 @@ namespace Pluton.Events
 
         public RespawnEvent(Player p)
         {
-            SpawnPos = UnityEngine.Vector3.zero;
-            WakeUp = false;
-            ChangePos = false;
-            GiveDefault = true;
-            Player = p;
+            this.SpawnPos = UnityEngine.Vector3.zero;
+            this.WakeUp = false;
+            this.ChangePos = false;
+            this.GiveDefault = true;
+            this.Player = p;
         }
     }
 }

@@ -17,21 +17,21 @@ namespace Pluton.Events
             this.User = Player.FindByGameID((arg.connection.player as BasePlayer).userID);
             this.Args = new List<string>();
 
-            Reply = "Command not found!";
+            this.Reply = "Command not found!";
 
             if (String.IsNullOrEmpty(rconCmd))
                 return;
 
             foreach (string str in rconCmd.Split(' '))
-                Args.Add(str);
+                this.Args.Add(str);
 
             this.cmd = Args[0];
-            Args.RemoveAt(0);
+            this.Args.RemoveAt(0);
         }
 
         public void ReplyWith(string msg)
         {
-            Reply = msg;
+            this.Reply = msg;
         }
     }
 }

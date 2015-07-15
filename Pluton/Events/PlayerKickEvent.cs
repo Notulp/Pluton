@@ -1,5 +1,4 @@
-﻿using System;
-using Network;
+﻿using Network;
 
 namespace Pluton
 {
@@ -12,8 +11,8 @@ namespace Pluton
 
         public PlayerKickEvent(Connection connection, string reason)
         {
-            Connection = connection;
-            Reason = reason;
+            this.Connection = connection;
+            this.Reason = reason;
         }
     }
 }

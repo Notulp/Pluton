@@ -1,19 +1,17 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class RocketShootEvent : CountedInstance
     {
-        private BaseEntity.RPCMessage _rpcMessage;
+        private BaseEntity.RPCMessage _msg;
         private BaseLauncher _launch;
-        private Entity _ent;
-        private Player _pl;
+        private Entity _entity;
+        private Player _player;
 
         public RocketShootEvent(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
         {
-            this._ent = new Entity(baseEntity);
-            this._pl = new Player(msg.player);
-            this._rpcMessage = msg;
+            this._entity = new Entity(baseEntity);
+            this._player = new Player(msg.player);
+            this._msg = msg;
             this._launch = baseLauncher;
         }
 
@@ -24,17 +22,17 @@ namespace Pluton.Events
 
         public Player Player
         {
-            get { return this._pl; }
+            get { return this._player; }
         }
 
         public Entity Entity
         {
-            get { return this._ent; }
+            get { return this._entity; }
         }
 
         public BaseEntity.RPCMessage RPCMessage
         {
-            get { return this._rpcMessage; }
+            get { return this._msg; }
         }
     }
 }

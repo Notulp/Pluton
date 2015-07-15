@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
-    public class SyringeUseEvent
+    public class SyringeUseEvent : CountedInstance
     {
         private Player _user;
         private Player _receiver;
@@ -11,14 +9,14 @@ namespace Pluton.Events
 
         public SyringeUseEvent(SyringeWeapon sw,  BaseEntity.RPCMessage msg, bool isSelf)
         {
-            _syringeWeapon = sw;
-            _user = new Player(sw.ownerPlayer);
-            _self = isSelf;
+            this._syringeWeapon = sw;
+            this._user = new Player(sw.ownerPlayer);
+            this._self = isSelf;
 
             if (isSelf)
-                _receiver = _user;
+                this._receiver = _user;
             else
-                _receiver = new Player(BaseNetworkable.serverEntities.Find(msg.read.UInt32()) as BasePlayer);
+                this._receiver = new Player(BaseNetworkable.serverEntities.Find(msg.read.UInt32()) as BasePlayer);
         }
 
         public Player User

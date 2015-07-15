@@ -26,7 +26,7 @@ namespace Pluton.Events
 
         public void ReplyWith(string reply)
         {
-            Reply = reply;
+            this.Reply = reply;
         }
     }
 }

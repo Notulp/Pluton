@@ -1,17 +1,15 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class ItemPickupEvent : CountedInstance
     {
         private InvItem _item;
         private Player _player;
         private BaseEntity.RPCMessage _msg;
-        private CollectibleEntity _ent;
+        private CollectibleEntity _entity;
 
         public ItemPickupEvent(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
         {
-            this._ent = ce;
+            this._entity = ce;
             this._msg = msg;
             this._player = new Player(msg.player);
             this._item = new InvItem(i);
@@ -24,7 +22,7 @@ namespace Pluton.Events
 
         public CollectibleEntity Entity
         {
-            get { return this._ent; }
+            get { return this._entity; }
         }
 
         public InvItem Item

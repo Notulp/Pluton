@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CommandPermissionEvent : CommandEvent
     {
@@ -10,19 +8,18 @@ namespace Pluton.Events
         public CommandPermissionEvent(Player player, string[] command, ChatCommand chatCmd)
             : base(player, command)
         {
-            chatCommand = chatCmd;
+            this.chatCommand = chatCmd;
         }
 
         public void BlockCommand(string reason)
         {
-            Reply = reason;
-            blocked = true;
+            this.Reply = reason;
+            this.blocked = true;
         }
 
-        public string PluginName {
-            get {
-                return chatCommand.plugin.Name;
-            }
+        public string PluginName
+        {
+            get { return this.chatCommand.plugin.Name; }
         }
     }
 }

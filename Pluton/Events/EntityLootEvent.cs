@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class EntityLootEvent : LootEvent
     {
@@ -9,7 +7,7 @@ namespace Pluton.Events
         public EntityLootEvent(PlayerLoot pl, Player looter, Entity looted)
             : base(pl, looter)
         {
-            Target = looted;
+            this.Target = looted;
         }
     }
 }
