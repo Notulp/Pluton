@@ -57,6 +57,8 @@ namespace Pluton
 
         void OnMining(MiningQuarry mq);
 
+        void OnNetworkableKill(BaseNetworkable bn);
+
         void OnNPCHurt(NPCHurtEvent he);
 
         void OnNPCKilled(NPCDeathEvent de);

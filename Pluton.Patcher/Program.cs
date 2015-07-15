@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.43";
+        private static string version = "1.0.0.60";
 
         #region patches
 
@@ -210,6 +210,18 @@ namespace Pluton.Patcher
             gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
             gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gatheringTree)));
             gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
+        private static void NetworkableKillPatch()
+        {
+            TypeDefinition baseNetworkable = rustAssembly.MainModule.GetType("BaseNetworkable");
+            MethodDefinition kill = baseNetworkable.GetMethod("Kill");
+            MethodDefinition networkableKill = hooksClass.GetMethod("NetworkableKill");
+
+            CloneMethod(kill);
+            ILProcessor il = kill.Body.GetILProcessor();
+            il.InsertAfter(kill.Body.Instructions[kill.Body.Instructions.Count - 13], Instruction.Create(OpCodes.Ldarg_0));
+            il.InsertAfter(kill.Body.Instructions[kill.Body.Instructions.Count - 13], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(networkableKill)));
         }
 
         private static void NPCDiedPatch()
@@ -706,6 +718,8 @@ namespace Pluton.Patcher
             PlayerClothingChanged();
 
             InventoryModificationPatch();
+
+            NetworkableKillPatch();
 
             NPCDiedPatch();
 

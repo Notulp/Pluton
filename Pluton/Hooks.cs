@@ -62,6 +62,8 @@ namespace Pluton
 
         public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
 
+        public static Subject<BaseNetworkable> OnNetworkableKill = new Subject<BaseNetworkable>();
+
         public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
 
         public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
@@ -368,6 +370,11 @@ namespace Pluton
         public static void BuildingPartDemolished(BuildingBlock bb, BaseEntity.RPCMessage msg)
         {
             OnBuildingPartDemolished.OnNext(new BuildingPartDemolishedEvent(bb, msg.player));
+        }
+
+        public static void NetworkableKill(BaseNetworkable bn)
+        {
+            OnNetworkableKill.OnNext(bn);
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)

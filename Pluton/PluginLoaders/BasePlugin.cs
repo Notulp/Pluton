@@ -529,6 +529,13 @@ namespace Pluton
             this.Invoke("On_LootingPlayer", le);
         }
 
+        public IDisposable OnNetworkableKillHook;
+
+        public void OnNetworkableKill(BaseNetworkable bn)
+        {
+            this.Invoke("On_NetworkableKill", bn);
+        }
+
         public IDisposable OnNPCHurtHook;
 
         public void OnNPCHurt(NPCHurtEvent he)

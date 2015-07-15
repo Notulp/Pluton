@@ -190,6 +190,9 @@
                 case "On_Mining":
                     plugin.OnMiningHook = Hooks.OnMining.Subscribe(p => plugin.OnMining(p));
                     break;
+                case "On_NetworkableKill":
+                    plugin.OnNetworkableKillHook = Hooks.OnNetworkableKill.Subscribe(n => plugin.OnNetworkableKill(n));
+                    break;
                 case "On_NPCHurt":
                     plugin.OnNPCHurtHook = Hooks.OnNPCHurt.Subscribe(n => plugin.OnNPCHurt(n));
                     break;
@@ -364,6 +367,9 @@
                     break;
                 case "On_Mining":
                     plugin.OnMiningHook.Dispose();
+                    break;
+                case "On_NetworkableKill":
+                    plugin.OnNetworkableKillHook.Dispose();
                     break;
                 case "On_NPCHurt":
                     plugin.OnNPCHurtHook.Dispose();
