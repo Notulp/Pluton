@@ -18,7 +18,7 @@
             else
                 BroadcastName = Server.server_message_name;
             OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
-            FinalText = OriginalText;
+            FinalText = OriginalText.Replace('<', '[').Replace('>', ']');
             Reply = "chat.say was executed";
         }
 

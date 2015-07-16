@@ -437,6 +437,13 @@ namespace Pluton
             this.Invoke("On_AllPluginsLoaded");
         }
 
+        public IDisposable OnBeingHammeredHook;
+
+        public void OnBeingHammered(HammerEvent he)
+        {
+            this.Invoke("On_BeingHammered", he);
+        }
+
         public IDisposable OnBuildingCompleteHook;
 
         public void OnBuildingComplete(BuildingPart bp)
@@ -527,6 +534,13 @@ namespace Pluton
         public void OnLootingPlayer(PlayerLootEvent le)
         {
             this.Invoke("On_LootingPlayer", le);
+        }
+
+        public IDisposable OnNetworkableKillHook;
+
+        public void OnNetworkableKill(BaseNetworkable bn)
+        {
+            this.Invoke("On_NetworkableKill", bn);
         }
 
         public IDisposable OnNPCHurtHook;
