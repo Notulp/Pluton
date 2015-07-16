@@ -121,6 +121,9 @@
                 case "On_AllPluginsLoaded":
                     plugin.OnAllPluginsLoadedHook = OnAllLoaded.Subscribe(s => plugin.OnAllPluginsLoaded(""));
                     break;
+                case "On_BeingHammered":
+                    plugin.OnBeingHammeredHook = Hooks.OnBeingHammered.Subscribe(he => plugin.OnBeingHammered(he));
+                    break;
                 case "On_BuildingPartDemolished":
                     plugin.OnBuildingPartDemolishedHook = Hooks.OnBuildingPartDemolished.Subscribe(p => plugin.OnBuildingPartDemolished(p));
                     break;
@@ -189,6 +192,9 @@
                     break;
                 case "On_Mining":
                     plugin.OnMiningHook = Hooks.OnMining.Subscribe(p => plugin.OnMining(p));
+                    break;
+                case "On_NetworkableKill":
+                    plugin.OnNetworkableKillHook = Hooks.OnNetworkableKill.Subscribe(n => plugin.OnNetworkableKill(n));
                     break;
                 case "On_NPCHurt":
                     plugin.OnNPCHurtHook = Hooks.OnNPCHurt.Subscribe(n => plugin.OnNPCHurt(n));
@@ -296,6 +302,9 @@
                 case "On_AllPluginsLoaded":
                     plugin.OnAllPluginsLoadedHook.Dispose();
                     break;
+                case "On_BeingHammered":
+                    plugin.OnBeingHammeredHook.Dispose();
+                    break;
                 case "On_BuildingPartDemolished":
                     plugin.OnBuildingPartDemolishedHook.Dispose();
                     break;
@@ -364,6 +373,9 @@
                     break;
                 case "On_Mining":
                     plugin.OnMiningHook.Dispose();
+                    break;
+                case "On_NetworkableKill":
+                    plugin.OnNetworkableKillHook.Dispose();
                     break;
                 case "On_NPCHurt":
                     plugin.OnNPCHurtHook.Dispose();

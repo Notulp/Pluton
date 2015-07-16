@@ -13,6 +13,8 @@ namespace Pluton
 
         void OnAllPluginsLoaded(string s);
 
+        void OnBeingHammered(HammerEvent he);
+
         void OnBuildingPartDemolished(BuildingPartDemolishedEvent bpde);
 
         void OnBuildingPartDestroyed(BuildingPartDestroyedEvent bpde);
@@ -56,6 +58,8 @@ namespace Pluton
         void OnLootingPlayer(PlayerLootEvent le);
 
         void OnMining(MiningQuarry mq);
+
+        void OnNetworkableKill(BaseNetworkable bn);
 
         void OnNPCHurt(NPCHurtEvent he);
 

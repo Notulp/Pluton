@@ -16,6 +16,8 @@ namespace Pluton
 
         #region Events
 
+        public static Subject<HammerEvent> OnBeingHammered = new Subject<HammerEvent>();
+
         public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
         public static Subject<BuildingPartDemolishedEvent> OnBuildingPartDemolished = new Subject<BuildingPartDemolishedEvent>();
@@ -61,6 +63,8 @@ namespace Pluton
         public static Subject<PlayerLootEvent> OnLootingPlayer = new Subject<PlayerLootEvent>();
 
         public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
+
+        public static Subject<BaseNetworkable> OnNetworkableKill = new Subject<BaseNetworkable>();
 
         public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
 
@@ -173,10 +177,10 @@ namespace Pluton
 
                 OnChat.OnNext(pChat);
 
-                string text2 = string.Format("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText.Replace('<', '[').Replace('>', ']'), arg2);
+                string text2 = string.Format("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText, arg2);
 
                 if (pChat.FinalText != "") {
-                    Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
+                    Logger.ChatLog(pChat.BroadcastName, pChat.OriginalText);
                     arg.ReplyWith(pChat.Reply);
 
                     if (ConVar.Server.globalchat) {
@@ -368,6 +372,16 @@ namespace Pluton
         public static void BuildingPartDemolished(BuildingBlock bb, BaseEntity.RPCMessage msg)
         {
             OnBuildingPartDemolished.OnNext(new BuildingPartDemolishedEvent(bb, msg.player));
+        }
+
+        public static void NetworkableKill(BaseNetworkable bn)
+        {
+            OnNetworkableKill.OnNext(bn);
+        }
+
+        public static void BeingHammered(HitInfo info, BasePlayer ownerPlayer)
+        {
+            OnBeingHammered.OnNext(new HammerEvent(info, ownerPlayer));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
