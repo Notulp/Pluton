@@ -864,7 +864,7 @@ namespace Pluton
 
             foreach (ItemBlueprint bp in ItemManager.Instance.bpList)
             {
-                bp.time /= 100000f;
+                bp.time /= Server.GetInstance().CraftingTimeScale;
             }
 
             Server.GetInstance().Loaded = true;
