@@ -175,10 +175,10 @@ namespace Pluton
 
                 OnChat.OnNext(pChat);
 
-                string text2 = string.Format("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText.Replace('<', '[').Replace('>', ']'), arg2);
+                string text2 = string.Format("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText, arg2);
 
                 if (pChat.FinalText != "") {
-                    Logger.ChatLog(pChat.BroadcastName, pChat.FinalText);
+                    Logger.ChatLog(pChat.BroadcastName, pChat.OriginalText);
                     arg.ReplyWith(pChat.Reply);
 
                     if (ConVar.Server.globalchat) {
