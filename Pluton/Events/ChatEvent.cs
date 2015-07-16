@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class ChatEvent : CountedInstance
     {
-
         public readonly ConsoleSystem.Arg _arg;
         public readonly string OriginalText;
         public readonly Player User;

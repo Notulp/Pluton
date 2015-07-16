@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CommandPermissionEvent : CommandEvent
     {
@@ -19,10 +17,9 @@ namespace Pluton.Events
             blocked = true;
         }
 
-        public string PluginName {
-            get {
-                return chatCommand.plugin.Name;
-            }
+        public string PluginName
+        {
+            get { return chatCommand.plugin.Name; }
         }
     }
 }

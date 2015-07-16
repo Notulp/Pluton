@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class PlayerTakedmgEvent : CountedInstance
     {
-
         public readonly Player Victim;
         public float Amount;
         public Rust.DamageType Type;

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Pluton.Events
 {
-    public class DoorCodeEvent
+    public class DoorCodeEvent : CountedInstance
     {
         public Player Player;
         public CodeLock codeLock;
@@ -17,7 +15,7 @@ namespace Pluton.Events
         public DoorCodeEvent(CodeLock doorLock, BasePlayer player, string entered)
         {
             codeLock = doorLock;
-            this.entered = entered;
+            entered = entered;
             Player = Server.GetPlayer(player);
         }
 

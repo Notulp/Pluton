@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
-    public class PlayerClothingEvent
+    public class PlayerClothingEvent : CountedInstance
     {
         private InvItem _item;
         private Player _player;
@@ -10,17 +8,17 @@ namespace Pluton.Events
         public PlayerClothingEvent(PlayerInventory playerInventory, Item item)
         {
             _item = new InvItem(item);
-            _player = new Player(playerInventory.GetComponent<BasePlayer>());
+            _player = Server.GetPlayer(playerInventory.GetComponent<BasePlayer>());
         }
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
     }
 }

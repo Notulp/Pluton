@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CorpseInitEvent : CountedInstance
     {
-
         public readonly BaseCorpse Corpse;
         public readonly Entity Parent;
 

@@ -7,18 +7,18 @@
 
         public ItemConditionEvent(Item item, float amount)
         {
-            this._item = new InvItem(item);
-            this._amount = amount;
+            _item = new InvItem(item);
+            _amount = amount;
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
 
         public float Amount
         {
-            get { return this._amount; }
+            get { return _amount; }
         }
     }
 }

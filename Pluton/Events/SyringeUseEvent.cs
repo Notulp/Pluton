@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
-    public class SyringeUseEvent
+    public class SyringeUseEvent : CountedInstance
     {
         private Player _user;
         private Player _receiver;
@@ -12,7 +10,7 @@ namespace Pluton.Events
         public SyringeUseEvent(SyringeWeapon sw,  BaseEntity.RPCMessage msg, bool isSelf)
         {
             _syringeWeapon = sw;
-            _user = new Player(sw.ownerPlayer);
+            _user = Server.GetPlayer(sw.ownerPlayer);
             _self = isSelf;
 
             if (isSelf)
@@ -23,22 +21,22 @@ namespace Pluton.Events
 
         public Player User
         {
-            get { return this._user; }
+            get { return _user; }
         }
 
         public Player Receiver
         {
-            get { return this._receiver; }
+            get { return _receiver; }
         }
 
         public SyringeWeapon Syringe
         {
-            get { return this._syringeWeapon; }
+            get { return _syringeWeapon; }
         }
 
         public bool IsSelfUsage()
         {
-            return this._self;
+            return _self;
         }
     }
 }

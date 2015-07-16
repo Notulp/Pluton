@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class CraftEvent : CountedInstance
     {
@@ -58,11 +56,14 @@ namespace Pluton.Events
         /// Gets or sets the time needed to craft this item. NOTE: this is saved for each blueprint, so CraftTime /= 2; will make instacraft eventually. Be careful!
         /// </summary>
         /// <value>The craft time.</value>
-        public float CraftTime {
-            get {
+        public float CraftTime
+        {
+            get
+            {
                 return bluePrint.time;
             }
-            set {
+            set
+            {
                 bluePrint.time = value;
             }
         }
@@ -71,11 +72,14 @@ namespace Pluton.Events
         /// Freecraft.
         /// </summary>
         /// <value><c>true</c> for free craft; otherwise, <c>false</c>.</value>
-        public bool FreeCraft {
-            get {
+        public bool FreeCraft
+        {
+            get
+            {
                 return itemCrafter.freeCraftingCheat;
             }
-            set {
+            set
+            {
                 itemCrafter.freeCraftingCheat = value;
             }
         }

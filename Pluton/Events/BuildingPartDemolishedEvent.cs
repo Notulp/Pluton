@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class BuildingPartDemolishedEvent : CountedInstance
     {
@@ -10,7 +8,7 @@ namespace Pluton.Events
         public BuildingPartDemolishedEvent(BuildingBlock bb, BasePlayer basePlayer)
         {
             buildingPart = new BuildingPart(bb);
-            player = new Player(basePlayer);
+            player = Server.GetPlayer(basePlayer);
         }
 
         public Player Player

@@ -35,10 +35,7 @@ namespace Pluton.Events
 
         public Rust.DamageType DamageType
         {
-            get
-            {
-                return _info.damageTypes.GetMajorityDamageType();
-            }
+            get { return _info.damageTypes.GetMajorityDamageType(); }
         }
 
         public Entity Attacker
