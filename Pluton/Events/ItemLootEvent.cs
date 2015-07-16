@@ -7,7 +7,7 @@
         public ItemLootEvent(PlayerLoot pl, Player looter, Item looted)
             : base(pl, looter)
         {
-            this.Target = looted;
+            Target = looted;
         }
     }
 }

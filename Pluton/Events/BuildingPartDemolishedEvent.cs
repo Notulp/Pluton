@@ -7,18 +7,18 @@
 
         public BuildingPartDemolishedEvent(BuildingBlock bb, BasePlayer basePlayer)
         {
-            this.buildingPart = new BuildingPart(bb);
-            this.player = Server.GetPlayer(basePlayer);
+            buildingPart = new BuildingPart(bb);
+            player = Server.GetPlayer(basePlayer);
         }
 
         public Player Player
         {
-            get { return this.player; }
+            get { return player; }
         }
 
         public BuildingPart BuildingPart
         {
-            get { return this.buildingPart; }
+            get { return buildingPart; }
         }
     }
 }

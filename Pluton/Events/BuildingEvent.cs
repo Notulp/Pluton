@@ -15,17 +15,17 @@ namespace Pluton.Events
 
         public BuildingEvent(Construction construction, Construction.Target target, BuildingBlock bb, bool bNeedsValidPlacement)
         {
-            this.Builder = Server.GetPlayer(target.player);
-            this.BuildingPart = new BuildingPart(bb);
-            this.Construction = construction;
-            this.Target = target;
-            this.NeedsValidPlacement = bNeedsValidPlacement;
+            Builder = Server.GetPlayer(target.player);
+            BuildingPart = new BuildingPart(bb);
+            Construction = construction;
+            Target = target;
+            NeedsValidPlacement = bNeedsValidPlacement;
         }
 
         public void Destroy(string reason = "Plugin blocks building!")
         {
-            this.DoDestroy = true;
-            this.DestroyReason = reason;
+            DoDestroy = true;
+            DestroyReason = reason;
         }
     }
 }

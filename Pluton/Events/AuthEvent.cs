@@ -10,39 +10,39 @@ namespace Pluton.Events
 
         public AuthEvent(Connection connection)
         {
-            this.con = connection;
-            this.approved = true;
+            con = connection;
+            approved = true;
         }
 
         public Connection Connection
         {
-            get { return this.con; }
+            get { return con; }
         }
 
         public ulong GameID
         {
-            get { return this.con.userid; }
+            get { return con.userid; }
         }
 
         public string IP
         {
-            get { return this.con.ipaddress; }
+            get { return con.ipaddress; }
         }
 
         public string Name
         {
-            get { return this.con.username; }
+            get { return con.username; }
         }
 
         public string OS
         {
-            get { return this.con.os; }
+            get { return con.os; }
         }
 
         public void Reject(string reason = "no reason")
         {
-            this.approved = false;
-            this._reason = reason;
+            approved = false;
+            _reason = reason;
         }
     }
 }

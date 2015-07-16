@@ -14,9 +14,9 @@ namespace Pluton.Events
 
         public DoorCodeEvent(CodeLock doorLock, BasePlayer player, string entered)
         {
-            this.codeLock = doorLock;
-            this.entered = entered;
-            this.Player = Server.GetPlayer(player);
+            codeLock = doorLock;
+            entered = entered;
+            Player = Server.GetPlayer(player);
         }
 
         public void Whitelist()

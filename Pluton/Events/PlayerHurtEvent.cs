@@ -7,7 +7,7 @@
         public PlayerHurtEvent(Player player, HitInfo info)
             : base(info)
         {
-            this.Victim = player;
+            Victim = player;
         }
     }
 }

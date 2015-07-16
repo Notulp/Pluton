@@ -12,17 +12,17 @@ namespace Pluton.Events
 
         public CommandEvent(Player player, string[] command)
         {
-            this.User = player;
-            this.Reply = String.Format("/{0} executed!", String.Join(" ", command));
-            this.cmd = command[0];
-            this.args = new string[command.Length - 1];
+            User = player;
+            Reply = String.Format("/{0} executed!", String.Join(" ", command));
+            cmd = command[0];
+            args = new string[command.Length - 1];
             Array.Copy(command, 1, args, 0, command.Length - 1);
-            this.quotedArgs = Util.GetInstance().GetQuotedArgs(args);
+            quotedArgs = Util.GetInstance().GetQuotedArgs(args);
         }
 
         public void ReplyWith(string msg)
         {
-            this.Reply = msg;
+            Reply = msg;
         }
     }
 }

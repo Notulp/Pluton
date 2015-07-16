@@ -8,18 +8,18 @@
         public CommandPermissionEvent(Player player, string[] command, ChatCommand chatCmd)
             : base(player, command)
         {
-            this.chatCommand = chatCmd;
+            chatCommand = chatCmd;
         }
 
         public void BlockCommand(string reason)
         {
-            this.Reply = reason;
-            this.blocked = true;
+            Reply = reason;
+            blocked = true;
         }
 
         public string PluginName
         {
-            get { return this.chatCommand.plugin.Name; }
+            get { return chatCommand.plugin.Name; }
         }
     }
 }

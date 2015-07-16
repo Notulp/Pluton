@@ -10,9 +10,9 @@
             var block = combatEnt.GetComponent<BuildingBlock>();
 
             if (block != null)
-                this.Victim = new BuildingPart(block);
+                Victim = new BuildingPart(block);
             else
-                this.Victim = new Entity(combatEnt);
+                Victim = new Entity(combatEnt);
         }
     }
 }

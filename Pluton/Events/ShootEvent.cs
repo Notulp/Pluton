@@ -8,24 +8,24 @@
 
         public ShootEvent(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
         {
-            this._player = Server.GetPlayer(msg.player);
-            this._rpcMessage = msg;
-            this._projectile = baseProjectile;
+            _player = Server.GetPlayer(msg.player);
+            _rpcMessage = msg;
+            _projectile = baseProjectile;
         }
 
         public BaseProjectile BaseProjectile
         {
-            get { return this._projectile; }
+            get { return _projectile; }
         }
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
 
         public BaseEntity.RPCMessage RPCMessage
         {
-            get { return this._rpcMessage; }
+            get { return _rpcMessage; }
         }
     }
 }

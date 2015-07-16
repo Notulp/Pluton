@@ -9,30 +9,30 @@
 
         public ItemPickupEvent(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
         {
-            this._entity = ce;
-            this._msg = msg;
-            this._player = Server.GetPlayer(msg.player);
-            this._item = new InvItem(i);
+            _entity = ce;
+            _msg = msg;
+            _player = Server.GetPlayer(msg.player);
+            _item = new InvItem(i);
         }
 
         public BaseEntity.RPCMessage RPCMessage
         {
-            get { return this._msg; }
+            get { return _msg; }
         }
 
         public CollectibleEntity Entity
         {
-            get { return this._entity; }
+            get { return _entity; }
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
     }
 }

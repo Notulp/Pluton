@@ -8,9 +8,9 @@
 
         public PlayerTakedmgEvent(Player p, float amount, Rust.DamageType type)
         {
-            this.Type = type;
-            this.Amount = amount;
-            this.Victim = p;
+            Type = type;
+            Amount = amount;
+            Victim = p;
         }
     }
 }

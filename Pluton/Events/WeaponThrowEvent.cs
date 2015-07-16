@@ -8,24 +8,24 @@ namespace Pluton.Events
 
         public WeaponThrowEvent(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
-            this._msg = msg;
-            this._thrownWeapon = thrownWeapon;
-            this._player = Server.GetPlayer(msg.player);
+            _msg = msg;
+            _thrownWeapon = thrownWeapon;
+            _player = Server.GetPlayer(msg.player);
         }
 
         public BaseEntity.RPCMessage RPCMessage
         {
-            get { return this._msg; }
+            get { return _msg; }
         }
 
         public ThrownWeapon Weapon
         {
-            get { return this._thrownWeapon; }
+            get { return _thrownWeapon; }
         }
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
     }
 }

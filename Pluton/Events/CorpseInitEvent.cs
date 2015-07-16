@@ -7,8 +7,8 @@
 
         public CorpseInitEvent(BaseCorpse c, BaseEntity p)
         {
-            this.Corpse = c;
-            this.Parent = new Entity(p);
+            Corpse = c;
+            Parent = new Entity(p);
         }
     }
 }

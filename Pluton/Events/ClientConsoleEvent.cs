@@ -13,25 +13,25 @@ namespace Pluton.Events
 
         public ClientConsoleEvent(ConsoleSystem.Arg arg, string rconCmd)
         {
-            this.Internal = arg;
-            this.User = Server.GetPlayer((BasePlayer) arg.connection.player);
-            this.Args = new List<string>();
+            Internal = arg;
+            User = Server.GetPlayer((BasePlayer) arg.connection.player);
+            Args = new List<string>();
 
-            this.Reply = "Command not found!";
+            Reply = "Command not found!";
 
             if (String.IsNullOrEmpty(rconCmd))
                 return;
 
             foreach (string str in rconCmd.Split(' '))
-                this.Args.Add(str);
+                Args.Add(str);
 
-            this.cmd = Args[0];
-            this.Args.RemoveAt(0);
+            cmd = Args[0];
+            Args.RemoveAt(0);
         }
 
         public void ReplyWith(string msg)
         {
-            this.Reply = msg;
+            Reply = msg;
         }
     }
 }

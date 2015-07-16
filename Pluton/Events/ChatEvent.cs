@@ -11,26 +11,26 @@
 
         public ChatEvent(Player player, ConsoleSystem.Arg args)
         {
-            this.User = player;
-            this._arg = args;
+            User = player;
+            _arg = args;
             if (args.connection != null)
-                this.BroadcastName = args.connection.username;
+                BroadcastName = args.connection.username;
             else
-                this.BroadcastName = Server.server_message_name;
-            this.OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
-            this.FinalText = OriginalText;
-            this.Reply = "chat.say was executed";
+                BroadcastName = Server.server_message_name;
+            OriginalText = args.ArgsStr.Substring(1, args.ArgsStr.Length - 2).Replace("\\", "");
+            FinalText = OriginalText;
+            Reply = "chat.say was executed";
         }
 
         public void ReplyWith(string msg)
         {
-            this.Reply = msg;
+            Reply = msg;
         }
         
         public void Cancel(string reply = "Your message was not sent")
         {
-            this.FinalText = "";
-            this.Reply = reply;
+            FinalText = "";
+            Reply = reply;
         }
     }
 }

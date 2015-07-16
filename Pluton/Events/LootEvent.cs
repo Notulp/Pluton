@@ -9,14 +9,14 @@
 
         public LootEvent(PlayerLoot pl, Player looter)
         {
-            this.Looter = looter;
-            this.pLoot = pl;
+            Looter = looter;
+            pLoot = pl;
         }
 
         public void Stop(string reason = "A plugin stops you from looting that!")
         {
-            this.cancelReason = reason;
-            this.Cancel = true;
+            cancelReason = reason;
+            Cancel = true;
         }
     }
 }

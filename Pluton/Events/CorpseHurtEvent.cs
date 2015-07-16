@@ -7,7 +7,7 @@
         public CorpseHurtEvent(BaseCorpse c, HitInfo info)
             : base(info)
         {
-            this.corpse = c;
+            corpse = c;
         }
     }
 }

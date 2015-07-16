@@ -7,7 +7,7 @@
         public NPCHurtEvent(NPC npc, HitInfo info)
             : base(info)
         {
-            this.Victim = npc;
+            Victim = npc;
         }
     }
 }

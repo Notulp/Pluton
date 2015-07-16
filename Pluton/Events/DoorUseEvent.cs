@@ -11,15 +11,15 @@
 
         public DoorUseEvent(Entity door, Player player, bool open)
         {
-            this.Door = door;
-            this.Open = open;
-            this.Player = player;
+            Door = door;
+            Open = open;
+            Player = player;
         }
 
         public void Deny(string reason = "")
         {
-            this.Open = !Open;
-            this.DenyReason = reason;
+            Open = !Open;
+            DenyReason = reason;
         }
     }
 }

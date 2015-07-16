@@ -7,18 +7,18 @@
 
         public PlayerClothingEvent(PlayerInventory playerInventory, Item item)
         {
-            this._item = new InvItem(item);
-            this._player = Server.GetPlayer(playerInventory.GetComponent<BasePlayer>());
+            _item = new InvItem(item);
+            _player = Server.GetPlayer(playerInventory.GetComponent<BasePlayer>());
         }
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
     }
 }

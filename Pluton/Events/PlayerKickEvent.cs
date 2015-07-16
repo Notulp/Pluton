@@ -11,8 +11,8 @@ namespace Pluton
 
         public PlayerKickEvent(Connection connection, string reason)
         {
-            this.Connection = connection;
-            this.Reason = reason;
+            Connection = connection;
+            Reason = reason;
         }
     }
 }

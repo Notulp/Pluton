@@ -39,17 +39,17 @@
 
         public CraftEvent(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData, int amount)
         {
-            this.Crafter = Server.GetPlayer(owner);
-            this.Target = bp.targetItem;
-            this.itemCrafter = self;
-            this.Amount = amount;
-            this.bluePrint = bp;
+            Crafter = Server.GetPlayer(owner);
+            Target = bp.targetItem;
+            itemCrafter = self;
+            Amount = amount;
+            bluePrint = bp;
         }
 
         public void Stop(string reason = "A plugin stops you from crafting that!")
         {
-            this.cancelReason = reason;
-            this.Cancel = true;
+            cancelReason = reason;
+            Cancel = true;
         }
 
         /// <summary>
@@ -60,11 +60,11 @@
         {
             get
             {
-                return this.bluePrint.time;
+                return bluePrint.time;
             }
             set
             {
-                this.bluePrint.time = value;
+                bluePrint.time = value;
             }
         }
 
@@ -76,11 +76,11 @@
         {
             get
             {
-                return this.itemCrafter.freeCraftingCheat;
+                return itemCrafter.freeCraftingCheat;
             }
             set
             {
-                this.itemCrafter.freeCraftingCheat = value;
+                itemCrafter.freeCraftingCheat = value;
             }
         }
     }

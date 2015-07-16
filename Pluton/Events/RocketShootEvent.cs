@@ -9,30 +9,30 @@
 
         public RocketShootEvent(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
         {
-            this._entity = new Entity(baseEntity);
-            this._player = Server.GetPlayer(msg.player);
-            this._msg = msg;
-            this._launch = baseLauncher;
+            _entity = new Entity(baseEntity);
+            _player = Server.GetPlayer(msg.player);
+            _msg = msg;
+            _launch = baseLauncher;
         }
 
         public BaseLauncher BaseLauncher
         {
-            get { return this._launch; }
+            get { return _launch; }
         }
 
         public Player Player
         {
-            get { return this._player; }
+            get { return _player; }
         }
 
         public Entity Entity
         {
-            get { return this._entity; }
+            get { return _entity; }
         }
 
         public BaseEntity.RPCMessage RPCMessage
         {
-            get { return this._msg; }
+            get { return _msg; }
         }
     }
 }

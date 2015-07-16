@@ -8,24 +8,24 @@ namespace Pluton.Events
 
         public ConsumeFuelEvent(BaseOven bo, Item fuel, ItemModBurnable burn)
         {
-            this._baseOven = bo;
-            this._item = new InvItem(fuel);
-            this._burn = burn;
+            _baseOven = bo;
+            _item = new InvItem(fuel);
+            _burn = burn;
         }
 
         public BaseOven BaseOven
         {
-            get { return this._baseOven; }
+            get { return _baseOven; }
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
 
         public ItemModBurnable Burnable
         {
-            get { return this._burn; }
+            get { return _burn; }
         }
 
     }

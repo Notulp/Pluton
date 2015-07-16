@@ -9,33 +9,33 @@
 
         public InventoryModEvent(ItemContainer ic, Item i)
         {
-            this._item = new InvItem(i);
-            this._itemContainer = ic;
+            _item = new InvItem(i);
+            _itemContainer = ic;
 
             if (ic.entityOwner != null)
-                this._entity = new Entity(ic.entityOwner);
+                _entity = new Entity(ic.entityOwner);
             if (ic.playerOwner != null)
-                this._owner = Server.GetPlayer(ic.playerOwner);
+                _owner = Server.GetPlayer(ic.playerOwner);
         }
 
         public InvItem Item
         {
-            get { return this._item; }
+            get { return _item; }
         }
 
         public ItemContainer ItemContainer
         {
-            get { return this._itemContainer; }
+            get { return _itemContainer; }
         }
 
         public Player Player
         {
-            get { return this._owner; }
+            get { return _owner; }
         }
 
         public Entity Entity
         {
-            get { return this._entity; }
+            get { return _entity; }
         }
     }
 }

@@ -11,37 +11,37 @@
         public GatherEvent(ResourceDispenser dispenser, BaseEntity from, BaseEntity to, ItemAmount itemAmt, int amount)
         {
             if (to is BasePlayer) {
-                this._gatherer = Server.GetPlayer((BasePlayer) to);
-                this._resource = new Entity(from);
-                this._resourceDispenser = dispenser;
-                this._itemAmount = itemAmt;
-                this._amount = (int)(amount * World.GetInstance().ResourceGatherMultiplier);
+                _gatherer = Server.GetPlayer((BasePlayer) to);
+                _resource = new Entity(from);
+                _resourceDispenser = dispenser;
+                _itemAmount = itemAmt;
+                _amount = (int)(amount * World.GetInstance().ResourceGatherMultiplier);
             }
         }
 
         public ResourceDispenser ResourceDispenser
         {
-            get { return this._resourceDispenser; }
+            get { return _resourceDispenser; }
         }
 
         public Player Gatherer
         {
-            get { return this._gatherer; }
+            get { return _gatherer; }
         }
 
         public Entity Resource
         {
-            get { return this._resource; }
+            get { return _resource; }
         }
 
         public ItemAmount ItemAmount
         {
-            get { return this._itemAmount; }
+            get { return _itemAmount; }
         }
 
         public int Amount
         {
-            get { return this._amount; }
+            get { return _amount; }
         }
     }
 }
