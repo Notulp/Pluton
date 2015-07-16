@@ -30,6 +30,21 @@ namespace Pluton.Patcher
             init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 3], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
+        private static void BeingHammeredPatch()
+        {
+            TypeDefinition hammer = rustAssembly.MainModule.GetType("Hammer");
+            MethodDefinition doAttackShared = hammer.GetMethod("DoAttackShared");
+            MethodDefinition beingHammered = hooksClass.GetMethod("BeingHammered");
+            MethodDefinition ownerPlayer = rustAssembly.MainModule.GetType("HeldEntity").GetMethod("get_ownerPlayer");
+
+            CloneMethod(doAttackShared);
+            ILProcessor il = doAttackShared.Body.GetILProcessor();
+            il.InsertAfter(doAttackShared.Body.Instructions[11], Instruction.Create(OpCodes.Ldarg_1));
+            il.InsertAfter(doAttackShared.Body.Instructions[12], Instruction.Create(OpCodes.Ldarg_0));
+            il.InsertAfter(doAttackShared.Body.Instructions[13], Instruction.Create(OpCodes.Call, ownerPlayer));
+            il.InsertAfter(doAttackShared.Body.Instructions[14], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(beingHammered)));
+        }
+
         private static void ChatPatch()
         {
             TypeDefinition chat = rustAssembly.MainModule.GetType("ConVar.Chat");
@@ -685,6 +700,7 @@ namespace Pluton.Patcher
 
             ChatPatch();
             ClientAuthPatch();
+            BeingHammeredPatch();
             BuildingBlockDemolishedPatch();
             CombatEntityHurtPatch();
             CraftingStartPatch();

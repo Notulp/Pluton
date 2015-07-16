@@ -437,6 +437,13 @@ namespace Pluton
             this.Invoke("On_AllPluginsLoaded");
         }
 
+        public IDisposable OnBeingHammeredHook;
+
+        public void OnBeingHammered(HammerEvent he)
+        {
+            this.Invoke("On_BeingHammered", he);
+        }
+
         public IDisposable OnBuildingCompleteHook;
 
         public void OnBuildingComplete(BuildingPart bp)

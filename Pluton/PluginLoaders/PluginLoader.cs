@@ -121,6 +121,9 @@
                 case "On_AllPluginsLoaded":
                     plugin.OnAllPluginsLoadedHook = OnAllLoaded.Subscribe(s => plugin.OnAllPluginsLoaded(""));
                     break;
+                case "On_BeingHammered":
+                    plugin.OnBeingHammeredHook = Hooks.OnBeingHammered.Subscribe(he => plugin.OnBeingHammered(he));
+                    break;
                 case "On_BuildingPartDemolished":
                     plugin.OnBuildingPartDemolishedHook = Hooks.OnBuildingPartDemolished.Subscribe(p => plugin.OnBuildingPartDemolished(p));
                     break;
@@ -298,6 +301,9 @@
                 switch (method) {
                 case "On_AllPluginsLoaded":
                     plugin.OnAllPluginsLoadedHook.Dispose();
+                    break;
+                case "On_BeingHammered":
+                    plugin.OnBeingHammeredHook.Dispose();
                     break;
                 case "On_BuildingPartDemolished":
                     plugin.OnBuildingPartDemolishedHook.Dispose();

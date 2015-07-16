@@ -13,6 +13,8 @@ namespace Pluton
 
         void OnAllPluginsLoaded(string s);
 
+        void OnBeingHammered(HammerEvent he);
+
         void OnBuildingPartDemolished(BuildingPartDemolishedEvent bpde);
 
         void OnBuildingPartDestroyed(BuildingPartDestroyedEvent bpde);

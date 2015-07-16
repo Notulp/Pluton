@@ -16,6 +16,8 @@ namespace Pluton
 
         #region Events
 
+        public static Subject<HammerEvent> OnBeingHammered = new Subject<HammerEvent>();
+
         public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
 
         public static Subject<BuildingPartDemolishedEvent> OnBuildingPartDemolished = new Subject<BuildingPartDemolishedEvent>();
@@ -375,6 +377,11 @@ namespace Pluton
         public static void NetworkableKill(BaseNetworkable bn)
         {
             OnNetworkableKill.OnNext(bn);
+        }
+
+        public static void BeingHammered(HitInfo info, BasePlayer ownerPlayer)
+        {
+            OnBeingHammered.OnNext(new HammerEvent(info, ownerPlayer));
         }
 
         public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
