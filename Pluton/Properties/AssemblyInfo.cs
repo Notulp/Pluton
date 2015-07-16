@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("Pluton")]
-[assembly: AssemblyDescription("A server mod for the active development branch of Rust")]
+[assembly: AssemblyDescription("A server mod for the active branch of the survival sandbox game Rust")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Pluton")]
