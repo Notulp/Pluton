@@ -340,7 +340,7 @@ namespace Pluton
         /// </summary>
         /// <returns>The ini.</returns>
         /// <param name="path">Path.</param>
-        public IniParser CreateIni(string path)
+        public IniParser CreateIni(string path = Name)
         {
             try {
                 path = ValidateRelativePath(path + ".ini");
