@@ -703,7 +703,7 @@ namespace Pluton.Patcher
             BeingHammeredPatch();
             BuildingBlockDemolishedPatch();
             CombatEntityHurtPatch();
-            CraftingStartPatch();
+            //CraftingStartPatch();
             ConsumeFuel();
 
             DoPlacementPatch();

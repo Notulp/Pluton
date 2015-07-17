@@ -631,7 +631,7 @@ namespace Pluton
             bpcopy.defaultBlueprint = bp.defaultBlueprint;
             bpcopy.ingredients = bp.ingredients;
             bpcopy.rarity = bp.rarity;
-            bpcopy.targetItem = bp.targetItem;
+            //bpcopy.targetItem = bp.targetItem;
             bpcopy.time = bp.time / Server.GetInstance().CraftingTimeScale;
             bpcopy.userCraftable = bp.userCraftable;
             CraftEvent ce = new CraftEvent(self, bpcopy, owner, instanceData, amount);

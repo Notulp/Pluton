@@ -340,13 +340,13 @@ namespace Pluton
         /// </summary>
         /// <returns>The ini.</returns>
         /// <param name="path">Path.</param>
-        public IniParser CreateIni(string path)
+        public IniParser CreateIni(string path = null)
         {
             try {
                 path = ValidateRelativePath(path + ".ini");
-                if (path == null)
-                    return (IniParser)null;
-
+                if (String.IsNullOrEmpty(path)){
+                    path = Name;
+                }
                 if (IniExists(path)) return GetIni(path);
 
                 File.WriteAllText(path, "");

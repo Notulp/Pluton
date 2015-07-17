@@ -10,12 +10,12 @@ namespace Pluton.Events
         public bool allowed = true;
         public bool forceAllow = false;
 
-        private string entered;
+        private string _entered;
 
         public DoorCodeEvent(CodeLock doorLock, BasePlayer player, string entered)
         {
             codeLock = doorLock;
-            entered = entered;
+            _entered = entered;
             Player = Server.GetPlayer(player);
         }
 
@@ -78,21 +78,21 @@ namespace Pluton.Events
         {
             get
             {
-                return entered;
+                return _entered;
             }
             set
             {
                 int nothing;
                 if (value.Length == 4 && int.TryParse(value, out nothing))
                 {
-                    entered = value;
+                    _entered = value;
                 }
             }
         }
 
         public bool IsCorrect()
         {
-            return entered == (string)codeLock.GetFieldValue("code");
+            return _entered == (string)codeLock.GetFieldValue("code");
         }
     }
 }
