@@ -56,6 +56,8 @@ namespace Pluton
 
         public static Subject<ItemUsedEvent> OnItemUsed = new Subject<ItemUsedEvent>();
 
+        public static Subject<Landmine> OnLandmineArmed = new Subject<Landmine>();
+
         public static Subject<EntityLootEvent> OnLootingEntity = new Subject<EntityLootEvent>();
 
         public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
@@ -533,6 +535,11 @@ namespace Pluton
                 whitelist.Add(rpc.player.userID);
                 doorLock.SetFieldValue("whitelistPlayers", whitelist);
             }
+        }
+
+        public static void LandmineArmed(Landmine l)
+        {
+            OnLandmineArmed.OnNext(l);
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()

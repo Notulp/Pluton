@@ -181,6 +181,9 @@
                 case "On_ItemUsed":
                     plugin.OnItemUsedHook = Hooks.OnItemUsed.Subscribe(p => plugin.OnItemUsed(p));
                     break;
+                case "On_LandmineArmed":
+                    plugin.OnLandmineArmedHook = Hooks.OnLandmineArmed.Subscribe(l => plugin.OnLandmineArmed(l));
+                    break;
                 case "On_LootingEntity":
                     plugin.OnLootingEntityHook = Hooks.OnLootingEntity.Subscribe(l => plugin.OnLootingEntity(l));
                     break;
@@ -361,6 +364,9 @@
                     break;
                 case "On_ItemUsed":
                     plugin.OnItemUsedHook.Dispose();
+                    break;
+                case "On_LandmineArmed":
+                    plugin.OnLandmineArmedHook.Dispose();
                     break;
                 case "On_LootingEntity":
                     plugin.OnLootingEntityHook.Dispose();

@@ -607,6 +607,18 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void LandmineArmed()
+        {
+            TypeDefinition Landmine = rustAssembly.MainModule.GetType("Landmine");
+            MethodDefinition Arm = Landmine.GetMethod("Arm");
+            MethodDefinition method = hooksClass.GetMethod("LandmineArmed");
+
+            int Position = Arm.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = Arm.Body.GetILProcessor();
+            iLProcessor.InsertBefore(Arm.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(Arm.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -714,6 +726,8 @@ namespace Pluton.Patcher
             ItemUsed();
             ItemRepaired();
             ItemLoseCondition();
+
+            LandmineArmed();
 
             FieldsUpdate();
 
