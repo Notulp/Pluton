@@ -165,6 +165,11 @@
     <Compile Include="Objects\PlutonUIPanel.cs" />
     <Compile Include="Objects\PlutonUIComponents\IComponent.cs" />
     <Compile Include="Objects\PlutonUIComponents\Text.cs" />
+    <Compile Include="Objects\PlutonUIComponents\Image.cs" />
+    <Compile Include="Objects\PlutonUIComponents\RawImage.cs" />
+    <Compile Include="Objects\PlutonUIComponents\NeedsCursor.cs" />
+    <Compile Include="Objects\PlutonUIComponents\RectTransform.cs" />
+    <Compile Include="Objects\PlutonUIComponents\BaseComponent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

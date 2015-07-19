@@ -2,27 +2,11 @@
 
 namespace Pluton.PlutonUIPanel
 {
-    public class Text : IComponent
+    public class Text : BaseComponent
     {
-        public JSON.Value this [string key] {
-            get {
-                return _obj[key];
-            }
-            set {
-                _obj[key] = value;
-            }
-        }
-
-        public string type {
+        public override string type {
             get {
                 return "UnityEngine.UI.Text";
-            }
-        }
-
-        private JSON.Object _obj = new JSON.Object();
-        public JSON.Object obj {
-            get {
-                return _obj;
             }
         }
 
