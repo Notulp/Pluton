@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pluton.PlutonUIPanel
+namespace Pluton.PlutonUI
 {
     public class BaseComponent : CountedInstance, IComponent
     {
