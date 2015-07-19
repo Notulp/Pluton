@@ -162,6 +162,7 @@
     <Compile Include="SingletonEx.cs" />
     <Compile Include="Events\PlayerKickEvent.cs" />
     <Compile Include="plugins.cs" />
+    <Compile Include="Objects\PlutonUIPanel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -169,4 +170,7 @@
     <None Include="Pluton.cfg" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Objects\PlutonUIComponents\" />
+  </ItemGroup>
 </Project>
