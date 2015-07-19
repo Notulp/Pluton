@@ -4,7 +4,14 @@ namespace Pluton
 {
     public class PlutonUIPanel
     {
-        public JSON.Value this [string key] => obj[key];
+        public JSON.Value this [string key] {
+            get {
+                return obj[key];
+            }
+            set {
+                obj[key] = value;
+            }
+        }
 
         public JSON.Array components = new JSON.Array();
 
