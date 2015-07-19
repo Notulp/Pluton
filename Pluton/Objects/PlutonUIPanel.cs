@@ -4,6 +4,9 @@ namespace Pluton
 {
     public class PlutonUIPanel
     {
+        public JSON.Array components = new JSON.Array();
+        public JSON.Object obj = new JSON.Object();
+
         public JSON.Value this [string key] {
             get {
                 return obj[key];
@@ -12,10 +15,6 @@ namespace Pluton
                 obj[key] = value;
             }
         }
-
-        public JSON.Array components = new JSON.Array();
-
-        public JSON.Object obj = new JSON.Object();
 
         public float fadeOut {
             get {
