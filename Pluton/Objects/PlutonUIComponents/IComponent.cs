@@ -4,8 +4,9 @@ namespace Pluton.PlutonUI
 {
     public interface IComponent
     {
-        string type { get; }
+        float fadeIn { get; }
         JSON.Object obj { get; }
+        string type { get; }
     }
 }
 

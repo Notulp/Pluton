@@ -4,12 +4,6 @@ namespace Pluton.PlutonUI
 {
     public class RawImage : BaseComponent
     {
-        public override string type {
-            get {
-                return "UnityEngine.UI.RawImage";
-            }
-        }
-
         public string color {
             get {
                 return _obj.GetString("color", "1.0 1.0 1.0 1.0");
@@ -55,6 +49,12 @@ namespace Pluton.PlutonUI
                     _obj["sprite"] = new JSON.Value(value);
                 else
                     _obj.Add("sprite", new JSON.Value(value));
+            }
+        }
+
+        public override string type {
+            get {
+                return "UnityEngine.UI.RawImage";
             }
         }
 

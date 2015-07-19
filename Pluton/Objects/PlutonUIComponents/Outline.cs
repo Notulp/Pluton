@@ -4,12 +4,6 @@ namespace Pluton.PlutonUI
 {
     public class Outline : BaseComponent
     {
-        public override string type {
-            get {
-                return "UnityEngine.UI.Outline";
-            }
-        }
-
         public string color {
             get {
                 return _obj.GetString("color", "1.0 1.0 1.0 1.0");
@@ -31,6 +25,12 @@ namespace Pluton.PlutonUI
                     _obj["distance"] = new JSON.Value(value);
                 else
                     _obj.Add("distance", new JSON.Value(value));
+            }
+        }
+
+        public override string type {
+            get {
+                return "UnityEngine.UI.Outline";
             }
         }
 

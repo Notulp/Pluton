@@ -4,12 +4,6 @@ namespace Pluton.PlutonUI
 {
     public class Button : BaseComponent
     {
-        public override string type {
-            get {
-                return "UnityEngine.UI.Button";
-            }
-        }
-
         public bool close {
             get {
                 return _obj.ContainsKey("close");
@@ -79,6 +73,12 @@ namespace Pluton.PlutonUI
                     _obj["sprite"] = new JSON.Value(value);
                 else
                     _obj.Add("sprite", new JSON.Value(value));
+            }
+        }
+
+        public override string type {
+            get {
+                return "UnityEngine.UI.Button";
             }
         }
     }
