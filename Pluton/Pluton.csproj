@@ -170,6 +170,8 @@
     <Compile Include="Objects\PlutonUIComponents\NeedsCursor.cs" />
     <Compile Include="Objects\PlutonUIComponents\RectTransform.cs" />
     <Compile Include="Objects\PlutonUIComponents\BaseComponent.cs" />
+    <Compile Include="Objects\PlutonUIComponents\Outline.cs" />
+    <Compile Include="Objects\PlutonUIComponents\Button.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
