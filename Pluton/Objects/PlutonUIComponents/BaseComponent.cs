@@ -30,6 +30,9 @@ namespace Pluton.PlutonUI
             get {
                 return _obj;
             }
+            set {
+                _obj = value;
+            }
         }
 
         public virtual string type { get { return ""; }}

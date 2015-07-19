@@ -69,6 +69,11 @@ namespace Pluton.PlutonUI
                     _obj.Add("url", new JSON.Value(value));
             }
         }
+
+        public RawImage()
+        {
+            this["type"] = new JSON.Value(type);
+        }
     }
 }
 

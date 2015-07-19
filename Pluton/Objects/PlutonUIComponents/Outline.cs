@@ -45,6 +45,11 @@ namespace Pluton.PlutonUI
                     _obj.Add("useGraphicAlpha", new JSON.Value(value));
             }
         }
+
+        public Outline()
+        {
+            this["type"] = new JSON.Value(type);
+        }
     }
 }
 

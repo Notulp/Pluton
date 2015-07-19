@@ -4,7 +4,6 @@ namespace Pluton
 {
     public class PlutonUIPanel
     {
-        public JSON.Array components = new JSON.Array();
         public JSON.Object obj = new JSON.Object();
 
         public JSON.Value this [string key] {
@@ -13,6 +12,18 @@ namespace Pluton
             }
             set {
                 obj[key] = value;
+            }
+        }
+
+        public JSON.Array components {
+            get {
+                return obj.GetArray("components");
+            }
+            set {
+                if (obj.ContainsKey("components"))
+                    obj["components"] = new JSON.Value(value);
+                else
+                    obj.Add("components", new JSON.Value(value));
             }
         }
 
@@ -50,6 +61,41 @@ namespace Pluton
                 else
                     obj.Add("parent", new JSON.Value(value));
             }
+        }
+
+        public PlutonUIPanel(string nam = null, string par = null, float? fade = null)
+        {
+            components = new JSON.Array();
+            if (nam != null)
+                name = nam;
+            if (par != null)
+                parent = par;
+            if (fade != null)
+                fadeOut = (float)fade;
+        }
+
+        public PlutonUI.BaseComponent AddComponent(PlutonUI.BaseComponent comp)
+        {
+            components.Add(comp.obj);
+            return comp;
+        }
+
+        public PlutonUI.BaseComponent AddComponent <T>() where T : PlutonUI.BaseComponent
+        {
+            PlutonUI.BaseComponent t = Activator.CreateInstance<T>();
+            components.Add(t.obj);
+            return t;
+        }
+
+        public bool RemoveComponent(PlutonUI.BaseComponent comp)
+        {
+            for (int i = 0; i < components.Length; i++) {
+                if (components[i].Obj == comp.obj) {
+                    components.Remove(i);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

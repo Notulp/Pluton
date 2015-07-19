@@ -57,6 +57,11 @@ namespace Pluton.PlutonUI
                 return "RectTransform";
             }
         }
+
+        public RectTransform()
+        {
+            this["type"] = new JSON.Value(type);
+        }
     }
 }
 

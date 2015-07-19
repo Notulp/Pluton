@@ -69,6 +69,11 @@ namespace Pluton.PlutonUI
                 return "UnityEngine.UI.Text";
             }
         }
+
+        public Text()
+        {
+            this["type"] = new JSON.Value(type);
+        }
     }
 }
 

@@ -4,14 +4,14 @@ namespace Pluton.PlutonUI
 {
     public class Button : BaseComponent
     {
-        public bool close {
+        public string close {
             get {
-                return _obj.ContainsKey("close");
+                return _obj.GetString("close");
             }
             set {
-                if (_obj.ContainsKey("close") && !value)
-                    _obj.Remove("close");
-                else if (!_obj.ContainsKey("close") && value)
+                if (_obj.ContainsKey("close"))
+                    _obj["close"] = new JSON.Value(value);
+                else
                     _obj.Add("close", new JSON.Value(value));
             }
         }
@@ -80,6 +80,11 @@ namespace Pluton.PlutonUI
             get {
                 return "UnityEngine.UI.Button";
             }
+        }
+
+        public Button()
+        {
+            this["type"] = new JSON.Value(type);
         }
     }
 }
