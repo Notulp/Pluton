@@ -15,7 +15,7 @@ namespace Pluton.PlutonUI
 
         public float fadeIn {
             get {
-                return _obj["fadeIn"];
+                return _obj.GetFloat("fadeIn");
             }
             set {
                 if (_obj.ContainsKey("fadeIn"))
