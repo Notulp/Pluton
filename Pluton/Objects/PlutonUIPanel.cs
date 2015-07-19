@@ -31,7 +31,7 @@ namespace Pluton
 
         public string name {
             get {
-                return obj.GetString("PlutonUI Panel");
+                return obj.GetString("name", "PlutonUI Panel");
             }
             set {
                 if (obj.ContainsKey("name"))
@@ -43,7 +43,7 @@ namespace Pluton
 
         public string parent {
             get {
-                return obj.GetString("Overlay");
+                return obj.GetString("parent", "Overlay");
             }
             set {
                 if (obj.ContainsKey("parent"))
