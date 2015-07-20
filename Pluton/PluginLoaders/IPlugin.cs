@@ -53,8 +53,6 @@ namespace Pluton
 
         void OnLandmineArmed(Landmine l);
 
-        void OnLandmineExploded(Landmine l);
-
         void OnLootingEntity(EntityLootEvent le);
 
         void OnLootingItem(ItemLootEvent le);
