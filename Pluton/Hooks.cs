@@ -58,6 +58,8 @@ namespace Pluton
 
         public static Subject<Landmine> OnLandmineArmed = new Subject<Landmine>();
 
+        public static Subject<Landmine> OnLandmineExploded = new Subject<Landmine>();
+
         public static Subject<EntityLootEvent> OnLootingEntity = new Subject<EntityLootEvent>();
 
         public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
@@ -540,6 +542,11 @@ namespace Pluton
         public static void LandmineArmed(Landmine l)
         {
             OnLandmineArmed.OnNext(l);
+        }
+
+        public static void LandmineExploded(Landmine l)
+        {
+            OnLandmineExploded.OnNext(l);
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
