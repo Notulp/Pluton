@@ -307,7 +307,7 @@
             if (!File.Exists(path))
                 File.AppendAllText("", path);
             var ini = new IniParser(path);
-            foreach (ItemDefinition item in ItemManager.Instance.itemList) {
+            foreach (ItemDefinition item in ItemManager.itemList) {
                 ini.AddSetting(item.displayName.english, "itemid", item.itemid.ToString());
                 ini.AddSetting(item.displayName.english, "category", item.category.ToString());
                 ini.AddSetting(item.displayName.english, "shortname", item.shortname);
