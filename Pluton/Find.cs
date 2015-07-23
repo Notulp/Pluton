@@ -17,12 +17,12 @@ namespace Pluton
 
         public List<ItemBlueprint> BluePrints()
         {
-            return ItemManager.Instance.bpList;
+            return ItemManager.bpList;
         }
 
         public ItemBlueprint BluePrint(string name)
         {
-            return ItemManager.Instance.bpList.Find(item => {
+            return ItemManager.bpList.Find(item => {
                 if (item.targetItem.shortname == name ||
                     item.targetItem.displayName.english == name)
                     return true;
@@ -32,7 +32,7 @@ namespace Pluton
 
         public List<ItemBlueprint> BluePrintsByCategory(string cat)
         {
-            return ItemManager.Instance.bpList.FindAll(item => {
+            return ItemManager.bpList.FindAll(item => {
                 if (item.targetItem.category.ToString() == cat)
                     return true;
                 return false;
@@ -41,7 +41,7 @@ namespace Pluton
 
         public List<ItemBlueprint> BluePrintsByCategory(ItemCategory cat)
         {
-            return ItemManager.Instance.bpList.FindAll(item => {
+            return ItemManager.bpList.FindAll(item => {
                 if (item.targetItem.category == cat)
                     return true;
                 return false;
@@ -148,26 +148,26 @@ namespace Pluton
 
         public List<ItemDefinition> ItemDefinitions()
         {
-            return ItemManager.Instance.itemList;
+            return ItemManager.itemList;
         }
 
         public List<ItemDefinition> ItemDefinitionsByCategory(string cat)
         {
-            return (from item in ItemManager.Instance.itemList
+            return (from item in ItemManager.itemList
                              where item.category.ToString() == cat
                              select item).ToList<ItemDefinition>();
         }
 
         public List<ItemDefinition> ItemDefinitionsByCategory(ItemCategory cat)
         {
-            return (from item in ItemManager.Instance.itemList
+            return (from item in ItemManager.itemList
                              where item.category == cat
                              select item).ToList<ItemDefinition>();
         }
 
         public ItemDefinition ItemDefinition(string name)
         {
-            return (from item in ItemManager.Instance.itemList
+            return (from item in ItemManager.itemList
                              where item.shortname == name ||
                                  item.displayName.english == name
                              select item).FirstOrDefault<ItemDefinition>();

@@ -141,7 +141,7 @@ namespace Pluton
 
         public static int GetItemID(string itemName)
         {
-            return (from item in ItemManager.Instance.itemList
+            return (from item in ItemManager.itemList
                              where item.displayName.english == itemName ||
                                  item.displayName.translated == itemName ||
                                  item.shortname == itemName
