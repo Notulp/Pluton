@@ -4,9 +4,15 @@ namespace Pluton.PlutonUI
 {
     public class RectTransform : BaseComponent
     {
-        public override string type {
+        public string anchormax {
             get {
-                return "RectTransform";
+                return _obj.GetString("anchormax", "1.0 1.0");
+            }
+            set {
+                if (_obj.ContainsKey("anchormax"))
+                    _obj["anchormax"] = new JSON.Value(value);
+                else
+                    _obj.Add("anchormax", new JSON.Value(value));
             }
         }
 
@@ -22,15 +28,15 @@ namespace Pluton.PlutonUI
             }
         }
 
-        public string anchormax {
+        public string offsetmax {
             get {
-                return _obj.GetString("anchormax", "1.0 1.0");
+                return _obj.GetString("offsetmax", "1.0 1.0");
             }
             set {
-                if (_obj.ContainsKey("anchormax"))
-                    _obj["anchormax"] = new JSON.Value(value);
+                if (_obj.ContainsKey("offsetmax"))
+                    _obj["offsetmax"] = new JSON.Value(value);
                 else
-                    _obj.Add("anchormax", new JSON.Value(value));
+                    _obj.Add("offsetmax", new JSON.Value(value));
             }
         }
 
@@ -46,16 +52,15 @@ namespace Pluton.PlutonUI
             }
         }
 
-        public string offsetmax {
+        public override string type {
             get {
-                return _obj.GetString("offsetmax", "1.0 1.0");
+                return "RectTransform";
             }
-            set {
-                if (_obj.ContainsKey("offsetmax"))
-                    _obj["offsetmax"] = new JSON.Value(value);
-                else
-                    _obj.Add("offsetmax", new JSON.Value(value));
-            }
+        }
+
+        public RectTransform()
+        {
+            this["type"] = new JSON.Value(type);
         }
     }
 }

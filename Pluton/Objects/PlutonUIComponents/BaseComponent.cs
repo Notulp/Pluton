@@ -13,14 +13,29 @@ namespace Pluton.PlutonUI
             }
         }
 
-        public virtual string type { get { return ""; }}
+        public float fadeIn {
+            get {
+                return _obj.GetFloat("fadeIn");
+            }
+            set {
+                if (_obj.ContainsKey("fadeIn"))
+                    _obj["fadeIn"] = new JSON.Value(value);
+                else
+                    _obj.Add("fadeIn", new JSON.Value(value));
+            }
+        }
 
         protected JSON.Object _obj = new JSON.Object();
         public JSON.Object obj {
             get {
                 return _obj;
             }
+            set {
+                _obj = value;
+            }
         }
+
+        public virtual string type { get { return ""; }}
     }
 }
 

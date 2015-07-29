@@ -85,7 +85,7 @@ namespace Pluton
         public RaycastHit GetLookHit(float maxDist = 500f, int layers = Physics.AllLayers)
         {
             RaycastHit hit;
-            Ray orig = basePlayer.eyes.Ray();
+            Ray orig = basePlayer.eyes.HeadRay();
             Physics.Raycast(orig, out hit, maxDist, layers);
             return hit;
         }

@@ -4,12 +4,6 @@ namespace Pluton.PlutonUI
 {
     public class Text : BaseComponent
     {
-        public override string type {
-            get {
-                return "UnityEngine.UI.Text";
-            }
-        }
-
         public string align {
             get {
                 return _obj.GetString("align", "UpperLeft");
@@ -68,6 +62,17 @@ namespace Pluton.PlutonUI
                 else
                     _obj.Add("text", new JSON.Value(value));
             }
+        }
+
+        public override string type {
+            get {
+                return "UnityEngine.UI.Text";
+            }
+        }
+
+        public Text()
+        {
+            this["type"] = new JSON.Value(type);
         }
     }
 }

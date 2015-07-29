@@ -4,12 +4,6 @@ namespace Pluton.PlutonUI
 {
     public class Outline : BaseComponent
     {
-        public override string type {
-            get {
-                return "UnityEngine.UI.Outline";
-            }
-        }
-
         public string color {
             get {
                 return _obj.GetString("color", "1.0 1.0 1.0 1.0");
@@ -34,6 +28,12 @@ namespace Pluton.PlutonUI
             }
         }
 
+        public override string type {
+            get {
+                return "UnityEngine.UI.Outline";
+            }
+        }
+
         public bool useGraphicAlpha {
             get {
                 return _obj.ContainsKey("useGraphicAlpha");
@@ -44,6 +44,11 @@ namespace Pluton.PlutonUI
                 else if (!_obj.ContainsKey("useGraphicAlpha") && value)
                     _obj.Add("useGraphicAlpha", new JSON.Value(value));
             }
+        }
+
+        public Outline()
+        {
+            this["type"] = new JSON.Value(type);
         }
     }
 }

@@ -9,6 +9,11 @@ namespace Pluton.PlutonUI
                 return "NeedsCursor";
             }
         }
+
+        public NeedsCursor()
+        {
+            this["type"] = new JSON.Value(type);
+        }
     }
 }
 

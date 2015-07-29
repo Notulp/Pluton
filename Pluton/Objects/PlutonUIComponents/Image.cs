@@ -4,12 +4,6 @@ namespace Pluton.PlutonUI
 {
     public class Image : BaseComponent
     {
-        public override string type {
-            get {
-                return "UnityEngine.UI.Image";
-            }
-        }
-
         public string color {
             get {
                 return _obj.GetString("color", "1.0 1.0 1.0 1.0");
@@ -46,6 +40,18 @@ namespace Pluton.PlutonUI
             }
         }
 
+        public string png {
+            get {
+                return _obj.GetString("png", "0");
+            }
+            set {
+                if (_obj.ContainsKey("png"))
+                    _obj["png"] = new JSON.Value(value);
+                else
+                    _obj.Add("png", new JSON.Value(value));
+            }
+        }
+
         public string sprite {
             get {
                 return _obj.GetString("sprite", "Assets/Content/UI/UI.Background.Tile.psd");
@@ -56,6 +62,17 @@ namespace Pluton.PlutonUI
                 else
                     _obj.Add("sprite", new JSON.Value(value));
             }
+        }
+
+        public override string type {
+            get {
+                return "UnityEngine.UI.Image";
+            }
+        }
+
+        public Image()
+        {
+            this["type"] = new JSON.Value(type);
         }
     }
 }
