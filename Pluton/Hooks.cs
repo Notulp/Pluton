@@ -881,6 +881,7 @@ namespace Pluton
 
         public static void ServerInit()
         {
+            Server.GetInstance().SendCommand("plugins.loaded");
             if (Server.GetInstance().Loaded)
                 return;
 
