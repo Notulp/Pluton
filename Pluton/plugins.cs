@@ -5,10 +5,6 @@ namespace Pluton
     [ConsoleSystem.Factory("plugins")]
     public class plugins : ConsoleSystem
     {
-        public plugins()
-        {
-        }
-
         [ConsoleSystem.Admin, ConsoleSystem.Help("Prints out plugin statistics!")]
         public static void Loaded(ConsoleSystem.Arg args)
         {
