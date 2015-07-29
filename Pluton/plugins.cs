@@ -16,6 +16,34 @@ namespace Pluton
             }
             args.ReplyWith(result);
         }
+
+        [ConsoleSystem.Admin, ConsoleSystem.Help("Prints out hooks statistics!")]
+        public static void Hooks(ConsoleSystem.Arg args)
+        {
+            Dictionary<string, List<string>> hooks = new Dictionary<string, List<string>>();
+            PluginLoader.GetInstance().Plugins.Values.ToList().ForEach(
+                p => p.Globals.ToList().ForEach(
+                    g => {
+                        if (g.StartsWith("On_"))
+                            AddPluginToHookListInDict(hooks, g, p.Name);
+                    }));
+            
+            string result = "The registered hooks are:" + Environment.NewLine;
+
+            hooks.Keys.ToList().ForEach(k => {
+                result += k + ": " + String.Join(", ", hooks[k].ToArray()) + Environment.NewLine;
+            });
+
+            args.ReplyWith(result);
+        }
+
+        private static void AddPluginToHookListInDict(Dictionary<string, List<string>> hooks, string key, string value)
+        {
+            if (hooks.ContainsKey(key))
+                hooks[key].Add(value);
+            else
+                hooks.Add(key, new List<string>() { value } );
+        }
     }
 }
 
