@@ -32,10 +32,6 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="MoonSharp.Interpreter">
       <HintPath>ref\MoonSharp.Interpreter.dll</HintPath>
     </Reference>
@@ -57,7 +53,12 @@
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ref\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\ref\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\ref\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
