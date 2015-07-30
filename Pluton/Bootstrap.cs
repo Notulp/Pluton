@@ -8,7 +8,7 @@ namespace Pluton
     public class Bootstrap : MonoBehaviour
     {
 
-        public static string Version = "0.9.8";
+        public static string Version { get; } = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static ServerTimers timers;
 
