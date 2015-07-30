@@ -112,21 +112,11 @@ namespace Pluton
                 _savetimer.Dispose();
             }
 
-            public void Start()
-            {
-                _savetimer.Start();
-            }
+            public void Start() => _savetimer.Start();
 
-            public void Stop()
-            {
-                _savetimer.Stop();
-            }
+            public void Stop() => _savetimer.Stop();
 
-            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e)
-            {
-                Bootstrap.SaveAll();
-            }
-                
+            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e) => SaveAll();
         }
     }
 }
