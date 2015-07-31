@@ -1,8 +1,15 @@
-﻿namespace Pluton.Events
+﻿using System;
+
+namespace Pluton.Events
 {
     public class ChatEvent : CountedInstance
     {
-        public readonly ConsoleSystem.Arg _arg;
+        public readonly ConsoleSystem.Arg Arg;
+        [Obsolete("ChatEvent._arg is obsolete and will be removed, please use ChatEvent.Arg", true)]
+        public ConsoleSystem.Arg _arg {
+            get { return Arg; }
+        }
+
         public readonly string OriginalText;
         public readonly Player User;
         public string BroadcastName;
@@ -12,7 +19,7 @@
         public ChatEvent(Player player, ConsoleSystem.Arg args)
         {
             User = player;
-            _arg = args;
+            Arg = args;
             if (args.connection != null)
                 BroadcastName = args.connection.username;
             else
@@ -22,16 +29,13 @@
             Reply = "chat.say was executed";
         }
 
-        public void ReplyWith(string msg)
-        {
-            Reply = msg;
-        }
-        
         public void Cancel(string reply = "Your message was not sent")
         {
             FinalText = "";
             Reply = reply;
         }
+
+        public void ReplyWith(string msg) => Reply = msg;
     }
 }
 
