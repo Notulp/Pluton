@@ -16,6 +16,9 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "isBuilt", false);
+                ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem.Index), "Build", new object[0]);
+
                 DirectoryConfig.GetInstance();
                 CoreConfig.GetInstance();
                 Config.GetInstance();
