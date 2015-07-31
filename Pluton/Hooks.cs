@@ -902,7 +902,7 @@ namespace Pluton
         {
             try {
                 if (pluton.enabled) {
-                    string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded",
+                    string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded,pluton",
                                              new object[] {
                             ConVar.Server.maxplayers,
                             BasePlayer.activePlayerList.Count,
