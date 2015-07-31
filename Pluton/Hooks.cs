@@ -512,8 +512,8 @@ namespace Pluton
         {
             if (!doorLock.IsLocked())
                 return;
-            string a = rpc.read.String();
-            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, a);
+            string code = rpc.read.String();
+            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, code);
             OnDoorCode.OnNext(dc);
             if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
             {
