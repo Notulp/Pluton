@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Timers;
 using UnityEngine;
@@ -17,6 +18,9 @@ namespace Pluton
         {
             try {
                 ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "isBuilt", false);
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "list", new List<ConsoleSystem.Command>());
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "globalNamespace", new Dictionary<string, ConsoleSystem.Command>(StringComparer.OrdinalIgnoreCase));
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "dictionary", new Dictionary<string, ConsoleSystem.Command>(StringComparer.OrdinalIgnoreCase));
                 ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem.Index), "Build", new object[0]);
 
                 DirectoryConfig.GetInstance();
