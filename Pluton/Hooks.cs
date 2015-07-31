@@ -206,8 +206,8 @@ namespace Pluton
             OnClientAuth.OnNext(ae);
 
             ca.m_AuthConnection.Remove(connection);
-            if (!ae.approved) {
-                ConnectionAuth.Reject(connection, ae._reason);
+            if (!ae.Approved) {
+                ConnectionAuth.Reject(connection, ae.Reason);
                 return;
             }
             SingletonComponent<ServerMgr>.Instance.ConnectionApproved(connection);
