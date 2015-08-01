@@ -253,7 +253,7 @@ namespace Pluton
 
                     CommandPermissionEvent permission = new CommandPermissionEvent(player, args, chatCmd);
                     OnCommandPermission.OnNext(permission);
-                    if (permission.blocked) {
+                    if (permission.Blocked) {
                         player.Message(permission.Reply);
                         continue;
                     }
