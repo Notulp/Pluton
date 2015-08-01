@@ -194,6 +194,23 @@
         {
             return Path.Combine(GetRootFolder(), Path.Combine("server", ConVar.Server.identity));
         }
+        
+        public object GetInstanceField(Type type, object instance, string fieldName)
+        {
+            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                | BindingFlags.Static;
+            try
+            {
+                FieldInfo field = type.GetField(fieldName, bindFlags);
+                object v = field.GetValue(instance);
+                return v;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("[Reflection] Failed to get value of " + fieldName + "! " + ex.ToString());
+                return null;
+            }
+        }
 
         public static string GetLoadoutFolder()
         {
@@ -344,6 +361,21 @@
         public Quaternion RotateZ(Quaternion q, float angle)
         {
             return (q *= Quaternion.Euler(0f, 0f, angle));
+        }
+        
+        public void SetInstanceField(Type type, object instance, string fieldName, object val)
+        {
+            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                | BindingFlags.Static;
+            FieldInfo field = type.GetField(fieldName, bindFlags);
+            try
+            {
+                field.SetValue(instance, val);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("[Reflection] Failed to set value of " + fieldName + "! " + ex.ToString());
+            }
         }
 
         public bool TryFindType(string typeName, out System.Type t)
