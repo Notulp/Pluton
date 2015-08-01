@@ -242,11 +242,11 @@ namespace Pluton
 
             CommandEvent cmd = new CommandEvent(player, args);
 
-            if (cmd.cmd == "")
+            if (cmd.Cmd == "")
                 return;
 
             foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
-                ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.cmd);
+                ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.Cmd);
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
                         continue;
@@ -259,7 +259,7 @@ namespace Pluton
                     }
 
                     try {
-                        chatCmd.callback(cmd.args, player);
+                        chatCmd.callback(cmd.Args, player);
                     } catch (Exception ex) {
                         Logger.LogError(chatCmd.plugin.FormatException(ex));
                     }
