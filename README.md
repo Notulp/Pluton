@@ -3,6 +3,16 @@ Pluton
 
 <a href='http://jenkins.pluton-team.org/job/Pluton/'>
   <img src='http://jenkins.pluton-team.org/buildStatus/icon?job=Pluton'></a>
+<a href='https://github.com/Notulp/Pluton/blob/master/LICENSE'>
+  <img src='https://img.shields.io/github/license/notulp/pluton.svg'></a>
+<a href='https://github.com/Notulp/Pluton/releases/latest'>
+  <img src='https://img.shields.io/github/release/notulp/pluton.svg'></a>
+<a href='https://github.com/Notulp/Pluton/network'>
+  <img src='https://img.shields.io/github/forks/notulp/pluton.svg'></a>
+<a href='https://github.com/Notulp/Pluton/stargazers'>
+  <img src='https://img.shields.io/github/stars/notulp/pluton.svg'></a>
+<a href='https://github.com/Notulp/Pluton/issues'>
+  <img src='https://img.shields.io/github/issues/notulp/pluton.svg'></a>
 
 Pluton is a server mod for the active branch of the survival sandbox game Rust.
 
