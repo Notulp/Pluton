@@ -34,7 +34,15 @@ Get started:
 4. Compile Pluton and Pluton.Patcher
 5. Copy Pluton.Patcher and Mono.Cecil from Pluton.Patcher/bin/debug to the downloaded server's managed folder
 6. Copy Pluton.dll from Pluton/bin/debug to the downloaded server's managed folder
-7. Copy all files in Pluton/ref to the downloaded server's managed folder
+7. You now 2 options. Copy all files from Pluton/ref to Managed folder or selectively choose the files you want based on what you will be using:
+
+  ```
+  Required = System.Reactive.dll, System.Threading.dll, and Mono.Cecil.dll
+  Python = IronPython.Deps.dll
+  Javascript = Jint.dll
+  CSharp = mcs.exe
+  Lua = MoonSharp.Interpreter.dll
+  ```
 8. Run the Pluton.Patcher.exe inside the managed folder
 9. Copy Pluton.cfg from Pluton/ to %serverroot%/server/_your_server's_identity_/Pluton/
 10. Have fun!
