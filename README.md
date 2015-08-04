@@ -28,6 +28,7 @@ Get started:
 
   ```
   Assembly-CSharp.dll
+  Assembly-CSharp-firstpass.dll
   UnityEngine.dll
   ```
 4. Compile Pluton and Pluton.Patcher
