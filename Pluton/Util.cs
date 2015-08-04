@@ -194,6 +194,11 @@
         {
             return Path.Combine(GetRootFolder(), Path.Combine("server", ConVar.Server.identity));
         }
+        
+        public object GetInstanceField(object instance, string fieldName)
+        {
+            return instance.GetFieldValue(fieldName);
+        }
 
         public static string GetLoadoutFolder()
         {
@@ -344,6 +349,11 @@
         public Quaternion RotateZ(Quaternion q, float angle)
         {
             return (q *= Quaternion.Euler(0f, 0f, angle));
+        }
+        
+        public void SetInstanceField(object instance, string fieldName, object val)
+        {
+            instance.SetFieldValue(fieldName, val);
         }
 
         public bool TryFindType(string typeName, out System.Type t)

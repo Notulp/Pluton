@@ -7,7 +7,13 @@ namespace Pluton.Events
     {
         public readonly ConsoleSystem.Arg Internal;
         public readonly Player User;
-        public readonly string cmd;
+
+        public readonly string Cmd;
+        [Obsolete("ClientConsoleEvent.cmd is obsolete and will be removed, please use ClientConsoleEvent.Cmd", true)]
+        public string cmd {
+            get { return Cmd;}
+        }
+
         public readonly List<string> Args;
         public string Reply;
 
@@ -25,13 +31,10 @@ namespace Pluton.Events
             foreach (string str in rconCmd.Split(' '))
                 Args.Add(str);
 
-            cmd = Args[0];
+            Cmd = Args[0];
             Args.RemoveAt(0);
         }
 
-        public void ReplyWith(string msg)
-        {
-            Reply = msg;
-        }
+        public void ReplyWith(string msg) => Reply = msg;
     }
 }

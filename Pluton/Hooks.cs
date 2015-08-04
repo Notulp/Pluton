@@ -1,13 +1,9 @@
 using System;
 using Network;
-using ProtoBuf;
 using UnityEngine;
 using Pluton.Events;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
 
 namespace Pluton
 {
@@ -124,8 +120,6 @@ namespace Pluton
 
         #endregion
 
-
-
         #region Handlers
 
         // chat.say()
@@ -212,8 +206,8 @@ namespace Pluton
             OnClientAuth.OnNext(ae);
 
             ca.m_AuthConnection.Remove(connection);
-            if (!ae.approved) {
-                ConnectionAuth.Reject(connection, ae._reason);
+            if (!ae.Approved) {
+                ConnectionAuth.Reject(connection, ae.Reason);
                 return;
             }
             SingletonComponent<ServerMgr>.Instance.ConnectionApproved(connection);
@@ -248,24 +242,24 @@ namespace Pluton
 
             CommandEvent cmd = new CommandEvent(player, args);
 
-            if (cmd.cmd == "")
+            if (cmd.Cmd == "")
                 return;
 
             foreach (KeyValuePair<string, BasePlugin> pl in PluginLoader.GetInstance().Plugins) {
-                ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.cmd);
+                ChatCommand[] commands = pl.Value.chatCommands.getChatCommands(cmd.Cmd);
                 foreach (ChatCommand chatCmd in commands) {
                     if (chatCmd.callback == null)
                         continue;
 
                     CommandPermissionEvent permission = new CommandPermissionEvent(player, args, chatCmd);
                     OnCommandPermission.OnNext(permission);
-                    if (permission.blocked) {
+                    if (permission.Blocked) {
                         player.Message(permission.Reply);
                         continue;
                     }
 
                     try {
-                        chatCmd.callback(cmd.args, player);
+                        chatCmd.callback(cmd.Args, player);
                     } catch (Exception ex) {
                         Logger.LogError(chatCmd.plugin.FormatException(ex));
                     }
@@ -518,8 +512,8 @@ namespace Pluton
         {
             if (!doorLock.IsLocked())
                 return;
-            string a = rpc.read.String();
-            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, a);
+            string code = rpc.read.String();
+            DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, code);
             OnDoorCode.OnNext(dc);
             if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
             {
@@ -881,6 +875,7 @@ namespace Pluton
 
         public static void ServerInit()
         {
+            Server.GetInstance().SendCommand("plugins.loaded");
             if (Server.GetInstance().Loaded)
                 return;
 
@@ -907,7 +902,7 @@ namespace Pluton
         {
             try {
                 if (pluton.enabled) {
-                    string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded",
+                    string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded,pluton",
                                              new object[] {
                             ConVar.Server.maxplayers,
                             BasePlayer.activePlayerList.Count,

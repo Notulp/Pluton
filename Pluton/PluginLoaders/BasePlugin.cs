@@ -476,7 +476,7 @@ namespace Pluton
 
         public void OnClientConsole(ClientConsoleEvent ce)
         {
-            ce.ReplyWith(ce.cmd + " " + String.Join(" ", ce.Args.ToArray()) + " was executed!");
+            ce.ReplyWith(ce.Cmd + " " + String.Join(" ", ce.Args.ToArray()) + " was executed!");
             this.Invoke("On_ClientConsole", ce);
         }
 

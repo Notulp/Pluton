@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Pluton.Events
 {
@@ -12,6 +13,32 @@ namespace Pluton.Events
 
         private string _entered;
 
+        public string Code
+        {
+            get {
+                return (string)codeLock.GetFieldValue("code");
+            }
+            set {
+                int code;
+                if (value.Length == 4 && Int32.TryParse(value, out code)) {
+                    codeLock.SetFieldValue("code", code);
+                }
+            }
+        }
+
+        public string Entered
+        {
+            get {
+                return _entered;
+            }
+            set {
+                int code;
+                if (value.Length == 4 && Int32.TryParse(value, out code)) {
+                    _entered = value;
+                }
+            }
+        }
+
         public DoorCodeEvent(CodeLock doorLock, BasePlayer player, string entered)
         {
             codeLock = doorLock;
@@ -19,18 +46,13 @@ namespace Pluton.Events
             Player = Server.GetPlayer(player);
         }
 
-        public void Whitelist()
-        {
-            List<ulong> whitelist = new List<ulong>();
-            whitelist = (List<ulong>)codeLock.GetFieldValue("whitelistPlayers");
-            whitelist.Add(Player.GameID);
-            codeLock.SetFieldValue("whitelistPlayers", whitelist);
-        }
+        public void Allow() => forceAllow = true;
 
-        public void ClearWhitelist()
-        {
-            codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
-        }
+        public void ClearWhitelist() => codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
+
+        public void Deny() => allowed = false;
+
+        public bool IsCorrect() => _entered == Code;
 
         public void RemoveCode()
         {
@@ -48,51 +70,12 @@ namespace Pluton.Events
             codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
         }
 
-        public void Deny()
+        public void Whitelist()
         {
-            allowed = false;
-        }
-
-        public void Allow()
-        {
-            forceAllow = true;
-        }
-
-        public string Code
-        {
-            get
-            {
-                return (string)codeLock.GetFieldValue("code");
-            }
-            set
-            {
-                int nothing;
-                if (value.Length == 4 && int.TryParse(value, out nothing))
-                {
-                    codeLock.SetFieldValue("code", value);
-                }
-            }
-        }
-
-        public string Entered
-        {
-            get
-            {
-                return _entered;
-            }
-            set
-            {
-                int nothing;
-                if (value.Length == 4 && int.TryParse(value, out nothing))
-                {
-                    _entered = value;
-                }
-            }
-        }
-
-        public bool IsCorrect()
-        {
-            return _entered == (string)codeLock.GetFieldValue("code");
+            List<ulong> whitelist = new List<ulong>();
+            whitelist = (List<ulong>)codeLock.GetFieldValue("whitelistPlayers");
+            whitelist.Add(Player.GameID);
+            codeLock.SetFieldValue("whitelistPlayers", whitelist);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Timers;
 using UnityEngine;
@@ -7,8 +8,7 @@ namespace Pluton
 {
     public class Bootstrap : MonoBehaviour
     {
-
-        public static string Version = "0.9.8";
+        public static string Version { get; } = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static ServerTimers timers;
 
@@ -17,6 +17,12 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "isBuilt", false);
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "list", new List<ConsoleSystem.Command>());
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "globalNamespace", new Dictionary<string, ConsoleSystem.Command>(StringComparer.OrdinalIgnoreCase));
+                ReflectionExtensions.SetFieldValueValue(typeof(ConsoleSystem.Index), "dictionary", new Dictionary<string, ConsoleSystem.Command>(StringComparer.OrdinalIgnoreCase));
+                ReflectionExtensions.CallStaticMethod(typeof(ConsoleSystem.Index), "Build", new object[0]);
+
                 DirectoryConfig.GetInstance();
                 CoreConfig.GetInstance();
                 Config.GetInstance();
@@ -112,21 +118,11 @@ namespace Pluton
                 _savetimer.Dispose();
             }
 
-            public void Start()
-            {
-                _savetimer.Start();
-            }
+            public void Start() => _savetimer.Start();
 
-            public void Stop()
-            {
-                _savetimer.Stop();
-            }
+            public void Stop() => _savetimer.Stop();
 
-            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e)
-            {
-                Bootstrap.SaveAll();
-            }
-                
+            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e) => SaveAll();
         }
     }
 }
