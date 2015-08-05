@@ -13,8 +13,7 @@ namespace Pluton.Events
 
         private string _entered;
 
-        public string Code
-        {
+        public string Code {
             get {
                 return (string)codeLock.GetFieldValue("code");
             }
@@ -26,8 +25,7 @@ namespace Pluton.Events
             }
         }
 
-        public string Entered
-        {
+        public string Entered {
             get {
                 return _entered;
             }
@@ -46,13 +44,25 @@ namespace Pluton.Events
             Player = Server.GetPlayer(player);
         }
 
-        public void Allow() => forceAllow = true;
+        public void Allow()
+        {
+            forceAllow = true;
+        }
 
-        public void ClearWhitelist() => codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
+        public void ClearWhitelist()
+        {
+            codeLock.SetFieldValue("whitelistPlayers", new List<ulong>());
+        }
 
-        public void Deny() => allowed = false;
+        public void Deny()
+        {
+            allowed = false;
+        }
 
-        public bool IsCorrect() => _entered == Code;
+        public bool IsCorrect()
+        {
+            return _entered == Code;
+        }
 
         public void RemoveCode()
         {
