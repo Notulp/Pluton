@@ -5,6 +5,7 @@ namespace Pluton.Events
     public class ChatEvent : CountedInstance
     {
         public readonly ConsoleSystem.Arg Arg;
+
         [Obsolete("ChatEvent._arg is obsolete and will be removed, please use ChatEvent.Arg", true)]
         public ConsoleSystem.Arg _arg {
             get { return Arg; }
@@ -35,7 +36,10 @@ namespace Pluton.Events
             Reply = reply;
         }
 
-        public void ReplyWith(string msg) => Reply = msg;
+        public void ReplyWith(string msg)
+        {
+            Reply = msg;
+        }
     }
 }
 

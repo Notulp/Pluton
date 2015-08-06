@@ -8,7 +8,7 @@ namespace Pluton
 {
     public class Bootstrap : MonoBehaviour
     {
-        public static string Version { get; } = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public readonly string Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static ServerTimers timers;
 
@@ -118,11 +118,17 @@ namespace Pluton
                 _savetimer.Dispose();
             }
 
-            public void Start() => _savetimer.Start();
+            public void Start() {
+                _savetimer.Start();
+            }
 
-            public void Stop() => _savetimer.Stop();
+            public void Stop() {
+                _savetimer.Stop();
+            }
 
-            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e) => SaveAll();
+            private void _savetimer_Elapsed(object sender, ElapsedEventArgs e) {
+                SaveAll();
+            }
         }
     }
 }
