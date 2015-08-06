@@ -102,10 +102,10 @@ namespace Pluton
 
         public bool IsBlueprint {
             get {
-                return _item.isBlueprint;
+                return _item.HasFlag(Item.Flag.Blueprint);
             }
             set {
-                _item.isBlueprint = value;
+                _item.SetFlag(Item.Flag.Blueprint, value);
             }
         }
 
