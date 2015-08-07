@@ -27,7 +27,7 @@ namespace Pluton.Patcher
             MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
             MethodDefinition init = serverInit.GetMethod("Init_Config");
 
-            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[init.Body.Instructions.Count - 3], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[0], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
         }
 
         private static void BeingHammeredPatch()
@@ -797,7 +797,7 @@ namespace Pluton.Patcher
                 plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
                 rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
             } catch (FileNotFoundException ex) {
-                Console.WriteLine("You are missing " + ex.FileName + " did you moved the patcher to the managed folder ?");
+                Console.WriteLine("You are missing " + ex.FileName + " did you move the patcher to the managed folder ?");
                 if (interactive) {
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();

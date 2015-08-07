@@ -96,7 +96,7 @@ namespace Pluton
         }
 
         //Static
-        public static void CallStaticMethod(Type classType, string methodName, params object[] args)
+        public static void CallStaticMethod(this Type classType, string methodName, params object[] args)
         {
             var metInf = GetMethodInfo(classType, methodName);
 
@@ -109,7 +109,7 @@ namespace Pluton
             }
         }
 
-        public static object GetStaticFieldValue(Type classType, string fieldName)
+        public static object GetStaticFieldValue(this Type classType, string fieldName)
         {
             var memInf = GetFieldInfo(classType, fieldName);
 
@@ -125,7 +125,7 @@ namespace Pluton
             throw new Exception();
         }
 
-        public static void SetFieldValueValue(Type classType, string fieldName, object newValue)
+        public static void SetFieldValueValue(this Type classType, string fieldName, object newValue)
         {
             var memInf = GetFieldInfo(classType, fieldName);
 
