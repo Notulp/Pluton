@@ -187,6 +187,9 @@
                 case "On_LandmineExploded":
                     plugin.OnLandmineExplodedHook = Hooks.OnLandmineExploded.Subscribe(l => plugin.OnLandmineExploded(l));
                     break;
+                case "On_LandmineTriggered":
+                    plugin.OnLandmineTriggeredHook = Hooks.OnLandmineTriggered.Subscribe(l => plugin.OnLandmineTriggered(l));
+                    break;
                 case "On_LootingEntity":
                     plugin.OnLootingEntityHook = Hooks.OnLootingEntity.Subscribe(l => plugin.OnLootingEntity(l));
                     break;
@@ -373,6 +376,9 @@
                     break;
                 case "On_LandmineExploded":
                     plugin.OnLandmineExplodedHook.Dispose();
+                    break;
+                case "On_LandmineTriggered":
+                    plugin.OnLandmineTriggeredHook.Dispose();
                     break;
                 case "On_LootingEntity":
                     plugin.OnLootingEntityHook.Dispose();

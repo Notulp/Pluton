@@ -125,6 +125,7 @@
     <Compile Include="Events\RespawnEvent.cs" />
     <Compile Include="Events\ClientConsoleEvent.cs" />
     <Compile Include="Events\ServerConsoleEvent.cs" />
+	<Compile Include="Events\LandmineTriggerEvent.cs" />
     <Compile Include="CountedInstance.cs" />
     <Compile Include="Objects\ChatCommands.cs" />
     <Compile Include="Objects\ConsoleCommands.cs" />

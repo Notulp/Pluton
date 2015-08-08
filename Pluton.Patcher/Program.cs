@@ -631,6 +631,23 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(Explode.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void LandmineTriggered()
+        {
+            TypeDefinition Landmine = rustAssembly.MainModule.GetType("Landmine");
+            MethodDefinition Trigger = Landmine.GetMethod("Trigger");
+            MethodDefinition method = hooksClass.GetMethod("LandmineTriggered");
+
+            ILProcessor iLProcessor = Trigger.Body.GetILProcessor();
+
+            iLProcessor.Body.Instructions.Clear();
+
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+
+            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+        }
+
         private static void ServerInitPatch()
         {
             TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
@@ -741,6 +758,7 @@ namespace Pluton.Patcher
 
             LandmineArmed();
             LandmineExploded();
+            LandmineTriggered();
 
             FieldsUpdate();
 

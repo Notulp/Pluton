@@ -529,6 +529,13 @@ namespace Pluton
             this.Invoke("On_LandmineExploded", l);
         }
 
+        public IDisposable OnLandmineTriggeredHook;
+
+        public void OnLandmineTriggered(LandmineTriggerEvent lte)
+        {
+            this.Invoke("On_LandmineTriggered", lte);
+        }
+
         public IDisposable OnLootingEntityHook;
 
         public void OnLootingEntity(EntityLootEvent le)
