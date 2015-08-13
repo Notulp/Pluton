@@ -56,6 +56,8 @@ namespace Pluton
 
         public static Subject<Landmine> OnLandmineExploded = new Subject<Landmine>();
 
+        public static Subject<LandmineTriggerEvent> OnLandmineTriggered = new Subject<LandmineTriggerEvent>();
+
         public static Subject<EntityLootEvent> OnLootingEntity = new Subject<EntityLootEvent>();
 
         public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
@@ -541,6 +543,20 @@ namespace Pluton
         public static void LandmineExploded(Landmine l)
         {
             OnLandmineExploded.OnNext(l);
+        }
+
+        public static void LandmineTriggered(Landmine landmine, BasePlayer basePlayer)
+        {
+            LandmineTriggerEvent landmineTriggerEvent = new LandmineTriggerEvent(landmine, basePlayer);
+            OnLandmineTriggered.OnNext(landmineTriggerEvent);
+
+            if (landmineTriggerEvent.Explode)
+            {
+                if (basePlayer != null)
+                    landmine.SetFieldValue("triggerPlayerID", basePlayer.userID);
+                landmine.SetFlag(BaseEntity.Flags.Open, true);
+                landmine.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+            }
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
