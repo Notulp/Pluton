@@ -280,6 +280,7 @@ namespace Pluton
         /// <param name="path">Path to the '.json' file.</param>
         public string FromJsonFile(string path)
         {
+            path = ValidateRelativePath(path + ".json");
             if (JsonFileExists(path))
                 return File.ReadAllText(path);
 
