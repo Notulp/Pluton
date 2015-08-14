@@ -800,7 +800,7 @@ namespace Pluton.Patcher
 
             WeaponThrown();
 
-            TypeDefinition plutonClass = new TypeDefinition("", "Pluton", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
+            TypeDefinition plutonClass = new TypeDefinition("", "PlutonPatched", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
             rustAssembly.MainModule.Types.Add(plutonClass);
         }
 
@@ -839,7 +839,7 @@ namespace Pluton.Patcher
             pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
 
             //Check if patching is required
-            TypeDefinition plutonClass = rustAssembly.MainModule.GetType("Pluton");
+            TypeDefinition plutonClass = rustAssembly.MainModule.GetType("PlutonPatched");
             if (plutonClass == null) {
                 try {
                     PatchASMCSharp();
