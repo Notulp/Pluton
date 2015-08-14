@@ -31,10 +31,10 @@ namespace Pluton
 
         public void GenerateConfig()
         {
-            ConfigFile.AddSetting("csharp", "enabled", "false");
+            ConfigFile.AddSetting("csharp", "enabled", "true");
             ConfigFile.AddSetting("csharp", "checkHash", "true");
 
-            ConfigFile.AddSetting("csscript", "enabled", "false");
+            ConfigFile.AddSetting("csscript", "enabled", "true");
             ConfigFile.AddSetting("csscript", "checkHash", "true");
 
             ConfigFile.AddSetting("python", "enabled", "true");
