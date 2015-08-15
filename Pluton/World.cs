@@ -18,7 +18,7 @@ namespace Pluton
 
         public BaseEntity AttachParachute(BaseEntity e)
         {
-            BaseEntity parachute = GameManager.server.CreateEntity("parachute", default(Vector3), default(Quaternion));
+            BaseEntity parachute = GameManager.server.CreateEntity("assets/bundled/prefabs/parachute.prefab", default(Vector3), default(Quaternion));
             if (parachute) {
                 parachute.SetParent(e, "parachute_attach");
                 parachute.Spawn(true);
@@ -35,7 +35,7 @@ namespace Pluton
 
         public void AirDrop(float speed, float height = 400f)
         {
-            BaseEntity baseEntity = GameManager.server.CreateEntity("events/cargo_plane", default(Vector3), default(Quaternion));
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/events/cargo_plane.prefab", default(Vector3), default(Quaternion));
             if (baseEntity) {
                 baseEntity.Spawn(true);
             }
@@ -54,7 +54,7 @@ namespace Pluton
             float worldSize = (float)(global::World.Size - (global::World.Size / 7));
             Vector3 zero = Vector3.zero;
 
-            BaseEntity baseEntity = GameManager.server.CreateEntity("events/cargo_plane", default(Vector3), default(Quaternion));
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/events/cargo_plane.prefab", default(Vector3), default(Quaternion));
             if (baseEntity) {
                 baseEntity.Spawn(true);
             }
@@ -158,7 +158,7 @@ namespace Pluton
         // like an airdrop
         public BaseEntity SpawnEvent(string evt, float x, float y, float z)
         {
-            BaseEntity ent = GameManager.server.CreateEntity("events/" + evt, 
+            BaseEntity ent = GameManager.server.CreateEntity("assets/bundled/prefabs/events/" + evt + ".prefab", 
                                  new UnityEngine.Vector3(x, y, z), 
                                  new UnityEngine.Quaternion());
             ent.Spawn(true);
@@ -168,7 +168,7 @@ namespace Pluton
         //Animals: boar, bear, stag, wolf
         public BaseEntity SpawnAnimal(string name, float x, float y, float z)
         {
-            BaseEntity ent = GameManager.server.CreateEntity("autospawn/animals/" + name, 
+            BaseEntity ent = GameManager.server.CreateEntity("assets/bundled/prefabs/autospawn/animals/" + name + ".prefab", 
                                  new UnityEngine.Vector3(x, y, z), 
                                  new UnityEngine.Quaternion());
             ent.Spawn(true);
