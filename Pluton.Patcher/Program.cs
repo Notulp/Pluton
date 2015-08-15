@@ -326,18 +326,14 @@ namespace Pluton.Patcher
 
         private static void RespawnPatch()
         {
-            MethodDefinition respawn = bPlayer.GetMethod("Respawn");
+            MethodDefinition respawn = bPlayer.GetMethod("RespawnAt");
             MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
 
-            for (var l = respawn.Body.Instructions.Count - 16; l >= 0; l--) {
-                respawn.Body.Instructions.RemoveAt(l);
-            }
-
             CloneMethod(respawn);
-            ILProcessor iLProcessor = respawn.Body.GetILProcessor();
-            iLProcessor.InsertBefore(respawn.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(respawn.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(respawn.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
+            respawn.Body.Instructions.Clear();
+            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
         }
 
         private static void ServerConsoleCommandPatch()

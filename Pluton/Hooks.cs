@@ -780,25 +780,20 @@ namespace Pluton
             receiver.GiveItem(item);
         }*/
 
-        public static void Respawn(BasePlayer player, bool newPos)
+        public static void Respawn(BasePlayer player, Vector3 pos, Quaternion quat)
         {
             Player p = Server.GetPlayer(player);
-            RespawnEvent re = new RespawnEvent(p);
+            RespawnEvent re = new RespawnEvent(p, pos, quat);
             OnRespawn.OnNext(re);
 
             ++ServerPerformance.spawns;
-            if (newPos) {
-                BasePlayer.SpawnPoint spawnPoint = ServerMgr.FindSpawnPoint();
-                player.transform.position = spawnPoint.pos;
-                player.transform.rotation = spawnPoint.rot;
-            }
-            if (re.ChangePos && re.SpawnPos != Vector3.zero) {
-                player.transform.position = re.SpawnPos;
-            }
+            player.SetFieldValue("lastPositionValue", pos);
+            player.transform.position = re.SpawnPos;
+            player.transform.rotation = re.SpawnRot;
             player.SetPlayerFlag(BasePlayer.PlayerFlags.Wounded, false);
             player.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             player.SetFieldValue("lastTickTime", 0f);
-            player.CancelInvoke("DieFromWounds");
+            player.CancelInvoke("WoundingEnd");
             player.StopSpectating();
             player.UpdateNetworkGroup();
             player.UpdatePlayerCollider(true, false);
@@ -817,6 +812,11 @@ namespace Pluton
 
             if (re.WakeUp)
                 player.EndSleeping();
+            player.SendNetworkUpdateImmediate(false);
+            player.ClientRPCPlayer(null, player, "StartLoading");
+            player.SendFullSnapshot ();
+            player.SetPlayerFlag (BasePlayer.PlayerFlags.ReceivingSnapshot, false);
+            player.ClientRPCPlayer(null, player, "FinishLoading");
         }
 
         // PlayerLoot.StartLootingEntity()
