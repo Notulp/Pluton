@@ -672,17 +672,15 @@ namespace Pluton
             self.taskUID++;
             ItemCraftTask itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bp;
-            if (!ce.FreeCraft) {
-                List<Item> list = new List<Item>();
-                foreach (ItemAmount current in bp.ingredients) {
-                    int amount2 = (int)current.amount * amount;
-                    foreach (ItemContainer current2 in self.containers) {
-                        amount2 -= current2.Take(list, current.itemid, amount2);
-                    }
+            List<Item> list = new List<Item>();
+            foreach (ItemAmount current in bp.ingredients) {
+                int amount2 = (int)current.amount * amount;
+                foreach (ItemContainer current2 in self.containers) {
+                    amount2 -= current2.Take(list, current.itemid, amount2);
                 }
-                foreach (Item current2 in list) {
-                    current2.Remove(0f);
-                }
+            }
+            foreach (Item current2 in list) {
+                current2.Remove(0f);
             }
             itemCraftTask.endTime = 0;
             itemCraftTask.taskUID = self.taskUID;

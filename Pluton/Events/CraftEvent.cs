@@ -67,22 +67,6 @@
                 bluePrint.time = value;
             }
         }
-
-        /// <summary>
-        /// Freecraft.
-        /// </summary>
-        /// <value><c>true</c> for free craft; otherwise, <c>false</c>.</value>
-        public bool FreeCraft
-        {
-            get
-            {
-                return itemCrafter.freeCraftingCheat;
-            }
-            set
-            {
-                itemCrafter.freeCraftingCheat = value;
-            }
-        }
     }
 }
 
