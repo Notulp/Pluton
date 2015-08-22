@@ -39,6 +39,14 @@ namespace Pluton
             throw new Exception();
         }
 
+        public static object GetFieldValueChain(this object obj, params string[] args)
+        {
+            foreach (string arg in args) {
+                obj = obj.GetFieldValue(arg);
+            }
+            return obj;
+        }
+
         public static void SetFieldValue(this object obj, string fieldName, object newValue)
         {
             var memInf = GetFieldInfo(obj, fieldName);
