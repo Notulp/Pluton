@@ -162,7 +162,10 @@ namespace Pluton
                 if (File.Exists(path)) {
                     return Assembly.Load(File.ReadAllBytes(path));
                 } else {
-                    Logger.LogError("returning null for the assembly");
+                    Logger.LogError("Couldn't compile " + Name + ".cs plugin.");
+                    if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(Name))
+                        PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(Name);
+                    
                     return null;
                 }
             } catch (Exception ex) {
