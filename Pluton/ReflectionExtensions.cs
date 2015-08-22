@@ -80,7 +80,7 @@ namespace Pluton
             var flds = new System.Collections.Generic.List<System.Reflection.FieldInfo>();
 
             flds.Add(objType.GetField(fieldName,
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static));          
+                BindingFlags.NonPublic | BindingFlags.Public  | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Static));          
 
             flds = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(flds, i => !ReferenceEquals(i, null)));
 
