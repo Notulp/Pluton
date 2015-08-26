@@ -333,7 +333,9 @@ namespace Pluton.Patcher
             respawn.Body.Instructions.Clear();
             respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
             respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
             respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
+            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void ServerConsoleCommandPatch()
