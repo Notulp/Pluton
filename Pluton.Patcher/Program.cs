@@ -15,7 +15,7 @@ namespace Pluton.Patcher
         private static TypeDefinition hooksClass;
         private static TypeDefinition itemCrafter;
         private static TypeDefinition pLoot;
-        private static string version = "1.0.0.60";
+        public static string Version { get; } = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         #region patches
 
@@ -808,7 +808,7 @@ namespace Pluton.Patcher
             if (args.Length > 0)
                 interactive = false;
             
-            Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", version));
+            Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", Version));
             try {
                 plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
                 rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
