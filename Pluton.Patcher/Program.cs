@@ -685,12 +685,9 @@ namespace Pluton.Patcher
             MethodDefinition servUpdate = servermgr.GetMethod("UpdateServerInformation");
             MethodDefinition setModded = hooksClass.GetMethod("SetModded");
 
-            ILProcessor il = servUpdate.Body.GetILProcessor();
-
-            for (var i = 48; i > 7; i--)
-                il.Body.Instructions.RemoveAt(i);
-
-            il.InsertAfter(servUpdate.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
+            servUpdate.Body.Instructions.Clear();
+            servUpdate.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
+            servUpdate.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
 
         private static void GiveItemsPatch()

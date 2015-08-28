@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using Network;
 using UnityEngine;
 using Pluton.Events;
 using System.Reactive.Subjects;
 using System.Collections.Generic;
+using Steamworks;
 
 namespace Pluton
 {
@@ -915,18 +917,38 @@ namespace Pluton
         public static void SetModded()
         {
             try {
-                if (pluton.enabled) {
-                    string pchGameTags = String.Format("mp{0},cp{1},v{2},procsd{3},procsz{4},modded,pluton",
-                                             new object[] {
-                            ConVar.Server.maxplayers,
-                            BasePlayer.activePlayerList.Count,
-                            Rust.Protocol.network,
-                            global::World.Seed,
-                            global::World.Size
-                        });
+                SteamGameServer.SetServerName(ConVar.Server.hostname);
+                SteamGameServer.SetMaxPlayerCount(ConVar.Server.maxplayers);
+                SteamGameServer.SetPasswordProtected(false);
+                SteamGameServer.SetMapName(Application.loadedLevelName);
+                string pchGameTags = String.Format("mp{0},cp{1},v{2},cc{3},procsd{4},procsz{5},{6}{7}",
+                                         new object[] {
+                        ConVar.Server.maxplayers,
+                        BasePlayer.activePlayerList.Count,
+                        Rust.Protocol.network,
+                        Steamworks.SteamGameServerUtils.GetIPCountry(),
+                        global::World.Seed,
+                        global::World.Size,
+                        ConVar.Server.pve ? "pve," : string.Empty,
+                        pluton.enabled ? "modded,pluton" : string.Empty
+                    });
 
-                    Steamworks.SteamGameServer.SetGameTags(pchGameTags);
+                SteamGameServer.SetGameTags(pchGameTags);
+                for (int i = 0; i < 16; i++) {
+                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), string.Empty);
                 }
+                string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
+                for (int j = 0; j < array.Length; j++) {
+                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", j), array[j]);
+                }
+                SteamGameServer.SetKeyValue("country", SteamGameServerUtils.GetIPCountry());
+                SteamGameServer.SetKeyValue("world.seed", global::World.Seed.ToString());
+                SteamGameServer.SetKeyValue("world.size", global::World.Size.ToString());
+                SteamGameServer.SetKeyValue("official", ConVar.Server.official.ToString());
+                SteamGameServer.SetKeyValue("pve", ConVar.Server.pve.ToString());
+                SteamGameServer.SetKeyValue("headerimage", ConVar.Server.headerimage);
+                SteamGameServer.SetKeyValue("url", ConVar.Server.url);
+                SteamGameServer.SetKeyValue("uptime", ((int)Time.realtimeSinceStartup).ToString());
             } catch (Exception ex) {
                 Logger.LogError("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
