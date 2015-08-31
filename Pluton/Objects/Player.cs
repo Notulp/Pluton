@@ -14,9 +14,12 @@ namespace Pluton
 
         public readonly ulong GameID;
 
+        public readonly string SteamID;
+
         public Player(BasePlayer player) : base(player)
         {
             GameID = player.userID;
+            SteamID = player.userID.ToString();
             _basePlayer = player;
             try {
                 Stats = new PlayerStats(SteamID);
@@ -29,7 +32,7 @@ namespace Pluton
         [OnDeserialized]
         public void OnPlayerDeserialized(StreamingContext context)
         {
-            Logger.LogWarning("Deserializing player with id: " + GameID.ToString());
+            Logger.LogWarning("Deserializing player with id: " + SteamID);
             _basePlayer = BasePlayer.FindByID(GameID);
             if (_basePlayer == null)
                 Logger.LogWarning("_basePlayer is <null>, is the player offline?");
@@ -64,7 +67,7 @@ namespace Pluton
         {
             ServerUsers.Set(GameID, ServerUsers.UserGroup.Banned, Name, reason);
             ServerUsers.Save();
-            Kick("Banned!");
+            Kick("[BAN] " + reason);
         }
 
         public void Kick(string reason = "no reason")
@@ -459,12 +462,6 @@ namespace Pluton
             }
             set {
                 Server.GetInstance().serverData.Add("PlayerStats", SteamID, value);
-            }
-        }
-
-        public string SteamID {
-            get {
-                return basePlayer.userID.ToString();
             }
         }
 
