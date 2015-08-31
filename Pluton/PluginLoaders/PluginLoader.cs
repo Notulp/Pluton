@@ -52,6 +52,9 @@
 
             // probably make an event here that others can hook?
 
+            if (CurrentlyLoadingPlugins.Count == 0)
+                OnAllLoaded.OnNext("");
+
             Logger.Log(String.Format("[PluginLoader] {0}<{1}> plugin was loaded successfuly.", plugin.Name, plugin.Type));
         }
 
@@ -62,12 +65,9 @@
 
         public void LoadPlugins()
         {
-            Logger.Log("number of loaders: " + PluginLoaders.Count.ToString());
             foreach (IPluginLoader loader in PluginLoaders.Values) {
                 loader.LoadPlugins();
             }
-
-            OnAllLoaded.OnNext("");
         }
 
         public void UnloadPlugins()
