@@ -345,8 +345,10 @@ namespace Pluton
             if (!basePlayer.IsSleeping())
                 basePlayer.StartSleeping();
 
-            basePlayer.transform.position = new Vector3(x, y + 0.05f, z);
-            basePlayer.ClientRPCPlayer(null, basePlayer, "ForcePositionTo", new Vector3(x, y + 0.05f, z));
+            Vector3 newPos = new Vector3(x, y + 0.05f, z);
+            basePlayer.transform.position = newPos;
+            basePlayer.MovePosition(newPos);
+            basePlayer.ClientRPCPlayer(null, basePlayer, "ForcePositionTo", newPos);
             basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             basePlayer.UpdateNetworkGroup();
             basePlayer.UpdatePlayerCollider(true, false);
