@@ -889,6 +889,11 @@ namespace Pluton
             if (Server.GetInstance().Loaded)
                 return;
 
+            foreach (ItemBlueprint bp in ItemManager.Instance.bpList)
+            {
+                bp.time /= Server.GetInstance().CraftingTimeScale;
+            }
+
             Server.GetInstance().Loaded = true;
             OnServerInit.OnNext("");
         }
