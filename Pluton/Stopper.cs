@@ -5,10 +5,10 @@ namespace Pluton
 {
     public class Stopper : CountedInstance, IDisposable
     {
-        string Type;
-        string Method;
-        long WarnTimeMS;
-        Stopwatch stopper;
+        readonly string Type;
+        readonly string Method;
+        readonly long WarnTimeMS;
+        readonly Stopwatch stopper;
 
         public Stopper(string type, string method, float warnSecs = 0.1f)
         {

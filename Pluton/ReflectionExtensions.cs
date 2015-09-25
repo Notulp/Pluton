@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace Pluton
@@ -15,11 +13,7 @@ namespace Pluton
 
             if (metInf == null)
                 throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
-
-            if (metInf is MethodInfo) {
-                MethodInfo meta = metInf.As<MethodInfo>();
-                return meta.Invoke(obj, args);
-            }
+            
             return (object)null;
         }
 

@@ -5,15 +5,12 @@
     using System.Linq;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using UnityEngine;
 
     public class Server : Singleton<Server>, ISingleton
     {
         public bool Loaded = false;
         public Dictionary<ulong, Player> Players;
         public Dictionary<ulong, OfflinePlayer> OfflinePlayers;
-        //public Dictionary<string, StructureRecorder.Structure> Structures;
         public Dictionary<string, LoadOut> LoadOuts;
         public DataStore serverData;
         public static string server_message_name = "Pluton";
