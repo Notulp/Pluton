@@ -652,6 +652,14 @@ namespace Pluton
         // ItemCrafter.CraftItem()
         public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1)
         {
+            /*ItemBlueprint bpcopy = new ItemBlueprint();
+            bpcopy.amountToCreate = bp.amountToCreate;
+            bpcopy.defaultBlueprint = bp.defaultBlueprint;
+            bpcopy.ingredients = bp.ingredients;
+            bpcopy.rarity = bp.rarity;
+            bpcopy.targetItem = bp.targetItem;
+            bpcopy.time = bp.time / Server.GetInstance().CraftingTimeScale;
+            bpcopy.userCraftable = bp.userCraftable;*/
             CraftEvent ce = new CraftEvent(self, bp, owner, instanceData, amount);
             OnPlayerStartCrafting.OnNext(ce);
             if (!self.CanCraft(bp, 1)) {
@@ -666,17 +674,15 @@ namespace Pluton
             self.taskUID++;
             ItemCraftTask itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bp;
-            if (!ce.FreeCraft) {
-                List<Item> list = new List<Item>();
-                foreach (ItemAmount current in bp.ingredients) {
-                    int amount2 = (int)current.amount * amount;
-                    foreach (ItemContainer current2 in self.containers) {
-                        amount2 -= current2.Take(list, current.itemid, amount2);
-                    }
+            List<Item> list = new List<Item>();
+            foreach (ItemAmount current in bp.ingredients) {
+                int amount2 = (int)current.amount * amount;
+                foreach (ItemContainer current2 in self.containers) {
+                    amount2 -= current2.Take(list, current.itemid, amount2);
                 }
-                foreach (Item current2 in list) {
-                    current2.Remove(0f);
-                }
+            }
+            foreach (Item current2 in list) {
+                current2.Remove(0f);
             }
             itemCraftTask.endTime = 0;
             itemCraftTask.taskUID = self.taskUID;
