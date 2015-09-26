@@ -5,7 +5,6 @@ using System.Linq;
 using Pluton.Events;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Pluton
 {
@@ -345,10 +344,11 @@ namespace Pluton
         {
             try {
                 path = ValidateRelativePath(path + ".ini");
-                if (String.IsNullOrEmpty(path)){
+                if (String.IsNullOrEmpty(path)) {
                     path = Name;
                 }
-                if (IniExists(path)) return GetIni(path);
+                if (IniExists(path))
+                    return GetIni(path);
 
                 File.WriteAllText(path, "");
                 return new IniParser(path);
@@ -433,7 +433,7 @@ namespace Pluton
 
         public IDisposable OnAllPluginsLoadedHook;
 
-        public void OnAllPluginsLoaded(string s = "")
+        public void OnAllPluginsLoaded(string s)
         {
             this.Invoke("On_AllPluginsLoaded");
         }
@@ -746,7 +746,7 @@ namespace Pluton
         {
             this.Invoke("On_ItemRemoved", ime);
         }
-        
+
         public IDisposable OnItemLoseConditionHook;
 
         public void OnItemLoseCondition(ItemConditionEvent ice)

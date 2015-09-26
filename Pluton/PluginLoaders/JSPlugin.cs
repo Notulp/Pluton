@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using Jint;
 using Jint.Expressions;
 
@@ -59,7 +58,7 @@ namespace Pluton
             }
         }
 
-        public override void Load(string code)
+        public override void Load(string code = "")
         {
             Engine = new JintEngine(Options.Ecmascript5)
                 .AllowClr(true);
