@@ -3,206 +3,362 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 
-public class IniParser : Pluton.CountedInstance
+namespace Pluton
 {
-    private readonly string iniFilePath;
-    private readonly Hashtable keyPairs = new Hashtable();
-    private readonly List<SectionPair> tmpList = new List<SectionPair>();
-
-    public readonly string Name;
-
-    public IniParser(string iniPath)
+    public class IniParser : Pluton.CountedInstance
     {
-        string str2 = null;
-        this.iniFilePath = iniPath;
-        this.Name = Path.GetFileNameWithoutExtension(iniPath);
+        public readonly string FilePath;
 
-        if (!File.Exists(iniPath))
-            throw new FileNotFoundException("Unable to locate " + iniPath);
+        public readonly string Name;
 
-        using (TextReader reader = new StreamReader(iniPath)) {
-            for (string str = reader.ReadLine(); str != null; str = reader.ReadLine()) {
-                str = str.Trim();
-                if (str == "")
-                    continue;
+        public Dictionary<string, IniSection> Sections = new Dictionary<string, IniSection>();
 
-                if (str.StartsWith("[") && str.EndsWith("]"))
-                    str2 = str.Substring(1, str.Length - 2);
-                else {
-                    SectionPair pair;
-
-                    if (str.StartsWith(";"))
-                        str = str.Replace("=", "%eq%") + @"=%comment%";
-
-                    string[] strArray = str.Split(new char[] { '=' }, 2);
-                    string str3 = null;
-                    if (str2 == null) {
-                        str2 = "ROOT";
+        public string this[string section, string setting] {
+            get {
+                return this[section][setting];
+            }
+            set {
+                if (Sections.ContainsKey(section)) {
+                    if (Sections[section].Settings.ContainsKey(setting)) {
+                        Sections[section].Settings[setting].Value = value;
+                    } else {
+                        Sections[section].Settings.Add(setting, new IniSetting(setting, value));
                     }
-                    pair.Section = str2;
-                    pair.Key = strArray[0];
-                    if (strArray.Length > 1) {
-                        str3 = strArray[1];
-                    }
-                    this.keyPairs.Add(pair, str3);
-                    this.tmpList.Add(pair);
-                }
+                } else {
+                    Sections.Add(section, new IniSection(section));
+                    Sections[section].Settings.Add(setting, new IniSetting(setting, value));
+                }   
             }
         }
-    }
 
-    public void AddSetting(string sectionName, string settingName)
-    {
-        this.AddSetting(sectionName, settingName, String.Empty);
-    }
-
-    public void AddSetting(string sectionName, string settingName, string settingValue)
-    {
-        SectionPair pair;
-        pair.Section = sectionName;
-        pair.Key = settingName;
-        if (this.keyPairs.ContainsKey(pair)) {
-            this.keyPairs.Remove(pair);
-        }
-        if (this.tmpList.Contains(pair)) {
-            this.tmpList.Remove(pair);
-        }
-        this.keyPairs.Add(pair, settingValue);
-        this.tmpList.Add(pair);
-    }
-
-    public int Count()
-    {
-        return this.Sections.Length;
-    }
-
-    public void DeleteSetting(string sectionName, string settingName)
-    {
-        SectionPair pair;
-        pair.Section = sectionName;
-        pair.Key = settingName;
-        if (this.keyPairs.ContainsKey(pair)) {
-            this.keyPairs.Remove(pair);
-            this.tmpList.Remove(pair);
-        }
-    }
-
-    public string[] EnumSection(string sectionName)
-    {
-        System.Collections.Generic.List<string> list = new System.Collections.Generic.List<string>();
-        foreach (SectionPair pair in this.tmpList) {
-            if (pair.Key.StartsWith(";"))
-                continue;
-
-            if (pair.Section == sectionName) {
-                list.Add(pair.Key);
+        public IniSection this[string section] {
+            get {
+                if (Sections.ContainsKey(section))
+                    return Sections[section];
+                return new IniSection("");
             }
         }
-        return list.ToArray();
-    }
 
-    public string[] Sections {
-        get {
-            return (from pair in this.tmpList
-                    orderby pair.Section ascending
-                    select pair.Section).ToArray<string>();
-        }
-    }
+        public IniParser(string iniPath)
+        {
+            string section = "ROOT";
+            FilePath = iniPath;
 
-    public string GetSetting(string sectionName, string settingName, string defaultValue = "")
-    {
-        SectionPair pair;
-        pair.Section = sectionName;
-        pair.Key = settingName;
-        if (!this.keyPairs.ContainsKey(pair)) {
-            AddSetting(sectionName, settingName, defaultValue);
-            return defaultValue;
-        }
-        return ((string)this.keyPairs[pair]).Trim();
-    }
+            IniSection currentSection = null;
 
-    public bool GetBoolSetting(string sectionName, string settingName, bool defaultValue = false)
-    {
-        if (defaultValue)
-            return (GetSetting(sectionName, settingName, "true").ToLower() != "false");
-        else
-            return (GetSetting(sectionName, settingName, "false").ToLower() == "true");
-    }
+            bool inroot = true;
 
-    public bool isCommandOn(string cmdName)
-    {
-        string setting = this.GetSetting("Commands", cmdName);
-        return ((setting == null) || (setting == "true"));
-    }
+            List<string> comments = new List<string>();
 
-    public void Save()
-    {
-        this.SaveSettings(this.iniFilePath);
-    }
+            Name = Path.GetFileNameWithoutExtension(iniPath);
 
-    public void SaveSettings(string newFilePath)
-    {
-        ArrayList list = new ArrayList();
-        string str = "";
-        string str2 = "";
-        foreach (SectionPair pair in this.tmpList) {
-            if (!list.Contains(pair.Section)) {
-                list.Add(pair.Section);
-            }
-        }
-        foreach (string str3 in list) {
-            str2 = str2 + "[" + str3 + "]\r\n";
-            foreach (SectionPair pair2 in this.tmpList) {
-                if (pair2.Section == str3) {
-                    str = (string)this.keyPairs[pair2];
-                    if (str != null) {
-                        if (str == "%comment%") {
-                            str = "";
-                        } else {
-                            str = "=" + str;
+            if (!File.Exists(iniPath))
+                throw new FileNotFoundException("Unable to locate " + iniPath);
+
+            using (TextReader reader = new StreamReader(iniPath)) {
+                for (string line = reader.ReadLine(); line != null; line = reader.ReadLine()) {
+                    line = line.Trim();
+                    if (line == String.Empty)
+                        continue;
+
+                    if (line.StartsWith("[") && line.EndsWith("]")) {
+
+                        section = line.Substring(1, line.Length - 2);
+
+                        if (!Sections.ContainsKey(section)) {
+                            Sections.Add(section, new IniSection(section));
+                            if (comments.Count != 0) {
+                                Sections[section].Comments.AddRange(comments);
+                                comments = new List<string>();
+                            }
+                        }
+                        currentSection = Sections[section];
+                        inroot = false;
+                    } else {
+                        if (line.StartsWith(";")) {
+                            comments.Add(line);
+                            continue;
+                        }
+
+                        string[] ConfEqValue = line.Split(new char[] { '=' }, 2);
+
+                        if (ConfEqValue.Length == 0)
+                            continue;
+
+                        if (inroot) {
+                            if (!Sections.ContainsKey(section)) {
+                                Sections.Add(section, new IniSection(section));
+                                if (comments.Count != 0) {
+                                    Sections[section].Comments.AddRange(comments);
+                                    comments = new List<string>();
+                                }
+                            }
+                            currentSection = Sections[section];
+                            inroot = false;
+                        }
+
+
+                        if (ConfEqValue.Length == 1)
+                            currentSection.AddSetting(ConfEqValue[0], null);
+
+                        if (ConfEqValue.Length == 2)
+                            currentSection.AddSetting(ConfEqValue[0], ConfEqValue[1]);
+
+                        if (comments.Count != 0) {
+                            currentSection.Settings[section].Comments.AddRange(comments);
+                            comments = new List<string>();
                         }
                     }
-                    str2 = str2 + pair2.Key.Replace("%eq%", "=") + str + "\r\n";
                 }
             }
-            str2 = str2 + "\r\n";
         }
 
-        using (TextWriter writer = new StreamWriter(newFilePath))
-            writer.Write(str2);
-    }
-
-    public void SetSetting(string sectionName, string settingName, string value)
-    {
-        SectionPair pair;
-        pair.Section = sectionName;
-        pair.Key = settingName;
-        if (this.keyPairs.ContainsKey(pair)) {
-            this.keyPairs[pair] = value;
-        } else {
-            AddSetting(sectionName, settingName, value);
+        public void AddSectionComments(string section, params string[] comments) {
+            if (Sections.ContainsKey(section))
+                Sections[section].Comments.AddRange(comments);
+            else
+                Logger.LogWarning($"[IniParser] There is no [{section}] section in: {FilePath}");
         }
-    }
 
-    public bool ContainsSetting(string sectionName, string settingName)
-    {
-        SectionPair pair;
-        pair.Section = sectionName;
-        pair.Key = settingName;
-        return this.keyPairs.Contains(pair);
-    }
-    
-    public bool ContainsValue(string valueName)
-    {
-        return this.keyPairs.ContainsValue(valueName);
-    }
+        public void AddSettingComments(string section, string setting, params string[] comments) {
+            if (Sections.ContainsKey(section) && Sections[section].Settings.ContainsKey(setting))
+                Sections[section].Settings[setting].Comments.AddRange(comments);
+            else
+                Logger.LogWarning($"[IniParser] There is no {setting} setting in [{section}] section in: {FilePath}");
+        }
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct SectionPair
-    {
-        public string Section;
-        public string Key;
+        public void AddSetting(string section, string setting)
+        {
+            this[section, setting] = String.Empty;
+        }
+
+        public void AddSetting(string section, string setting, string value)
+        {
+            this[section, setting] = value;
+        }
+
+        public int Count()
+        {
+            return Sections.Count;
+        }
+
+        public void DeleteSetting(string section, string setting)
+        {
+            this[section]?.Settings.Remove(setting);
+        }
+
+        public void DeleteSection(string section)
+        {
+            if (Sections.ContainsKey(section))
+                Sections.Remove(section);
+        }
+
+        public string[] EnumSection(string section)
+        {
+            return Sections[section]?.Settings.Keys.ToArray();
+        }
+
+        public string GetSetting(string section, string setting)
+        {
+            return this[section, setting];
+        }
+
+        public string GetSetting(string section, string setting, string defaultvalue)
+        {
+            if (this[section, setting] != null)
+                return this[section, setting];
+            this[section, setting] = defaultvalue;
+            return defaultvalue;
+        }
+
+        public int GetIntSetting(string section, string setting)
+        {
+            int result = 0;
+            if (Int32.TryParse(this[section, setting], out result))
+                return result;
+            Logger.LogWarning($"[IniParser] [{section}] -> {setting} -> {this[section, setting]} cant be converted to Int32. ({FilePath})");
+            return 0;
+        }
+
+        public bool GetBoolSetting(string section, string setting, bool defaultvalue)
+        {
+            if (this[section, setting] != null)
+                return GetBoolSetting(section, setting);
+            this[section, setting] = defaultvalue.ToString();
+            return defaultvalue;
+        }
+
+        public bool GetBoolSetting(string section, string setting)
+        {
+            bool result = false;
+            if (Boolean.TryParse(this[section, setting], out result))
+                return result;
+            Logger.LogWarning($"[IniParser] [{section}] -> {setting} -> {this[section, setting]} cant be converted to Boolean. ({FilePath})");
+            return false;
+        }
+
+        public int GetIntSetting(string section, string setting, int defaultvalue)
+        {
+            if (this[section, setting] != null)
+                return GetIntSetting(section, setting);
+            this[section, setting] = defaultvalue.ToString();
+            return defaultvalue;
+        }
+
+        public void Save()
+        {
+            this.SaveSettings(FilePath);
+        }
+
+        public void SaveSettings(string newFilePath)
+        {
+            string result = String.Empty;
+            foreach (var section in Sections.Values) {
+                result += section.ToString() + Environment.NewLine;
+            }
+
+            using (TextWriter writer = new StreamWriter(newFilePath))
+                writer.Write(result);
+        }
+
+        public void SetSetting(string section, string setting, string value)
+        {
+            this[section, setting] = value;
+        }
+
+        public bool ContainsSetting(string section, string setting)
+        {
+            return Sections.ContainsKey(section) && Sections[section].Settings.ContainsKey(setting);
+        }
+
+        public bool ContainsValue(string value)
+        {
+            return Sections.Values.Any(section => {
+                return section.Settings.Any(setting => {
+                    return setting.Value.Value == value;
+                });
+            });
+        }
+
+        public class IniSection
+        {
+
+            public List<string> Comments = new List<string>();
+
+            public string this[string index] {
+                get {
+                    if (Settings.ContainsKey(index))
+                        return Settings[index].Value;
+                    return null;
+                }
+                set {
+                    AddSetting(index, value);
+                }
+            }
+
+            public string SectionName;
+            public Dictionary<string, IniSetting> Settings = new Dictionary<string, IniSetting>();
+
+            public IniSection(string name) {
+                SectionName = name;
+            }
+
+            public void AddSetting(string setting, string value) {
+                if (!Settings.ContainsKey(setting))
+                    Settings.Add(setting, new IniSetting(setting, value));
+                else
+                    Settings[setting] = new IniSetting(setting, value);
+            }
+
+            public IniSection(string name, params string[] comments)
+                : this(name)
+            {
+                Comments = comments.ToList();
+            }
+
+            public IniSection(string name, IEnumerable<string> comments)
+                : this(name)
+            {
+                Comments = comments.ToList();
+            }
+
+            public void AddComment(string comment) {
+                Comments.Add(comment);
+            }
+
+            public void RemoveComment(string comment) {
+                Comments.Remove(comment);
+            }
+
+            public void ClearComments() {
+                Comments.Clear();
+            }
+
+            public override string ToString()
+            {
+                string result = String.Empty;
+                string result2 = String.Empty;
+
+                if (Comments.Count != 0)
+                    foreach (string comment in Comments)
+                        result += ";" + comment + Environment.NewLine;
+
+                foreach (IniSetting setting in Settings.Values)
+                    result2 += setting.ToString();
+
+                return result + $"[{SectionName}]" + Environment.NewLine + result2;
+            }
+        }
+
+        public class IniSetting {
+
+            public List<string> Comments = new List<string>();
+
+            public string SettingName;
+            public string Value;
+
+            public IniSetting(string name, string value) {
+                SettingName = name;
+                Value = value;
+            }
+
+            public IniSetting(string name, string value, params string[] comments)
+                : this(name, value)
+            {
+                Comments = comments.ToList();
+            }
+
+            public IniSetting(string name, string value, IEnumerable<string> comments)
+                : this(name, value)
+            {
+                Comments = comments.ToList();
+            }
+
+            public void AddComment(string comment) {
+                Comments.Add(comment);
+            }
+
+            public void RemoveComment(string comment) {
+                Comments.Remove(comment);
+            }
+
+            public void ClearComments() {
+                Comments.Clear();
+            }
+
+            public override string ToString()
+            {
+                string result = String.Empty;
+                if (Comments.Count != 0) {
+                    result += Environment.NewLine;
+                    foreach (string comment in Comments)
+                        result += ";" + comment + Environment.NewLine;
+                }
+
+                return result + $"{SettingName}={Value}" + Environment.NewLine;
+            }
+        }
     }
 }
+

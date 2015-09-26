@@ -125,7 +125,7 @@ namespace Pluton
             if (File.Exists(inipath))
             {
                 IniParser ini = new IniParser(inipath);
-                foreach (string section in ini.Sections)
+                foreach (string section in ini.Sections.Keys)
                 {
                     foreach (string setting in ini.EnumSection(section))
                     {
