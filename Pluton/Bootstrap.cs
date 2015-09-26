@@ -16,15 +16,15 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
-                System.Reflection.Assembly executingAssembly = System.Reflection.Assembly.GetExecutingAssembly ();
-                Type[] types = executingAssembly.GetTypes ();
+                System.Reflection.Assembly executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Type[] types = executingAssembly.GetTypes();
                 for (int i = 0; i < types.Length; i++) {
-                    object[] customAttributes = types [i].GetCustomAttributes (typeof(ConsoleSystem.Factory), false);
+                    object[] customAttributes = types[i].GetCustomAttributes (typeof(ConsoleSystem.Factory), false);
                     if (customAttributes != null && customAttributes.Length != 0) {
-                        ConsoleSystem.Factory factory = customAttributes [0] as ConsoleSystem.Factory;
-                        typeof(ConsoleSystem.Index).CallStaticMethod("BuildFields", types [i], factory);
-                        typeof(ConsoleSystem.Index).CallStaticMethod("BuildProperties", types [i], factory);
-                        typeof(ConsoleSystem.Index).CallStaticMethod("BuildFunctions", types [i], factory);
+                        ConsoleSystem.Factory factory = customAttributes[0] as ConsoleSystem.Factory;
+                        typeof(ConsoleSystem.Index).CallStaticMethod("BuildFields", types[i], factory);
+                        typeof(ConsoleSystem.Index).CallStaticMethod("BuildProperties", types[i], factory);
+                        typeof(ConsoleSystem.Index).CallStaticMethod("BuildFunctions", types[i], factory);
                     }
                 }
 
