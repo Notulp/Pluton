@@ -363,10 +363,9 @@ namespace Pluton.Patcher
             CloneMethod(CLProject);
 
             ILProcessor iLProcessor = CLProject.Body.GetILProcessor();
-            int Position = CLProject.Body.Instructions.Count - 1;
-            iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(CLProject.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertBefore(CLProject.Body.Instructions[0], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(CLProject.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(CLProject.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
         }
 
         private static void ItemUsed()
