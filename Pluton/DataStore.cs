@@ -13,6 +13,15 @@ namespace Pluton
         private static DataStore instance;
         public string PATH;
 
+        public object this[string tablename, object key] {
+            get {
+                return Get(tablename, key);
+            }
+            set {
+                Add(tablename, key, value);
+            }
+        }
+
         private static object StringifyIfVector3(object keyorval)
         {
             if (keyorval == null)
