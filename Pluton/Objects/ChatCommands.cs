@@ -78,12 +78,11 @@ namespace Pluton
 
             return Register(c);
         }
-        
+
         public List<ChatCommand> RegisterWithMultipleNames(string[] commands, string callback, string usage, string description)
         {
             List<ChatCommand> chatCommands = new List<ChatCommand>();
-            foreach (string command in commands)
-            {
+            foreach (string command in commands) {
                 ChatCommand chatCommand = Register(command).setCallback(callback).setUsage(usage).setDescription(description);
                 chatCommands.Add(chatCommand);
             }

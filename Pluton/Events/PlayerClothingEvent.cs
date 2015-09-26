@@ -11,13 +11,11 @@
             _player = Server.GetPlayer(playerInventory.GetComponent<BasePlayer>());
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
     }

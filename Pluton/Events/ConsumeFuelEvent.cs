@@ -13,18 +13,15 @@ namespace Pluton.Events
             _burn = burn;
         }
 
-        public BaseOven BaseOven
-        {
+        public BaseOven BaseOven {
             get { return _baseOven; }
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
 
-        public ItemModBurnable Burnable
-        {
+        public ItemModBurnable Burnable {
             get { return _burn; }
         }
 

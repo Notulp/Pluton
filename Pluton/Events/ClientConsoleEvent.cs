@@ -9,9 +9,10 @@ namespace Pluton.Events
         public readonly Player User;
 
         public readonly string Cmd;
+
         [Obsolete("ClientConsoleEvent.cmd is obsolete and will be removed, please use ClientConsoleEvent.Cmd", true)]
         public string cmd {
-            get { return Cmd;}
+            get { return Cmd; }
         }
 
         public readonly List<string> Args;
@@ -20,7 +21,7 @@ namespace Pluton.Events
         public ClientConsoleEvent(ConsoleSystem.Arg arg, string rconCmd)
         {
             Internal = arg;
-            User = Server.GetPlayer((BasePlayer) arg.connection.player);
+            User = Server.GetPlayer((BasePlayer)arg.connection.player);
             Args = new List<string>();
 
             Reply = "Command not found!";

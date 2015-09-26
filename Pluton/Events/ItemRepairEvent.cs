@@ -6,7 +6,7 @@
         private Player _player;
         private InvItem _item;
         private BaseEntity.RPCMessage _msg;
-        
+
         public ItemRepairEvent(RepairBench repairBench, BaseEntity.RPCMessage msg)
         {
             _repairBench = repairBench;
@@ -15,23 +15,19 @@
             _msg = msg;
         }
 
-        public RepairBench RepairBench
-        {
+        public RepairBench RepairBench {
             get { return _repairBench; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
 
-        public BaseEntity.RPCMessage RPCMessage
-        {
+        public BaseEntity.RPCMessage RPCMessage {
             get { return _msg; }
         }
     }

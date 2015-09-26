@@ -18,23 +18,19 @@
                 _owner = Server.GetPlayer(ic.playerOwner);
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
 
-        public ItemContainer ItemContainer
-        {
+        public ItemContainer ItemContainer {
             get { return _itemContainer; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _owner; }
         }
 
-        public Entity Entity
-        {
+        public Entity Entity {
             get { return _entity; }
         }
     }

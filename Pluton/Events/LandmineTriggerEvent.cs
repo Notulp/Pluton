@@ -12,18 +12,15 @@
             _player = Server.GetPlayer(player);
         }
 
-        public Landmine Landmine
-        {
+        public Landmine Landmine {
             get { return _landmine; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
 
-        public bool Explode
-        {
+        public bool Explode {
             get { return _explode; }
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace Pluton
 {
     public class LoadOutItem : CountedInstance

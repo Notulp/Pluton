@@ -56,14 +56,11 @@
         /// Gets or sets the time needed to craft this item. NOTE: this is saved for each blueprint, so CraftTime /= 2; will make instacraft eventually. Be careful!
         /// </summary>
         /// <value>The craft time.</value>
-        public float CraftTime
-        {
-            get
-            {
+        public float CraftTime {
+            get {
                 return bluePrint.time;
             }
-            set
-            {
+            set {
                 bluePrint.time = value;
             }
         }

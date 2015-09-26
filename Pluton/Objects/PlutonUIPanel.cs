@@ -6,7 +6,7 @@ namespace Pluton
     {
         public JSON.Object obj = new JSON.Object();
 
-        public JSON.Value this [string key] {
+        public JSON.Value this[string key] {
             get {
                 return obj[key];
             }

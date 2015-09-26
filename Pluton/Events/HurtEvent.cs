@@ -35,20 +35,16 @@ namespace Pluton.Events
         *                 *
         ******************/
 
-        public float[] DamageAmounts
-        {
-            get
-            {
+        public float[] DamageAmounts {
+            get {
                 return _info.damageTypes.types;
             }
-            set
-            {
+            set {
                 _info.damageTypes.types = value;
             }
         }
 
-        public Rust.DamageType DamageType
-        {
+        public Rust.DamageType DamageType {
             get { return _info.damageTypes.GetMajorityDamageType(); }
         }
 

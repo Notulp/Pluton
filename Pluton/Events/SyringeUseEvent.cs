@@ -7,7 +7,7 @@
         private SyringeWeapon _syringeWeapon;
         private bool _self;
 
-        public SyringeUseEvent(SyringeWeapon sw,  BaseEntity.RPCMessage msg, bool isSelf)
+        public SyringeUseEvent(SyringeWeapon sw, BaseEntity.RPCMessage msg, bool isSelf)
         {
             _syringeWeapon = sw;
             _user = Server.GetPlayer(sw.ownerPlayer);
@@ -19,18 +19,15 @@
                 _receiver = new Player(BaseNetworkable.serverEntities.Find(msg.read.UInt32()) as BasePlayer);
         }
 
-        public Player User
-        {
+        public Player User {
             get { return _user; }
         }
 
-        public Player Receiver
-        {
+        public Player Receiver {
             get { return _receiver; }
         }
 
-        public SyringeWeapon Syringe
-        {
+        public SyringeWeapon Syringe {
             get { return _syringeWeapon; }
         }
 

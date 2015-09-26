@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pluton.Events
+﻿namespace Pluton.Events
 {
     public class HammerEvent : CountedInstance
     {
@@ -16,19 +14,19 @@ namespace Pluton.Events
             HitBone = bonename == "" ? "unknown" : bonename;
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return Server.GetPlayer(basePlayer); }
         }
 
-        public Entity Victim
-        {
+        public Entity Victim {
             get {
                 BaseEntity ent = _info.HitEntity;
                 BasePlayer p = ent.GetComponent<BasePlayer>();
-                if (p != null) return Server.GetPlayer(p);
+                if (p != null)
+                    return Server.GetPlayer(p);
                 BaseNPC n = ent.GetComponent<BaseNPC>();
-                if (n != null) return new NPC(n);
+                if (n != null)
+                    return new NPC(n);
                 return new Entity(ent);
             }
         }

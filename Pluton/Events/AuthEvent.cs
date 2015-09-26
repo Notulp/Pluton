@@ -6,6 +6,7 @@ namespace Pluton.Events
     public class AuthEvent : CountedInstance
     {
         public bool Approved;
+
         [Obsolete("AuthEvent.approved is obsolete and will be removed, please use AuthEvent.Approved", true)]
         public bool approved {
             get { return Approved; }
@@ -13,6 +14,7 @@ namespace Pluton.Events
         }
 
         public readonly Connection Connection;
+
         [Obsolete("AuthEvent.con is obsolete and will be removed, please use AuthEvent.Connection", true)]
         public Connection con {
             get { return Connection; }
@@ -35,6 +37,7 @@ namespace Pluton.Events
         }
 
         public string Reason;
+
         [Obsolete("AuthEvent._reason is obsolete and will be removed, please use AuthEvent.Reason", true)]
         public string _reason {
             get { return Reason; }

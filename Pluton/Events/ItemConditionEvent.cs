@@ -11,13 +11,11 @@
             _amount = amount;
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
 
-        public float Amount
-        {
+        public float Amount {
             get { return _amount; }
         }
     }

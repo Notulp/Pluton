@@ -13,8 +13,7 @@ namespace Pluton.Events
 
         private string _entered;
 
-        public string Code
-        {
+        public string Code {
             get {
                 return (string)codeLock.GetFieldValue("code");
             }
@@ -26,8 +25,7 @@ namespace Pluton.Events
             }
         }
 
-        public string Entered
-        {
+        public string Entered {
             get {
                 return _entered;
             }

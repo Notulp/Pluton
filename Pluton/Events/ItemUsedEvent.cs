@@ -11,13 +11,11 @@
             _amount = amountToConsume;
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
 
-        public int Amount
-        {
+        public int Amount {
             get { return _amount; }
         }
 

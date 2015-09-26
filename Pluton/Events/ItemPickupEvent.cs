@@ -15,23 +15,19 @@
             _item = new InvItem(i);
         }
 
-        public BaseEntity.RPCMessage RPCMessage
-        {
+        public BaseEntity.RPCMessage RPCMessage {
             get { return _msg; }
         }
 
-        public CollectibleEntity Entity
-        {
+        public CollectibleEntity Entity {
             get { return _entity; }
         }
 
-        public InvItem Item
-        {
+        public InvItem Item {
             get { return _item; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
     }

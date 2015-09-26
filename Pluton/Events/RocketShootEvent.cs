@@ -15,23 +15,19 @@
             _launch = baseLauncher;
         }
 
-        public BaseLauncher BaseLauncher
-        {
+        public BaseLauncher BaseLauncher {
             get { return _launch; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
 
-        public Entity Entity
-        {
+        public Entity Entity {
             get { return _entity; }
         }
 
-        public BaseEntity.RPCMessage RPCMessage
-        {
+        public BaseEntity.RPCMessage RPCMessage {
             get { return _msg; }
         }
     }

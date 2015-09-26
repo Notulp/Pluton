@@ -5,12 +5,14 @@ namespace Pluton.Events
     public class BuildingPartDestroyedEvent : CountedInstance
     {
         public readonly BuildingPart BuildingPart;
+
         [Obsolete("BuildingPartDestroyedEvent.buildingPart is obsolete and will be removed, please use BuildingPartDestroyedEvent.BuildingPart", true)]
         public BuildingPart buildingPart {
             get { return BuildingPart; }
         }
 
         public readonly HitInfo Info;
+
         [Obsolete("BuildingPartDestroyedEvent._info is obsolete and will be removed, please use BuildingPartDestroyedEvent.Info", true)]
         public HitInfo _info {
             get { return Info; }

@@ -5,12 +5,14 @@ namespace Pluton.Events
     public class CommandPermissionEvent : CommandEvent
     {
         public bool Blocked = false;
+
         [Obsolete("CommandPermissionEvent.blocked is obsolete and will be removed, please use CommandPermissionEvent.Blocked", true)]
         public bool blocked {
             get { return Blocked; }
         }
 
         public readonly ChatCommand ChatCommand;
+
         [Obsolete("CommandPermissionEvent.chatCommand is obsolete and will be removed, please use CommandPermissionEvent.ChatCommand", true)]
         public ChatCommand chatCommand {
             get { return ChatCommand; }
@@ -28,8 +30,7 @@ namespace Pluton.Events
             Blocked = true;
         }
 
-        public string PluginName
-        {
+        public string PluginName {
             get { return ChatCommand.plugin.Name; }
         }
     }

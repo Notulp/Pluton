@@ -13,18 +13,15 @@
             _projectile = baseProjectile;
         }
 
-        public BaseProjectile BaseProjectile
-        {
+        public BaseProjectile BaseProjectile {
             get { return _projectile; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
 
-        public BaseEntity.RPCMessage RPCMessage
-        {
+        public BaseEntity.RPCMessage RPCMessage {
             get { return _rpcMessage; }
         }
     }

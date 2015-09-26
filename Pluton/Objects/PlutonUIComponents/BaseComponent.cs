@@ -1,10 +1,9 @@
-﻿using System;
-
+﻿
 namespace Pluton.PlutonUI
 {
     public class BaseComponent : CountedInstance, IComponent
     {
-        public JSON.Value this [string key] {
+        public JSON.Value this[string key] {
             get {
                 return _obj[key];
             }
@@ -26,6 +25,7 @@ namespace Pluton.PlutonUI
         }
 
         protected JSON.Object _obj = new JSON.Object();
+
         public JSON.Object obj {
             get {
                 return _obj;
@@ -35,7 +35,7 @@ namespace Pluton.PlutonUI
             }
         }
 
-        public virtual string type { get { return ""; }}
+        public virtual string type { get { return ""; } }
     }
 }
 

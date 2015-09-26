@@ -13,18 +13,15 @@ namespace Pluton.Events
             _player = Server.GetPlayer(msg.player);
         }
 
-        public BaseEntity.RPCMessage RPCMessage
-        {
+        public BaseEntity.RPCMessage RPCMessage {
             get { return _msg; }
         }
 
-        public ThrownWeapon Weapon
-        {
+        public ThrownWeapon Weapon {
             get { return _thrownWeapon; }
         }
 
-        public Player Player
-        {
+        public Player Player {
             get { return _player; }
         }
     }
