@@ -13,6 +13,9 @@ namespace Pluton
 
             if (metInf == null)
                 throw new Exception(String.Format("Couldn't find method '{0}' using reflection.", methodName));
+
+            if (metInf is MethodInfo)
+                return metInf.As<MethodInfo>().Invoke(obj, args);
             
             return (object)null;
         }
