@@ -189,7 +189,9 @@
     <None Include="Pluton.cfg" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Objects\PlutonUIComponents\" />
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
