@@ -97,6 +97,8 @@ namespace Pluton
 
         void OnPlayerSyringeSelf(SyringeUseEvent sue);
 
+        void OnPlayerHealthChange(PlayerHealthChangeEvent phce);
+
         void OnPlayerTakeRadiation(PlayerTakeRadsEvent re);
 
         void OnPlayerWakeUp(Player player);

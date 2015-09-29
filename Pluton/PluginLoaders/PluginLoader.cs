@@ -249,6 +249,9 @@
                     case "On_PlayerSyringeSelf":
                         plugin.OnPlayerSyringeSelfHook = Hooks.OnPlayerSyringeSelf.Subscribe(p => plugin.OnPlayerSyringeSelf(p));
                         break;
+                    case "On_PlayerHealthChange":
+                        plugin.OnPlayerHealthChangeHook = Hooks.OnPlayerHealthChange.Subscribe(p => plugin.OnPlayerHealthChange(p));
+                        break;
                     case "On_PlayerTakeRadiation":
                         plugin.OnPlayerTakeRadiationHook = Hooks.OnPlayerTakeRads.Subscribe(p => plugin.OnPlayerTakeRadiation(p));
                         break;

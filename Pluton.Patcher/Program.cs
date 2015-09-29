@@ -554,6 +554,18 @@ namespace Pluton.Patcher
             iLProcessor.InsertBefore(InjectedOther.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
         }
 
+        private static void PlayerHealthChange()
+        {
+            MethodDefinition OnHealthChanged = bPlayer.GetMethod("OnHealthChanged");
+            MethodDefinition method = hooksClass.GetMethod("PlayerHealthChangeEvent");
+            int c = OnHealthChanged.Body.Instructions.Count - 1;
+            ILProcessor iLProcessor = OnHealthChanged.Body.GetILProcessor();
+            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+        }
+
         private static void PlayerClothingChanged()
         {
             TypeDefinition PlayerInventory = rustAssembly.MainModule.GetType("PlayerInventory");
@@ -772,6 +784,7 @@ namespace Pluton.Patcher
             PlayerSyringeSelf();
             PlayerSyringeOther();
             PlayerClothingChanged();
+            PlayerHealthChange();
 
             InventoryModificationPatch();
 
