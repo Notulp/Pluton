@@ -56,6 +56,7 @@ namespace Pluton
             if (!File.Exists(iniPath))
                 throw new FileNotFoundException("Unable to locate " + iniPath);
 
+            
             using (TextReader reader = new StreamReader(iniPath)) {
                 for (string line = reader.ReadLine(); line != null; line = reader.ReadLine()) {
                     line = line.Trim();
@@ -99,14 +100,14 @@ namespace Pluton
                         }
 
 
-                        if (ConfEqValue.Length == 1)
-                            currentSection.AddSetting(ConfEqValue[0], null);
-
                         if (ConfEqValue.Length == 2)
                             currentSection.AddSetting(ConfEqValue[0], ConfEqValue[1]);
 
+                        else if (ConfEqValue.Length == 1)
+                            currentSection.AddSetting(ConfEqValue[0], null);
+
                         if (comments.Count != 0) {
-                            currentSection.Settings[section].Comments.AddRange(comments);
+                            currentSection.Settings[ConfEqValue[0]].Comments.AddRange(comments);
                             comments = new List<string>();
                         }
                     }
