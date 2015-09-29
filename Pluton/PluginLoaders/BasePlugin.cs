@@ -30,6 +30,10 @@ namespace Pluton
         /// </summary>
         public bool DontReload = false;
 
+        public bool HasErrors = false;
+
+        public string LastError = String.Empty;
+
         /// <summary>
         /// Name of the Plugin.
         /// </summary>
