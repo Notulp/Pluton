@@ -105,6 +105,8 @@ namespace Pluton
         public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
 
         public static Subject<Player> OnPlayerWounded = new Subject<Player>();
+        
+        public static Subject<PlayerHealthChangeEvent> OnPlayerHealthChange = new Subject<PlayerHealthChangeEvent>();
 
         public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
 
