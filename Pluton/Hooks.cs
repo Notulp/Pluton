@@ -650,45 +650,30 @@ namespace Pluton
         }
 
         // ItemCrafter.CraftItem()
-        public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1)
+        public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1, int skinID = 0)
         {
-            /*ItemBlueprint bpcopy = new ItemBlueprint();
-            bpcopy.amountToCreate = bp.amountToCreate;
-            bpcopy.defaultBlueprint = bp.defaultBlueprint;
-            bpcopy.ingredients = bp.ingredients;
-            bpcopy.rarity = bp.rarity;
-            bpcopy.targetItem = bp.targetItem;
-            bpcopy.time = bp.time / Server.GetInstance().CraftingTimeScale;
-            bpcopy.userCraftable = bp.userCraftable;*/
-            CraftEvent ce = new CraftEvent(self, bp, owner, instanceData, amount);
+            CraftEvent ce = new CraftEvent(self, bp, owner, instanceData, amount, skinID);
+
             OnPlayerStartCrafting.OnNext(ce);
-            if (!self.CanCraft(bp, 1)) {
+
+            if (!self.CanCraft(bp, ce.Amount))
                 return false;
-            }
+
             if (ce.Cancel) {
-                if (ce.cancelReason != "")
-                    owner.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), ce.cancelReason));
+                if (ce.cancelReason != String.Empty) ce.Crafter.Message(ce.cancelReason);
                 return false;
             }
- 
+            
             self.taskUID++;
             ItemCraftTask itemCraftTask = new ItemCraftTask();
             itemCraftTask.blueprint = bp;
-            List<Item> list = new List<Item>();
-            foreach (ItemAmount current in bp.ingredients) {
-                int amount2 = (int)current.amount * amount;
-                foreach (ItemContainer current2 in self.containers) {
-                    amount2 -= current2.Take(list, current.itemid, amount2);
-                }
-            }
-            foreach (Item current2 in list) {
-                current2.Remove(0f);
-            }
+            self.CallMethod("CollectIngredients", bp, ce.Amount);
             itemCraftTask.endTime = 0;
             itemCraftTask.taskUID = self.taskUID;
             itemCraftTask.owner = owner;
             itemCraftTask.instanceData = instanceData;
-            itemCraftTask.amount = amount;
+            itemCraftTask.amount = ce.Amount;
+            itemCraftTask.skinID = ce.SkinID;
             self.queue.Enqueue(itemCraftTask);
             if (itemCraftTask.owner != null) {
                 itemCraftTask.owner.Command("note.craft_add", new object[] {

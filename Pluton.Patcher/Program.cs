@@ -137,10 +137,11 @@ namespace Pluton.Patcher
 
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Nop));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_3));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[0]));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[1]));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[2]));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[3]));
+            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[4]));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftHook)));
             il.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
@@ -738,7 +739,7 @@ namespace Pluton.Patcher
             BeingHammeredPatch();
             BuildingBlockDemolishedPatch();
             CombatEntityHurtPatch();
-            //CraftingStartPatch();
+            CraftingStartPatch();
             ConsumeFuel();
 
             DoPlacementPatch();

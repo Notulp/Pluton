@@ -35,15 +35,18 @@
         /// <summary>
         /// Notify the Crafter about the action.
         /// </summary>
-        public string cancelReason = "A plugin stops you from crafting that!";
+        public string cancelReason = System.String.Empty;
 
-        public CraftEvent(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData, int amount)
+        public int SkinID;
+
+        public CraftEvent(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData, int amount, int skinid)
         {
             Crafter = Server.GetPlayer(owner);
             Target = bp.targetItem;
             itemCrafter = self;
             Amount = amount;
             bluePrint = bp;
+            SkinID = skinid;
         }
 
         public void Stop(string reason = "A plugin stops you from crafting that!")
