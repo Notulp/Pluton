@@ -122,6 +122,18 @@ namespace Pluton
             return (from door in UnityEngine.Object.FindObjectsOfType<Door>()
                              select new Entity(door as BaseEntity)).ToList<Entity>();
         }
+        
+        public Entity Entity(UnityEngine.Vector3 location, float dist = 1f)
+        {
+            foreach (var x in BaseNetworkable.serverEntities.All())
+            {
+                if (UnityEngine.Vector3.Distance(x.transform.position, location) <= dist)
+                {
+                    return new Entity(x as BaseEntity);
+                }
+            }
+            return null;
+        }
 
         /// <summary>
         /// Gets all the Entities.
