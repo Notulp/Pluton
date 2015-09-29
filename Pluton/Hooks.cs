@@ -350,6 +350,11 @@ namespace Pluton
         {
             OnPlayerSyringeOther.OnNext(new SyringeUseEvent(sw, msg, false));
         }
+        
+        public static void PlayerHealthChangeEvent(BasePlayer p, float f, float f2)
+        {
+            OnPlayerHealthChange.OnNext(new PlayerHealthChangeEvent(p, f, f2));
+        }
 
         public static void ItemAdded(ItemContainer ic, Item i)
         {
