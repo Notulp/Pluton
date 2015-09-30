@@ -157,7 +157,7 @@ namespace Pluton
 
         public string[] EnumSection(string section)
         {
-            return Sections[section]?.Settings.Keys.ToArray();
+            return Sections.ContainsKey(section) ? Sections[section].Settings.Keys.ToArray() : new string[0] ;
         }
 
         public string GetSetting(string section, string setting)
