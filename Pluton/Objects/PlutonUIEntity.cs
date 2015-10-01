@@ -31,7 +31,7 @@ namespace Pluton
             if (connections.Count == 0)
                 return null;
             
-            CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo() { connections = connections }, null, "AddUI", panels.ToString());
+            CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo() { connections = connections }, null, "AddUI", new Facepunch.ObjectList?(new Facepunch.ObjectList(panels.ToString())));
             return panels;
         }
 
@@ -40,7 +40,7 @@ namespace Pluton
             if (connections.Count == 0)
                 return;
             foreach (var panel in panels) {
-                CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo() { connections = connections }, null, "DestroyPanel", panel.Obj.GetString("name"));
+                CommunityEntity.ServerInstance.ClientRPCEx(new Network.SendInfo() { connections = connections }, null, "DestroyPanel", new Facepunch.ObjectList?(new Facepunch.ObjectList(panel.Obj.GetString("name"))));
             }
         }
 
