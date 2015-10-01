@@ -698,6 +698,9 @@ namespace Pluton.Patcher
             MethodDefinition setModded = hooksClass.GetMethod("SetModded");
 
             servUpdate.Body.Instructions.Clear();
+            servUpdate.Body.ExceptionHandlers.Clear();
+            servUpdate.Body.Variables.Clear();
+
             servUpdate.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
             servUpdate.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
         }
