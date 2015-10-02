@@ -934,7 +934,7 @@ namespace Pluton
                     for (int j = 0; j < array.Length; j++) {
                         SteamGameServer.SetKeyValue(string.Format("description_{0:00}", j), array[j]);
                     }
-                } catch (Exception) { }
+                } catch { }
                 SteamGameServer.SetKeyValue("country", SteamGameServerUtils.GetIPCountry());
                 SteamGameServer.SetKeyValue("world.seed", global::World.Seed.ToString());
                 SteamGameServer.SetKeyValue("world.size", global::World.Size.ToString());
@@ -943,7 +943,7 @@ namespace Pluton
                 SteamGameServer.SetKeyValue("headerimage", ConVar.Server.headerimage);
                 SteamGameServer.SetKeyValue("url", ConVar.Server.url);
                 SteamGameServer.SetKeyValue("uptime", ((int)Time.realtimeSinceStartup).ToString());
-            } catch {
+            } catch (Exception ex) {
                 Logger.LogError("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
             }
