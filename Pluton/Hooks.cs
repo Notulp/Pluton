@@ -926,13 +926,15 @@ namespace Pluton
                     });
 
                 SteamGameServer.SetGameTags(pchGameTags);
-                for (int i = 0; i < 16; i++) {
-                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), string.Empty);
-                }
-                string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
-                for (int j = 0; j < array.Length; j++) {
-                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", j), array[j]);
-                }
+                try {
+                    for (int i = 0; i < 16; i++) {
+                        SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), string.Empty);
+                    }
+                    string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
+                    for (int j = 0; j < array.Length; j++) {
+                        SteamGameServer.SetKeyValue(string.Format("description_{0:00}", j), array[j]);
+                    }
+                } catch { }
                 SteamGameServer.SetKeyValue("country", SteamGameServerUtils.GetIPCountry());
                 SteamGameServer.SetKeyValue("world.seed", global::World.Seed.ToString());
                 SteamGameServer.SetKeyValue("world.size", global::World.Size.ToString());
