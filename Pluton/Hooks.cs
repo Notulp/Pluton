@@ -943,7 +943,7 @@ namespace Pluton
                 SteamGameServer.SetKeyValue("headerimage", ConVar.Server.headerimage);
                 SteamGameServer.SetKeyValue("url", ConVar.Server.url);
                 SteamGameServer.SetKeyValue("uptime", ((int)Time.realtimeSinceStartup).ToString());
-            } catch (Exception ex) {
+            } catch {
                 Logger.LogError("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
             }
