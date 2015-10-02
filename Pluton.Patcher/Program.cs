@@ -97,6 +97,8 @@ namespace Pluton.Patcher
                 if (hurt.Name == "Hurt") {
                     if (hurt.Parameters[0].Name == "info") {
                         hurt.Body.Instructions.Clear();
+                        hurt.Body.ExceptionHandlers.Clear();
+                        hurt.Body.Variables.Clear();
 
                         hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
                         hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
@@ -271,11 +273,7 @@ namespace Pluton.Patcher
 
             CloneMethod(die);
             ILProcessor iLProcessor = die.Body.GetILProcessor();
-            Instruction self = Instruction.Create(OpCodes.Ldarg_0);
-            iLProcessor.InsertAfter(die.Body.Instructions[0x08], self);
-            iLProcessor.InsertAfter(die.Body.Instructions[0x09], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(die.Body.Instructions[0x0a], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied)));
-            die.Body.Instructions[0x07] = Instruction.Create(OpCodes.Brfalse, self);
+            iLProcessor.Body.Instructions[10] = Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied));
         }
 
         private static void PlayerDisconnectedPatch()

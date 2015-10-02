@@ -401,108 +401,109 @@ namespace Pluton
                 if (combatEnt.IsDead()) {
                     return;
                 }
+                using (TimeWarning.New("Hurt", 50)) {
+                    BaseNPC npc = combatEnt.GetComponent<BaseNPC>();
+                    BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
+                    BasePlayer player = combatEnt.GetComponent<BasePlayer>();
 
-                BaseNPC npc = combatEnt.GetComponent<BaseNPC>();
-                BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
-                BasePlayer player = combatEnt.GetComponent<BasePlayer>();
+                    combatEnt.ScaleDamage(info, useProtection);
 
-                combatEnt.ScaleDamage(info, useProtection);
-
-                HurtEvent he;
-                if (player != null) {
-                    Player p = Server.GetPlayer(player);
-                    if (p.Teleporting) {
-                        for (int i = 0; i < info.damageTypes.types.Length; i++) {
-                            info.damageTypes.types[i] = 0f;
+                    HurtEvent he;
+                    if (player != null) {
+                        Player p = Server.GetPlayer(player);
+                        if (p.Teleporting) {
+                            for (int i = 0; i < info.damageTypes.types.Length; i++) {
+                                info.damageTypes.types[i] = 0f;
+                            }
                         }
+
+                        he = new PlayerHurtEvent(p, info);
+                        OnPlayerHurt.OnNext(he as PlayerHurtEvent);
+                    } else if (npc != null) {
+                        he = new NPCHurtEvent(new NPC(npc), info);
+                        OnNPCHurt.OnNext(he as NPCHurtEvent);
+                    } else if (corpse != null) {
+                        he = new CorpseHurtEvent(corpse, info);
+                        OnCorpseHurt.OnNext(he as CorpseHurtEvent);
+                    } else {
+                        he = new CombatEntityHurtEvent(combatEnt, info);
+                        OnCombatEntityHurt.OnNext(he as CombatEntityHurtEvent);
                     }
 
-                    he = new PlayerHurtEvent(p, info);
-                    OnPlayerHurt.OnNext(he as PlayerHurtEvent);
-                } else if (npc != null) {
-                    he = new NPCHurtEvent(new NPC(npc), info);
-                    OnNPCHurt.OnNext(he as NPCHurtEvent);
-                } else if (corpse != null) {
-                    he = new CorpseHurtEvent(corpse, info);
-                    OnCorpseHurt.OnNext(he as CorpseHurtEvent);
-                } else {
-                    he = new CombatEntityHurtEvent(combatEnt, info);
-                    OnCombatEntityHurt.OnNext(he as CombatEntityHurtEvent);
-                }
-
-                if (info.PointStart != Vector3.zero) {
-                    DirectionProperties[] directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
-                    for (int i = 0; i < directionProperties.Length; i++) {
-                        if (!(directionProperties[i].extraProtection == null)) {
-                            if (directionProperties[i].IsPointWithinRadius(combatEnt.transform, info.PointStart)) {
-                                directionProperties[i].extraProtection.Scale(info.damageTypes);
+                    if (info.PointStart != Vector3.zero) {
+                        DirectionProperties[] directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
+                        for (int i = 0; i < directionProperties.Length; i++) {
+                            if (!(directionProperties[i].extraProtection == null)) {
+                                if (directionProperties[i].IsPointWithinRadius(combatEnt.transform, info.PointStart)) {
+                                    directionProperties[i].extraProtection.Scale(info.damageTypes);
+                                }
                             }
                         }
                     }
-                }
 
-                // the DebugHurt() method
-                if (ConVar.Vis.attack) {
-                    if (info.PointStart != info.PointEnd) {
-                        ConsoleSystem.Broadcast("ddraw.arrow", new object[] {
-                            60, Color.cyan, info.PointStart, info.PointEnd, 0.1
-                        });
-                        ConsoleSystem.Broadcast("ddraw.sphere", new object[] {
-                            60, Color.cyan, info.HitPositionWorld, 0.05
-                        });
-                    }
-                        string text = String.Empty;
-                        for (int i = 0; i < info.damageTypes.types.Length; i++) {
-                            float num = info.damageTypes.types[i];
-                            if (num != 0) {
-                                string text2 = text;
-                                text = String.Concat(new string[] {
-                                    text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
-                                });
-                            }
+                    // the DebugHurt() method
+                    if (ConVar.Vis.attack) {
+                        if (info.PointStart != info.PointEnd) {
+                            ConsoleSystem.Broadcast("ddraw.arrow", new object[] {
+                                60, Color.cyan, info.PointStart, info.PointEnd, 0.1
+                            });
+                            ConsoleSystem.Broadcast("ddraw.sphere", new object[] {
+                                60, Color.cyan, info.HitPositionWorld, 0.05
+                            });
                         }
-                        string text3 = String.Concat(new object[] {
-                            "<color=lightblue>Damage:</color>".PadRight(10),
-                            info.damageTypes.Total().ToString("0.00"),
-                            "\r\n<color=lightblue>Health:</color>".PadRight(10),
-                            combatEnt.health.ToString("0.00"), " / ",
-                            (combatEnt.health - info.damageTypes.Total() > 0) ? "<color=green>" : "<color=red>",
-                            (combatEnt.health - info.damageTypes.Total()).ToString("0.00"), "</color>",
-                            "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
-                            "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
-                            "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
-                            "\r\n<color=lightblue>Damages:</color>\r\n", text
-                        });
-                        ConsoleSystem.Broadcast("ddraw.text", new object[] {
-                            60, Color.white, info.HitPositionWorld, text3
-                        });
-                    }
+                            string text = String.Empty;
+                            for (int i = 0; i < info.damageTypes.types.Length; i++) {
+                                float num = info.damageTypes.types[i];
+                                if (num != 0) {
+                                    string text2 = text;
+                                    text = String.Concat(new string[] {
+                                        text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
+                                    });
+                                }
+                            }
+                            string text3 = String.Concat(new object[] {
+                                "<color=lightblue>Damage:</color>".PadRight(10),
+                                info.damageTypes.Total().ToString("0.00"),
+                                "\r\n<color=lightblue>Health:</color>".PadRight(10),
+                                combatEnt.health.ToString("0.00"), " / ",
+                                (combatEnt.health - info.damageTypes.Total() > 0) ? "<color=green>" : "<color=red>",
+                                (combatEnt.health - info.damageTypes.Total()).ToString("0.00"), "</color>",
+                                "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
+                                "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
+                                "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
+                                "\r\n<color=lightblue>Damages:</color>\r\n", text
+                            });
+                            ConsoleSystem.Broadcast("ddraw.text", new object[] {
+                                60, Color.white, info.HitPositionWorld, text3
+                            });
+                        }
 
-                combatEnt.health -= info.damageTypes.Total();
-                combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
-                if (ConVar.Global.developer > 1) {
-                    Debug.Log(string.Concat(new object[]
-		            {
-			            "[Combat]".PadRight(10),
-			            combatEnt.gameObject.name,
-			            " hurt ",
-			            info.damageTypes.GetMajorityDamageType(),
-			            "/",
-			            info.damageTypes.Total(),
-			            " - ",
-			            combatEnt.health.ToString("0"),
-			            " health left"
-		            }));
-                }
-                combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
-                combatEnt.lastAttacker = info.Initiator;
-                //combatEnt.SetFieldValue("_lastAttackedTime", Time.time);
-                if (combatEnt.health <= 0f) {
-                    combatEnt.Die(info);
-                    BuildingBlock bb = combatEnt.GetComponent<BuildingBlock>();
-                    if (bb != null)
-                    {
-                        OnBuildingPartDestroyed.OnNext(new BuildingPartDestroyedEvent(bb, info));
+                    combatEnt.health -= info.damageTypes.Total();
+                    combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+                    if (ConVar.Global.developer > 1) {
+                        Debug.Log(string.Concat(new object[]
+    		            {
+    			            "[Combat]".PadRight(10),
+    			            combatEnt.gameObject.name,
+    			            " hurt ",
+    			            info.damageTypes.GetMajorityDamageType(),
+    			            "/",
+    			            info.damageTypes.Total(),
+    			            " - ",
+    			            combatEnt.health.ToString("0"),
+    			            " health left"
+    		            }));
+                    }
+                    combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
+                    combatEnt.lastAttacker = info.Initiator;
+                    //combatEnt.SetFieldValue("_lastAttackedTime", Time.time);
+                    if (combatEnt.health <= 0f) {
+                        combatEnt.Die(info);
+                        BuildingBlock bb = combatEnt.GetComponent<BuildingBlock>();
+                        if (bb != null)
+                        {
+                            OnBuildingPartDestroyed.OnNext(new BuildingPartDestroyedEvent(bb, info));
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -685,7 +686,7 @@ namespace Pluton
         }
 
         // BasePlayer.Die()
-        public static void PlayerDied(BasePlayer player, HitInfo info)
+        public static bool PlayerDied(BasePlayer player, HitInfo info)
         {
             if (info == null) {
                 info = new HitInfo();
@@ -694,23 +695,26 @@ namespace Pluton
             }
 
             Player victim = Server.GetPlayer(player);
+            if (!((bool)player.CallMethod("WoundInsteadOfDying", info))) {
+                if (info.Initiator != null) {
+                    PlayerStats statsV = victim.Stats;
 
-            if (info.Initiator != null) {
-                PlayerStats statsV = victim.Stats;
-
-                if (info.Initiator is BasePlayer) {
-                    Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
-                    victim.Stats.AddDeath(true, false);
-                } else if (info.Initiator is BaseNPC) {
-                    victim.Stats.AddDeath(false, true);
+                    if (info.Initiator is BasePlayer) {
+                        Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
+                        victim.Stats.AddDeath(true, false);
+                    } else if (info.Initiator is BaseNPC) {
+                        victim.Stats.AddDeath(false, true);
+                    }
                 }
+
+                Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
+                OnPlayerDied.OnNext(pde);
+
+                if (!pde.dropLoot)
+                    player.inventory.Strip();
+                return false;
             }
-
-            Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
-            OnPlayerDied.OnNext(pde);
-
-            if (!pde.dropLoot)
-                player.inventory.Strip();
+            return true;
         }
 
 
