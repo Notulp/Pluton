@@ -441,7 +441,43 @@ namespace Pluton
                     }
                 }
 
-                combatEnt.CallMethod("DebugHurt", info);
+                // the DebugHurt() method
+                if (ConVar.Vis.attack) {
+                    if (info.PointStart != info.PointEnd) {
+                        ConsoleSystem.Broadcast("ddraw.arrow", new object[] {
+                            60, Color.cyan, info.PointStart, info.PointEnd, 0.1
+                        });
+                        ConsoleSystem.Broadcast("ddraw.sphere", new object[] {
+                            60, Color.cyan, info.HitPositionWorld, 0.05
+                        });
+                    }
+                        string text = String.Empty;
+                        for (int i = 0; i < info.damageTypes.types.Length; i++) {
+                            float num = info.damageTypes.types[i];
+                            if (num != 0) {
+                                string text2 = text;
+                                text = String.Concat(new string[] {
+                                    text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
+                                });
+                            }
+                        }
+                        string text3 = String.Concat(new object[] {
+                            "<color=lightblue>Damage:</color>".PadRight(10),
+                            info.damageTypes.Total().ToString("0.00"),
+                            "\r\n<color=lightblue>Health:</color>".PadRight(10),
+                            combatEnt.health.ToString("0.00"), " / ",
+                            (combatEnt.health - info.damageTypes.Total() > 0) ? "<color=green>" : "<color=red>",
+                            (combatEnt.health - info.damageTypes.Total()).ToString("0.00"), "</color>",
+                            "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
+                            "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
+                            "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
+                            "\r\n<color=lightblue>Damages:</color>\r\n", text
+                        });
+                        ConsoleSystem.Broadcast("ddraw.text", new object[] {
+                            60, Color.white, info.HitPositionWorld, text3
+                        });
+                    }
+
                 combatEnt.health -= info.damageTypes.Total();
                 combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 if (ConVar.Global.developer > 1) {
