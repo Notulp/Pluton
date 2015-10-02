@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using Network;
 using UnityEngine;
@@ -393,7 +394,7 @@ namespace Pluton
             OnBeingHammered.OnNext(new HammerEvent(info, ownerPlayer));
         }
 
-        public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
+        public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info, bool useProtection = true)
         {
             try {
                 Assert.Test(combatEnt.isServer, "This should be called serverside only");
@@ -405,17 +406,8 @@ namespace Pluton
                 BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
                 BasePlayer player = combatEnt.GetComponent<BasePlayer>();
 
-                if (!SkinnedMeshCollider.ScaleDamage(info)) {
-                    if (combatEnt.baseProtection != null) {
-                        combatEnt.baseProtection.Scale(info.damageTypes);
-                        if (ConVar.Global.developer > 1) {
-                            Debug.Log("BaseProtection Scaling for entity :" + combatEnt.name);
-                        }
-                    }
-                }
-                else if (ConVar.Global.developer > 1) {
-                    Debug.Log("SMC scaling damage for entity :" + combatEnt.name);
-                }
+                combatEnt.ScaleDamage(info, useProtection);
+
                 HurtEvent he;
                 if (player != null) {
                     Player p = Server.GetPlayer(player);
@@ -438,45 +430,6 @@ namespace Pluton
                     OnCombatEntityHurt.OnNext(he as CombatEntityHurtEvent);
                 }
 
-                // the DebugHurt() method
-                if (ConVar.Vis.attack) {
-                    if (info.PointStart != info.PointEnd) {
-                        ConsoleSystem.Broadcast("ddraw.arrow", new object[] {
-                            60, Color.cyan, info.PointStart, info.PointEnd, 0.1
-                        });
-                        ConsoleSystem.Broadcast("ddraw.sphere", new object[] {
-                            60, Color.cyan, info.HitPositionWorld, 0.05
-                        });
-                    }
-                    string text = String.Empty;
-                    for (int i = 0; i < info.damageTypes.types.Length; i++) {
-                        float num = info.damageTypes.types[i];
-                        if (num != 0) {
-                            string text2 = text;
-                            text = String.Concat(new string[] {
-                                text2, " ", ((Rust.DamageType)i).ToString().PadRight(10), num.ToString("0.00"), "\r\n"
-                            });
-                        }
-                    }
-                    string text3 = String.Concat(new object[] {
-                        "<color=lightblue>Damage:</color>".PadRight(10),
-                        info.damageTypes.Total().ToString("0.00"),
-                        "\r\n<color=lightblue>Health:</color>".PadRight(10),
-                        combatEnt.health.ToString("0.00"), " / ",
-                        (combatEnt.health - info.damageTypes.Total() > 0) ? "<color=green>" : "<color=red>",
-                        (combatEnt.health - info.damageTypes.Total()).ToString("0.00"), "</color>",
-                        "\r\n<color=lightblue>Hit Ent:</color>".PadRight(10), combatEnt,
-                        "\r\n<color=lightblue>Attacker:</color>".PadRight(10), info.Initiator,
-                        "\r\n<color=lightblue>Weapon:</color>".PadRight(10), info.Weapon,
-                        "\r\n<color=lightblue>Damages:</color>\r\n", text
-                    });
-                    ConsoleSystem.Broadcast("ddraw.text", new object[] {
-                        60, Color.white, info.HitPositionWorld, text3
-                    });
-                }
-                if (combatEnt.skeletonProperties) {
-                    combatEnt.skeletonProperties.ScaleDamage(info);
-                }
                 if (info.PointStart != Vector3.zero) {
                     DirectionProperties[] directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
                     for (int i = 0; i < directionProperties.Length; i++) {
@@ -487,6 +440,8 @@ namespace Pluton
                         }
                     }
                 }
+
+                combatEnt.CallMethod("DebugHurt", info);
                 combatEnt.health -= info.damageTypes.Total();
                 combatEnt.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
                 if (ConVar.Global.developer > 1) {
@@ -505,6 +460,7 @@ namespace Pluton
                 }
                 combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
                 combatEnt.lastAttacker = info.Initiator;
+                combatEnt.SetFieldValue("_lastAttackedTime", Time.time);
                 if (combatEnt.health <= 0f) {
                     combatEnt.Die(info);
                     BuildingBlock bb = combatEnt.GetComponent<BuildingBlock>();

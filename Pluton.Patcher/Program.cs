@@ -100,6 +100,7 @@ namespace Pluton.Patcher
 
                         hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
                         hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
                         hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(hurtHook)));
                         hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
                     }
