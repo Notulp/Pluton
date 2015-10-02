@@ -496,7 +496,7 @@ namespace Pluton
                 }
                 combatEnt.lastDamage = info.damageTypes.GetMajorityDamageType();
                 combatEnt.lastAttacker = info.Initiator;
-                combatEnt.SetFieldValue("_lastAttackedTime", Time.time);
+                //combatEnt.SetFieldValue("_lastAttackedTime", Time.time);
                 if (combatEnt.health <= 0f) {
                     combatEnt.Die(info);
                     BuildingBlock bb = combatEnt.GetComponent<BuildingBlock>();
