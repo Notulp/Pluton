@@ -342,20 +342,22 @@ namespace Pluton
 
             teleporting = true;
 
-            if (!basePlayer.IsSleeping())
-                basePlayer.StartSleeping();
-
             Vector3 newPos = new Vector3(x, y + 0.05f, z);
+            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.Sleeping, true);
+            if (!BasePlayer.sleepingPlayerList.Contains(basePlayer))
+            {
+                BasePlayer.sleepingPlayerList.Add(basePlayer);
+            }
+            basePlayer.CancelInvoke("InventoryUpdate");
+            basePlayer.inventory.crafting.CancelAll(true);
             basePlayer.MovePosition(newPos);
             basePlayer.ClientRPCPlayer(null, basePlayer, "ForcePositionTo", newPos);
+            basePlayer.TransformChanged();
             basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, true);
             basePlayer.UpdateNetworkGroup();
-            basePlayer.UpdatePlayerCollider(true, false);
             basePlayer.SendNetworkUpdateImmediate(false);
             basePlayer.ClientRPCPlayer(null, basePlayer, "StartLoading");
             basePlayer.SendFullSnapshot();
-            basePlayer.SetPlayerFlag(BasePlayer.PlayerFlags.ReceivingSnapshot, false);
-            basePlayer.ClientRPCPlayer(null, basePlayer, "FinishLoading");
 
             teleporting = false;
 
