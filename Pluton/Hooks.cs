@@ -567,16 +567,30 @@ namespace Pluton
             DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
             OnDoorUse.OnNext(due);
 
+            bool doaction = false;
+
             BaseLock baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
-            if (baseLock != null && !due.IgnoreLock) {
-                bool TryCloseOpen = open ? !baseLock.OnTryToOpen(rpc.player) : !baseLock.OnTryToClose(rpc.player);
-                if (TryCloseOpen)
-                    return;
+            if (!due.IgnoreLock && baseLock != null) {
+                doaction = open ? baseLock.OnTryToOpen(rpc.player) : baseLock.OnTryToClose(rpc.player);
+
+                if (doaction && open && (baseLock.IsLocked() && Time.realtimeSinceStartup - (float)door.GetFieldValue("decayResetTimeLast") > 60)) {
+                    Decay.RadialDecayTouch (door.transform.position, 40, 270532608);
+                    door.SetFieldValue("decayResetTimeLast", Time.realtimeSinceStartup);
+                }
             }
 
-            door.SetFlag(BaseEntity.Flags.Open, due.Open);
-            door.Invoke("UpdateLayer", 0f);
-            door.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
+            if (doaction) {
+                door.SetFlag(BaseEntity.Flags.Open, open);
+                door.SendNetworkUpdateImmediate(false);
+
+                if (open)
+                    door.CallMethod("UpdateLayer");
+
+                door.CancelInvoke("UpdateLayer");
+
+                if (!open)
+                    door.Invoke("UpdateLayer", door.closeDelay);
+            }
 
             if (due.DenyReason != "")
                 rpc.player.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), due.DenyReason));
@@ -665,13 +679,16 @@ namespace Pluton
             }
             
             self.taskUID++;
-            ItemCraftTask itemCraftTask = new ItemCraftTask();
+            ItemCraftTask itemCraftTask = Facepunch.Pool.Get<ItemCraftTask>();
             itemCraftTask.blueprint = bp;
             self.CallMethod("CollectIngredients", bp, ce.Amount);
             itemCraftTask.endTime = 0;
             itemCraftTask.taskUID = self.taskUID;
             itemCraftTask.owner = owner;
             itemCraftTask.instanceData = instanceData;
+            if (itemCraftTask.instanceData != null) {
+                itemCraftTask.instanceData.ShouldPool = false;
+            }
             itemCraftTask.amount = ce.Amount;
             itemCraftTask.skinID = ce.SkinID;
             self.queue.Enqueue(itemCraftTask);

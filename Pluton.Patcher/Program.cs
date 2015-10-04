@@ -262,8 +262,8 @@ namespace Pluton.Patcher
 
             CloneMethod(bpInit);
             ILProcessor iLProcessor = bpInit.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
+            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 29], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 29], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
         }
 
         private static void PlayerDiedPatch()
@@ -764,6 +764,7 @@ namespace Pluton.Patcher
             ItemUsed();
             ItemRepaired();
             ItemLoseCondition();
+            ItemsLoadedPatch();
 
             LandmineArmed();
             LandmineExploded();
