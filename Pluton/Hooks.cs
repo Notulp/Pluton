@@ -567,7 +567,7 @@ namespace Pluton
             DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
             OnDoorUse.OnNext(due);
 
-            bool doaction = false;
+            bool doaction = true;
 
             BaseLock baseLock = door.GetSlot(BaseEntity.Slot.Lock) as BaseLock;
             if (!due.IgnoreLock && baseLock != null) {
