@@ -764,7 +764,6 @@ namespace Pluton.Patcher
             ItemUsed();
             ItemRepaired();
             ItemLoseCondition();
-            ItemsLoadedPatch();
 
             LandmineArmed();
             LandmineExploded();
