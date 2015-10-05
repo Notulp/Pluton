@@ -57,7 +57,6 @@ namespace Pluton
                 new JSPlugin(name, code, path);
 
             } catch (Exception ex) {
-                Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[JSPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
             }

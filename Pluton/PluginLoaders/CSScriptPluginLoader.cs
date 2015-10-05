@@ -64,7 +64,6 @@ namespace Pluton
 
 
             } catch (Exception ex) {
-                Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[CSScriptPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
                 if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {

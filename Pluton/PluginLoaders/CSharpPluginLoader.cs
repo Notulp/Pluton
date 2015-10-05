@@ -65,7 +65,6 @@ namespace Pluton
                 new CSPlugin(name, code, path);
 
             } catch (Exception ex) {
-                Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[CSharpPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
                 if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {

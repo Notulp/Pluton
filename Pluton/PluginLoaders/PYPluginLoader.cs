@@ -56,7 +56,6 @@ namespace Pluton
                 new PYPlugin(name, code, path);
 
             } catch (Exception ex) {
-                Server.GetInstance().Broadcast(name + " plugin could not be loaded.");
                 Logger.Log("[PYPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
             }
