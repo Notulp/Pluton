@@ -22,42 +22,25 @@ namespace Pluton
             }
         }
 
-        private static object StringifyIfVector3(object keyorval)
+        private static object SerializeIfPossible(object keyorval)
         {
             if (keyorval == null)
                 return keyorval;
 
-            try {
-                if (typeof(Vector3).Equals(keyorval.GetType())) {
-                    return "Vector3," +
-                    ((Vector3)keyorval).x.ToString("G9") + "," +
-                    ((Vector3)keyorval).y.ToString("G9") + "," +
-                    ((Vector3)keyorval).z.ToString("G9");
-                }
-            } catch (Exception ex) {
-                Logger.LogException(ex);
+            if (keyorval is Vector3) {
+                return ((Vector3)keyorval).Serialize();
+            } else if (keyorval is Quaternion) {
+                return ((Quaternion)keyorval).Serialize();
             }
+
             return keyorval;
         }
 
-        private static object ParseIfVector3String(object keyorval)
+        private static object DeserializeIfPossible(object keyorval)
         {
-            if (keyorval == null)
-                return keyorval;
-
-            try {
-                if (typeof(string).Equals(keyorval.GetType())) {
-                    if ((keyorval as string).StartsWith("Vector3,", StringComparison.Ordinal)) {
-                        string[] v3array = (keyorval as string).Split(new char[] { ',' });
-                        Vector3 parse = new Vector3(Single.Parse(v3array[1]), 
-                                            Single.Parse(v3array[2]),
-                                            Single.Parse(v3array[3]));
-                        return parse;
-                    }
-                }
-            } catch (Exception ex) {
-                Logger.LogException(ex);
-            }          
+            if (keyorval is Pluton.ISerializable) {
+                return ((ISerializable)keyorval).Deserialize();
+            }
             return keyorval;
         }
 
@@ -156,7 +139,7 @@ namespace Pluton
                 hashtable = new Hashtable();
                 this.datastore.Add(tablename, hashtable);
             }
-            hashtable[StringifyIfVector3(key)] = StringifyIfVector3(val);
+            hashtable[SerializeIfPossible(key)] = SerializeIfPossible(val);
         }
 
         public bool ContainsKey(string tablename, object key)
@@ -166,7 +149,7 @@ namespace Pluton
 
             Hashtable hashtable = (Hashtable)this.datastore[tablename];
             if (hashtable != null) {
-                return hashtable.ContainsKey(StringifyIfVector3(key));
+                return hashtable.ContainsKey(SerializeIfPossible(key));
             }
             return false;
         }
@@ -175,7 +158,7 @@ namespace Pluton
         {
             Hashtable hashtable = (Hashtable)this.datastore[tablename];
             if (hashtable != null) {
-                return hashtable.ContainsValue(StringifyIfVector3(val));
+                return hashtable.ContainsValue(SerializeIfPossible(val));
             }
             return false;
         }
@@ -202,7 +185,7 @@ namespace Pluton
                 return null;
 
             Hashtable hashtable = (Hashtable)this.datastore[tablename];
-            return hashtable == null ? null : ParseIfVector3String(hashtable[StringifyIfVector3(key)]);
+            return hashtable == null ? null : DeserializeIfPossible(hashtable[SerializeIfPossible(key)]);
         }
 
         public static DataStore GetInstance()
@@ -221,7 +204,7 @@ namespace Pluton
             }
             Hashtable parse = new Hashtable(hashtable.Count);
             foreach (DictionaryEntry entry in hashtable) {
-                parse.Add(ParseIfVector3String(entry.Key), ParseIfVector3String(entry.Value));
+                parse.Add(DeserializeIfPossible(entry.Key), DeserializeIfPossible(entry.Value));
             }
             return parse;
         }
@@ -234,7 +217,7 @@ namespace Pluton
             }
             List<object> parse = new List<object>(hashtable.Keys.Count);
             foreach (object key in hashtable.Keys) {
-                parse.Add(ParseIfVector3String(key));
+                parse.Add(DeserializeIfPossible(key));
             }
             return parse.ToArray<object>();
         }
@@ -267,7 +250,7 @@ namespace Pluton
 
             Hashtable hashtable = (Hashtable)this.datastore[tablename];
             if (hashtable != null) {
-                hashtable.Remove(StringifyIfVector3(key));
+                hashtable.Remove(SerializeIfPossible(key));
             }
         }
 
@@ -287,7 +270,7 @@ namespace Pluton
             }
             List<object> parse = new List<object>(hashtable.Values.Count);
             foreach (object val in hashtable.Values) {
-                parse.Add(ParseIfVector3String(val));
+                parse.Add(DeserializeIfPossible(val));
             }
             return parse.ToArray();
         }

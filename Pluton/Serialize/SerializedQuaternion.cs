@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Pluton
 {
     [Serializable]
-    public class SerializedQuaternion : CountedInstance
+    public class SerializedQuaternion : CountedInstance, ISerializable
     {
         public float x;
         public float y;
@@ -17,6 +17,11 @@ namespace Pluton
             y = q.y;
             z = q.z;
             w = q.w;
+        }
+
+        public object Deserialize()
+        {
+            return new Quaternion(x, y, z, w);
         }
 
         public bool Equals(Quaternion q)

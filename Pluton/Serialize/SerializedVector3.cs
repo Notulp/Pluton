@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Pluton
 {
     [Serializable]
-    public class SerializedVector3 : CountedInstance
+    public class SerializedVector3 : CountedInstance, ISerializable
     {
         public float x;
         public float y;
@@ -15,6 +15,11 @@ namespace Pluton
             x = v3.x;
             y = v3.y;
             z = v3.z;
+        }
+
+        public object Deserialize()
+        {
+            return new Vector3(x, y, z);
         }
 
         public bool Equals(Vector3 v3)
