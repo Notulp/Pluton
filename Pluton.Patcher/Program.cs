@@ -715,7 +715,7 @@ namespace Pluton.Patcher
 
             ILProcessor il = giveFromItem.Body.GetILProcessor();
             int count = il.Body.Instructions.Count;
-            for (int i = count - 1; i > count - 15; i--) {
+            for (int i = count - 1; i > count - 16; i--) {
                 il.Body.Instructions.RemoveAt(i);
             }
             il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
