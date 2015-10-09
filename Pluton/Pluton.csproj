@@ -182,6 +182,7 @@
     <Compile Include="Objects\PlutonUIComponents\BaseComponent.cs" />
     <Compile Include="Objects\PlutonUIComponents\Outline.cs" />
     <Compile Include="Objects\PlutonUIComponents\Button.cs" />
+    <Compile Include="Serialize\ISerializable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
