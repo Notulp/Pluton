@@ -97,7 +97,7 @@ namespace Pluton
             if (baseEntity)
             {
                 baseEntity.Spawn(true);
-                return new Entity(baseEntity)
+                return new Entity(baseEntity);
             }
             return null;
         }
