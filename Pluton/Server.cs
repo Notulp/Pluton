@@ -16,6 +16,53 @@
         public static string server_message_name = "Pluton";
         private float craftTimeScale = 1f;
 
+        public void BanPlayer(Player player, string Banner = "Console", string Reason = "You were banned.", Player Sender = null)
+        {
+            player.Message("You were Banned by: " + Banner);
+            if (Sender != null)
+            {
+                Sender.Message("You banned " + player.Name);
+                Sender.Message("Player's IP: " + player.IP);
+                Sender.Message("Player's ID: " + player.SteamID);
+            }
+            player.Kick(Reason);
+            foreach (var pl in ActivePlayers.Where(pl => pl.Admin))
+            {
+                pl.Message(player.Name + " was banned by: " + Banner);
+                pl.Message(" Reason: " + Reason);
+            }
+            BanPlayerIPandID(player.IP, player.SteamID, player.Name, Reason, Banner);
+        }
+
+        public void BanPlayerIPandID(string ip, string id, string name = "1", string reason = "You were banned.", string adminname = "Unknown")
+        {
+            var ini = GlobalBanList;
+            ini.AddSetting("Ips", ip, name);
+            ini.AddSetting("Ids", id, name);
+            File.AppendAllText(Path.Combine(Util.GetIdentityFolder(), "GlobalBanList.log"), "[" + DateTime.Now.ToShortDateString() 
+                + " " + DateTime.Now.ToShortTimeString() + "] " + name + "|" 
+                + ip + "|" +  id + "|" + adminname + "|" + reason + "\r\n");
+            ini.Save();
+        }
+
+        public void BanPlayerIP(string ip, string name = "1", string reason = "You were banned.", string adminname = "Unknown")
+        {
+            var ini = GlobalBanList;
+            ini.AddSetting("Ips", ip, name);
+            File.AppendAllText(Path.Combine(Util.GetIdentityFolder(), "GlobalBanList.log"), "[" + DateTime.Now.ToShortDateString()
+                + " " + DateTime.Now.ToShortTimeString() + "] " + name + "|"
+                + ip + "|" + adminname + "|" + reason + "\r\n");
+            ini.Save();
+        }
+
+        public void BanPlayerID(string id, string name = "1", string reason = "You were banned.", string adminname = "Unknown")
+        {
+            var ini = GlobalBanList;
+            ini.AddSetting("Ids", id, name);
+            ini.AddSetting("AdminWhoBanned", name + "|" + id, adminname + "|" + reason);
+            ini.Save();
+        }
+
         public void Broadcast(string arg)
         {
             BroadcastFrom(server_message_name, arg);
@@ -29,6 +76,30 @@
         public void BroadcastFrom(ulong playerid, string arg)
         {
             ConsoleSystem.Broadcast("chat.add", playerid, arg, 1);
+        }
+
+        public bool CheckDependencies()
+        {
+            return true;
+        }
+    
+        public void CheckPluginsFolder()
+        {
+            string path = Util.GetPluginsFolder();
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+        }
+        
+        public float CraftingTimeScale
+        {
+            get
+            {
+                return craftTimeScale;
+            }
+            set
+            {
+                craftTimeScale = value;
+            }
         }
 
         public Player FindPlayer(string s)
@@ -46,6 +117,22 @@
             return FindPlayer(steamid.ToString());
         }
 
+        public List<string> FindIPsOfName(string name)
+        {
+            var ini = GlobalBanList;
+            var ips = ini.EnumSection("Ips");
+            var l = name.ToLower();
+            return ips.Where(ip => ini.GetSetting("Ips", ip).ToLower() == l).ToList();
+        }
+
+        public List<string> FindIDsOfName(string name)
+        {
+            var ini = GlobalBanList;
+            var ids = ini.EnumSection("Ids");
+            var l = name.ToLower();
+            return ids.Where(id => ini.GetSetting("Ids", id).ToLower() == l).ToList();
+        }
+
         public static Player GetPlayer(BasePlayer bp)
         {
             try {
@@ -57,6 +144,19 @@
                 Logger.LogDebug("[Server] GetPlayer: " + ex.Message);
                 Logger.LogException(ex);
                 return null;
+            }
+        }
+
+        public IniParser GlobalBanList
+        {
+            get
+            {
+                var path = Path.Combine(Util.GetIdentityFolder(), "GlobalBanList.ini");
+                if (!File.Exists(path))
+                {
+                    File.Create(path).Dispose();
+                }
+                return new IniParser(path);
             }
         }
 
@@ -75,31 +175,20 @@
             Instance.CheckPluginsFolder();
         }
 
-        public bool CheckDependencies()
+        public bool IsBannedID(string id)
         {
-            return true;
+            return (GlobalBanList.GetSetting("Ids", id) != null);
         }
 
-        public void CheckPluginsFolder()
+        public bool IsBannedIP(string ip)
         {
-            string path = Util.GetPluginsFolder();
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            return (GlobalBanList.GetSetting("Ips", ip) != null);
         }
 
         [Obsolete("Server.GetServer() is obsolete, use Server.GetInstance() instead.", false)]
         public static Pluton.Server GetServer()
         {
             return Instance;
-        }
-
-        public float CraftingTimeScale {
-            get {
-                return craftTimeScale;
-            }
-            set {
-                craftTimeScale = value;
-            }
         }
 
         public void LoadLoadouts()
@@ -204,6 +293,45 @@
             get{
                 return ConVar.Server.maxplayers;
             }
+        }
+
+        public bool UnbanByIP(string ip)
+        {
+            var ini = GlobalBanList;
+            if (ini.GetSetting("Ips", ip) == null) return false;
+            ini.DeleteSetting("Ips", ip);
+            ini.Save();
+            return true;
+        }
+
+        public bool UnbanByID(string id)
+        {
+            var ini = GlobalBanList;
+            if (ini.GetSetting("Ids", id) == null) return false;
+            ini.DeleteSetting("Ids", id);
+            ini.Save();
+            return true;
+        }
+        public bool UnbanByName(string name, string UnBanner = "Console", Player Sender = null)
+        {
+            var ids = FindIDsOfName(name);
+            var ips = FindIPsOfName(name);
+            if (ids.Count == 0 && ips.Count == 0)
+            {
+                Sender?.Message("Couldn't find any names matching with " + name);
+                return false;
+            }
+            foreach (var pl in ActivePlayers.Where(pl => pl.Admin))
+            {
+                pl.Message(name + " was unbanned by: " + UnBanner + " Different matches: " + ids.Count);
+            }
+            var iptub = ips.Last();
+            var idtub = ids.Last();
+            var ini = GlobalBanList;
+            ini.DeleteSetting("Ips", iptub);
+            ini.DeleteSetting("Ids", idtub);
+            ini.Save();
+            return true;
         }
     }
 }
