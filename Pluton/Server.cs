@@ -151,7 +151,7 @@
         {
             get
             {
-                var path = Path.Combine(Util.GetIdentityFolder(), "GlobalBanList.ini");
+                var path = Path.Combine(Util.GetServerFolder(), "GlobalBanList.ini");
                 if (!File.Exists(path))
                 {
                     File.Create(path).Dispose();
