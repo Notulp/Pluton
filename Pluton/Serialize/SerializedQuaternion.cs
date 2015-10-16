@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Pluton
 {
     [Serializable]
-    public class SerializedQuaternion : CountedInstance, ISerializable
+    public struct SerializedQuaternion : ISerializable
     {
         public float x;
         public float y;
@@ -24,14 +24,18 @@ namespace Pluton
             return new Quaternion(x, y, z, w);
         }
 
-        public bool Equals(Quaternion q)
+        public override bool Equals(object other)
         {
-            return q.Equals(ToQuaternion());
+            if (!(other is SerializedQuaternion)) {
+                return false;
+            }
+            SerializedQuaternion q = (SerializedQuaternion)other;
+            return x.Equals (q.x) && y.Equals (q.y) && z.Equals (q.z) && w.Equals (q.w);
         }
 
-        public bool Equals(SerializedQuaternion q)
+        public override int GetHashCode()
         {
-            return q.ToQuaternion().Equals(ToQuaternion());
+            return ToQuaternion().GetHashCode();
         }
 
         public Quaternion ToQuaternion()
@@ -42,6 +46,14 @@ namespace Pluton
         public override string ToString()
         {
             return String.Format("({0:F1}, {1:F1}, {2:F1}, {3:F1})", new object[] { x, y, z, w });
+        }
+
+        public static bool operator == (SerializedQuaternion lhs, SerializedQuaternion rhs) {
+            return Quaternion.Dot (lhs.ToQuaternion(), rhs.ToQuaternion()) > 0.999999;
+        }
+
+        public static bool operator != (SerializedQuaternion lhs, SerializedQuaternion rhs) {
+            return Quaternion.Dot (lhs.ToQuaternion(), rhs.ToQuaternion()) <= 0.999999;
         }
     }
 }

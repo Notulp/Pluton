@@ -16,8 +16,6 @@ namespace Pluton
         [OnSerializing]
         void OnSerializing(StreamingContext context)
         {
-            if (position != null)
-                return;
             position = buildingBlock.transform.position.Serialize();
         }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Pluton
 {
     [Serializable]
-    public class SerializedVector3 : CountedInstance, ISerializable
+    public struct SerializedVector3 : ISerializable
     {
         public float x;
         public float y;
@@ -22,14 +22,19 @@ namespace Pluton
             return new Vector3(x, y, z);
         }
 
-        public bool Equals(Vector3 v3)
+        public override bool Equals(object other)
         {
-            return v3.Equals(ToVector3());
+            if (!(other is SerializedVector3))
+                return false;
+
+            SerializedVector3 v3 = (SerializedVector3)other;
+
+            return x.Equals(v3.x) && y.Equals(v3.y) && z.Equals(v3.z);
         }
 
-        public bool Equals(SerializedVector3 v3)
+        public override int GetHashCode()
         {
-            return v3.ToVector3().Equals(ToVector3());
+            return ToVector3().GetHashCode();
         }
 
         public Vector3 ToVector3()
@@ -40,6 +45,14 @@ namespace Pluton
         public override string ToString()
         {
             return String.Format("({0:F1}, {1:F1}, {2:F1})", x, y, z);
+        }
+
+        public static bool operator == (SerializedVector3 lhs, SerializedVector3 rhs) {
+            return Vector3.SqrMagnitude (lhs.ToVector3() - rhs.ToVector3()) < 9.999999E-11;
+        }
+
+        public static bool operator != (SerializedVector3 lhs, SerializedVector3 rhs) {
+            return Vector3.SqrMagnitude (lhs.ToVector3() - rhs.ToVector3()) >= 9.999999E-11;
         }
     }
 }
