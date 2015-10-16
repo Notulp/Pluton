@@ -90,6 +90,40 @@ namespace Pluton
         {
             AirDropAt(player.Location, speed, height);
         }
+        
+        public Entity PatrolHelicopter(float height = 10f)
+        {
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/npc/patrol_helicopter/PatrolHelicopter.prefab", default(Vector3), default(Quaternion), true);
+            if (baseEntity)
+            {
+                baseEntity.Spawn(true);
+                return new Entity(baseEntity);
+            }
+            return null;
+        }
+
+        public Entity PatrolHelicopterAt(Vector3 position, float height = 10f)
+        {
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/npc/patrol_helicopter/PatrolHelicopter.prefab", default(Vector3), default(Quaternion), true);
+            if (baseEntity)
+            {
+                PatrolHelicopterAI component = baseEntity.GetComponent<PatrolHelicopterAI>();
+                component.SetInitialDestination(position + new Vector3(0, height, 0), 0.25f);
+                baseEntity.Spawn(true);
+                return new Entity(baseEntity);
+            }
+            return null;
+        }
+
+        public Entity PatrolHelicopterAt(float x, float y, float z, float height = 10f)
+        {
+            return PatrolHelicopterAt(new Vector3(x, y, z), height);
+        }
+
+        public Entity PatrolHelicopterAtPlayer(Player player, float height = 10f)
+        {
+            return PatrolHelicopterAt(player.Location, height);
+        }
 
         public float GetGround(float x, float z)
         {

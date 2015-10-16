@@ -559,10 +559,10 @@ namespace Pluton.Patcher
             MethodDefinition method = hooksClass.GetMethod("PlayerHealthChangeEvent");
             int c = OnHealthChanged.Body.Instructions.Count - 1;
             ILProcessor iLProcessor = OnHealthChanged.Body.GetILProcessor();
-            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertAfter(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_0));
         }
 
         private static void PlayerClothingChanged()
