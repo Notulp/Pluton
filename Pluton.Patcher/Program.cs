@@ -186,26 +186,24 @@ namespace Pluton.Patcher
             MethodDefinition doorUse = hooksClass.GetMethod("DoorUse");
 
             ILProcessor iLC = close.Body.GetILProcessor();
-            for (int i = close.Body.Instructions.Count - 1; i > 3; i--)
-                close.Body.Instructions.RemoveAt(i);
+            close.Body.Instructions.Clear();
 
             ILProcessor iLO = open.Body.GetILProcessor();
-            for (int i = open.Body.Instructions.Count - 1; i > 3; i--)
-                open.Body.Instructions.RemoveAt(i);
+            open.Body.Instructions.Clear();
 
-            iLC.InsertAfter(close.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
-            iLC.InsertAfter(close.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
-            iLC.InsertAfter(close.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
-            iLC.InsertAfter(close.Body.Instructions[6], Instruction.Create(OpCodes.Ldc_I4_0));
-            iLC.InsertAfter(close.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
-            iLC.InsertAfter(close.Body.Instructions[8], Instruction.Create(OpCodes.Ret));
+            // iLC.InsertAfter(close.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
+            iLC.Append(Instruction.Create(OpCodes.Ldarg_0));
+            iLC.Append(Instruction.Create(OpCodes.Ldarg_1));
+            iLC.Append(Instruction.Create(OpCodes.Ldc_I4_0));
+            iLC.Append(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
+            iLC.Append(Instruction.Create(OpCodes.Ret));
 
-            iLO.InsertAfter(open.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
-            iLO.InsertAfter(open.Body.Instructions[4], Instruction.Create(OpCodes.Ldarg_0));
-            iLO.InsertAfter(open.Body.Instructions[5], Instruction.Create(OpCodes.Ldarg_1));
-            iLO.InsertAfter(open.Body.Instructions[6], Instruction.Create(OpCodes.Ldc_I4_1));
-            iLO.InsertAfter(open.Body.Instructions[7], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
-            iLO.InsertAfter(open.Body.Instructions[8], Instruction.Create(OpCodes.Ret));
+            // iLO.InsertAfter(open.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
+            iLO.Append(Instruction.Create(OpCodes.Ldarg_0));
+            iLO.Append(Instruction.Create(OpCodes.Ldarg_1));
+            iLO.Append(Instruction.Create(OpCodes.Ldc_I4_1));
+            iLO.Append(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
+            iLO.Append(Instruction.Create(OpCodes.Ret));
         }
 
         private static void GatherPatch()

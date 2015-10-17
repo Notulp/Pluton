@@ -564,8 +564,17 @@ namespace Pluton
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
         public static void DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
         {
+            if ((open && door.IsOpen()) || (!open && !door.IsOpen()))
+                return;
+
             DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
             OnDoorUse.OnNext(due);
+
+            if (!due.Allow) {
+                if (due.DenyReason != "")
+                    rpc.player.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), due.DenyReason));
+                return;
+            }
 
             bool doaction = true;
 
@@ -591,9 +600,6 @@ namespace Pluton
                 if (!open)
                     door.Invoke("UpdateLayer", door.closeDelay);
             }
-
-            if (due.DenyReason != "")
-                rpc.player.SendConsoleCommand("chat.add", 0, String.Format("{0}: {1}", Server.server_message_name.ColorText("fa5"), due.DenyReason));
         }
 
         // Construiction.Common.CreateConstruction()
