@@ -17,7 +17,7 @@ Pluton
   <img src='https://img.shields.io/github/issues/notulp/pluton.svg'></a>
 <a href='https://gitter.im/Notulp/Pluton'>
   <img src='https://badges.gitter.im/Join%20Chat.svg'></a>
-<a href='hhttp://forum.pluton-team.org/chat/'>
+<a href='http://forum.pluton-team.org/chat/'>
   <img src='https://img.shields.io/badge/IRC-JOIN_CHAT-lightgrey.svg'></a>
   
 
