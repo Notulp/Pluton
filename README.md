@@ -17,11 +17,18 @@ Pluton
   <img src='https://img.shields.io/github/issues/notulp/pluton.svg'></a>
 <a href='https://gitter.im/Notulp/Pluton'>
   <img src='https://badges.gitter.im/Join%20Chat.svg'></a>
+<a href='hhttp://forum.pluton-team.org/chat/'>
+  <img src='https://img.shields.io/badge/IRC-JOIN_CHAT-lightgrey.svg'></a>
   
 
 Pluton is a server mod for the active branch of the survival sandbox game Rust. By using our simple API, you can to easily change the gameplay drastically.
 
-[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [IRC](http://webchat.freenode.net?channels=%23pluton), [Compiling](http://forum.pluton-team.org/wiki/compiling/), [FAQ](http://forum.pluton-team.org/wiki/faq/)
+* [Homepage](http://pluton-team.org) 
+* [Forum](http://forum.pluton-team.org)
+* [Wiki](http://forum.pluton-team.org/wiki/index/)
+* [Binaries](http://dl.pluton-team.org)
+* [Compiling](http://forum.pluton-team.org/wiki/compiling/)
+* [FAQ](http://forum.pluton-team.org/wiki/faq/)
 
 
 Our sponsors:
