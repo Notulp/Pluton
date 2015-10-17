@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/4fc6QT8.png" alt="Pluton Icon">
+
 Pluton
 ======
 
