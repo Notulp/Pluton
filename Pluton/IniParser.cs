@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -173,13 +172,13 @@ namespace Pluton
             return defaultvalue;
         }
 
-        public int GetIntSetting(string section, string setting)
+        public bool GetBoolSetting(string section, string setting)
         {
-            int result = 0;
-            if (Int32.TryParse(this[section, setting], out result))
+            bool result = false;
+            if (Boolean.TryParse(this[section, setting], out result))
                 return result;
-            Logger.LogWarning($"[IniParser] [{section}] -> {setting} -> {this[section, setting]} cant be converted to Int32. ({FilePath})");
-            return 0;
+            Logger.LogWarning($"[IniParser] [{section}] -> {setting} -> {this[section, setting]} cant be converted to Boolean. ({FilePath})");
+            return false;
         }
 
         public bool GetBoolSetting(string section, string setting, bool defaultvalue)
@@ -190,13 +189,13 @@ namespace Pluton
             return defaultvalue;
         }
 
-        public bool GetBoolSetting(string section, string setting)
+        public int GetIntSetting(string section, string setting)
         {
-            bool result = false;
-            if (Boolean.TryParse(this[section, setting], out result))
+            int result = 0;
+            if (Int32.TryParse(this[section, setting], out result))
                 return result;
-            Logger.LogWarning($"[IniParser] [{section}] -> {setting} -> {this[section, setting]} cant be converted to Boolean. ({FilePath})");
-            return false;
+            Logger.LogWarning($"[IniParser] [{section}] -> {setting} -> {this[section, setting]} cant be converted to Int32. ({FilePath})");
+            return 0;
         }
 
         public int GetIntSetting(string section, string setting, int defaultvalue)
