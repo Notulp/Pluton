@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/4fc6QT8.png" alt="Pluton Icon">
+
 Pluton
 ======
 
@@ -13,66 +15,26 @@ Pluton
   <img src='https://img.shields.io/github/stars/notulp/pluton.svg'></a>
 <a href='https://github.com/Notulp/Pluton/issues'>
   <img src='https://img.shields.io/github/issues/notulp/pluton.svg'></a>
+<a href='https://gitter.im/Notulp/Pluton'>
+  <img src='https://badges.gitter.im/Join%20Chat.svg'></a>
+<a href='http://forum.pluton-team.org/chat/'>
+  <img src='https://img.shields.io/badge/IRC-JOIN_CHAT-lightgrey.svg'></a>
+  
 
-Pluton is a server mod for the active branch of the survival sandbox game Rust.
+Pluton is a server mod for the active branch of the survival sandbox game Rust. By using our simple API, you can to easily change the gameplay drastically.
 
-Get started:
-------------
-1. Grab the files.
-2. Download the server files from steamcmd with:
-
-  ```
-  app_update 258550 validate
-  ```
-3. Copy these files into the ref folder next to the 'Pluton' and 'Pluton.Patcher' folders
-
-  ```
-  Assembly-CSharp.dll
-  Assembly-CSharp-firstpass.dll
-  UnityEngine.dll
-  ```
-4. Compile Pluton and Pluton.Patcher
-5. Copy Pluton.Patcher and Mono.Cecil from Pluton.Patcher/bin/debug to the downloaded server's managed folder
-6. Copy Pluton.dll from Pluton/bin/debug to the downloaded server's managed folder
-7. You now have two options. Copy all files from Pluton/ref to Managed folder or selectively choose the files you want based on what you will be using:
-
-  ```
-  Required = System.Reactive.dll, System.Threading.dll, and Mono.Cecil.dll
-  Python = IronPython.Deps.dll
-  Javascript = Jint.dll
-  CSharp = mcs.exe
-  Lua = MoonSharp.Interpreter.dll
-  ```
-8. Run the Pluton.Patcher.exe inside the managed folder
-9. Copy Pluton.cfg from Pluton/ to %serverroot%/server/_your_server's_identity_/Pluton/
-10. Have fun!
-
-Q.A.
-----
-
-Q: Where the plugins go?
-
-A: Into: %publicfolder%/Plugins/_Plugin'sName_/_Plugin'sName.**_ (** is the plugin's extenison, .py for python, .js for javascript)
-
-
-Q: Which is the public folder?
-
-A: That's: %identityfolder%/Pluton.
-
-
-Q: Uhm, identityfolder?
-
-A: %serverroot%/server/_your_server's_identity_
+* [Homepage](http://pluton-team.org) 
+* [Forum](http://forum.pluton-team.org)
+* [Wiki](http://forum.pluton-team.org/wiki/index/)
+* [Binaries](http://dl.pluton-team.org)
+* [Compiling](http://forum.pluton-team.org/wiki/compiling/)
+* [FAQ](http://forum.pluton-team.org/wiki/faq/)
 
 
 Our sponsors:
 ------------
 
-[Streamlines Servers](http://www.streamline-servers.com)
-
-[FPS Players](http://fpsplayers.com)
-
-Links:
-------
-
-[Homepage](http://pluton-team.org), [Forum](http://forum.pluton-team.org), [Wiki](http://forum.pluton-team.org/wiki/index/), [IRC](http://webchat.freenode.net?channels=%23pluton)
+<a href="http://www.streamline-servers.com" alt="Streamline Servers">
+  <img src="https://i.imgur.com/ZlZ3vBN.png"></a>
+<a href="http://fpsplayers.com" alt="FPS Players">
+  <img src="http://i.imgur.com/z7OEC52.png"></a>
