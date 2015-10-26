@@ -2,814 +2,857 @@ using System;
 using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Pluton.Patcher.Reflection;
+using System.Linq;
 
 namespace Pluton.Patcher
 {
     class MainClass
     {
-        private static AssemblyDefinition plutonAssembly;
-        private static AssemblyDefinition rustAssembly;
-        private static TypeDefinition bNPC;
-        private static TypeDefinition bPlayer;
-        private static TypeDefinition codeLock;
-        private static TypeDefinition hooksClass;
-        private static TypeDefinition itemCrafter;
-        private static TypeDefinition pLoot;
+        public static AssemblyPatcher plutonAssembly;
+        public static AssemblyPatcher rustAssembly;
+        public static TypePatcher bNPC;
+        public static TypePatcher bPlayer;
+        public static TypePatcher codeLock;
+        public static TypePatcher hooksClass;
+        public static TypePatcher itemCrafter;
+        public static TypePatcher pLoot;
         public static string Version { get; } = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        static bool gendiffs = false;
+        static bool newAssCS = false;
 
         #region patches
 
         private static void BootstrapAttachPatch()
         {
-            // Call our AttachBootstrap from their, Bootstrap.Start()
-            TypeDefinition plutonBootstrap = plutonAssembly.MainModule.GetType("Pluton.Bootstrap");
-            TypeDefinition serverInit = rustAssembly.MainModule.GetType("Bootstrap");
-            MethodDefinition attachBootstrap = plutonBootstrap.GetMethod("AttachBootstrap");
-            MethodDefinition init = serverInit.GetMethod("Init_Config");
+            var initConfig = rustAssembly.GetType("Bootstrap").GetMethod("Init_Config");
+            var attachBootstrap = plutonAssembly.GetType("Pluton.Bootstrap").GetMethod("AttachBootstrap");
 
-            init.Body.GetILProcessor().InsertBefore(init.Body.Instructions[0], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(attachBootstrap)));
+            initConfig.InsertCallBefore(0, attachBootstrap);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + initConfig.FriendlyName + ".html", initConfig.PrintAndLink(attachBootstrap));
+        }
+
+        private static void ItemsLoadedPatch()
+        {
+            var initialize = rustAssembly.GetType("ItemManager").GetMethod("Initialize");
+            var itemsLoaded = hooksClass.GetMethod("ItemsLoaded");
+
+            initialize.InsertCallBeforeRet(itemsLoaded);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + initialize.FriendlyName + ".html", initialize.PrintAndLink(itemsLoaded));
         }
 
         private static void BeingHammeredPatch()
         {
-            TypeDefinition hammer = rustAssembly.MainModule.GetType("Hammer");
-            MethodDefinition doAttackShared = hammer.GetMethod("DoAttackShared");
-            MethodDefinition beingHammered = hooksClass.GetMethod("BeingHammered");
-            MethodDefinition ownerPlayer = rustAssembly.MainModule.GetType("HeldEntity").GetMethod("get_ownerPlayer");
+            var doAttackShared = rustAssembly.GetType("Hammer").GetMethod("DoAttackShared");
+            var getOwnerP = rustAssembly.GetType("HeldEntity").GetMethod("get_ownerPlayer");
 
-            CloneMethod(doAttackShared);
-            ILProcessor il = doAttackShared.Body.GetILProcessor();
-            il.InsertAfter(doAttackShared.Body.Instructions[11], Instruction.Create(OpCodes.Ldarg_1));
-            il.InsertAfter(doAttackShared.Body.Instructions[12], Instruction.Create(OpCodes.Ldarg_0));
-            il.InsertAfter(doAttackShared.Body.Instructions[13], Instruction.Create(OpCodes.Call, ownerPlayer));
-            il.InsertAfter(doAttackShared.Body.Instructions[14], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(beingHammered)));
+            var beingHammered = hooksClass.GetMethod("BeingHammered");
+
+            doAttackShared.InsertAfter(11, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertAfter(12, Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallAfter(13, getOwnerP)
+                .InsertCallAfter(14, beingHammered);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doAttackShared.FriendlyName + ".html", doAttackShared.PrintAndLink(beingHammered));
         }
 
         private static void ChatPatch()
         {
-            TypeDefinition chat = rustAssembly.MainModule.GetType("ConVar.Chat");
-            MethodDefinition say = chat.GetMethod("say");
-            MethodDefinition onchat = hooksClass.GetMethod("Chat");
+            var say = rustAssembly.GetType("ConVar.Chat").GetMethod("say");
+            var onchat = hooksClass.GetMethod("Chat");
 
-            CloneMethod(say);
-            ILProcessor il = say.Body.GetILProcessor();
-            il.InsertBefore(say.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
-            il.InsertBefore(say.Body.Instructions[1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onchat)));
-            il.InsertBefore(say.Body.Instructions[2], Instruction.Create(OpCodes.Ret));
+            say.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .AppendCall(onchat)
+                .Append(Instruction.Create(OpCodes.Ret));
+            
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + say.FriendlyName + ".html", say.PrintAndLink(onchat));
         }
 
         private static void ClientAuthPatch()
         {
-            TypeDefinition connAuth = rustAssembly.MainModule.GetType("ConnectionAuth");
-            MethodDefinition cAuth = hooksClass.GetMethod("ClientAuth");
-            MethodDefinition approve = connAuth.GetMethod("Approve");
+            var approve = rustAssembly.GetType("ConnectionAuth").GetMethod("Approve");
+            var onClientAuth = hooksClass.GetMethod("ClientAuth");
 
-            CloneMethod(approve);
-            approve.Body.Instructions.Clear();
-            approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            approve.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(cAuth)));
-            approve.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            approve.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(onClientAuth)
+                .Append(Instruction.Create(OpCodes.Ret));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + approve.FriendlyName + ".html", approve.PrintAndLink(onClientAuth));
         }
 
         private static void ClientConsoleCommandPatch()
         {
-            TypeDefinition consoleSystem = rustAssembly.MainModule.GetType("ConsoleSystem");
-            MethodDefinition onClientCmd = consoleSystem.GetMethod("OnClientCommand");
-            MethodDefinition onClientConsole = hooksClass.GetMethod("ClientConsoleCommand");
+            var onClientCommand = rustAssembly.GetType("ConsoleSystem").GetMethod("OnClientCommand");
+            var onClientConsoleHook = hooksClass.GetMethod("ClientConsoleCommand");
 
-            ILProcessor iLProcessor = onClientCmd.Body.GetILProcessor();
+            onClientCommand.RemoveRange(14, 19)
+                .InsertAfter(10, Instruction.Create(OpCodes.Ldloc_1))
+                .InsertAfter(11, Instruction.Create(OpCodes.Ldloc_0))
+                .InsertCallAfter(12, onClientConsoleHook);
 
-            for (int i = 19; i >= 14; i--)
-                iLProcessor.Body.Instructions.RemoveAt(i);
-
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[10], Instruction.Create(OpCodes.Ldloc_1));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[11], Instruction.Create(OpCodes.Ldloc_0));
-            iLProcessor.InsertAfter(onClientCmd.Body.Instructions[12], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onClientConsole)));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + onClientCommand.FriendlyName + ".html", onClientCommand.PrintAndLink(onClientConsoleHook));
         }
 
         private static void CombatEntityHurtPatch()
         {
-            TypeDefinition combatEnt = rustAssembly.MainModule.GetType("BaseCombatEntity");
-            MethodDefinition hurtHook = hooksClass.GetMethod("CombatEntityHurt");
+            var combatEnt = rustAssembly.GetType("BaseCombatEntity");
+            var onHurtHook = hooksClass.GetMethod("CombatEntityHurt");
 
-            foreach (var hurt in combatEnt.GetMethods()) {
-                if (hurt.Name == "Hurt") {
-                    if (hurt.Parameters[0].Name == "info") {
-                        hurt.Body.Instructions.Clear();
-                        hurt.Body.ExceptionHandlers.Clear();
-                        hurt.Body.Variables.Clear();
+            var hurt = combatEnt.GetMethod(methods => {
+                return (from method in methods
+                    where method.Name == "Hurt" &&
+                          method.Parameters[0].Name == "info"
+                    select method).First();
+            });
 
-                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
-                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(hurtHook)));
-                        hurt.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-                    }
-                }
-            }
+            hurt.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .Append(Instruction.Create(OpCodes.Ldarg_2))
+                .AppendCall(onHurtHook)
+                .Append(Instruction.Create(OpCodes.Ret));
+            
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + hurt.FriendlyName + ".html", hurt.PrintAndLink(onHurtHook));
         }
 
         private static void BuildingBlockDemolishedPatch()
         {
-            TypeDefinition BuildingBlock = rustAssembly.MainModule.GetType("BuildingBlock");
-            MethodDefinition DoDemolish = BuildingBlock.GetMethod("DoDemolish");
-            MethodDefinition DoImmediateDemolish = BuildingBlock.GetMethod("DoImmediateDemolish");
-            MethodDefinition method = hooksClass.GetMethod("BuildingPartDemolished");
+            var buildingBlock = rustAssembly.GetType("BuildingBlock");
+            var doDemolish = buildingBlock.GetMethod("DoDemolish");
+            var doImmediateDemolish = buildingBlock.GetMethod("DoImmediateDemolish");
 
-            CloneMethod(DoDemolish);
-            ILProcessor ilProcessor = DoDemolish.Body.GetILProcessor();
-            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
-            ilProcessor.InsertBefore(DoDemolish.Body.Instructions[DoDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            var bpDemolishedHook = hooksClass.GetMethod("BuildingPartDemolished");
 
-            CloneMethod(DoImmediateDemolish);
-            ILProcessor iilProcessor = DoImmediateDemolish.Body.GetILProcessor();
-            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
-            iilProcessor.InsertBefore(DoImmediateDemolish.Body.Instructions[DoImmediateDemolish.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
+            doDemolish.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(bpDemolishedHook);
+
+            doImmediateDemolish.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(bpDemolishedHook);
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doDemolish.FriendlyName + ".html", doDemolish.PrintAndLink(bpDemolishedHook));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doImmediateDemolish.FriendlyName + ".html", doImmediateDemolish.PrintAndLink(bpDemolishedHook));
         }
 
         private static void CraftingStartPatch()
         {
-            MethodDefinition craftit = itemCrafter.GetMethod("CraftItem");
-            MethodDefinition craftHook = hooksClass.GetMethod("PlayerStartCrafting");
+            var craftItem = rustAssembly.GetType("ItemCrafter").GetMethod("CraftItem");
+            var onPlayerStartCraftingHook = hooksClass.GetMethod("PlayerStartCrafting");
 
-            ILProcessor il = craftit.Body.GetILProcessor();
-            il.Body.Instructions.Clear();
+            craftItem.Clear()
+                .Append(Instruction.Create(OpCodes.Nop))
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg, craftItem.IlProc.Body.Method.Parameters[0]))
+                .Append(Instruction.Create(OpCodes.Ldarg, craftItem.IlProc.Body.Method.Parameters[1]))
+                .Append(Instruction.Create(OpCodes.Ldarg, craftItem.IlProc.Body.Method.Parameters[2]))
+                .Append(Instruction.Create(OpCodes.Ldarg, craftItem.IlProc.Body.Method.Parameters[3]))
+                .Append(Instruction.Create(OpCodes.Ldarg, craftItem.IlProc.Body.Method.Parameters[4]))
+                .AppendCall(onPlayerStartCraftingHook)
+                .Append(Instruction.Create(OpCodes.Ret));
 
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Nop));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[0]));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[1]));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[2]));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[3]));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg, il.Body.Method.Parameters[4]));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(craftHook)));
-            il.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + craftItem.FriendlyName + ".html", craftItem.PrintAndLink(onPlayerStartCraftingHook));
         }
 
         private static void DoPlacementPatch()
         {
-            TypeDefinition construction = rustAssembly.MainModule.GetType("Construction");
-            MethodDefinition createConstruction = construction.GetMethod("CreateConstruction");
-            MethodDefinition doPlacement = hooksClass.GetMethod("DoPlacement");
+            var createConstruction = rustAssembly.GetType("Construction").GetMethod("CreateConstruction");
+            var onPlacement = hooksClass.GetMethod("DoPlacement");
 
-            ILProcessor iLProcessor = createConstruction.Body.GetILProcessor();
-            iLProcessor.Body.Instructions.Clear();
+            createConstruction.Clear()
+                .Append(Instruction.Create(OpCodes.Nop))
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .Append(Instruction.Create(OpCodes.Ldarg_2))
+                .AppendCall(onPlacement)
+                .Append(Instruction.Create(OpCodes.Ret));
+                
 
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Nop));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doPlacement)));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + createConstruction.FriendlyName + ".html", createConstruction.PrintAndLink(onPlacement));
         }
 
         private static void DoorCodePatch()
         {
-            MethodDefinition codeUnlock = codeLock.GetMethod("UnlockWithCode");
-            MethodDefinition doorCode = hooksClass.GetMethod("DoorCode");
+            var unlockWithCode = rustAssembly.GetType("CodeLock").GetMethod("UnlockWithCode");
+            var onClientAuth = hooksClass.GetMethod("DoorCode");
 
-            codeUnlock.Body.Instructions.Clear();
-            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorCode)));
-            codeUnlock.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            unlockWithCode.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(onClientAuth)
+                .Append(Instruction.Create(OpCodes.Ret));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + unlockWithCode.FriendlyName + ".html", unlockWithCode.PrintAndLink(onClientAuth));
         }
 
         private static void DoorUsePatch()
         {
-            TypeDefinition door = rustAssembly.MainModule.GetType("Door");
-            MethodDefinition close = door.GetMethod("RPC_CloseDoor");
-            MethodDefinition open = door.GetMethod("RPC_OpenDoor");
-            MethodDefinition doorUse = hooksClass.GetMethod("DoorUse");
+            var door = rustAssembly.GetType("Door");
+            var close = door.GetMethod("RPC_CloseDoor");
+            var open = door.GetMethod("RPC_OpenDoor");
+            var doorUse = hooksClass.GetMethod("DoorUse");
 
-            ILProcessor iLC = close.Body.GetILProcessor();
-            close.Body.Instructions.Clear();
+            close.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .Append(Instruction.Create(OpCodes.Ldc_I4_0))
+                .AppendCall(doorUse)
+                .Append(Instruction.Create(OpCodes.Ret));
 
-            ILProcessor iLO = open.Body.GetILProcessor();
-            open.Body.Instructions.Clear();
+            open.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .Append(Instruction.Create(OpCodes.Ldc_I4_1))
+                .AppendCall(doorUse)
+                .Append(Instruction.Create(OpCodes.Ret));
 
-            // iLC.InsertAfter(close.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
-            iLC.Append(Instruction.Create(OpCodes.Ldarg_0));
-            iLC.Append(Instruction.Create(OpCodes.Ldarg_1));
-            iLC.Append(Instruction.Create(OpCodes.Ldc_I4_0));
-            iLC.Append(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
-            iLC.Append(Instruction.Create(OpCodes.Ret));
-
-            // iLO.InsertAfter(open.Body.Instructions[3], Instruction.Create(OpCodes.Nop));
-            iLO.Append(Instruction.Create(OpCodes.Ldarg_0));
-            iLO.Append(Instruction.Create(OpCodes.Ldarg_1));
-            iLO.Append(Instruction.Create(OpCodes.Ldc_I4_1));
-            iLO.Append(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(doorUse)));
-            iLO.Append(Instruction.Create(OpCodes.Ret));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + close.FriendlyName + ".html", close.PrintAndLink(doorUse));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + open.FriendlyName + ".html", open.PrintAndLink(doorUse));
         }
 
         private static void GatherPatch()
         {
-            TypeDefinition bRes = rustAssembly.MainModule.GetType("BaseResource");
-            MethodDefinition gather = bRes.GetMethod("OnAttacked");
-            MethodDefinition gatheringBR = hooksClass.GetMethod("GatheringBR");
+            var resAttacked = rustAssembly.GetType("BaseResource").GetMethod("OnAttacked");
+            var treeAttacked = rustAssembly.GetType("TreeEntity").GetMethod("OnAttacked");
 
-            TypeDefinition treeEnt = rustAssembly.MainModule.GetType("TreeEntity");
-            MethodDefinition gatherWood = treeEnt.GetMethod("OnAttacked");
-            MethodDefinition gatheringTree = hooksClass.GetMethod("GatheringTree");
+            var onGatheringResource = hooksClass.GetMethod("GatheringBR");
+            var onGatheringWood = hooksClass.GetMethod("GatheringTree");
 
-            gather.Body.Instructions.Clear();
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gatheringBR)));
-            gather.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
-
-            gatherWood.Body.Instructions.Clear();
-            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(gatheringTree)));
-            gatherWood.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            resAttacked.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(onGatheringResource)
+                .Append(Instruction.Create(OpCodes.Ret));
+            
+            treeAttacked.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(onGatheringWood)
+                .Append(Instruction.Create(OpCodes.Ret));
+            
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + resAttacked.FriendlyName + ".html", resAttacked.PrintAndLink(onGatheringResource));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + treeAttacked.FriendlyName + ".html", treeAttacked.PrintAndLink(onGatheringWood));
         }
 
         private static void NetworkableKillPatch()
         {
-            TypeDefinition baseNetworkable = rustAssembly.MainModule.GetType("BaseNetworkable");
-            MethodDefinition kill = baseNetworkable.GetMethod("Kill");
-            MethodDefinition networkableKill = hooksClass.GetMethod("NetworkableKill");
+            var networkableKill = rustAssembly.GetType("BaseNetworkable").GetMethod("Kill");
+            var onNetworkableKilled = hooksClass.GetMethod("NetworkableKill");
 
-            CloneMethod(kill);
-            ILProcessor il = kill.Body.GetILProcessor();
-            il.InsertAfter(kill.Body.Instructions[kill.Body.Instructions.Count - 13], Instruction.Create(OpCodes.Ldarg_0));
-            il.InsertAfter(kill.Body.Instructions[kill.Body.Instructions.Count - 13], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(networkableKill)));
+            networkableKill.InsertAfter(networkableKill.IlProc.Body.Instructions.Count - 13, Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallAfter(networkableKill.IlProc.Body.Instructions.Count - 13, onNetworkableKilled);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + networkableKill.FriendlyName + ".html", networkableKill.PrintAndLink(onNetworkableKilled));
         }
 
         private static void NPCDiedPatch()
         {
-            MethodDefinition npcdie = bNPC.GetMethod("OnKilled");
-            MethodDefinition npcDied = hooksClass.GetMethod("NPCDied");
+            var npcKilled = rustAssembly.GetType("BaseNPC").GetMethod("OnKilled");
+            var onNPCDied = hooksClass.GetMethod("NPCDied");
 
-            CloneMethod(npcdie);
-            ILProcessor iLProcessor = npcdie.Body.GetILProcessor();
-            iLProcessor.InsertBefore(npcdie.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(npcdie.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertAfter(npcdie.Body.Instructions[0x01], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(npcDied)));
+            npcKilled.InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBefore(1, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBefore(2, onNPCDied);
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + npcKilled.FriendlyName + ".html", npcKilled.PrintAndLink(onNPCDied));
         }
 
         private static void PlayerConnectedPatch()
         {
-            MethodDefinition bpInit = bPlayer.GetMethod("PlayerInit");
-            MethodDefinition playerConnected = hooksClass.GetMethod("PlayerConnected");
+            var basePlayerInit = rustAssembly.GetType("BasePlayer").GetMethod("PlayerInit");
+            var onPlayerConnected = hooksClass.GetMethod("PlayerConnected");
 
-            CloneMethod(bpInit);
-            ILProcessor iLProcessor = bpInit.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 29], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(bpInit.Body.Instructions[bpInit.Body.Instructions.Count - 29], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerConnected)));
+            basePlayerInit.InsertBefore(basePlayerInit.IlProc.Body.Instructions.Count - 29, Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBefore(basePlayerInit.IlProc.Body.Instructions.Count - 29, onPlayerConnected);
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + basePlayerInit.FriendlyName + ".html", basePlayerInit.PrintAndLink(onPlayerConnected));
         }
 
         private static void PlayerDiedPatch()
         {
-            MethodDefinition die = bPlayer.GetMethod("Die");
-            MethodDefinition playerDied = hooksClass.GetMethod("PlayerDied");
+            var basePlayerDie = rustAssembly.GetType("BasePlayer").GetMethod("Die");
+            var onPlayerDied = hooksClass.GetMethod("PlayerDied");
 
-            CloneMethod(die);
-            ILProcessor iLProcessor = die.Body.GetILProcessor();
-            iLProcessor.Body.Instructions[10] = Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDied));
+            basePlayerDie.RemoveAt(10)
+                .InsertCallBefore(10, onPlayerDied);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + basePlayerDie.FriendlyName + ".html", basePlayerDie.PrintAndLink(onPlayerDied));
         }
 
         private static void PlayerDisconnectedPatch()
         {
-            MethodDefinition bpDisconnected = bPlayer.GetMethod("OnDisconnected");
-            MethodDefinition playerDisconnected = hooksClass.GetMethod("PlayerDisconnected");
+            
+            var basePlayerDisconnected = rustAssembly.GetType("BasePlayer").GetMethod("OnDisconnected");
+            var onPlayerDisconnected = hooksClass.GetMethod("PlayerDisconnected");
 
-            CloneMethod(bpDisconnected);
-            ILProcessor iLProcessor = bpDisconnected.Body.GetILProcessor();
-            iLProcessor.InsertBefore(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.InsertAfter(bpDisconnected.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerDisconnected)));
+            basePlayerDisconnected.InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBefore(1, onPlayerDisconnected);
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + basePlayerDisconnected.FriendlyName + ".html", basePlayerDisconnected.PrintAndLink(onPlayerDisconnected));
         }
 
         private static void PlayerTakeRadiationPatch()
         {
-            MethodDefinition getRadiated = bPlayer.GetMethod("UpdateRadiation");
-            MethodDefinition playerTakeRAD = hooksClass.GetMethod("PlayerTakeRadiation");
+            
+            var updateRadiation = rustAssembly.GetType("BasePlayer").GetMethod("UpdateRadiation");
+            var onPlayerTakeRadiation = hooksClass.GetMethod("PlayerTakeRadiation");
 
-            getRadiated.Body.Instructions.Clear();
-            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(playerTakeRAD)));
-            getRadiated.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            updateRadiation.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(onPlayerTakeRadiation)
+                .Append(Instruction.Create(OpCodes.Ret));
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + onPlayerTakeRadiation.FriendlyName + ".html", onPlayerTakeRadiation.PrintAndLink(onPlayerTakeRadiation));
         }
 
         private static void PlayerStartLootingPatch()
         {
-            MethodDefinition plEntity = pLoot.GetMethod("StartLootingEntity");
-            MethodDefinition lootEntity = hooksClass.GetMethod("StartLootingEntity");
-            MethodDefinition plPlayer = pLoot.GetMethod("StartLootingPlayer");
-            MethodDefinition lootPlayer = hooksClass.GetMethod("StartLootingPlayer");
-            MethodDefinition plItem = pLoot.GetMethod("StartLootingItem");
-            MethodDefinition lootItem = hooksClass.GetMethod("StartLootingItem");
+            var plEntity = pLoot.GetMethod("StartLootingEntity");
+            var lootEntity = hooksClass.GetMethod("StartLootingEntity");
+            var plPlayer = pLoot.GetMethod("StartLootingPlayer");
+            var lootPlayer = hooksClass.GetMethod("StartLootingPlayer");
+            var plItem = pLoot.GetMethod("StartLootingItem");
+            var lootItem = hooksClass.GetMethod("StartLootingItem");
 
-            CloneMethod(plEntity);
-            ILProcessor eiLProcessor = plEntity.Body.GetILProcessor();
-            eiLProcessor.InsertBefore(plEntity.Body.Instructions[plEntity.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            eiLProcessor.InsertBefore(plEntity.Body.Instructions[plEntity.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootEntity)));
+            plEntity.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(lootEntity);
 
-            CloneMethod(plPlayer);
-            ILProcessor piLProcessor = plPlayer.Body.GetILProcessor();
-            piLProcessor.InsertBefore(plPlayer.Body.Instructions[plPlayer.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            piLProcessor.InsertBefore(plPlayer.Body.Instructions[plPlayer.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootPlayer)));
+            plPlayer.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(lootPlayer);
 
-            CloneMethod(plItem);
-            ILProcessor iiLProcessor = plItem.Body.GetILProcessor();
-            iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            iiLProcessor.InsertBefore(plItem.Body.Instructions[plItem.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(lootItem)));
+            plItem.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(lootItem);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + plEntity.FriendlyName + ".html", plEntity.PrintAndLink(lootEntity));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + plPlayer.FriendlyName + ".html", plPlayer.PrintAndLink(lootPlayer));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + plItem.FriendlyName + ".html", plItem.PrintAndLink(lootItem));
         }
 
         private static void RespawnPatch()
         {
-            MethodDefinition respawn = bPlayer.GetMethod("RespawnAt");
-            MethodDefinition spawnEvent = hooksClass.GetMethod("Respawn");
+            
+            var respawnAt = rustAssembly.GetType("BasePlayer").GetMethod("RespawnAt");
+            var respawn = hooksClass.GetMethod("Respawn");
 
-            CloneMethod(respawn);
-            respawn.Body.Instructions.Clear();
-            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
-            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(spawnEvent)));
-            respawn.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            respawnAt.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .Append(Instruction.Create(OpCodes.Ldarg_2))
+                .AppendCall(respawn)
+                .Append(Instruction.Create(OpCodes.Ret));
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + respawnAt.FriendlyName + ".html", respawnAt.PrintAndLink(respawn));
         }
 
         private static void ServerConsoleCommandPatch()
         {
-            TypeDefinition consoleSystem = rustAssembly.MainModule.GetType("ConsoleSystem");
-            foreach (var i in consoleSystem.GetNestedType("SystemRealm").GetMethods()) {
-                if (i.Parameters.Count == 3 && i.Name == "Normal") {
-                    MethodDefinition onServerCmd = i;
-                    MethodDefinition onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
+            var consoleSystemRealm = rustAssembly.GetType("ConsoleSystem").GetNestedType("SystemRealm");
+            var serverCmd = consoleSystemRealm.GetMethod(methods => {
+                return (from method in methods
+                    where method.Parameters.Count == 3 && method.Name == "Normal"
+                    select method).FirstOrDefault();
+            });
+            var onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
 
-                    ILProcessor iLProcessor = onServerCmd.Body.GetILProcessor();
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[12], Instruction.Create(OpCodes.Ldloc_1));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[13], Instruction.Create(OpCodes.Ldarg_2));
-                    iLProcessor.InsertAfter(iLProcessor.Body.Instructions[14], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerConsole)));
+            serverCmd.InsertAfter(12, Instruction.Create(OpCodes.Ldloc_1));
+            serverCmd.InsertAfter(13, Instruction.Create(OpCodes.Ldloc_2));
+            serverCmd.InsertCallAfter(14, onServerConsole);
 
-                }
-            }
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + serverCmd.FriendlyName + ".html", serverCmd.PrintAndLink(onServerConsole));
         }
 
         private static void ShootEvent()
         {
-            TypeDefinition BaseProjectile = rustAssembly.MainModule.GetType("BaseProjectile");
-            MethodDefinition CLProject = BaseProjectile.GetMethod("CLProject");
-            MethodDefinition method = hooksClass.GetMethod("OnShoot");
-            CloneMethod(CLProject);
+            var baseProjCLProject = rustAssembly.GetType("BaseProjectile").GetMethod("CLProject");
+            var onShoot = hooksClass.GetMethod("OnShoot");
 
-            ILProcessor iLProcessor = CLProject.Body.GetILProcessor();
-            iLProcessor.InsertBefore(CLProject.Body.Instructions[0], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(CLProject.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(CLProject.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+            baseProjCLProject.InsertCallBefore(0, onShoot)
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + baseProjCLProject.FriendlyName + ".html", baseProjCLProject.PrintAndLink(onShoot));
         }
 
         private static void ItemUsed()
         {
-            TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
-            MethodDefinition UseItem = Item.GetMethod("UseItem");
-            MethodDefinition method = hooksClass.GetMethod("ItemUsed");
-            CloneMethod(UseItem);
+            var useItem = rustAssembly.GetType("Item").GetMethod("UseItem");
+            var onItemUsed = hooksClass.GetMethod("ItemUsed");
 
-            ILProcessor iLProcessor = UseItem.Body.GetILProcessor();
-            iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(UseItem.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+            useItem.InsertCallBefore(0, onItemUsed)
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + useItem.FriendlyName + ".html", useItem.PrintAndLink(onItemUsed));
         }
 
         private static void Mining()
         {
-            TypeDefinition MiningQuarry = rustAssembly.MainModule.GetType("MiningQuarry");
-            MethodDefinition ProcessResources = MiningQuarry.GetMethod("ProcessResources");
-            MethodDefinition method = hooksClass.GetMethod("ProcessResources");
-            CloneMethod(ProcessResources);
+            var processResource = rustAssembly.GetType("MiningQuarry").GetMethod("ProcessResources");
+            var processResourceHook = hooksClass.GetMethod("ProcessResources");
 
-            int Position = ProcessResources.Body.Instructions.Count - 6;
-            ILProcessor iLProcessor = ProcessResources.Body.GetILProcessor();
-            iLProcessor.InsertBefore(ProcessResources.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(ProcessResources.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            processResource.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(processResourceHook);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + processResource.FriendlyName + ".html", processResource.PrintAndLink(processResourceHook));
         }
 
         private static void WeaponThrown()
         {
-            TypeDefinition ThrownWeapon = rustAssembly.MainModule.GetType("ThrownWeapon");
-            MethodDefinition DoThrow = ThrownWeapon.GetMethod("DoThrow");
-            MethodDefinition method = hooksClass.GetMethod("DoThrow");
-            CloneMethod(DoThrow);
+            var doThrow = rustAssembly.GetType("ThrownWeapon").GetMethod("DoThrow");
+            var onThrowing = hooksClass.GetMethod("DoThrow");
 
-            int Position = DoThrow.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = DoThrow.Body.GetILProcessor();
-            iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(DoThrow.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            doThrow.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(onThrowing);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doThrow.FriendlyName + ".html", doThrow.PrintAndLink(onThrowing));
         }
 
         private static void RocketShootEvent()
         {
-            TypeDefinition BaseLauncher = rustAssembly.MainModule.GetType("BaseLauncher");
-            MethodDefinition SV_Launch = BaseLauncher.GetMethod("SV_Launch");
-            MethodDefinition method = hooksClass.GetMethod("OnRocketShoot");
-            CloneMethod(SV_Launch);
+            var baseLauncherSVLaunch = rustAssembly.GetType("BaseLauncher").GetMethod("SV_Launch");
+            var onRocketShoot = hooksClass.GetMethod("OnRocketShoot");
 
-            ILProcessor iLProcessor = SV_Launch.Body.GetILProcessor();
-            int Position = SV_Launch.Body.Instructions.Count - 1;
-            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldloc_S, SV_Launch.Body.Variables[7]));
-            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(SV_Launch.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            baseLauncherSVLaunch.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldloc_S, baseLauncherSVLaunch.IlProc.Body.Variables[7]))
+                .InsertCallBeforeRet(onRocketShoot);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + baseLauncherSVLaunch.FriendlyName + ".html", baseLauncherSVLaunch.PrintAndLink(onRocketShoot));
         }
 
         private static void ConsumeFuel()
         {
-            TypeDefinition ThrownWeapon = rustAssembly.MainModule.GetType("BaseOven");
-            MethodDefinition ConsumeFuel = ThrownWeapon.GetMethod("ConsumeFuel");
-            MethodDefinition method = hooksClass.GetMethod("ConsumeFuel");
-            CloneMethod(ConsumeFuel);
+            var consumeFuel = rustAssembly.GetType("BaseOven").GetMethod("ConsumeFuel");
+            var onConsumeFuel = hooksClass.GetMethod("ConsumeFuel");
 
-            ILProcessor iLProcessor = ConsumeFuel.Body.GetILProcessor();
-            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(ConsumeFuel.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+            consumeFuel.InsertCallBefore(0, onConsumeFuel)
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_2))
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + consumeFuel.FriendlyName + ".html", consumeFuel.PrintAndLink(onConsumeFuel));
         }
 
         private static void ItemPickup()
         {
-            TypeDefinition CollectibleEntity = rustAssembly.MainModule.GetType("CollectibleEntity");
-            MethodDefinition Pickup = CollectibleEntity.GetMethod("Pickup");
-            MethodDefinition method = hooksClass.GetMethod("Pickup");
-            CloneMethod(Pickup);
+            var pickupCollectable = rustAssembly.GetType("CollectibleEntity").GetMethod("Pickup");
+            var method = hooksClass.GetMethod("Pickup");
 
-            int Position = Pickup.Body.Instructions.Count - 36;
-            ILProcessor iLProcessor = Pickup.Body.GetILProcessor();
-            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position],
-                Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position],
-                Instruction.Create(OpCodes.Ldloc_S, Pickup.Body.Variables[3]));
-            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(Pickup.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            int Position = pickupCollectable.IlProc.Body.Instructions.Count - 36;
+            pickupCollectable.InsertCallBefore(Position, method)
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldloc_S, pickupCollectable.IlProc.Body.Variables[3]))
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + pickupCollectable.FriendlyName + ".html", pickupCollectable.PrintAndLink(method));
         }
 
         private static void FieldsUpdate()
         {
-            bPlayer.GetField("buildingPrivlidges").SetPublic(true);
+            bPlayer.typeDefinition.GetField("buildingPrivlidges").SetPublic(true);
         }
 
         private static void PlayerSleep()
         {
-            MethodDefinition StartSleeping = bPlayer.GetMethod("StartSleeping");
-            MethodDefinition method = hooksClass.GetMethod("PlayerSleep");
+            var startSleeping = rustAssembly.GetType("BasePlayer").GetMethod("StartSleeping");
+            var onPlayerSleep = hooksClass.GetMethod("PlayerSleep");
 
-            int Position = StartSleeping.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = StartSleeping.Body.GetILProcessor();
-            iLProcessor.InsertBefore(StartSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(StartSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            startSleeping.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(onPlayerSleep);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + startSleeping.FriendlyName + ".html", startSleeping.PrintAndLink(onPlayerSleep));
         }
 
         private static void PlayerWakeUp()
         {
-            MethodDefinition EndSleeping = bPlayer.GetMethod("EndSleeping");
-            MethodDefinition method = hooksClass.GetMethod("PlayerWakeUp");
+            var endSleeping = rustAssembly.GetType("BasePlayer").GetMethod("EndSleeping");
+            var onPlayerWakeUp = hooksClass.GetMethod("PlayerWakeUp");
 
-            int Position = EndSleeping.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = EndSleeping.Body.GetILProcessor();
-            iLProcessor.InsertBefore(EndSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(EndSleeping.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            endSleeping.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(onPlayerWakeUp);
+                
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + endSleeping.FriendlyName + ".html", endSleeping.PrintAndLink(onPlayerWakeUp));
         }
 
         private static void PlayerLoaded()
         {
-            MethodDefinition EnterGame = bPlayer.GetMethod("EnterGame");
-            MethodDefinition method = hooksClass.GetMethod("PlayerLoaded");
+            var enterGame = rustAssembly.GetType("BasePlayer").GetMethod("EnterGame");
+            var onPlayerLoaded = hooksClass.GetMethod("PlayerLoaded");
 
-            int Position = EnterGame.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = EnterGame.Body.GetILProcessor();
-            iLProcessor.InsertBefore(EnterGame.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(EnterGame.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            enterGame.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(onPlayerLoaded);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + enterGame.FriendlyName + ".html", enterGame.PrintAndLink(onPlayerLoaded));
         }
 
         private static void PlayerWounded()
         {
-            MethodDefinition StartWounded = bPlayer.GetMethod("StartWounded");
-            MethodDefinition method = hooksClass.GetMethod("PlayerWounded");
+            var basePlayerWound = rustAssembly.GetType("BasePlayer").GetMethod("StartWounded");
+            var onPlayerWounded = hooksClass.GetMethod("PlayerWounded");
 
-            int Position = StartWounded.Body.Instructions.Count - 1;
-            ILProcessor ilProcessor = StartWounded.Body.GetILProcessor();
-            ilProcessor.InsertBefore(StartWounded.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            ilProcessor.InsertBefore(StartWounded.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            basePlayerWound.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(onPlayerWounded);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + basePlayerWound.FriendlyName + ".html", basePlayerWound.PrintAndLink(onPlayerWounded));
         }
 
         private static void PlayerAssisted()
         {
-            MethodDefinition WoundAssist = bPlayer.GetMethod("WoundAssist");
-            MethodDefinition method = hooksClass.GetMethod("PlayerAssisted");
+            var woundAssist = rustAssembly.GetType("BasePlayer").GetMethod("WoundAssist");
+            var onPlayerAssisted = hooksClass.GetMethod("PlayerAssisted");
 
-            int Position = WoundAssist.Body.Instructions.Count - 1;
-            ILProcessor ilProcessor = WoundAssist.Body.GetILProcessor();
-            ilProcessor.InsertBefore(WoundAssist.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            ilProcessor.InsertBefore(WoundAssist.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            woundAssist.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(onPlayerAssisted);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + woundAssist.FriendlyName + ".html", woundAssist.PrintAndLink(onPlayerAssisted));
         }
 
         private static void ItemRepaired()
         {
-            TypeDefinition RepairBench = rustAssembly.MainModule.GetType("RepairBench");
-            MethodDefinition RepairItem = RepairBench.GetMethod("RepairItem");
-            MethodDefinition method = hooksClass.GetMethod("ItemRepaired");
+            var repairItem = rustAssembly.GetType("RepairBench").GetMethod("RepairItem");
+            var onItemRepaired = hooksClass.GetMethod("ItemRepaired");
 
-            int Position = RepairItem.Body.Instructions.Count - 1;
-            ILProcessor ilProcessor = RepairItem.Body.GetILProcessor();
-            ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            ilProcessor.InsertBefore(RepairItem.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            repairItem.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(onItemRepaired);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + repairItem.FriendlyName + ".html", repairItem.PrintAndLink(onItemRepaired));
         }
 
         private static void PlayerSyringeSelf()
         {
-            TypeDefinition SyringeWeapon = rustAssembly.MainModule.GetType("SyringeWeapon");
-            MethodDefinition InjectedSelf = SyringeWeapon.GetMethod("InjectedSelf");
-            MethodDefinition method = hooksClass.GetMethod("PlayerSyringeSelf");
+            var syringeSelf = rustAssembly.GetType("SyringeWeapon").GetMethod("InjectedSelf");
+            var onPlayerSyringeSelf = hooksClass.GetMethod("PlayerSyringeSelf");
 
-            int Position = InjectedSelf.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = InjectedSelf.Body.GetILProcessor();
-            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(InjectedSelf.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            syringeSelf.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(onPlayerSyringeSelf);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + syringeSelf.FriendlyName + ".html", syringeSelf.PrintAndLink(onPlayerSyringeSelf));
         }
 
         private static void PlayerSyringeOther()
         {
-            TypeDefinition SyringeWeapon = rustAssembly.MainModule.GetType("SyringeWeapon");
-            MethodDefinition InjectedOther = SyringeWeapon.GetMethod("InjectedOther");
-            MethodDefinition method = hooksClass.GetMethod("PlayerSyringeOther");
+            var syringeOther = rustAssembly.GetType("SyringeWeapon").GetMethod("InjectedOther");
+            var onPlayerSyringeOther = hooksClass.GetMethod("PlayerSyringeOther");
 
-            int Position = InjectedOther.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = InjectedOther.Body.GetILProcessor();
-            iLProcessor.InsertBefore(InjectedOther.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(InjectedOther.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(InjectedOther.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            syringeOther.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(onPlayerSyringeOther);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + syringeOther.FriendlyName + ".html", syringeOther.PrintAndLink(onPlayerSyringeOther));
         }
 
         private static void PlayerHealthChange()
         {
-            MethodDefinition OnHealthChanged = bPlayer.GetMethod("OnHealthChanged");
-            MethodDefinition method = hooksClass.GetMethod("PlayerHealthChangeEvent");
-            int c = OnHealthChanged.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = OnHealthChanged.Body.GetILProcessor();
-            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_2));
-            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(OnHealthChanged.Body.Instructions[c], Instruction.Create(OpCodes.Ldarg_0));
+            var hpChanged = rustAssembly.GetType("BasePlayer").GetMethod("OnHealthChanged");
+            var onPlayerhpChanged = hooksClass.GetMethod("PlayerHealthChangeEvent");
+
+            hpChanged.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_2))
+                .InsertCallBeforeRet(onPlayerhpChanged);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + hpChanged.FriendlyName + ".html", hpChanged.PrintAndLink(onPlayerhpChanged));
         }
 
         private static void PlayerClothingChanged()
         {
-            TypeDefinition PlayerInventory = rustAssembly.MainModule.GetType("PlayerInventory");
-            MethodDefinition OnClothingChanged = PlayerInventory.GetMethod("OnClothingChanged");
-            MethodDefinition method = hooksClass.GetMethod("PlayerClothingChanged");
+            var onClothingChanged = rustAssembly.GetType("PlayerInventory").GetMethod("OnClothingChanged");
+            var onPlayerClothingChanged = hooksClass.GetMethod("PlayerClothingChanged");
 
-            int Position = OnClothingChanged.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = OnClothingChanged.Body.GetILProcessor();
-            iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(OnClothingChanged.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            onClothingChanged.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertCallBeforeRet(onPlayerClothingChanged);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + onClothingChanged.FriendlyName + ".html", onClothingChanged.PrintAndLink(onPlayerClothingChanged));
         }
 
         private static void InventoryModificationPatch()
         {
-            TypeDefinition ItemContainer = rustAssembly.MainModule.GetType("ItemContainer");
-            MethodDefinition Insert = ItemContainer.GetMethod("Insert");
-            MethodDefinition Remove = ItemContainer.GetMethod("Remove");
-            MethodDefinition method = hooksClass.GetMethod("ItemAdded");
-            MethodDefinition method2 = hooksClass.GetMethod("ItemRemoved");
+            var ItemContainer = rustAssembly.GetType("ItemContainer");
+            var Insert = ItemContainer.GetMethod("Insert");
+            var Remove = ItemContainer.GetMethod("Remove");
+            var method = hooksClass.GetMethod("ItemAdded");
+            var method2 = hooksClass.GetMethod("ItemRemoved");
 
-            int Position = Insert.Body.Instructions.Count - 2;
-            int Position2 = Remove.Body.Instructions.Count - 2;
+            int Position = Insert.IlProc.Body.Instructions.Count - 2;
+            int Position2 = Remove.IlProc.Body.Instructions.Count - 2;
 
-            ILProcessor iLProcessor = Insert.Body.GetILProcessor();
-            iLProcessor.InsertBefore(Insert.Body.Instructions[Position],
-                Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(Insert.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(Insert.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            Insert.InsertCallBefore(Position, method)
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_0));
 
-            iLProcessor = Remove.Body.GetILProcessor();
-            iLProcessor.InsertBefore(Remove.Body.Instructions[Position2],
-                Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method2)));
-            iLProcessor.InsertBefore(Remove.Body.Instructions[Position2], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(Remove.Body.Instructions[Position2], Instruction.Create(OpCodes.Ldarg_0));
+            Remove.InsertCallBefore(Position2, method2)
+                .InsertBefore(Position2, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(Position2, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + Insert.FriendlyName + ".html", Insert.PrintAndLink(method));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + Remove.FriendlyName + ".html", Remove.PrintAndLink(method2));
         }
 
         private static void ItemLoseCondition()
         {
-            TypeDefinition Item = rustAssembly.MainModule.GetType("Item");
-            MethodDefinition LoseCondition = Item.GetMethod("LoseCondition");
-            MethodDefinition method = hooksClass.GetMethod("ItemLoseCondition");
-            CloneMethod(LoseCondition);
+            var loseCondition = rustAssembly.GetType("Item").GetMethod("LoseCondition");
+            var onItemLoseCondition = hooksClass.GetMethod("ItemLoseCondition");
 
-            ILProcessor iLProcessor = LoseCondition.Body.GetILProcessor();
-            int Position = LoseCondition.Body.Instructions.Count - 10;
-            iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.InsertBefore(LoseCondition.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            int Position = loseCondition.IlProc.Body.Instructions.Count - 10;
+            loseCondition.InsertCallBefore(Position, onItemLoseCondition)
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + loseCondition.FriendlyName + ".html", loseCondition.PrintAndLink(onItemLoseCondition));
         }
 
         private static void LandmineArmed()
         {
-            TypeDefinition Landmine = rustAssembly.MainModule.GetType("Landmine");
-            MethodDefinition Arm = Landmine.GetMethod("Arm");
-            MethodDefinition method = hooksClass.GetMethod("LandmineArmed");
+            var armLandmine = rustAssembly.GetType("Landmine").GetMethod("Arm");
+            var onLandmineArmed = hooksClass.GetMethod("LandmineArmed");
 
-            int Position = Arm.Body.Instructions.Count - 1;
-            ILProcessor iLProcessor = Arm.Body.GetILProcessor();
-            iLProcessor.InsertBefore(Arm.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(Arm.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            armLandmine.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertCallBeforeRet(onLandmineArmed);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + armLandmine.FriendlyName + ".html", armLandmine.PrintAndLink(onLandmineArmed));
         }
 
         private static void LandmineExploded()
         {
-            TypeDefinition Landmine = rustAssembly.MainModule.GetType("Landmine");
-            MethodDefinition Explode = Landmine.GetMethod("Explode");
-            MethodDefinition method = hooksClass.GetMethod("LandmineExploded");
+            var landmineExplode = rustAssembly.GetType("Landmine").GetMethod("Explode");
+            var onLandmineExploded = hooksClass.GetMethod("LandmineExploded");
 
-            int Position = Explode.Body.Instructions.Count - 6;
-            ILProcessor iLProcessor = Explode.Body.GetILProcessor();
-            iLProcessor.InsertBefore(Explode.Body.Instructions[Position], Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-            iLProcessor.InsertBefore(Explode.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));
+            int Position = landmineExplode.IlProc.Body.Instructions.Count - 6;
+            landmineExplode.InsertCallBefore(Position, onLandmineExploded)
+                .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_0));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + landmineExplode.FriendlyName + ".html", landmineExplode.PrintAndLink(onLandmineExploded));
         }
 
         private static void LandmineTriggered()
         {
-            TypeDefinition Landmine = rustAssembly.MainModule.GetType("Landmine");
-            MethodDefinition Trigger = Landmine.GetMethod("Trigger");
-            MethodDefinition method = hooksClass.GetMethod("LandmineTriggered");
+            var landmineTrigger = rustAssembly.GetType("Landmine").GetMethod("Trigger");
+            var onLandmineTriggered = hooksClass.GetMethod("LandmineTriggered");
 
-            ILProcessor iLProcessor = Trigger.Body.GetILProcessor();
+            landmineTrigger.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(onLandmineTriggered)
+                .Append(Instruction.Create(OpCodes.Ret));
 
-            iLProcessor.Body.Instructions.Clear();
-
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Callvirt, rustAssembly.MainModule.Import(method)));
-
-            iLProcessor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + landmineTrigger.FriendlyName + ".html", landmineTrigger.PrintAndLink(onLandmineTriggered));
         }
 
         private static void ServerInitPatch()
         {
-            TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
-            MethodDefinition serverInit = servermgr.GetMethod("Initialize");
-            MethodDefinition onServerInit = hooksClass.GetMethod("ServerInit");
+            var srvMgrInit = rustAssembly.GetType("ServerMgr").GetMethod("Initialize");
+            var onServerInit = hooksClass.GetMethod("ServerInit");
 
-            CloneMethod(serverInit);
-            ILProcessor il = serverInit.Body.GetILProcessor();
-            il.InsertBefore(serverInit.Body.Instructions[serverInit.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerInit)));
+            srvMgrInit.InsertCallBeforeRet(onServerInit);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + srvMgrInit.FriendlyName + ".html", srvMgrInit.PrintAndLink(onServerInit));
         }
 
         private static void ServerSavedPatch()
         {
-            TypeDefinition saverestore = rustAssembly.MainModule.GetType("SaveRestore");
-            MethodDefinition serverSaved = saverestore.GetMethod("DoAutomatedSave");
-            MethodDefinition onServerSaved = hooksClass.GetMethod("ServerSaved");
+            var doAutomatedSave = rustAssembly.GetType("SaveRestore").GetMethod("DoAutomatedSave");
+            var onServerSaved = hooksClass.GetMethod("ServerSaved");
 
-            CloneMethod(serverSaved);
-            ILProcessor il = serverSaved.Body.GetILProcessor();
-            il.InsertBefore(serverSaved.Body.Instructions[serverSaved.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onServerSaved)));
+            doAutomatedSave.InsertCallBeforeRet(onServerSaved);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doAutomatedSave.FriendlyName + ".html", doAutomatedSave.PrintAndLink(onServerSaved));
         }
 
         private static void ServerShutdownPatch()
         {
-            TypeDefinition serverMGR = rustAssembly.MainModule.GetType("ServerMgr");
-            MethodDefinition disable = serverMGR.GetMethod("OnDisable");
-            MethodDefinition shutdown = hooksClass.GetMethod("ServerShutdown");
+            var srvMrgDisable = rustAssembly.GetType("ServerMgr").GetMethod("OnDisable");
+            var onServerShutdown = hooksClass.GetMethod("ServerShutdown");
 
-            CloneMethod(disable);
-            ILProcessor iLProcessor = disable.Body.GetILProcessor();
-            iLProcessor.InsertBefore(disable.Body.Instructions[0x00], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(shutdown)));
+            srvMrgDisable.InsertCallBeforeRet(onServerShutdown);
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + srvMrgDisable.FriendlyName + ".html", srvMrgDisable.PrintAndLink(onServerShutdown));
         }
 
         private static void SetModdedPatch()
         {
-            TypeDefinition servermgr = rustAssembly.MainModule.GetType("ServerMgr");
-            MethodDefinition servUpdate = servermgr.GetMethod("UpdateServerInformation");
-            MethodDefinition setModded = hooksClass.GetMethod("SetModded");
+            var srvMgrUpdateInfo = rustAssembly.GetType("ServerMgr").GetMethod("UpdateServerInformation");
+            var setModded = hooksClass.GetMethod("SetModded");
 
-            servUpdate.Body.Instructions.Clear();
-            servUpdate.Body.ExceptionHandlers.Clear();
-            servUpdate.Body.Variables.Clear();
+            srvMgrUpdateInfo.Clear();
 
-            servUpdate.Body.Instructions.Add(Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(setModded)));
-            servUpdate.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+            setModded.AppendCall(setModded)
+                .Append(Instruction.Create(OpCodes.Ret));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + srvMgrUpdateInfo.FriendlyName + ".html", srvMgrUpdateInfo.PrintAndLink(setModded));
         }
 
         private static void GiveItemsPatch()
         {
-            TypeDefinition disp = rustAssembly.MainModule.GetType("ResourceDispenser");
-            //TypeDefinition entComp = rustAssembly.MainModule.GetType("EntityComponent`1");
-            MethodDefinition giveFromItem = disp.GetMethod("GiveResourceFromItem");
-            //FieldReference fromEnt = entComp.GetField("baseEntity");
+            var giveResFromItem = rustAssembly.GetType("ResourceDispenser").GetMethod("GiveResourceFromItem");
+            var onGather = hooksClass.GetMethod("Gathering");
 
-            MethodDefinition onGather = hooksClass.GetMethod("Gathering");
+            int iCount = giveResFromItem.IlProc.Body.Instructions.Count;
+            giveResFromItem.RemoveRange(iCount - 16, iCount - 1);
 
-            ILProcessor il = giveFromItem.Body.GetILProcessor();
-            int count = il.Body.Instructions.Count;
-            for (int i = count - 1; i > count - 16; i--) {
-                il.Body.Instructions.RemoveAt(i);
-            }
-            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_0));
-            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_1));
-            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldarg_2));
-            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ldloc_S, il.Body.Variables[6]));
-            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Call, rustAssembly.MainModule.Import(onGather)));
-            il.InsertAfter(il.Body.Instructions[il.Body.Instructions.Count - 1], Instruction.Create(OpCodes.Ret));
+            giveResFromItem.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_2))
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ldloc_S, giveResFromItem.IlProc.Body.Variables[6]))
+                .InsertCallBeforeRet(onGather)
+                .InsertBeforeRet(Instruction.Create(OpCodes.Ret));
+            
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + giveResFromItem.FriendlyName + ".html", giveResFromItem.PrintAndLink(onGather));
         }
 
         #endregion
 
-        // from fougerite.patcher
-        private static MethodDefinition CloneMethod(MethodDefinition orig)
-        {
-            MethodDefinition definition = new MethodDefinition(orig.Name + "Original", orig.Attributes, orig.ReturnType);
-            foreach (VariableDefinition definition2 in orig.Body.Variables) {
-                definition.Body.Variables.Add(definition2);
-            }
-            foreach (ParameterDefinition definition3 in orig.Parameters) {
-                definition.Parameters.Add(definition3);
-            }
-            foreach (Instruction instruction in orig.Body.Instructions) {
-                definition.Body.Instructions.Add(instruction);
-            }
-            return definition;
-        }
-
         private static void PatchASMCSharp()
         {
-            BootstrapAttachPatch();
+            try {
+                BootstrapAttachPatch();
 
-            ChatPatch();
-            ClientAuthPatch();
-            BeingHammeredPatch();
-            BuildingBlockDemolishedPatch();
-            CombatEntityHurtPatch();
-            CraftingStartPatch();
-            ConsumeFuel();
+                ChatPatch();
+                ClientAuthPatch();
+                BeingHammeredPatch();
+                BuildingBlockDemolishedPatch();
+                CombatEntityHurtPatch();
+                CraftingStartPatch();
+                ConsumeFuel();
 
-            DoPlacementPatch();
-            DoorCodePatch();
-            DoorUsePatch();
+                DoPlacementPatch();
+                DoorCodePatch();
+                DoorUsePatch();
 
-            ItemPickup();
-            ItemUsed();
-            ItemRepaired();
-            ItemLoseCondition();
+                ItemPickup();
+                ItemUsed();
+                ItemRepaired();
+                ItemLoseCondition();
 
-            LandmineArmed();
-            LandmineExploded();
-            LandmineTriggered();
+                LandmineArmed();
+                LandmineExploded();
+                LandmineTriggered();
 
-            FieldsUpdate();
+                FieldsUpdate();
 
-            GiveItemsPatch();
+                GiveItemsPatch();
 
-            PlayerConnectedPatch();
-            PlayerDisconnectedPatch();
-            PlayerStartLootingPatch();
-            PlayerTakeRadiationPatch();
-            PlayerDiedPatch();
-            PlayerSleep();
-            PlayerWakeUp();
-            PlayerLoaded();
-            PlayerWounded();
-            PlayerAssisted();
-            PlayerSyringeSelf();
-            PlayerSyringeOther();
-            PlayerClothingChanged();
-            PlayerHealthChange();
+                PlayerConnectedPatch();
+                PlayerDisconnectedPatch();
+                PlayerStartLootingPatch();
+                PlayerTakeRadiationPatch();
+                PlayerDiedPatch();
+                PlayerSleep();
+                PlayerWakeUp();
+                PlayerLoaded();
+                PlayerWounded();
+                PlayerAssisted();
+                PlayerSyringeSelf();
+                PlayerSyringeOther();
+                PlayerClothingChanged();
+                PlayerHealthChange();
 
-            InventoryModificationPatch();
+                InventoryModificationPatch();
 
-            NetworkableKillPatch();
+                NetworkableKillPatch();
 
-            NPCDiedPatch();
+                NPCDiedPatch();
 
-            RespawnPatch();
-            RocketShootEvent();
+                RespawnPatch();
+                RocketShootEvent();
 
-            ServerShutdownPatch();
-            ServerSavedPatch();
-            ServerInitPatch();
-            SetModdedPatch();
+                ServerShutdownPatch();
+                ServerSavedPatch();
+                ServerInitPatch();
+                SetModdedPatch();
 
-            ClientConsoleCommandPatch();
-            ServerConsoleCommandPatch();
-            ShootEvent();
+                ClientConsoleCommandPatch();
+                ServerConsoleCommandPatch();
+                ShootEvent();
 
-            Mining();
+                Mining();
 
-            WeaponThrown();
+                WeaponThrown();
 
-            TypeDefinition plutonClass = new TypeDefinition("", "PlutonPatched", TypeAttributes.Public, rustAssembly.MainModule.Import(typeof(Object)));
-            rustAssembly.MainModule.Types.Add(plutonClass);
+                rustAssembly.CreateType("", "PlutonPatched");
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public static string GetHtmlDiff(string a, string b)
+        {
+            var dmp = new DiffMatchPatch.diff_match_patch();
+            var diffmain = dmp.diff_main(a, b);
+            dmp.diff_cleanupSemantic(diffmain);
+            return "<div id='hook_diff'><pre>" + dmp.diff_prettyHtml(diffmain) + "</pre></div>";
         }
 
         public static int Main(string[] args)
@@ -817,16 +860,21 @@ namespace Pluton.Patcher
             bool interactive = true;
             if (args.Length > 0)
                 interactive = false;
-            
+
+            foreach (string arg in args)
+                if (arg.Contains("--generatediffs"))
+                    gendiffs = true;
+
+            newAssCS = true;
+
             Console.WriteLine(string.Format("[( Pluton Patcher v{0} )]", Version));
             try {
-                plutonAssembly = AssemblyDefinition.ReadAssembly("Pluton.dll");
-                rustAssembly = AssemblyDefinition.ReadAssembly("Assembly-CSharp.dll");
+                plutonAssembly = AssemblyPatcher.FromFile("Pluton.dll");
+                rustAssembly = AssemblyPatcher.FromFile("Assembly-CSharp.dll");
             } catch (FileNotFoundException ex) {
                 Console.WriteLine("You are missing " + ex.FileName + " did you move the patcher to the managed folder ?");
                 if (interactive) {
                     Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
                 }
                 return (int)ExitCode.DLL_MISSING;
             } catch (Exception ex) {
@@ -834,22 +882,46 @@ namespace Pluton.Patcher
                 Console.WriteLine(ex.ToString());
                 if (interactive) {
                     Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
                 }
                 return (int)ExitCode.DLL_READ_ERROR;
             }
 
-            bNPC = rustAssembly.MainModule.GetType("BaseNPC");
-            bPlayer = rustAssembly.MainModule.GetType("BasePlayer");
-            codeLock = rustAssembly.MainModule.GetType("CodeLock");
-            hooksClass = plutonAssembly.MainModule.GetType("Pluton.Hooks");
-            itemCrafter = rustAssembly.MainModule.GetType("ItemCrafter");
-            pLoot = rustAssembly.MainModule.GetType("PlayerLoot");
+            bNPC = rustAssembly.GetType("BaseNPC");
+            bPlayer = rustAssembly.GetType("BasePlayer");
+            codeLock = rustAssembly.GetType("CodeLock");
+            hooksClass = plutonAssembly.GetType("Pluton.Hooks");
+            itemCrafter = rustAssembly.GetType("ItemCrafter");
+            pLoot = rustAssembly.GetType("PlayerLoot");
 
             //Check if patching is required
-            TypeDefinition plutonClass = rustAssembly.MainModule.GetType("PlutonPatched");
+            TypePatcher plutonClass = rustAssembly.GetType("PlutonPatched");
             if (plutonClass == null) {
                 try {
+                    if (gendiffs) {
+                        string hash = String.Empty;
+                        using (var sha512 = new System.Security.Cryptography.SHA512Managed())
+                            hash = BitConverter.ToString(sha512.ComputeHash(File.ReadAllBytes("Assembly-CSharp.dll"))).Replace("-", "").ToLower();
+
+                        Directory.CreateDirectory("diffs");
+
+                        string hashpath = "diffs" + Path.DirectorySeparatorChar + "lastHash";
+
+                        if (File.Exists(hashpath)) newAssCS = hash != File.ReadAllText(hashpath);
+
+                        if (newAssCS) {
+                            foreach (var difffile in Directory.GetFiles("diffs")) {
+                                if (difffile.Contains(".htm")) {
+                                    string filename = Path.GetFileName(difffile);
+                                    string dirname = Path.GetDirectoryName(difffile);
+                                    Directory.CreateDirectory(Path.Combine(dirname, "old"));
+                                    File.Move(difffile, difffile.Replace(Path.Combine(dirname, filename), Path.Combine(dirname, "old", filename)));
+                                }
+                            }
+                        }
+
+                        if (gendiffs && newAssCS)
+                            File.WriteAllText(hashpath, hash);
+                    }
                     PatchASMCSharp();
                     Console.WriteLine("Patched Assembly-CSharp !");
                 } catch (Exception ex) {
@@ -865,7 +937,6 @@ namespace Pluton.Patcher
 
                     if (interactive) {
                         Console.WriteLine("Press any key to continue...");
-                        Console.ReadKey();
                     }
                     return (int)ExitCode.ACDLL_GENERIC_PATCH_ERR;
                 }
@@ -883,7 +954,6 @@ namespace Pluton.Patcher
 
                 if (interactive) {
                     Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
                 }
 
                 return (int)ExitCode.DLL_WRITE_ERROR;

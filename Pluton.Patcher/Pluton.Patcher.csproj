@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Pluton.Patcher</RootNamespace>
     <AssemblyName>Pluton.Patcher</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -34,9 +34,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="ILSpy">
+      <HintPath>ref\ILSpy.exe</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.Decompiler">
+      <HintPath>ref\ICSharpCode.Decompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="Mono.Cecil">
       <HintPath>ref\Mono.Cecil.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -44,6 +52,11 @@
     <Compile Include="Pluton.Patcher\TypeDefinitionExtensions.cs" />
     <Compile Include="Pluton.Patcher\MethodDefinitionExtensions.cs" />
     <Compile Include="Pluton.Patcher\FieldDefinitionExtensions.cs" />
+    <Compile Include="Pluton.Patcher\Reflection\TypePatcher.cs" />
+    <Compile Include="Pluton.Patcher\Reflection\MethodPatcher.cs" />
+    <Compile Include="Pluton.Patcher\Reflection\PatcherObject.cs" />
+    <Compile Include="Pluton.Patcher\Reflection\AssemblyPatcher.cs" />
+    <Compile Include="DiffMatchPatch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
