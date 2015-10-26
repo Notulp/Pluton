@@ -19,8 +19,8 @@ namespace Pluton.Patcher
         public static TypePatcher pLoot;
         public static string Version { get; } = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        static bool gendiffs = false;
-        static bool newAssCS = false;
+        internal static bool gendiffs = false;
+        internal static bool newAssCS = false;
 
         #region patches
 

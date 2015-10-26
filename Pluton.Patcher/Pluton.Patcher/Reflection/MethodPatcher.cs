@@ -17,7 +17,8 @@ namespace Pluton.Patcher.Reflection
             IlProc = metDef.Body.GetILProcessor();
             rootAssemblyPatcher = prnt.rootAssemblyPatcher;
 
-            original = metDef.Print();
+            if (MainClass.gendiffs && MainClass.newAssCS)
+                original = metDef.Print();
         }
 
         public MethodPatcher Clear()
