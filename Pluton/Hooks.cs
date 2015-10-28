@@ -355,8 +355,6 @@ namespace Pluton
         {
             OnNext("On_PlayerHealthChange", new PlayerHealthChangeEvent(p, f, f2));
         }
-        {
-        }
 
         public static void On_ItemAdded(ItemContainer ic, Item i)
         {
