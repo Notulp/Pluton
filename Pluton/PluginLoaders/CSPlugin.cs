@@ -49,10 +49,14 @@ namespace Pluton
                 }
             } catch (Exception ex) {
                 string fileinfo = (String.Format("{0}<{1}>.{2}()", Name, Type, func) + Environment.NewLine);
-                if (ex is TargetInvocationException)
+                HasErrors = true;
+                if (ex is TargetInvocationException) {
+                    LastError = FormatException(ex.InnerException);
                     Logger.LogError(fileinfo + FormatException(ex.InnerException));
-                else
+                } else {
+                    LastError = FormatException(ex);
                     Logger.LogError(fileinfo + FormatException(ex));
+                }
                 return null;
             }
         }
