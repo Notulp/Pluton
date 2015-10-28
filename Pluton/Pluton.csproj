@@ -183,6 +183,8 @@
     <Compile Include="Objects\PlutonUIComponents\Outline.cs" />
     <Compile Include="Objects\PlutonUIComponents\Button.cs" />
     <Compile Include="Serialize\ISerializable.cs" />
+    <Compile Include="Documentation\DoqAttribute.cs" />
+    <Compile Include="Documentation\DoqEnums.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -192,6 +194,7 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Objects\PlutonUIComponents\" />
+    <Folder Include="Documentation\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -250,6 +253,7 @@
               </NamingRule>
             </Rules>
           </NameConventionPolicy>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>
