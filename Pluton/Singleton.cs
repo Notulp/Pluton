@@ -4,7 +4,7 @@ namespace Pluton
 {
     public abstract class Singleton<T> : CountedInstance where T : ISingleton
     {
-        protected static T Instance;
+        internal static T Instance;
 
         public static T GetInstance()
         {
