@@ -29,7 +29,7 @@
         public TimedEvent(string name, double interval, Dictionary<string, object> args)
             : this(name, interval)
         {
-            this.Args = args;
+            _args = args;
         }
 
         private void _timer_Elapsed(object sender, ElapsedEventArgs e)
