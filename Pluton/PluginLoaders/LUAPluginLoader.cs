@@ -52,10 +52,18 @@ namespace Pluton
                 throw new InvalidOperationException("[LUAPluginLoader] " + name + " plugin is already loaded.");
             }
 
+            if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {
+                Logger.LogWarning(name + " plugin is already being loaded. Returning.");
+                return;
+            }
+
             try
             {
                 string code = GetSource(name);
                 DirectoryInfo path = new DirectoryInfo(Path.Combine(PluginLoader.GetInstance().pluginDirectory.FullName, name));
+
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Add(name);
+
                 new LUAPlugin(name, code, path);
 
             }
