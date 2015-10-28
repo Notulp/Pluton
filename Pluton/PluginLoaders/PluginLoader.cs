@@ -117,7 +117,11 @@
                         Hooks.Subscribe(method, plugin)
                     );
                     Logger.LogDebug("Found hook: " + method);
+                }
             }
+
+            if (plugin.Globals.Contains("On_PluginInit"))
+                plugin.Invoke("On_PluginInit");
         }
 
         public void RemoveHooks(BasePlugin plugin)
