@@ -86,7 +86,7 @@ namespace Pluton
                 Server.GetInstance().LoadLoadouts();
 
                 if (Server.GetInstance().Loaded)
-                    Hooks.ServerInit();
+                    Hooks.On_ServerInit();
 
                 PluginLoader.GetInstance().ReloadPlugins();
 

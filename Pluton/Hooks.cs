@@ -10,130 +10,127 @@ using Steamworks;
 
 namespace Pluton
 {
+    public class Hook : CountedInstance
+    {
+        ~Hook()
+        {
+            if (hook != null)
+                hook.Dispose();
+        }
+
+        public Hook(string method, Action<object[]> callback)
+        {
+            if (Hooks.HookNames.Contains(method))
+                hook = Hooks.Subjects[method].Subscribe(callback);
+            else
+                throw new Exception($"Can't find the hook '{method}' to subscribe to.");
+            Name = method;
+        }
+
+        public string Name;
+        public IDisposable hook;
+    }
+
     public class Hooks
     {
+        static internal List<string> HookNames = new List<string>() {
+            "On_AllPluginsLoaded",
+            "On_BeingHammered",
+            "On_BuildingPartDemolished",
+            "On_BuildingPartDestroyed",
+            "On_BuildingComplete",
+            "On_Chat",
+            "On_ClientAuth",
+            "On_ClientConsole",
+            "On_CombatEntityHurt",
+            "On_Command",
+            "On_CommandPermission",
+            "On_ConsumeFuel",
+            "On_CorpseHurt",
+            "On_DoorCode",
+            "On_DoorUse",
+            "On_ItemAdded",
+            "On_ItemLoseCondition",
+            "On_ItemPickup",
+            "On_ItemRemoved",
+            "On_ItemRepaired",
+            "On_ItemUsed",
+            "On_LandmineArmed",
+            "On_LandmineExploded",
+            "On_LandmineTriggered",
+            "On_LootingEntity",
+            "On_LootingItem",
+            "On_LootingPlayer",
+            "On_NetworkableKill",
+            "On_NPCHurt",
+            "On_NPCKilled",
+            "On_Placement",
+            "On_PlayerAssisted",
+            "On_PlayerClothingChanged",
+            "On_PlayerConnected",
+            "On_PlayerDied",
+            "On_PlayerDisconnected",
+            "On_PlayerGathering",
+            "On_PlayerHurt",
+            "On_PlayerLoaded",
+            "On_PlayerSleep",
+            "On_PlayerStartCrafting",
+            "On_PlayerSyringeOther",
+            "On_PlayerSyringeSelf",
+            "On_PlayerHealthChange",
+            "On_PlayerTakeRadiation",
+            "On_PlayerWakeUp",
+            "On_PlayerWounded",
+            "On_QuarryMining",
+            "On_Respawn",
+            "On_RocketShooting",
+            "On_Shooting",
+            "On_ServerConsole",
+            "On_ServerInit",
+            "On_ServerSaved",
+            "On_ServerShutdown",
+            "On_WeaponThrow"
+        };
 
-        #region Events
+        static internal Dictionary<string, Subject<object[]>> Subjects = new Dictionary<string, Subject<object[]>>();
 
-        public static Subject<HammerEvent> OnBeingHammered = new Subject<HammerEvent>();
+        public static Dictionary<string, Subject<object[]>> CreateOrUpdateSubjects()
+        {
+            for (int i = 0; i < HookNames.Count; i++) {
+                string hookName = HookNames[i];
+                if (!Subjects.ContainsKey(hookName))
+                    Subjects.Add(hookName, new Subject<object[]>());
+            }
+            return Subjects;
+        }
 
-        public static Subject<BuildingPart> OnBuildingComplete = new Subject<BuildingPart>();
+        static internal void OnNext(string hook, params object[] args)
+        {
+            Subjects[hook].OnNext(args);
+        }
 
-        public static Subject<BuildingPartDemolishedEvent> OnBuildingPartDemolished = new Subject<BuildingPartDemolishedEvent>();
+        public static Hook Subscribe(string hookname, Action<object[]> callback)
+        {
+            return new Hook(hookname, callback);
+        }
 
-        public static Subject<BuildingPartDestroyedEvent> OnBuildingPartDestroyed = new Subject<BuildingPartDestroyedEvent>();
-        
-        public static Subject<ChatEvent> OnChat = new Subject<ChatEvent>();
-
-        public static Subject<AuthEvent> OnClientAuth = new Subject<AuthEvent>();
-
-        public static Subject<ClientConsoleEvent> OnClientConsole = new Subject<ClientConsoleEvent>();
-
-        public static Subject<CombatEntityHurtEvent> OnCombatEntityHurt = new Subject<CombatEntityHurtEvent>();
-        
-        public static Subject<CommandEvent> OnCommand = new Subject<CommandEvent>();
-
-        public static Subject<CommandPermissionEvent> OnCommandPermission = new Subject<CommandPermissionEvent>();
-        
-        public static Subject<ConsumeFuelEvent> OnConsumeFuel = new Subject<ConsumeFuelEvent>();
-
-        public static Subject<CorpseHurtEvent> OnCorpseHurt = new Subject<CorpseHurtEvent>();
-
-        public static Subject<DoorCodeEvent> OnDoorCode = new Subject<DoorCodeEvent>();
-
-        public static Subject<DoorUseEvent> OnDoorUse = new Subject<DoorUseEvent>();
-
-        public static Subject<InventoryModEvent> OnItemAdded = new Subject<InventoryModEvent>();
-
-        public static Subject<ItemConditionEvent> OnItemLoseCondition = new Subject<ItemConditionEvent>();
-
-        public static Subject<ItemPickupEvent> OnItemPickup = new Subject<ItemPickupEvent>();
-
-        public static Subject<InventoryModEvent> OnItemRemoved = new Subject<InventoryModEvent>();
-
-        public static Subject<ItemRepairEvent> OnItemRepaired = new Subject<ItemRepairEvent>();
-
-        public static Subject<ItemUsedEvent> OnItemUsed = new Subject<ItemUsedEvent>();
-
-        public static Subject<Landmine> OnLandmineArmed = new Subject<Landmine>();
-
-        public static Subject<Landmine> OnLandmineExploded = new Subject<Landmine>();
-
-        public static Subject<LandmineTriggerEvent> OnLandmineTriggered = new Subject<LandmineTriggerEvent>();
-
-        public static Subject<EntityLootEvent> OnLootingEntity = new Subject<EntityLootEvent>();
-
-        public static Subject<ItemLootEvent> OnLootingItem = new Subject<ItemLootEvent>();
-
-        public static Subject<PlayerLootEvent> OnLootingPlayer = new Subject<PlayerLootEvent>();
-
-        public static Subject<MiningQuarry> OnMining = new Subject<MiningQuarry>();
-
-        public static Subject<BaseNetworkable> OnNetworkableKill = new Subject<BaseNetworkable>();
-
-        public static Subject<NPCHurtEvent> OnNPCHurt = new Subject<NPCHurtEvent>();
-
-        public static Subject<NPCDeathEvent> OnNPCDied = new Subject<NPCDeathEvent>();
-
-        public static Subject<BuildingEvent> OnPlacement = new Subject<BuildingEvent>();
-
-        public static Subject<Player> OnPlayerAssisted = new Subject<Player>();
-
-        public static Subject<PlayerClothingEvent> OnPlayerClothingChanged = new Subject<PlayerClothingEvent>();
-
-        public static Subject<Player> OnPlayerConnected = new Subject<Player>();
-
-        public static Subject<PlayerDeathEvent> OnPlayerDied = new Subject<PlayerDeathEvent>();
-
-        public static Subject<Player> OnPlayerDisconnected = new Subject<Player>();
-
-        public static Subject<GatherEvent> OnGathering = new Subject<GatherEvent>();
-
-        public static Subject<PlayerHurtEvent> OnPlayerHurt = new Subject<PlayerHurtEvent>();
-
-        public static Subject<Player> OnPlayerLoaded = new Subject<Player>();
-
-        public static Subject<Player> OnPlayerSleep = new Subject<Player>();
-
-        public static Subject<CraftEvent> OnPlayerStartCrafting = new Subject<CraftEvent>();
-
-        public static Subject<SyringeUseEvent> OnPlayerSyringeOther = new Subject<SyringeUseEvent>();
-
-        public static Subject<SyringeUseEvent> OnPlayerSyringeSelf = new Subject<SyringeUseEvent>();
-
-        public static Subject<PlayerTakeRadsEvent> OnPlayerTakeRads = new Subject<PlayerTakeRadsEvent>();
-
-        public static Subject<Player> OnPlayerWakeUp = new Subject<Player>();
-
-        public static Subject<Player> OnPlayerWounded = new Subject<Player>();
-        
-        public static Subject<PlayerHealthChangeEvent> OnPlayerHealthChange = new Subject<PlayerHealthChangeEvent>();
-
-        public static Subject<RespawnEvent> OnRespawn = new Subject<RespawnEvent>();
-
-        public static Subject<RocketShootEvent> OnRocketShooting = new Subject<RocketShootEvent>();
-
-        public static Subject<ShootEvent> OnShooting = new Subject<ShootEvent>();
-
-        public static Subject<ServerConsoleEvent> OnServerConsole = new Subject<ServerConsoleEvent>();
-
-        public static Subject<string> OnServerInit = new Subject<string>();
-
-        public static Subject<string> OnServerSaved = new Subject<string>();
-
-        public static Subject<string> OnServerShutdown = new Subject<string>();
-
-        public static Subject<WeaponThrowEvent> OnWeaponThrow = new Subject<WeaponThrowEvent>();
-
-        #endregion
+        public static Hook Subscribe(string hookname, BasePlugin plugin)
+        {
+            return new Hook(hookname, args => plugin.Invoke(hookname, args));
+        }
 
         #region Handlers
 
-        // chat.say()
-        public static void Chat(ConsoleSystem.Arg arg)
+        [Documentation.Doq(
+            typeof(ChatEvent),
+            category = Documentation.DoqCategory.Pluton_Hooks,
+            doqType = Documentation.DoqType.Hook,
+            description = "Gets called when the user enters something in the chat and it doesn't start with '/'."
+        )]
+        public static void On_Chat(ConsoleSystem.Arg arg)
         {
             if (arg.ArgsStr.StartsWith("\"/") && !arg.ArgsStr.StartsWith("\"/ ")) {
-                Command(arg);
+                On_Command(arg);
                 return;
             }
 
@@ -180,7 +177,7 @@ namespace Pluton
                     arg2 = "#fa5";
                 }
 
-                OnChat.OnNext(pChat);
+                OnNext("On_Chat", pChat);
 
                 string text2 = string.Format("<color={2}>{0}</color>: {1}", basePlayer.displayName.Replace('<', '[').Replace('>', ']'), pChat.FinalText, arg2);
 
@@ -206,11 +203,11 @@ namespace Pluton
         }
 
         // ConnectionAuth.Approve()
-        public static void ClientAuth(ConnectionAuth ca, Connection connection)
+        public static void On_ClientAuth(ConnectionAuth ca, Connection connection)
         {
             var ae = new Events.AuthEvent(connection);
 
-            OnClientAuth.OnNext(ae);
+            OnNext("On_ClientAuth", ae);
 
             ca.m_AuthConnection.Remove(connection);
             if (!ae.Approved) {
@@ -221,11 +218,11 @@ namespace Pluton
         }
 
         // ConsoleSystem.OnClientCommand()
-        public static void ClientConsoleCommand(ConsoleSystem.Arg arg, String rconCmd)
+        public static void On_ClientConsole(ConsoleSystem.Arg arg, String rconCmd)
         {
             ClientConsoleEvent ce = new ClientConsoleEvent(arg, rconCmd);
             if (arg.connection != null) {
-                OnClientConsole.OnNext(ce);
+                OnNext("On_ClientConsole", ce);
 
                 if (arg.Invalid) {
                     if (!Net.sv.IsConnected()) {
@@ -242,13 +239,13 @@ namespace Pluton
         }
 
         // chat.say().Hooks.Chat()
-        public static void Command(ConsoleSystem.Arg arg)
+        public static void On_Command(ConsoleSystem.Arg arg)
         {
             Player player = Server.GetPlayer(arg.Player());
             string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{ " " }, StringSplitOptions.None);
 
             CommandEvent cmd = new CommandEvent(player, args);
-
+            // TODO: do this part in a different function to be documented
             if (cmd.Cmd == "")
                 return;
 
@@ -259,7 +256,7 @@ namespace Pluton
                         continue;
 
                     CommandPermissionEvent permission = new CommandPermissionEvent(player, args, chatCmd);
-                    OnCommandPermission.OnNext(permission);
+                    OnNext("On_CommandPermission", permission);
                     if (permission.Blocked) {
                         player.Message(permission.Reply);
                         continue;
@@ -272,129 +269,131 @@ namespace Pluton
                     }
                 }
             }
-            OnCommand.OnNext(cmd);
+            OnNext("On_Command", cmd);
 
             if (cmd.Reply != "")
                 arg.ReplyWith(cmd.Reply);
 
         }
 
-        public static void OnShoot(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
+        public static void On_Shooting(BaseProjectile baseProjectile, BaseEntity.RPCMessage msg)
         {
-            OnShooting.OnNext(new ShootEvent(baseProjectile, msg));
+            OnNext("On_Shooting", new ShootEvent(baseProjectile, msg));
         }
 
-        public static void ItemUsed(Item item, int amountToConsume)
+        public static void On_ItemUsed(Item item, int amountToConsume)
         {
-            OnItemUsed.OnNext(new ItemUsedEvent(item, amountToConsume));
+            OnNext("On_ItemUsed", new  ItemUsedEvent(item, amountToConsume));
         }
 
-        public static void ProcessResources(MiningQuarry miningQuarry)
+        public static void On_QuarryMining(MiningQuarry miningQuarry)
         {
-            OnMining.OnNext(miningQuarry);
+            OnNext("On_QuarryMining", miningQuarry );
         }
 
-        public static void DoThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
+        public static void On_WeaponThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
-            OnWeaponThrow.OnNext(new WeaponThrowEvent(thrownWeapon, msg));
+            OnNext("On_WeaponThrow", new  WeaponThrowEvent(thrownWeapon, msg));
         }
 
-        public static void OnRocketShoot(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
+        public static void On_RocketShooting(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
         {
-            OnRocketShooting.OnNext(new RocketShootEvent(baseLauncher, msg, baseEntity));
+            OnNext("On_RocketShooting", new  RocketShootEvent(baseLauncher, msg, baseEntity));
         }
 
-        public static void Pickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
+        public static void On_ItemPickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
         {
-            OnItemPickup.OnNext(new ItemPickupEvent(ce, msg, i));
+            OnNext("On_ItemPickup", new  ItemPickupEvent(ce, msg, i));
         }
 
-        public static void ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
+        public static void On_ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
         {
-            OnConsumeFuel.OnNext(new ConsumeFuelEvent(bo, fuel, burn));
+            OnNext("On_ConsumeFuel", new  ConsumeFuelEvent(bo, fuel, burn));
         }
 
-        public static void PlayerSleep(BasePlayer bp)
+        public static void On_PlayerSleep(BasePlayer bp)
         {
-            OnPlayerSleep.OnNext(new Player(bp));
+            OnNext("On_PlayerSleep", Server.GetPlayer(bp));
         }
 
-        public static void PlayerWakeUp(BasePlayer bp)
+        public static void On_PlayerWakeUp(BasePlayer bp)
         {
-            OnPlayerWakeUp.OnNext(new Player(bp));
+            OnNext("On_PlayerWakeUp", Server.GetPlayer(bp));
         }
 
-        public static void PlayerLoaded(BasePlayer bp)
+        public static void On_PlayerLoaded(BasePlayer bp)
         {
-            OnPlayerLoaded.OnNext(new Player(bp));
+            OnNext("On_PlayerLoaded", Server.GetPlayer(bp));
         }
 
-        public static void PlayerWounded(BasePlayer bp)
+        public static void On_PlayerWounded(BasePlayer bp)
         {
-            OnPlayerWounded.OnNext(new Player(bp));
+            OnNext("On_PlayerWounded", Server.GetPlayer(bp));
         }
 
-        public static void PlayerAssisted(BasePlayer bp)
+        public static void On_PlayerAssisted(BasePlayer bp)
         {
-            OnPlayerAssisted.OnNext(new Player(bp));
+            OnNext("On_PlayerAssisted", Server.GetPlayer(bp));
         }
 
-        public static void ItemRepaired(RepairBench rb, BaseEntity.RPCMessage msg)
+        public static void On_ItemRepaired(RepairBench rb, BaseEntity.RPCMessage msg)
         {
-            OnItemRepaired.OnNext(new ItemRepairEvent(rb, msg));
+            OnNext("On_ItemRepaired", new ItemRepairEvent(rb, msg));
         }
 
-        public static void PlayerSyringeSelf(SyringeWeapon sw, BaseEntity.RPCMessage msg)
+        public static void On_PlayerSyringeSelf(SyringeWeapon sw, BaseEntity.RPCMessage msg)
         {
-            OnPlayerSyringeSelf.OnNext(new SyringeUseEvent(sw, msg, true));
+            OnNext("On_PlayerSyringeSelf", new SyringeUseEvent(sw, msg, true));
         }
 
-        public static void PlayerSyringeOther(SyringeWeapon sw, BaseEntity.RPCMessage msg)
+        public static void On_PlayerSyringeOther(SyringeWeapon sw, BaseEntity.RPCMessage msg)
         {
-            OnPlayerSyringeOther.OnNext(new SyringeUseEvent(sw, msg, false));
+            OnNext("On_PlayerSyringeOther", new SyringeUseEvent(sw, msg, false));
         }
         
-        public static void PlayerHealthChangeEvent(BasePlayer p, float f, float f2)
+        public static void On_PlayerHealthChange(BasePlayer p, float f, float f2)
         {
-            OnPlayerHealthChange.OnNext(new PlayerHealthChangeEvent(p, f, f2));
+            OnNext("On_PlayerHealthChange", new PlayerHealthChangeEvent(p, f, f2));
+        }
+        {
         }
 
-        public static void ItemAdded(ItemContainer ic, Item i)
+        public static void On_ItemAdded(ItemContainer ic, Item i)
         {
-            OnItemAdded.OnNext(new InventoryModEvent(ic, i));
+            OnNext("On_ItemAdded", new InventoryModEvent(ic, i));
         }
         
-        public static void ItemRemoved(ItemContainer ic, Item i)
+        public static void On_ItemRemoved(ItemContainer ic, Item i)
         {
-            OnItemRemoved.OnNext(new InventoryModEvent(ic, i));
+            OnNext("On_ItemRemoved", new InventoryModEvent(ic, i));
         }
 
-        public static void ItemLoseCondition(Item i, float f)
+        public static void On_ItemLoseCondition(Item i, float f)
         {
-            OnItemLoseCondition.OnNext(new ItemConditionEvent(i, f));
+            OnNext("On_ItemLoseCondition", new ItemConditionEvent(i, f));
         }
 
-        public static void PlayerClothingChanged(PlayerInventory pi, Item i)
+        public static void On_PlayerClothingChanged(PlayerInventory pi, Item i)
         {
-            OnPlayerClothingChanged.OnNext(new PlayerClothingEvent(pi, i));
+            OnNext("On_PlayerClothingChanged", new PlayerClothingEvent(pi, i));
         }
 
-        public static void BuildingPartDemolished(BuildingBlock bb, BaseEntity.RPCMessage msg)
+        public static void On_BuildingPartDemolished(BuildingBlock bb, BaseEntity.RPCMessage msg)
         {
-            OnBuildingPartDemolished.OnNext(new BuildingPartDemolishedEvent(bb, msg.player));
+            OnNext("On_BuildingPartDemolished", new BuildingPartDemolishedEvent(bb, msg.player));
         }
 
-        public static void NetworkableKill(BaseNetworkable bn)
+        public static void On_NetworkableKill(BaseNetworkable bn)
         {
-            OnNetworkableKill.OnNext(bn);
+            OnNext("On_NetworkableKill", bn);
         }
 
-        public static void BeingHammered(HitInfo info, BasePlayer ownerPlayer)
+        public static void On_BeingHammered(HitInfo info, BasePlayer ownerPlayer)
         {
-            OnBeingHammered.OnNext(new HammerEvent(info, ownerPlayer));
+            OnNext("On_BeingHammered", new HammerEvent(info, ownerPlayer));
         }
 
-        public static void CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info, bool useProtection = true)
+        public static void On_CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info, bool useProtection = true)
         {
             try {
                 Assert.Test(combatEnt.isServer, "This should be called serverside only");
@@ -418,16 +417,16 @@ namespace Pluton
                         }
 
                         he = new PlayerHurtEvent(p, info);
-                        OnPlayerHurt.OnNext(he as PlayerHurtEvent);
+                        OnNext("On_PlayerHurt", he);
                     } else if (npc != null) {
                         he = new NPCHurtEvent(new NPC(npc), info);
-                        OnNPCHurt.OnNext(he as NPCHurtEvent);
+                        OnNext("On_NPCHurt", he);
                     } else if (corpse != null) {
                         he = new CorpseHurtEvent(corpse, info);
-                        OnCorpseHurt.OnNext(he as CorpseHurtEvent);
+                        OnNext("On_CorpseHurt", he);
                     } else {
                         he = new CombatEntityHurtEvent(combatEnt, info);
-                        OnCombatEntityHurt.OnNext(he as CombatEntityHurtEvent);
+                        OnNext("On_CombatEntityHurt", he);
                     }
 
                     if (info.PointStart != Vector3.zero) {
@@ -502,7 +501,7 @@ namespace Pluton
                         BuildingBlock bb = combatEnt.GetComponent<BuildingBlock>();
                         if (bb != null)
                         {
-                            OnBuildingPartDestroyed.OnNext(new BuildingPartDestroyedEvent(bb, info));
+                            OnNext("On_BuildingPartDestroyed", new BuildingPartDestroyedEvent(bb, info));
                         }
                     }
                 }
@@ -512,13 +511,13 @@ namespace Pluton
             }
         }
 
-        public static void DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
+        public static void On_DoorCode(CodeLock doorLock, BaseEntity.RPCMessage rpc)
         {
             if (!doorLock.IsLocked())
                 return;
             string code = rpc.read.String();
             DoorCodeEvent dc = new DoorCodeEvent(doorLock, rpc.player, code);
-            OnDoorCode.OnNext(dc);
+            OnNext("On_DoorCode", dc);
             if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
             {
                 Effect.server.Run(doorLock.effectDenied, doorLock, 0u, Vector3.zero, Vector3.forward);
@@ -537,20 +536,20 @@ namespace Pluton
             }
         }
 
-        public static void LandmineArmed(Landmine l)
+        public static void On_LandmineArmed(Landmine l)
         {
-            OnLandmineArmed.OnNext(l);
+            OnNext("On_LandmineArmed", l);
         }
 
-        public static void LandmineExploded(Landmine l)
+        public static void On_LandmineExploded(Landmine l)
         {
-            OnLandmineExploded.OnNext(l);
+            OnNext("On_LandmineExploded", l);
         }
 
-        public static void LandmineTriggered(Landmine landmine, BasePlayer basePlayer)
+        public static void On_LandmineTriggered(Landmine landmine, BasePlayer basePlayer)
         {
             LandmineTriggerEvent landmineTriggerEvent = new LandmineTriggerEvent(landmine, basePlayer);
-            OnLandmineTriggered.OnNext(landmineTriggerEvent);
+            OnNext("On_LandmineTriggered", landmineTriggerEvent);
 
             if (landmineTriggerEvent.Explode)
             {
@@ -562,13 +561,13 @@ namespace Pluton
         }
 
         // Door.RPC_CloseDoor()/RPC_OpenDoor()
-        public static void DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
+        public static void On_DoorUse(Door door, BaseEntity.RPCMessage rpc, bool open)
         {
             if ((open && door.IsOpen()) || (!open && !door.IsOpen()))
                 return;
 
             DoorUseEvent due = new DoorUseEvent(new Entity(door), Server.GetPlayer(rpc.player), open);
-            OnDoorUse.OnNext(due);
+            OnNext("On_DoorUse", due);
 
             if (!due.Allow) {
                 if (due.DenyReason != "")
@@ -603,7 +602,7 @@ namespace Pluton
         }
 
         // Construiction.Common.CreateConstruction()
-        public static BaseEntity DoPlacement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
+        public static BaseEntity On_Placement(Construction construction, Construction.Target target, bool bNeedsValidPlacement)
         {
             try {
                 GameObject gameObject = GameManager.server.CreatePrefab(construction.fullName, default(Vector3), default(Quaternion), true);
@@ -618,7 +617,7 @@ namespace Pluton
                 BuildingEvent be = null;
                 if (component != null) {
                     be = new BuildingEvent(construction, target, component, bNeedsValidPlacement);
-                    OnPlacement.OnNext(be);
+                    OnNext("On_Placement", be);
                 }
 
                 if (be != null && be.DoDestroy) {
@@ -634,12 +633,12 @@ namespace Pluton
             }
         }
 
-        public static void Gathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
+        public static void On_PlayerGathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
         {
             itemAmt.amount += amount;
             BaseEntity from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
             GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
-            OnGathering.OnNext(ge);
+            OnNext("On_PlayerGathering", ge);
  
             if (ge.Amount > 0) {
  
@@ -659,22 +658,22 @@ namespace Pluton
         }
 
         // BaseAnimal.Die()
-        public static void NPCDied(BaseNPC bnpc, HitInfo info)
+        public static void On_NPCKilled(BaseNPC bnpc, HitInfo info)
         {
             if (info.Initiator != null && info.Initiator.ToPlayer() != null) {
                 Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(false, true);
             }
 
             var npc = new NPC(bnpc);
-            OnNPCDied.OnNext(new Events.NPCDeathEvent(npc, info));
+            OnNext("On_NPCKilled", new Events.NPCDeathEvent(npc, info));
         }
 
         // ItemCrafter.CraftItem()
-        public static bool PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1, int skinID = 0)
+        public static bool On_PlayerStartCrafting(ItemCrafter self, ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1, int skinID = 0)
         {
             CraftEvent ce = new CraftEvent(self, bp, owner, instanceData, amount, skinID);
 
-            OnPlayerStartCrafting.OnNext(ce);
+            OnNext("On_PlayerStartCrafting", ce);
 
             if (!self.CanCraft(bp, ce.Amount))
                 return false;
@@ -709,7 +708,7 @@ namespace Pluton
         }
 
         // BasePlayer.Die()
-        public static bool PlayerDied(BasePlayer player, HitInfo info)
+        public static bool On_PlayerDied(BasePlayer player, HitInfo info)
         {
             if (info == null) {
                 info = new HitInfo();
@@ -731,7 +730,7 @@ namespace Pluton
                 }
 
                 Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
-                OnPlayerDied.OnNext(pde);
+                OnNext("On_PlayerDied", pde);
 
                 if (!pde.dropLoot)
                     player.inventory.Strip();
@@ -741,7 +740,7 @@ namespace Pluton
         }
 
 
-        public static void PlayerConnected(Network.Connection connection)
+        public static void On_PlayerConnected(Network.Connection connection)
         {
             var player = connection.player as BasePlayer;
             var p = new Player(player);
@@ -750,11 +749,11 @@ namespace Pluton
             if (!Server.GetInstance().Players.ContainsKey(player.userID))
                 Server.GetInstance().Players.Add(player.userID, p);
 
-            OnPlayerConnected.OnNext(p);
+            OnNext("On_PlayerConnected", p);
         }
 
         // BasePlayer.OnDisconnected()
-        public static void PlayerDisconnected(BasePlayer player)
+        public static void On_PlayerDisconnected(BasePlayer player)
         {
             var p = Server.GetPlayer(player);
 
@@ -770,32 +769,22 @@ namespace Pluton
             if (Server.GetInstance().Players.ContainsKey(player.userID))
                 Server.GetInstance().Players.Remove(player.userID);
 
-            OnPlayerDisconnected.OnNext(p);
+            OnNext("On_PlayerDisconnected", p);
         }
 
         // BasePlayer.UpdateRadiation()
-        public static void PlayerTakeRadiation(BasePlayer player, float radAmount)
+        public static void On_PlayerTakeRadiation(BasePlayer player, float radAmount)
         {
             var ptr = new PlayerTakeRadsEvent(Server.GetPlayer(player), player.metabolism.radiation_level.value, radAmount);
-            OnPlayerTakeRads.OnNext(ptr);
+            OnNext("On_PlayerTakeRadiation", ptr);
             player.metabolism.radiation_level.value = ptr.Next;
         }
-        /*
-        // In future create an Event, allow people to adjust certain resources to give certain amounts!
-        public static void ResourceGatherMultiplier(int amount, BaseEntity receiver, ItemAmount itemAmt)
-        {
-            int newAmt = amount;
-            if (receiver.ToPlayer() != null)
-                newAmt = (int)((double)amount * World.GetInstance().ResourceGatherMultiplier);
-            Item item = ItemManager.CreateByItemID(itemAmt.itemid, newAmt);
-            receiver.GiveItem(item);
-        }*/
 
-        public static void Respawn(BasePlayer player, Vector3 pos, Quaternion quat)
+        public static void On_Respawn(BasePlayer player, Vector3 pos, Quaternion quat)
         {
             Player p = Server.GetPlayer(player);
             RespawnEvent re = new RespawnEvent(p, pos, quat);
-            OnRespawn.OnNext(re);
+            OnNext("On_Respawn", re);
 
             ++ServerPerformance.spawns;
             player.SetFieldValue("lastPositionValue", pos);
@@ -831,11 +820,11 @@ namespace Pluton
         }
 
         // PlayerLoot.StartLootingEntity()
-        public static void StartLootingEntity(PlayerLoot playerLoot)
+        public static void On_LootingEntity(PlayerLoot playerLoot)
         {
             BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
             var ele = new Events.EntityLootEvent(playerLoot, Server.GetPlayer(looter), new Entity(playerLoot.entitySource));
-            OnLootingEntity.OnNext(ele);
+            OnNext("On_LootingEntity", ele);
 
             if (ele.Cancel) {
                 playerLoot.Clear();
@@ -844,11 +833,11 @@ namespace Pluton
         }
 
         // PlayerLoot.StartLootingPlayer()
-        public static void StartLootingPlayer(PlayerLoot playerLoot)
+        public static void On_LootingPlayer(PlayerLoot playerLoot)
         {
             BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
             var ple = new Events.PlayerLootEvent(playerLoot, Server.GetPlayer(looter), Server.GetPlayer(playerLoot.entitySource as BasePlayer));
-            OnLootingPlayer.OnNext(ple);
+            OnNext("On_LootingPlayer", ple);
 
             if (ple.Cancel) {
                 playerLoot.Clear();
@@ -857,11 +846,11 @@ namespace Pluton
         }
 
         // PlayerLoot.StartLootingItem()
-        public static void StartLootingItem(PlayerLoot playerLoot)
+        public static void On_LootingItem(PlayerLoot playerLoot)
         {
             BasePlayer looter = playerLoot.GetComponent<BasePlayer>();
             var ile = new Events.ItemLootEvent(playerLoot, Server.GetPlayer(looter), playerLoot.itemSource);
-            OnLootingItem.OnNext(ile);
+            OnNext("On_LootingItem", ile);
 
             if (ile.Cancel) {
                 playerLoot.Clear();
@@ -869,8 +858,8 @@ namespace Pluton
             }
         }
 
-        // Facepunch.ConsoleSystem.SystemRealm.Normal
-        public static void ServerConsoleCommand(ConsoleSystem.Arg arg, string cmd)
+        // ConsoleSystem.SystemRealm.Normal
+        public static void On_ServerConsole(ConsoleSystem.Arg arg, string cmd)
         {
             try {
                 if (!Bootstrap.PlutonLoaded)
@@ -891,7 +880,7 @@ namespace Pluton
                     }
                 }
 
-                OnServerConsole.OnNext(ssc);
+                OnNext("On_ServerConsole", ssc);
                 if (arg.Invalid) {
                     Debug.Log(ssc.Reply);
                 }
@@ -900,25 +889,25 @@ namespace Pluton
             }
         }
 
-        public static void ServerInit()
+        public static void On_ServerInit()
         {
             Server.GetInstance().SendCommand("plugins.loaded");
             if (Server.GetInstance().Loaded)
                 return;
 
             Server.GetInstance().Loaded = true;
-            OnServerInit.OnNext("");
+            OnNext("On_ServerInit");
         }
 
-        public static void ServerSaved()
+        public static void On_ServerSaved()
         {
-            OnServerSaved.OnNext("");
+            OnNext("On_ServerSaved");
         }
 
-        public static void ServerShutdown()
+        public static void On_ServerShutdown()
         {
             Bootstrap.timers.Dispose();
-            OnServerShutdown.OnNext("");
+            OnNext("On_ServerShutdown");
 
             PluginLoader.GetInstance().UnloadPlugins();
 

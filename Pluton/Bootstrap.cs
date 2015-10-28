@@ -16,6 +16,8 @@ namespace Pluton
         public static void AttachBootstrap()
         {
             try {
+                Hooks.CreateOrUpdateSubjects();
+
                 System.Reflection.Assembly executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
                 Type[] types = executingAssembly.GetTypes();
                 for (int i = 0; i < types.Length; i++) {

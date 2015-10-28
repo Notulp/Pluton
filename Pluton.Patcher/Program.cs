@@ -35,23 +35,12 @@ namespace Pluton.Patcher
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + initConfig.FriendlyName + ".html", initConfig.PrintAndLink(attachBootstrap));
         }
 
-        private static void ItemsLoadedPatch()
-        {
-            var initialize = rustAssembly.GetType("ItemManager").GetMethod("Initialize");
-            var itemsLoaded = hooksClass.GetMethod("ItemsLoaded");
-
-            initialize.InsertCallBeforeRet(itemsLoaded);
-
-            if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + initialize.FriendlyName + ".html", initialize.PrintAndLink(itemsLoaded));
-        }
-
         private static void BeingHammeredPatch()
         {
             var doAttackShared = rustAssembly.GetType("Hammer").GetMethod("DoAttackShared");
             var getOwnerP = rustAssembly.GetType("HeldEntity").GetMethod("get_ownerPlayer");
 
-            var beingHammered = hooksClass.GetMethod("BeingHammered");
+            var beingHammered = hooksClass.GetMethod("On_BeingHammered");
 
             doAttackShared.InsertAfter(11, Instruction.Create(OpCodes.Ldarg_1))
                 .InsertAfter(12, Instruction.Create(OpCodes.Ldarg_0))
@@ -65,7 +54,7 @@ namespace Pluton.Patcher
         private static void ChatPatch()
         {
             var say = rustAssembly.GetType("ConVar.Chat").GetMethod("say");
-            var onchat = hooksClass.GetMethod("Chat");
+            var onchat = hooksClass.GetMethod("On_Chat");
 
             say.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
@@ -79,7 +68,7 @@ namespace Pluton.Patcher
         private static void ClientAuthPatch()
         {
             var approve = rustAssembly.GetType("ConnectionAuth").GetMethod("Approve");
-            var onClientAuth = hooksClass.GetMethod("ClientAuth");
+            var onClientAuth = hooksClass.GetMethod("On_ClientAuth");
 
             approve.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
@@ -94,7 +83,7 @@ namespace Pluton.Patcher
         private static void ClientConsoleCommandPatch()
         {
             var onClientCommand = rustAssembly.GetType("ConsoleSystem").GetMethod("OnClientCommand");
-            var onClientConsoleHook = hooksClass.GetMethod("ClientConsoleCommand");
+            var onClientConsoleHook = hooksClass.GetMethod("On_ClientConsole");
 
             onClientCommand.RemoveRange(14, 19)
                 .InsertAfter(10, Instruction.Create(OpCodes.Ldloc_1))
@@ -108,7 +97,7 @@ namespace Pluton.Patcher
         private static void CombatEntityHurtPatch()
         {
             var combatEnt = rustAssembly.GetType("BaseCombatEntity");
-            var onHurtHook = hooksClass.GetMethod("CombatEntityHurt");
+            var onHurtHook = hooksClass.GetMethod("On_CombatEntityHurt");
 
             var hurt = combatEnt.GetMethod(methods => {
                 return (from method in methods
@@ -134,7 +123,7 @@ namespace Pluton.Patcher
             var doDemolish = buildingBlock.GetMethod("DoDemolish");
             var doImmediateDemolish = buildingBlock.GetMethod("DoImmediateDemolish");
 
-            var bpDemolishedHook = hooksClass.GetMethod("BuildingPartDemolished");
+            var bpDemolishedHook = hooksClass.GetMethod("On_BuildingPartDemolished");
 
             doDemolish.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -154,7 +143,7 @@ namespace Pluton.Patcher
         private static void CraftingStartPatch()
         {
             var craftItem = rustAssembly.GetType("ItemCrafter").GetMethod("CraftItem");
-            var onPlayerStartCraftingHook = hooksClass.GetMethod("PlayerStartCrafting");
+            var onPlayerStartCraftingHook = hooksClass.GetMethod("On_PlayerStartCrafting");
 
             craftItem.Clear()
                 .Append(Instruction.Create(OpCodes.Nop))
@@ -174,7 +163,7 @@ namespace Pluton.Patcher
         private static void DoPlacementPatch()
         {
             var createConstruction = rustAssembly.GetType("Construction").GetMethod("CreateConstruction");
-            var onPlacement = hooksClass.GetMethod("DoPlacement");
+            var onPlacement = hooksClass.GetMethod("On_Placement");
 
             createConstruction.Clear()
                 .Append(Instruction.Create(OpCodes.Nop))
@@ -192,16 +181,16 @@ namespace Pluton.Patcher
         private static void DoorCodePatch()
         {
             var unlockWithCode = rustAssembly.GetType("CodeLock").GetMethod("UnlockWithCode");
-            var onClientAuth = hooksClass.GetMethod("DoorCode");
+            var ondoorCode = hooksClass.GetMethod("On_DoorCode");
 
             unlockWithCode.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
                 .Append(Instruction.Create(OpCodes.Ldarg_1))
-                .AppendCall(onClientAuth)
+                .AppendCall(ondoorCode)
                 .Append(Instruction.Create(OpCodes.Ret));
 
             if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + unlockWithCode.FriendlyName + ".html", unlockWithCode.PrintAndLink(onClientAuth));
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + unlockWithCode.FriendlyName + ".html", unlockWithCode.PrintAndLink(ondoorCode));
         }
 
         private static void DoorUsePatch()
@@ -209,7 +198,7 @@ namespace Pluton.Patcher
             var door = rustAssembly.GetType("Door");
             var close = door.GetMethod("RPC_CloseDoor");
             var open = door.GetMethod("RPC_OpenDoor");
-            var doorUse = hooksClass.GetMethod("DoorUse");
+            var doorUse = hooksClass.GetMethod("On_DoorUse");
 
             close.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
@@ -231,36 +220,10 @@ namespace Pluton.Patcher
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + open.FriendlyName + ".html", open.PrintAndLink(doorUse));
         }
 
-        private static void GatherPatch()
-        {
-            var resAttacked = rustAssembly.GetType("BaseResource").GetMethod("OnAttacked");
-            var treeAttacked = rustAssembly.GetType("TreeEntity").GetMethod("OnAttacked");
-
-            var onGatheringResource = hooksClass.GetMethod("GatheringBR");
-            var onGatheringWood = hooksClass.GetMethod("GatheringTree");
-
-            resAttacked.Clear()
-                .Append(Instruction.Create(OpCodes.Ldarg_0))
-                .Append(Instruction.Create(OpCodes.Ldarg_1))
-                .AppendCall(onGatheringResource)
-                .Append(Instruction.Create(OpCodes.Ret));
-            
-            treeAttacked.Clear()
-                .Append(Instruction.Create(OpCodes.Ldarg_0))
-                .Append(Instruction.Create(OpCodes.Ldarg_1))
-                .AppendCall(onGatheringWood)
-                .Append(Instruction.Create(OpCodes.Ret));
-            
-            if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + resAttacked.FriendlyName + ".html", resAttacked.PrintAndLink(onGatheringResource));
-            if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + treeAttacked.FriendlyName + ".html", treeAttacked.PrintAndLink(onGatheringWood));
-        }
-
         private static void NetworkableKillPatch()
         {
             var networkableKill = rustAssembly.GetType("BaseNetworkable").GetMethod("Kill");
-            var onNetworkableKilled = hooksClass.GetMethod("NetworkableKill");
+            var onNetworkableKilled = hooksClass.GetMethod("On_NetworkableKill");
 
             networkableKill.InsertAfter(networkableKill.IlProc.Body.Instructions.Count - 13, Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallAfter(networkableKill.IlProc.Body.Instructions.Count - 13, onNetworkableKilled);
@@ -272,7 +235,7 @@ namespace Pluton.Patcher
         private static void NPCDiedPatch()
         {
             var npcKilled = rustAssembly.GetType("BaseNPC").GetMethod("OnKilled");
-            var onNPCDied = hooksClass.GetMethod("NPCDied");
+            var onNPCDied = hooksClass.GetMethod("On_NPCKilled");
 
             npcKilled.InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBefore(1, Instruction.Create(OpCodes.Ldarg_1))
@@ -286,7 +249,7 @@ namespace Pluton.Patcher
         private static void PlayerConnectedPatch()
         {
             var basePlayerInit = rustAssembly.GetType("BasePlayer").GetMethod("PlayerInit");
-            var onPlayerConnected = hooksClass.GetMethod("PlayerConnected");
+            var onPlayerConnected = hooksClass.GetMethod("On_PlayerConnected");
 
             basePlayerInit.InsertBefore(basePlayerInit.IlProc.Body.Instructions.Count - 29, Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBefore(basePlayerInit.IlProc.Body.Instructions.Count - 29, onPlayerConnected);
@@ -299,7 +262,7 @@ namespace Pluton.Patcher
         private static void PlayerDiedPatch()
         {
             var basePlayerDie = rustAssembly.GetType("BasePlayer").GetMethod("Die");
-            var onPlayerDied = hooksClass.GetMethod("PlayerDied");
+            var onPlayerDied = hooksClass.GetMethod("On_PlayerDied");
 
             basePlayerDie.RemoveAt(10)
                 .InsertCallBefore(10, onPlayerDied);
@@ -312,7 +275,7 @@ namespace Pluton.Patcher
         {
             
             var basePlayerDisconnected = rustAssembly.GetType("BasePlayer").GetMethod("OnDisconnected");
-            var onPlayerDisconnected = hooksClass.GetMethod("PlayerDisconnected");
+            var onPlayerDisconnected = hooksClass.GetMethod("On_PlayerDisconnected");
 
             basePlayerDisconnected.InsertBefore(0, Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBefore(1, onPlayerDisconnected);
@@ -326,7 +289,7 @@ namespace Pluton.Patcher
         {
             
             var updateRadiation = rustAssembly.GetType("BasePlayer").GetMethod("UpdateRadiation");
-            var onPlayerTakeRadiation = hooksClass.GetMethod("PlayerTakeRadiation");
+            var onPlayerTakeRadiation = hooksClass.GetMethod("On_PlayerTakeRadiation");
 
             updateRadiation.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
@@ -336,17 +299,17 @@ namespace Pluton.Patcher
                 
 
             if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + onPlayerTakeRadiation.FriendlyName + ".html", onPlayerTakeRadiation.PrintAndLink(onPlayerTakeRadiation));
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + updateRadiation.FriendlyName + ".html", updateRadiation.PrintAndLink(onPlayerTakeRadiation));
         }
 
         private static void PlayerStartLootingPatch()
         {
             var plEntity = pLoot.GetMethod("StartLootingEntity");
-            var lootEntity = hooksClass.GetMethod("StartLootingEntity");
+            var lootEntity = hooksClass.GetMethod("On_LootingEntity");
             var plPlayer = pLoot.GetMethod("StartLootingPlayer");
-            var lootPlayer = hooksClass.GetMethod("StartLootingPlayer");
+            var lootPlayer = hooksClass.GetMethod("On_LootingPlayer");
             var plItem = pLoot.GetMethod("StartLootingItem");
-            var lootItem = hooksClass.GetMethod("StartLootingItem");
+            var lootItem = hooksClass.GetMethod("On_LootingItem");
 
             plEntity.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(lootEntity);
@@ -369,7 +332,7 @@ namespace Pluton.Patcher
         {
             
             var respawnAt = rustAssembly.GetType("BasePlayer").GetMethod("RespawnAt");
-            var respawn = hooksClass.GetMethod("Respawn");
+            var respawn = hooksClass.GetMethod("On_Respawn");
 
             respawnAt.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
@@ -391,10 +354,10 @@ namespace Pluton.Patcher
                     where method.Parameters.Count == 3 && method.Name == "Normal"
                     select method).FirstOrDefault();
             });
-            var onServerConsole = hooksClass.GetMethod("ServerConsoleCommand");
+            var onServerConsole = hooksClass.GetMethod("On_ServerConsole");
 
             serverCmd.InsertAfter(12, Instruction.Create(OpCodes.Ldloc_1));
-            serverCmd.InsertAfter(13, Instruction.Create(OpCodes.Ldloc_2));
+            serverCmd.InsertAfter(13, Instruction.Create(OpCodes.Ldarg_2));
             serverCmd.InsertCallAfter(14, onServerConsole);
 
             if (gendiffs && newAssCS)
@@ -404,7 +367,7 @@ namespace Pluton.Patcher
         private static void ShootEvent()
         {
             var baseProjCLProject = rustAssembly.GetType("BaseProjectile").GetMethod("CLProject");
-            var onShoot = hooksClass.GetMethod("OnShoot");
+            var onShoot = hooksClass.GetMethod("On_Shooting");
 
             baseProjCLProject.InsertCallBefore(0, onShoot)
                 .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_1))
@@ -417,7 +380,7 @@ namespace Pluton.Patcher
         private static void ItemUsed()
         {
             var useItem = rustAssembly.GetType("Item").GetMethod("UseItem");
-            var onItemUsed = hooksClass.GetMethod("ItemUsed");
+            var onItemUsed = hooksClass.GetMethod("On_ItemUsed");
 
             useItem.InsertCallBefore(0, onItemUsed)
                 .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_1))
@@ -430,7 +393,7 @@ namespace Pluton.Patcher
         private static void Mining()
         {
             var processResource = rustAssembly.GetType("MiningQuarry").GetMethod("ProcessResources");
-            var processResourceHook = hooksClass.GetMethod("ProcessResources");
+            var processResourceHook = hooksClass.GetMethod("On_QuarryMining");
 
             processResource.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(processResourceHook);
@@ -442,7 +405,7 @@ namespace Pluton.Patcher
         private static void WeaponThrown()
         {
             var doThrow = rustAssembly.GetType("ThrownWeapon").GetMethod("DoThrow");
-            var onThrowing = hooksClass.GetMethod("DoThrow");
+            var onThrowing = hooksClass.GetMethod("On_WeaponThrow");
 
             doThrow.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -455,7 +418,7 @@ namespace Pluton.Patcher
         private static void RocketShootEvent()
         {
             var baseLauncherSVLaunch = rustAssembly.GetType("BaseLauncher").GetMethod("SV_Launch");
-            var onRocketShoot = hooksClass.GetMethod("OnRocketShoot");
+            var onRocketShoot = hooksClass.GetMethod("On_RocketShooting");
 
             baseLauncherSVLaunch.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -469,7 +432,7 @@ namespace Pluton.Patcher
         private static void ConsumeFuel()
         {
             var consumeFuel = rustAssembly.GetType("BaseOven").GetMethod("ConsumeFuel");
-            var onConsumeFuel = hooksClass.GetMethod("ConsumeFuel");
+            var onConsumeFuel = hooksClass.GetMethod("On_ConsumeFuel");
 
             consumeFuel.InsertCallBefore(0, onConsumeFuel)
                 .InsertBefore(0, Instruction.Create(OpCodes.Ldarg_2))
@@ -483,7 +446,7 @@ namespace Pluton.Patcher
         private static void ItemPickup()
         {
             var pickupCollectable = rustAssembly.GetType("CollectibleEntity").GetMethod("Pickup");
-            var method = hooksClass.GetMethod("Pickup");
+            var method = hooksClass.GetMethod("On_ItemPickup");
 
             int Position = pickupCollectable.IlProc.Body.Instructions.Count - 36;
             pickupCollectable.InsertCallBefore(Position, method)
@@ -503,7 +466,7 @@ namespace Pluton.Patcher
         private static void PlayerSleep()
         {
             var startSleeping = rustAssembly.GetType("BasePlayer").GetMethod("StartSleeping");
-            var onPlayerSleep = hooksClass.GetMethod("PlayerSleep");
+            var onPlayerSleep = hooksClass.GetMethod("On_PlayerSleep");
 
             startSleeping.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(onPlayerSleep);
@@ -515,7 +478,7 @@ namespace Pluton.Patcher
         private static void PlayerWakeUp()
         {
             var endSleeping = rustAssembly.GetType("BasePlayer").GetMethod("EndSleeping");
-            var onPlayerWakeUp = hooksClass.GetMethod("PlayerWakeUp");
+            var onPlayerWakeUp = hooksClass.GetMethod("On_PlayerWakeUp");
 
             endSleeping.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(onPlayerWakeUp);
@@ -528,7 +491,7 @@ namespace Pluton.Patcher
         private static void PlayerLoaded()
         {
             var enterGame = rustAssembly.GetType("BasePlayer").GetMethod("EnterGame");
-            var onPlayerLoaded = hooksClass.GetMethod("PlayerLoaded");
+            var onPlayerLoaded = hooksClass.GetMethod("On_PlayerLoaded");
 
             enterGame.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(onPlayerLoaded);
@@ -540,7 +503,7 @@ namespace Pluton.Patcher
         private static void PlayerWounded()
         {
             var basePlayerWound = rustAssembly.GetType("BasePlayer").GetMethod("StartWounded");
-            var onPlayerWounded = hooksClass.GetMethod("PlayerWounded");
+            var onPlayerWounded = hooksClass.GetMethod("On_PlayerWounded");
 
             basePlayerWound.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(onPlayerWounded);
@@ -552,7 +515,7 @@ namespace Pluton.Patcher
         private static void PlayerAssisted()
         {
             var woundAssist = rustAssembly.GetType("BasePlayer").GetMethod("WoundAssist");
-            var onPlayerAssisted = hooksClass.GetMethod("PlayerAssisted");
+            var onPlayerAssisted = hooksClass.GetMethod("On_PlayerAssisted");
 
             woundAssist.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(onPlayerAssisted);
@@ -564,7 +527,7 @@ namespace Pluton.Patcher
         private static void ItemRepaired()
         {
             var repairItem = rustAssembly.GetType("RepairBench").GetMethod("RepairItem");
-            var onItemRepaired = hooksClass.GetMethod("ItemRepaired");
+            var onItemRepaired = hooksClass.GetMethod("On_ItemRepaired");
 
             repairItem.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -577,7 +540,7 @@ namespace Pluton.Patcher
         private static void PlayerSyringeSelf()
         {
             var syringeSelf = rustAssembly.GetType("SyringeWeapon").GetMethod("InjectedSelf");
-            var onPlayerSyringeSelf = hooksClass.GetMethod("PlayerSyringeSelf");
+            var onPlayerSyringeSelf = hooksClass.GetMethod("On_PlayerSyringeSelf");
 
             syringeSelf.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -590,7 +553,7 @@ namespace Pluton.Patcher
         private static void PlayerSyringeOther()
         {
             var syringeOther = rustAssembly.GetType("SyringeWeapon").GetMethod("InjectedOther");
-            var onPlayerSyringeOther = hooksClass.GetMethod("PlayerSyringeOther");
+            var onPlayerSyringeOther = hooksClass.GetMethod("On_PlayerSyringeOther");
 
             syringeOther.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -603,7 +566,7 @@ namespace Pluton.Patcher
         private static void PlayerHealthChange()
         {
             var hpChanged = rustAssembly.GetType("BasePlayer").GetMethod("OnHealthChanged");
-            var onPlayerhpChanged = hooksClass.GetMethod("PlayerHealthChangeEvent");
+            var onPlayerhpChanged = hooksClass.GetMethod("On_PlayerHealthChange");
 
             hpChanged.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -617,7 +580,7 @@ namespace Pluton.Patcher
         private static void PlayerClothingChanged()
         {
             var onClothingChanged = rustAssembly.GetType("PlayerInventory").GetMethod("OnClothingChanged");
-            var onPlayerClothingChanged = hooksClass.GetMethod("PlayerClothingChanged");
+            var onPlayerClothingChanged = hooksClass.GetMethod("On_PlayerClothingChanged");
 
             onClothingChanged.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
@@ -632,8 +595,8 @@ namespace Pluton.Patcher
             var ItemContainer = rustAssembly.GetType("ItemContainer");
             var Insert = ItemContainer.GetMethod("Insert");
             var Remove = ItemContainer.GetMethod("Remove");
-            var method = hooksClass.GetMethod("ItemAdded");
-            var method2 = hooksClass.GetMethod("ItemRemoved");
+            var method = hooksClass.GetMethod("On_ItemAdded");
+            var method2 = hooksClass.GetMethod("On_ItemRemoved");
 
             int Position = Insert.IlProc.Body.Instructions.Count - 2;
             int Position2 = Remove.IlProc.Body.Instructions.Count - 2;
@@ -655,7 +618,7 @@ namespace Pluton.Patcher
         private static void ItemLoseCondition()
         {
             var loseCondition = rustAssembly.GetType("Item").GetMethod("LoseCondition");
-            var onItemLoseCondition = hooksClass.GetMethod("ItemLoseCondition");
+            var onItemLoseCondition = hooksClass.GetMethod("On_ItemLoseCondition");
 
             int Position = loseCondition.IlProc.Body.Instructions.Count - 10;
             loseCondition.InsertCallBefore(Position, onItemLoseCondition)
@@ -669,7 +632,7 @@ namespace Pluton.Patcher
         private static void LandmineArmed()
         {
             var armLandmine = rustAssembly.GetType("Landmine").GetMethod("Arm");
-            var onLandmineArmed = hooksClass.GetMethod("LandmineArmed");
+            var onLandmineArmed = hooksClass.GetMethod("On_LandmineArmed");
 
             armLandmine.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
                 .InsertCallBeforeRet(onLandmineArmed);
@@ -681,9 +644,9 @@ namespace Pluton.Patcher
         private static void LandmineExploded()
         {
             var landmineExplode = rustAssembly.GetType("Landmine").GetMethod("Explode");
-            var onLandmineExploded = hooksClass.GetMethod("LandmineExploded");
+            var onLandmineExploded = hooksClass.GetMethod("On_LandmineExploded");
 
-            int Position = landmineExplode.IlProc.Body.Instructions.Count - 6;
+            int Position = landmineExplode.IlProc.Body.Instructions.Count - 7;
             landmineExplode.InsertCallBefore(Position, onLandmineExploded)
                 .InsertBefore(Position, Instruction.Create(OpCodes.Ldarg_0));
 
@@ -694,7 +657,7 @@ namespace Pluton.Patcher
         private static void LandmineTriggered()
         {
             var landmineTrigger = rustAssembly.GetType("Landmine").GetMethod("Trigger");
-            var onLandmineTriggered = hooksClass.GetMethod("LandmineTriggered");
+            var onLandmineTriggered = hooksClass.GetMethod("On_LandmineTriggered");
 
             landmineTrigger.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
@@ -709,7 +672,7 @@ namespace Pluton.Patcher
         private static void ServerInitPatch()
         {
             var srvMgrInit = rustAssembly.GetType("ServerMgr").GetMethod("Initialize");
-            var onServerInit = hooksClass.GetMethod("ServerInit");
+            var onServerInit = hooksClass.GetMethod("On_ServerInit");
 
             srvMgrInit.InsertCallBeforeRet(onServerInit);
 
@@ -720,9 +683,9 @@ namespace Pluton.Patcher
         private static void ServerSavedPatch()
         {
             var doAutomatedSave = rustAssembly.GetType("SaveRestore").GetMethod("DoAutomatedSave");
-            var onServerSaved = hooksClass.GetMethod("ServerSaved");
+            var onServerSaved = hooksClass.GetMethod("On_ServerSaved");
 
-            doAutomatedSave.InsertCallBeforeRet(onServerSaved);
+            doAutomatedSave.InsertCallBefore(doAutomatedSave.IlProc.Body.Instructions.Count - 2, onServerSaved);
 
             if (gendiffs && newAssCS)
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doAutomatedSave.FriendlyName + ".html", doAutomatedSave.PrintAndLink(onServerSaved));
@@ -731,9 +694,9 @@ namespace Pluton.Patcher
         private static void ServerShutdownPatch()
         {
             var srvMrgDisable = rustAssembly.GetType("ServerMgr").GetMethod("OnDisable");
-            var onServerShutdown = hooksClass.GetMethod("ServerShutdown");
+            var onServerShutdown = hooksClass.GetMethod("On_ServerShutdown");
 
-            srvMrgDisable.InsertCallBeforeRet(onServerShutdown);
+            srvMrgDisable.InsertCallBefore(0, onServerShutdown);
 
             if (gendiffs && newAssCS)
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + srvMrgDisable.FriendlyName + ".html", srvMrgDisable.PrintAndLink(onServerShutdown));
@@ -746,7 +709,7 @@ namespace Pluton.Patcher
 
             srvMgrUpdateInfo.Clear();
 
-            setModded.AppendCall(setModded)
+            srvMgrUpdateInfo.AppendCall(setModded)
                 .Append(Instruction.Create(OpCodes.Ret));
 
             if (gendiffs && newAssCS)
@@ -756,7 +719,7 @@ namespace Pluton.Patcher
         private static void GiveItemsPatch()
         {
             var giveResFromItem = rustAssembly.GetType("ResourceDispenser").GetMethod("GiveResourceFromItem");
-            var onGather = hooksClass.GetMethod("Gathering");
+            var onGather = hooksClass.GetMethod("On_PlayerGathering");
 
             int iCount = giveResFromItem.IlProc.Body.Instructions.Count;
             giveResFromItem.RemoveRange(iCount - 16, iCount - 1);
@@ -836,7 +799,7 @@ namespace Pluton.Patcher
                 ClientConsoleCommandPatch();
                 ServerConsoleCommandPatch();
                 ShootEvent();
-
+                
                 Mining();
 
                 WeaponThrown();
