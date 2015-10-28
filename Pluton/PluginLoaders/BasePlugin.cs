@@ -471,6 +471,23 @@ namespace Pluton
         /// <returns>The timer.</returns>
         /// <param name="name">Name.</param>
         /// <param name="timeoutDelay">Timeout delay.</param>
+        public TimedEvent CreateTimer(string name, int timeoutDelay, Action<TimedEvent> callback)
+        {
+            TimedEvent timedEvent = GetTimer(name);
+            if (timedEvent == null) {
+                timedEvent = new TimedEvent(name, (double)timeoutDelay);
+                timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(callback);
+                Timers.Add(name, timedEvent);
+            }
+            return timedEvent;
+        }
+
+        /// <summary>
+        /// Creates a timer.
+        /// </summary>
+        /// <returns>The timer.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="timeoutDelay">Timeout delay.</param>
         /// <param name="args">Arguments.</param>
         public TimedEvent CreateTimer(string name, int timeoutDelay, Dictionary<string, object> args)
         {
@@ -479,6 +496,25 @@ namespace Pluton
                 timedEvent = new TimedEvent(name, (double)timeoutDelay);
                 timedEvent.Args = args;
                 timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(OnTimerCB);
+                Timers.Add(name, timedEvent);
+            }
+            return timedEvent;
+        }
+
+        /// <summary>
+        /// Creates a timer.
+        /// </summary>
+        /// <returns>The timer.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="timeoutDelay">Timeout delay.</param>
+        /// <param name="args">Arguments.</param>
+        public TimedEvent CreateTimer(string name, int timeoutDelay, Dictionary<string, object> args, Action<TimedEvent> callback)
+        {
+            TimedEvent timedEvent = GetTimer(name);
+            if (timedEvent == null) {
+                timedEvent = new TimedEvent(name, (double)timeoutDelay);
+                timedEvent.Args = args;
+                timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(callback);
                 Timers.Add(name, timedEvent);
             }
             return timedEvent;
@@ -545,6 +581,22 @@ namespace Pluton
             TimedEvent timedEvent = new TimedEvent(name, (double)timeoutDelay);
             timedEvent.Args = args;
             timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(OnTimerCB);
+            ParallelTimers.Add(timedEvent);
+            return timedEvent;
+        }
+
+        /// <summary>
+        /// Creates a parallel timer.
+        /// </summary>
+        /// <returns>The parallel timer.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="timeoutDelay">Timeout delay.</param>
+        /// <param name="args">Arguments.</param>
+        public TimedEvent CreateParallelTimer(string name, int timeoutDelay, Dictionary<string, object> args, Action<TimedEvent> callback)
+        {
+            TimedEvent timedEvent = new TimedEvent(name, (double)timeoutDelay);
+            timedEvent.Args = args;
+            timedEvent.OnFire += new TimedEvent.TimedEventFireDelegate(callback);
             ParallelTimers.Add(timedEvent);
             return timedEvent;
         }
