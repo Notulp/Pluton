@@ -113,8 +113,7 @@ namespace Pluton
         public object GetGlobalObject(string identifier)
         {
             try {
-                object obj = Scope.GetVariable(identifier);
-                return obj;
+                return Scope.GetVariable(identifier);
             } catch {
                 return null;
             }
