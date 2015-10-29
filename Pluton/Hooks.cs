@@ -738,9 +738,8 @@ namespace Pluton
         }
 
 
-        public static void On_PlayerConnected(Network.Connection connection)
+        public static void On_PlayerConnected(BasePlayer player)
         {
-            var player = connection.player as BasePlayer;
             var p = new Player(player);
             if (Server.GetInstance().OfflinePlayers.ContainsKey(player.userID))
                 Server.GetInstance().OfflinePlayers.Remove(player.userID);
