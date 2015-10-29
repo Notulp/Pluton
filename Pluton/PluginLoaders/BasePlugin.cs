@@ -682,6 +682,8 @@ namespace Pluton
             return true;
         }
 
+        public string UserAgent = "Pluton Plugin - " + Bootstrap.Version;
+
         /// <summary>
         /// GET request.
         /// </summary>
@@ -689,7 +691,22 @@ namespace Pluton
         public string GET(string url)
         {
             using (System.Net.WebClient client = new System.Net.WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 return client.DownloadString(url);
+            }
+        }
+
+        /// <summary>
+        /// GET request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
+        public void GETAsync(string url, Action<string> callback)
+        {
+            using (System.Net.WebClient client = new System.Net.WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.DownloadStringCompleted += (s, e) => callback.Invoke(e.Result);
+                client.DownloadStringAsync(new Uri(url));
             }
         }
 
@@ -701,9 +718,112 @@ namespace Pluton
         public string POST(string url, string data)
         {
             using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                byte[] bytes = client.UploadData(url, "POST", Encoding.ASCII.GetBytes(data));
-                return Encoding.ASCII.GetString(bytes);
+                return client.UploadString(url, "POST", data);
+            }
+        }
+
+        /// <summary>
+        /// POST request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
+        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
+        public void POSTAsync(string url, string data, Action<string> callback)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                client.UploadStringCompleted += (s, e) => callback.Invoke(e.Result);
+                client.UploadStringAsync(new Uri(url), "POST", data);
+            }
+        }
+
+        /// <summary>
+        /// PUT request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
+        public string PUT(string url, string data)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                return client.UploadString(url, "PUT", data);
+            }
+        }
+
+        /// <summary>
+        /// PUT request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
+        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
+        public void PUTAsync(string url, string data, Action<string> callback)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                client.UploadStringCompleted += (s, e) => callback.Invoke(e.Result);
+                client.UploadStringAsync(new Uri(url), "PUT", data);
+            }
+        }
+
+        /// <summary>
+        /// PATCH request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
+        public string PATCH(string url, string data)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                return client.UploadString(url, "PATCH", data);
+            }
+        }
+
+        /// <summary>
+        /// PATCH request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="data">Data.</param>
+        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
+        public void PATCHAsync(string url, string data, Action<string> callback)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                client.UploadStringCompleted += (s, e) => callback.Invoke(e.Result);
+                client.UploadStringAsync(new Uri(url), "PATCH", data);
+            }
+        }
+
+        /// <summary>
+        /// OPTIONS request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        public string OPTIONS(string url)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.UploadString(url, "OPTIONS", "");
+                return client.ResponseHeaders["Allow"];
+            }
+        }
+
+        /// <summary>
+        /// OPTIONS request.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="callback">Method that takes a string, it will be called with the returned options gathered from the Allow header.</param>
+        public void OPTIONSAsync(string url, Action<string> callback)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.UploadStringCompleted += (s, e) => callback.Invoke(client.ResponseHeaders["Allow"]);
+                client.UploadStringAsync(new Uri(url), "OPTIONS", "");
             }
         }
 
@@ -715,9 +835,9 @@ namespace Pluton
         public string POSTJSON(string url, string json)
         {
             using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                byte[] bytes = client.UploadData(url, "POST", Encoding.UTF8.GetBytes(json));
-                return Encoding.UTF8.GetString(bytes);
+                return client.UploadString(url, "POST", json);
             }
         }
     }
