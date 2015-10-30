@@ -587,15 +587,8 @@ namespace Pluton
 
             if (doaction) {
                 door.SetFlag(BaseEntity.Flags.Open, open);
-                door.SendNetworkUpdateImmediate(false);
-
-                if (open)
-                    door.CallMethod("UpdateLayer");
-
-                door.CancelInvoke("UpdateLayer");
-
-                if (!open)
-                    door.Invoke("UpdateLayer", door.closeDelay);
+                door.SendNetworkUpdateImmediate (false);
+                door.CallMethod("UpdateDoorAnimationParameters", false);
             }
         }
 
