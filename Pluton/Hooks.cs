@@ -631,28 +631,48 @@ namespace Pluton
             }
         }
 
-        public static void On_PlayerGathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, int amount)
+        public static void On_PlayerGathering(ResourceDispenser dispenser, BaseEntity to, ItemAmount itemAmt, float gatherDamage, float destroyFraction)
         {
-            itemAmt.amount += amount;
             BaseEntity from = (BaseEntity)dispenser.GetFieldValue("baseEntity");
-            GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, amount);
-            OnNext("On_PlayerGathering", ge);
- 
-            if (ge.Amount > 0) {
- 
-                if (amount > 0) {
- 
-                    itemAmt.amount -= amount;
-                    if (itemAmt.amount < 0)
-                        itemAmt.amount = 0;
- 
-                    Item item = ItemManager.CreateByItemID(itemAmt.itemid, ge.Amount, false);
-                    if (item == null) {
-                        return;
-                    }
-                    to.GiveItem(item);
-                }
+
+            if (itemAmt.amount == 0) {
+                return;
             }
+
+            float num = gatherDamage / from.MaxHealth ();
+            float num2 = itemAmt.startAmount / (float)dispenser.GetFieldValue("startingItemCounts");
+            float value = itemAmt.startAmount * num / num2;
+            float num3 = Mathf.Clamp (value, 0, itemAmt.amount);
+            float num4 = num3 * destroyFraction * 2;
+            if (itemAmt.amount < num3 + num4) {
+                itemAmt.amount -= destroyFraction * num3;
+                num3 = itemAmt.amount;
+                num4 = 0;
+            }
+            float amount = itemAmt.amount;
+            itemAmt.amount -= num3;
+            if (itemAmt.amount < 0) {
+                itemAmt.amount = 0;
+            }
+            int num5 = Mathf.Clamp (Mathf.RoundToInt (num3), 0, Mathf.CeilToInt (amount));
+            itemAmt.amount -= num4;
+            if (itemAmt.amount < 0) {
+                itemAmt.amount = 0;
+            }
+
+            GatherEvent ge = new GatherEvent(dispenser, from, to, itemAmt, num5);
+
+            OnNext("On_PlayerGathering", ge);
+
+            if (ge.Amount <= 0) {
+                return;
+            }
+            Item item = ItemManager.CreateByItemID (itemAmt.itemid, ge.Amount);
+            if (item == null) {
+                return;
+            }
+
+            to.GiveItem (item, BaseEntity.GiveItemReason.ResourceHarvested);
         }
 
         // BaseAnimal.Die()

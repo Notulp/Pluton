@@ -721,15 +721,15 @@ namespace Pluton.Patcher
             var giveResFromItem = rustAssembly.GetType("ResourceDispenser").GetMethod("GiveResourceFromItem");
             var onGather = hooksClass.GetMethod("On_PlayerGathering");
 
-            int iCount = giveResFromItem.IlProc.Body.Instructions.Count;
-            giveResFromItem.RemoveRange(iCount - 16, iCount - 1);
-
-            giveResFromItem.InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_0))
-                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_1))
-                .InsertBeforeRet(Instruction.Create(OpCodes.Ldarg_2))
-                .InsertBeforeRet(Instruction.Create(OpCodes.Ldloc_S, giveResFromItem.IlProc.Body.Variables[6]))
-                .InsertCallBeforeRet(onGather)
-                .InsertBeforeRet(Instruction.Create(OpCodes.Ret));
+            giveResFromItem.Clear()
+                .Append(Instruction.Create(OpCodes.Nop))
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg, giveResFromItem.IlProc.Body.Method.Parameters[0]))
+                .Append(Instruction.Create(OpCodes.Ldarg, giveResFromItem.IlProc.Body.Method.Parameters[1]))
+                .Append(Instruction.Create(OpCodes.Ldarg, giveResFromItem.IlProc.Body.Method.Parameters[2]))
+                .Append(Instruction.Create(OpCodes.Ldarg, giveResFromItem.IlProc.Body.Method.Parameters[3]))
+                .AppendCall(onGather)
+                .Append(Instruction.Create(OpCodes.Ret));
             
             if (gendiffs && newAssCS)
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + giveResFromItem.FriendlyName + ".html", giveResFromItem.PrintAndLink(onGather));
