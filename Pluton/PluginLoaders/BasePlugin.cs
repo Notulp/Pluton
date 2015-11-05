@@ -673,14 +673,9 @@ namespace Pluton
 
     public class Web : Singleton<Web>, ISingleton
     {
-        public void Initialize()
-        {
-        }
+        public void Initialize(){ }
 
-        public bool CheckDependencies()
-        {
-            return true;
-        }
+        public bool CheckDependencies() => true;
 
         public string UserAgent = "Pluton Plugin - " + Bootstrap.Version;
 
