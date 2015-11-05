@@ -679,10 +679,6 @@ namespace Pluton
 
         public string UserAgent = "Pluton Plugin - " + Bootstrap.Version;
 
-        /// <summary>
-        /// GET request.
-        /// </summary>
-        /// <param name="url">URL.</param>
         public string GET(string url)
         {
             using (System.Net.WebClient client = new System.Net.WebClient()) {
@@ -691,11 +687,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// GET request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
         public void GETAsync(string url, Action<string> callback)
         {
             using (System.Net.WebClient client = new System.Net.WebClient()) {
@@ -705,11 +696,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// POST request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="data">Data.</param>
         public string POST(string url, string data)
         {
             using (WebClient client = new WebClient()) {
@@ -719,12 +705,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// POST request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="data">Data.</param>
-        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
         public void POSTAsync(string url, string data, Action<string> callback)
         {
             using (WebClient client = new WebClient()) {
@@ -735,11 +715,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// PUT request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="data">Data.</param>
         public string PUT(string url, string data)
         {
             using (WebClient client = new WebClient()) {
@@ -749,12 +724,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// PUT request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="data">Data.</param>
-        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
         public void PUTAsync(string url, string data, Action<string> callback)
         {
             using (WebClient client = new WebClient()) {
@@ -765,11 +734,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// PATCH request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="data">Data.</param>
         public string PATCH(string url, string data)
         {
             using (WebClient client = new WebClient()) {
@@ -779,12 +743,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// PATCH request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="data">Data.</param>
-        /// <param name="callback">Method that takes a string, it will be called with the returned response.</param>
         public void PATCHAsync(string url, string data, Action<string> callback)
         {
             using (WebClient client = new WebClient()) {
@@ -795,10 +753,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// OPTIONS request.
-        /// </summary>
-        /// <param name="url">URL.</param>
         public string OPTIONS(string url)
         {
             using (WebClient client = new WebClient()) {
@@ -808,11 +762,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// OPTIONS request.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="callback">Method that takes a string, it will be called with the returned options gathered from the Allow header.</param>
         public void OPTIONSAsync(string url, Action<string> callback)
         {
             using (WebClient client = new WebClient()) {
@@ -822,11 +771,6 @@ namespace Pluton
             }
         }
 
-        /// <summary>
-        /// POSTs a json string to the specified url.
-        /// </summary>
-        /// <param name="url">URL.</param>
-        /// <param name="json">Json.</param>
         public string POSTJSON(string url, string json)
         {
             using (WebClient client = new WebClient()) {
