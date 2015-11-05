@@ -209,7 +209,7 @@ namespace Pluton
 
             OnNext("On_ClientAuth", ae);
 
-            ca.Approve(connection);
+            ConnectionAuth.m_AuthConnection.Remove(connection);
             if (!ae.Approved) {
                 ConnectionAuth.Reject(connection, ae.Reason);
                 return;
