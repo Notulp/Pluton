@@ -714,7 +714,6 @@ namespace Pluton
                 client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 return client.UploadString(url, "POST", data);
-                POST(url, data, (evt) => true);
             }
         }
 
