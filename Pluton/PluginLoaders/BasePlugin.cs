@@ -687,6 +687,18 @@ namespace Pluton
             }
         }
 
+        public string GET(string url, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (System.Net.WebClient client = new System.Net.WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                string result = client.DownloadString(url);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
+            }
+        }
+
         public void GETAsync(string url, Action<string> callback)
         {
             using (System.Net.WebClient client = new System.Net.WebClient()) {
@@ -702,6 +714,20 @@ namespace Pluton
                 client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 return client.UploadString(url, "POST", data);
+                POST(url, data, (evt) => true);
+            }
+        }
+
+        public string POST(string url, string data, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (WebClient client = new WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string result = client.UploadString(url, "POST", data);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
             }
         }
 
@@ -715,12 +741,54 @@ namespace Pluton
             }
         }
 
+        public string DELETE(string url)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                return client.UploadString(url, "DELETE", "");
+            }
+        }
+
+        public string DELETE(string url, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (WebClient client = new WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                string result = client.UploadString(url, "DELETE", "");
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
+            }
+        }
+
+        public void DELETEAsync(string url, Action<string> callback)
+        {
+            using (WebClient client = new WebClient()) {
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.UploadStringCompleted += (s, e) => callback.Invoke(e.Result);
+                client.UploadStringAsync(new Uri(url), "DELETE", "");
+            }
+        }
+
         public string PUT(string url, string data)
         {
             using (WebClient client = new WebClient()) {
                 client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 return client.UploadString(url, "PUT", data);
+            }
+        }
+
+        public string PUT(string url, string data, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (WebClient client = new WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string result = client.UploadString(url, "PUT", data);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
             }
         }
 
@@ -743,6 +811,19 @@ namespace Pluton
             }
         }
 
+        public string PATCH(string url, string data, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (WebClient client = new WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string result = client.UploadString(url, "PATCH", data);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
+            }
+        }
+
         public void PATCHAsync(string url, string data, Action<string> callback)
         {
             using (WebClient client = new WebClient()) {
@@ -762,6 +843,19 @@ namespace Pluton
             }
         }
 
+        public string OPTIONS(string url, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (WebClient client = new WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.UploadString(url, "OPTIONS", "");
+                string result = client.ResponseHeaders["Allow"];
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
+            }
+        }
+
         public void OPTIONSAsync(string url, Action<string> callback)
         {
             using (WebClient client = new WebClient()) {
@@ -777,6 +871,40 @@ namespace Pluton
                 client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
                 return client.UploadString(url, "POST", json);
+            }
+        }
+
+        public string POSTJSON(string url, string json, Func<SSLVerificationEvent, bool> verifySSLcallback)
+        {
+            using (WebClient client = new WebClient()) {
+                System.Net.Security.RemoteCertificateValidationCallback verifyssl = (sender, cert, chain, errors) => verifySSLcallback.Invoke(new SSLVerificationEvent(cert, chain, errors));
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += verifyssl;
+                client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                string result = client.UploadString(url, "POST", json);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback -= verifyssl;
+                return result;
+            }
+        }
+
+        public class SSLVerificationEvent
+        {
+            public System.Security.Cryptography.X509Certificates.X509Certificate Cert;
+            public System.Security.Cryptography.X509Certificates.X509Chain Chain;
+            public System.Net.Security.SslPolicyErrors Errors;
+
+            public bool HasErrors = false;
+
+            public SSLVerificationEvent(
+                System.Security.Cryptography.X509Certificates.X509Certificate cert,
+                System.Security.Cryptography.X509Certificates.X509Chain chain,
+                System.Net.Security.SslPolicyErrors errors
+            )
+            {
+                Cert = cert;
+                Chain = chain;
+                Errors = errors;
+                HasErrors = Errors != System.Net.Security.SslPolicyErrors.None;
             }
         }
     }
