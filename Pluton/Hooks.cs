@@ -697,7 +697,7 @@ namespace Pluton
             self.taskUID++;
             ItemCraftTask itemCraftTask = Facepunch.Pool.Get<ItemCraftTask>();
             itemCraftTask.blueprint = bp;
-            self.CallMethod("CollectIngredients", bp, ce.Amount);
+            self.CallMethod("CollectIngredients", bp, ce.Amount, owner);
             itemCraftTask.endTime = 0;
             itemCraftTask.taskUID = self.taskUID;
             itemCraftTask.owner = owner;
