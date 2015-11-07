@@ -18,7 +18,7 @@ namespace Pluton
 
         public BaseEntity AttachParachute(BaseEntity e)
         {
-            BaseEntity parachute = GameManager.server.CreateEntity("assets/bundled/prefabs/parachute.prefab", default(Vector3), default(Quaternion));
+            BaseEntity parachute = GameManager.server.CreateEntity("assets/prefabs/misc/parachute/parachute.prefab", default(Vector3), default(Quaternion));
             if (parachute) {
                 parachute.SetParent(e, "parachute_attach");
                 parachute.Spawn(true);
@@ -35,7 +35,7 @@ namespace Pluton
 
         public void AirDrop(float speed, float height = 400f)
         {
-            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/events/cargo_plane.prefab", default(Vector3), default(Quaternion));
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/prefabs/npc/cargo plane/cargo_plane.prefab", default(Vector3), default(Quaternion));
             if (baseEntity) {
                 baseEntity.Spawn(true);
             }
@@ -54,7 +54,7 @@ namespace Pluton
             float worldSize = (float)(global::World.Size - (global::World.Size / 7));
             Vector3 zero = Vector3.zero;
 
-            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/events/cargo_plane.prefab", default(Vector3), default(Quaternion));
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/prefabs/npc/cargo plane/cargo_plane.prefab", default(Vector3), default(Quaternion));
             if (baseEntity) {
                 baseEntity.Spawn(true);
             }
@@ -93,7 +93,7 @@ namespace Pluton
         
         public Entity PatrolHelicopter(float height = 10f)
         {
-            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/npc/patrol_helicopter/PatrolHelicopter.prefab", default(Vector3), default(Quaternion), true);
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/prefabs/npc/patrol helicopter/patrolhelicopter.prefab", default(Vector3), default(Quaternion), true);
             if (baseEntity)
             {
                 baseEntity.Spawn(true);
@@ -104,7 +104,7 @@ namespace Pluton
 
         public Entity PatrolHelicopterAt(Vector3 position, float height = 10f)
         {
-            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/bundled/prefabs/npc/patrol_helicopter/PatrolHelicopter.prefab", default(Vector3), default(Quaternion), true);
+            BaseEntity baseEntity = GameManager.server.CreateEntity("assets/prefabs/npc/patrol helicopter/patrolhelicopter.prefab", default(Vector3), default(Quaternion), true);
             if (baseEntity)
             {
                 PatrolHelicopterAI component = baseEntity.GetComponent<PatrolHelicopterAI>();
@@ -181,25 +181,25 @@ namespace Pluton
 
         public BaseEntity SpawnEvent(string evt, float x, float z)
         {
-            return SpawnEvent(evt, x, GetGround(x, z), z);    
+            return SpawnEffect(evt, x, GetGround(x, z), z);    
         }
 
         public BaseEntity SpawnEvent(string evt, Vector3 loc)
         {
-            return SpawnEvent(evt, loc.x, loc.x, loc.z);    
+            return SpawnEffect(evt, loc.x, loc.x, loc.z);    
         }
 
-        // like an airdrop
-        public BaseEntity SpawnEvent(string evt, float x, float y, float z)
+        // Like sounds, smoke, fire
+        public BaseEntity SpawnEffect(string evt, float x, float y, float z)
         {
-            BaseEntity ent = GameManager.server.CreateEntity("assets/bundled/prefabs/events/" + evt + ".prefab", 
+            BaseEntity ent = GameManager.server.CreateEntity("assets/bundled/prefabs/fx/" + evt + ".prefab", 
                                  new UnityEngine.Vector3(x, y, z), 
                                  new UnityEngine.Quaternion());
             ent.Spawn(true);
             return ent;
         }
 
-        //Animals: boar, bear, stag, wolf
+        //Animals: boar, bear, stag, wolf, horse, chicken
         public BaseEntity SpawnAnimal(string name, float x, float y, float z)
         {
             BaseEntity ent = GameManager.server.CreateEntity("assets/bundled/prefabs/autospawn/animals/" + name + ".prefab", 
@@ -283,10 +283,10 @@ namespace Pluton
 
         public void PrintPrefabs()
         {
-            BaseEntity[] objectsOfType = UnityEngine.Object.FindObjectsOfType<BaseEntity>();
-            foreach (BaseEntity baseEntity in objectsOfType)
-                if (!list.Contains(baseEntity.LookupPrefabName()))
-                    list.Add(baseEntity.LookupPrefabName());
+            GameManifest.PrefabProperties[] prefabProperties = GameManifest.Get().prefabProperties;
+            foreach (var prefabProperty in prefabProperties)
+                if (!list.Contains(prefabProperty.name))
+                    list.Add(prefabProperty.name);
             
             foreach (var s in list)
                 Debug.Log(s);
