@@ -1,6 +1,6 @@
 ﻿namespace Pluton.Events
 {
-    public class NPCDeathEvent : HurtEvent
+    public class NPCDeathEvent : DeathEvent
     {
         public readonly NPC Victim;
 
