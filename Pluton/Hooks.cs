@@ -209,7 +209,7 @@ namespace Pluton
 
             OnNext("On_ClientAuth", ae);
 
-            ConnectionAuth.m_AuthConnection.Remove(connection);
+            ca.m_AuthConnection.Remove(connection);
             if (!ae.Approved) {
                 ConnectionAuth.Reject(connection, ae.Reason);
                 return;
@@ -518,11 +518,11 @@ namespace Pluton
             OnNext("On_DoorCode", dc);
             if ((!dc.IsCorrect() || !dc.allowed) && !dc.forceAllow)
             {
-                Effect.server.Run(doorLock.effectDenied.resourcePath, doorLock, 0u, Vector3.zero, Vector3.forward);
+                Effect.server.Run(doorLock.effectDenied, doorLock, 0u, Vector3.zero, Vector3.forward);
                 rpc.player.Hurt(1f, Rust.DamageType.ElectricShock, doorLock, true);
                 return;
             }
-            Effect.server.Run(doorLock.effectUnlocked.resourcePath, doorLock, 0u, Vector3.zero, Vector3.forward);
+            Effect.server.Run(doorLock.effectUnlocked, doorLock, 0u, Vector3.zero, Vector3.forward);
             doorLock.SetFlag(BaseEntity.Flags.Locked, false);
             doorLock.SendNetworkUpdate(BasePlayer.NetworkQueue.Update);
             List<ulong> whitelist = new List<ulong>();
