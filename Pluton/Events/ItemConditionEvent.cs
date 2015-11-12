@@ -5,10 +5,13 @@
         private InvItem _item;
         private float _amount;
 
+        public Player Player;
+
         public ItemConditionEvent(Item item, float amount)
         {
             _item = new InvItem(item);
             _amount = amount;
+            Player = Server.GetPlayer(item.GetOwnerPlayer());
         }
 
         public InvItem Item {
