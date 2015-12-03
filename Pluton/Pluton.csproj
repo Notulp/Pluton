@@ -32,8 +32,20 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Facepunch.Network">
+      <HintPath>..\ref\Facepunch.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.System">
+      <HintPath>..\ref\Facepunch.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.UnityEngine">
+      <HintPath>..\ref\Facepunch.UnityEngine.dll</HintPath>
+    </Reference>
     <Reference Include="MoonSharp.Interpreter">
       <HintPath>ref\MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Data">
+      <HintPath>..\ref\Rust.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="IronPython.Deps">
@@ -187,14 +199,8 @@
     <Compile Include="Documentation\DoqEnums.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
   <ItemGroup>
     <None Include="Pluton.cfg" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Objects\PlutonUIComponents\" />
-    <Folder Include="Documentation\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

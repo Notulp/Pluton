@@ -63,7 +63,9 @@ namespace Pluton
 
         public static string QuoteSafe(this string self)
         {
-            return global::UnityEngine.StringExtensions.QuoteSafe(self);
+            self = self.Replace("\"", "\\\"");
+            self = self.TrimEnd(new char[] { '\\' });
+            return "\"" + self + "\"";
         }
     }
 }
