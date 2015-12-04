@@ -116,7 +116,7 @@
                     plugin.Hooks.Add(
                         Hooks.Subscribe(method, plugin)
                     );
-                    Logger.LogDebug("Found hook: " + method);
+                    Logger.LogDebug($"[{plugin.Type}] Adding hook: {plugin.Name}.{method}");
                 }
             }
 
@@ -130,7 +130,7 @@
                 return;
 
             foreach (Hook hook in plugin.Hooks) {
-                Logger.LogDebug("Found hook: " + hook.Name);
+                Logger.LogDebug($"[{plugin.Type}] Removing hook: {plugin.Name}.{hook.Name}");
                 hook.hook.Dispose();
             }
             plugin.Hooks.Clear();
