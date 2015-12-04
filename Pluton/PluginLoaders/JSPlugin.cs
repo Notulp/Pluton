@@ -60,6 +60,8 @@ namespace Pluton
 
         public override void Load(string code = "")
         {
+
+            try {
             Engine = new JintEngine(Options.Ecmascript5)
                 .AllowClr(true);
 
@@ -74,8 +76,6 @@ namespace Pluton
                 .SetParameter("Web", Web)
                 .SetParameter("World", World.GetInstance())
                 .SetFunction("importClass", new importit(importClass));
-
-            try {
                 Program = JintEngine.Compile(code, false);
 
                 Globals = (from statement in Program.Statements
@@ -95,6 +95,7 @@ namespace Pluton
             } catch (Exception ex) {
                 Logger.LogException(ex);
                 State = PluginState.FailedToLoad;
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(Name);
             }
 
             PluginLoader.GetInstance().OnPluginLoaded(this);

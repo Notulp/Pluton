@@ -32,6 +32,7 @@ namespace Pluton
             {
                 Logger.LogDebug(String.Format("[Plugin] MD5Hash not found for: {0} [{1}]!", name, Type));
                 State = PluginState.HashNotFound;
+                PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(Name);
                 return;
             }
 

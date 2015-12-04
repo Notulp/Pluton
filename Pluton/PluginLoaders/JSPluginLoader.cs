@@ -67,6 +67,9 @@ namespace Pluton
             } catch (Exception ex) {
                 Logger.Log("[JSPluginLoader] " + name + " plugin could not be loaded.");
                 Logger.LogException(ex);
+                if (PluginLoader.GetInstance().CurrentlyLoadingPlugins.Contains(name)) {
+                    PluginLoader.GetInstance().CurrentlyLoadingPlugins.Remove(name);
+                }
             }
         }
 
