@@ -1,3 +1,7 @@
 Assembly-CSharp.dll
 Assembly-CSharp-firstpass.dll
+Facepunch.Network.dll
+Facepunch.System.dll
+Facepunch.UnityEngine.dll
+Rust.Data.dll
 UnityEngine.dll
