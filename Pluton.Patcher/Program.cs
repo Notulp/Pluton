@@ -193,6 +193,34 @@ namespace Pluton.Patcher
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + unlockWithCode.FriendlyName + ".html", unlockWithCode.PrintAndLink(ondoorCode));
         }
 
+        private static void DoUpgradeToGradePatch() {
+            var doupgradetograde = rustAssembly.GetType("BuildingBlock").GetMethod("DoUpgradeToGrade");
+            var ongradechange = hooksClass.GetMethod("On_GradeChange");
+
+            doupgradetograde.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .Append(Instruction.Create(OpCodes.Ldarg_1))
+                .AppendCall(ongradechange)
+                .Append(Instruction.Create(OpCodes.Ret));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doupgradetograde.FriendlyName + ".html", doupgradetograde.PrintAndLink(ongradechange));
+        }
+
+        private static void TriggeredEventPrefabPatch()
+        {
+            var runevent = rustAssembly.GetType("TriggeredEventPrefab").GetMethod("RunEvent");
+            var onrunevent = hooksClass.GetMethod("On_RunEvent");
+
+            runevent.Clear()
+                .Append(Instruction.Create(OpCodes.Ldarg_0))
+                .AppendCall(onrunevent)
+                .Append(Instruction.Create(OpCodes.Ret));
+
+            if (gendiffs && newAssCS)
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + runevent.FriendlyName + ".html", runevent.PrintAndLink(onrunevent));
+        }
+
         private static void DoorUsePatch()
         {
             var door = rustAssembly.GetType("Door");
@@ -750,6 +778,7 @@ namespace Pluton.Patcher
                 CraftingStartPatch();
                 ConsumeFuel();
 
+                DoUpgradeToGradePatch();
                 DoPlacementPatch();
                 DoorCodePatch();
                 DoorUsePatch();
@@ -798,6 +827,7 @@ namespace Pluton.Patcher
 
                 ClientConsoleCommandPatch();
                 ServerConsoleCommandPatch();
+                TriggeredEventPrefabPatch();
                 ShootEvent();
                 
                 Mining();
@@ -861,7 +891,7 @@ namespace Pluton.Patcher
             if (plutonClass == null) {
                 try {
                     if (gendiffs) {
-                        string hash = String.Empty;
+                        string hash = string.Empty;
                         using (var sha512 = new System.Security.Cryptography.SHA512Managed())
                             hash = BitConverter.ToString(sha512.ComputeHash(File.ReadAllBytes("Assembly-CSharp.dll"))).Replace("-", "").ToLower();
 
