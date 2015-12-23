@@ -395,11 +395,11 @@ namespace Pluton
 
         public static void On_EventTriggered(TriggeredEventPrefab tep)
         {
-            EventTriggeredEvent ree = new EventTriggeredEvent(tep);
-            OnNext("On_EventTriggered", ree);
-            if (ree.Stop) return;
-            Debug.Log("[event] " + ree.Prefab);
-            BaseEntity baseEntity = GameManager.server.CreateEntity(ree.Prefab);
+            EventTriggeredEvent ete = new EventTriggeredEvent(tep);
+            OnNext("On_EventTriggered", ete);
+            if (ete.Stop) return;
+            Debug.Log("[event] " + ete.Prefab);
+            BaseEntity baseEntity = GameManager.server.CreateEntity(ete.Prefab);
             if (baseEntity) baseEntity.Spawn();
         }
 
