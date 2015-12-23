@@ -36,9 +36,10 @@ namespace Pluton
         static internal List<string> HookNames = new List<string>() {
             "On_AllPluginsLoaded",
             "On_BeingHammered",
+            "On_BuildingComplete",
             "On_BuildingPartDemolished",
             "On_BuildingPartDestroyed",
-            "On_BuildingComplete",
+            "On_BuildingPartGradeChange",
             "On_Chat",
             "On_ClientAuth",
             "On_ClientConsole",
@@ -49,13 +50,13 @@ namespace Pluton
             "On_CorpseHurt",
             "On_DoorCode",
             "On_DoorUse",
+            "On_EventTriggered",
             "On_ItemAdded",
             "On_ItemLoseCondition",
             "On_ItemPickup",
             "On_ItemRemoved",
             "On_ItemRepaired",
             "On_ItemUsed",
-            "On_GradeChange",
             "On_LandmineArmed",
             "On_LandmineExploded",
             "On_LandmineTriggered",
@@ -85,7 +86,6 @@ namespace Pluton
             "On_QuarryMining",
             "On_Respawn",
             "On_RocketShooting",
-            "On_RunEvent",
             "On_Shooting",
             "On_ServerConsole",
             "On_ServerInit",
@@ -393,39 +393,39 @@ namespace Pluton
             OnNext("On_BeingHammered", new HammerEvent(info, ownerPlayer));
         }
 
-        public static void On_RunEvent(TriggeredEventPrefab tep)
+        public static void On_EventTriggered(TriggeredEventPrefab tep)
         {
             RunEventEvent ree = new RunEventEvent(tep);
-            OnNext("On_RunEvent", ree);
+            OnNext("On_EventTriggered", ree);
             if (ree.Stop) return;
             Debug.Log("[event] " + ree.Prefab);
             BaseEntity baseEntity = GameManager.server.CreateEntity(ree.Prefab);
             if (baseEntity) baseEntity.Spawn();
         }
 
-        public static void On_GradeChange(BuildingBlock bb, BaseEntity.RPCMessage msg)
+        public static void On_BuildingPartGradeChange(BuildingBlock bb, BaseEntity.RPCMessage msg)
         {
             BuildingGrade.Enum bgrade = (BuildingGrade.Enum)msg.read.Int32();
             BasePlayer player = msg.player;
-            GradeChangeEvent gce = new GradeChangeEvent(bb, bgrade, player);
-            OnNext("On_GradeChange", gce);
-            ConstructionGrade cg = (ConstructionGrade)bb.CallMethod("GetGrade", gce.Grade);
-            if (gce.DoDestroy) {
-                gce.Builder.Message(gce.DestroyReason);
+            BuildingPartGradeChangeEvent bpgce = new BuildingPartGradeChangeEvent(bb, bgrade, player);
+            OnNext("On_BuildingPartGradeChange", bpgce);
+            ConstructionGrade cg = (ConstructionGrade)bb.CallMethod("GetGrade", bpgce.Grade);
+            if (bpgce.DoDestroy) {
+                bpgce.Builder.Message(bpgce.DestroyReason);
                 UnityEngine.Object.Destroy(bb);
                 return;
             }
             if (cg == null) return;
-	        if (!gce.HasPrivilege) return;
-            if (gce.PayForUpgrade && !(bool)bb.CallMethod("CanAffordUpgrade", gce.Grade, player)) return;
+	        if (!bpgce.HasPrivilege) return;
+            if (bpgce.PayForUpgrade && !(bool)bb.CallMethod("CanAffordUpgrade", bpgce.Grade, player)) return;
 	        if (bb.TimeSinceAttacked() < 8f) return;
-            if (gce.PayForUpgrade) bb.CallMethod("PayForUpgrade", cg, player);
-            bb.SetGrade(gce.Grade);
+            if (bpgce.PayForUpgrade) bb.CallMethod("PayForUpgrade", cg, player);
+            bb.SetGrade(bpgce.Grade);
             bb.SetHealthToMax();
-            if (gce.Rotatable) bb.CallMethod("StartBeingRotatable");
+            if (bpgce.Rotatable) bb.CallMethod("StartBeingRotatable");
             bb.SendNetworkUpdate();
             bb.CallMethod("UpdateSkin");
-            Effect.server.Run("assets/bundled/prefabs/fx/build/promote_" + gce.Grade.ToString().ToLower() + ".prefab", bb, 0u, Vector3.zero, Vector3.zero);
+            Effect.server.Run("assets/bundled/prefabs/fx/build/promote_" + bpgce.Grade.ToString().ToLower() + ".prefab", bb, 0u, Vector3.zero, Vector3.zero);
         }
 
         public static void On_CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info, bool useProtection = true)

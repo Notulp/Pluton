@@ -85,7 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\GradeChangeEvent.cs" />
+    <Compile Include="Events\BuildingPartGradeChangeEvent.cs" />
     <Compile Include="Events\BuildingPartDemolishedEvent.cs" />
     <Compile Include="Events\BuildingPartDestroyedEvent.cs" />
     <Compile Include="Events\RunEventEvent.cs" />

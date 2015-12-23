@@ -195,30 +195,30 @@ namespace Pluton.Patcher
 
         private static void DoUpgradeToGradePatch() {
             var doupgradetograde = rustAssembly.GetType("BuildingBlock").GetMethod("DoUpgradeToGrade");
-            var ongradechange = hooksClass.GetMethod("On_GradeChange");
+            var onbuildingpartgradechange = hooksClass.GetMethod("On_BuildingPartGradeChange");
 
             doupgradetograde.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
                 .Append(Instruction.Create(OpCodes.Ldarg_1))
-                .AppendCall(ongradechange)
+                .AppendCall(onbuildingpartgradechange)
                 .Append(Instruction.Create(OpCodes.Ret));
 
             if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doupgradetograde.FriendlyName + ".html", doupgradetograde.PrintAndLink(ongradechange));
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + doupgradetograde.FriendlyName + ".html", doupgradetograde.PrintAndLink(onbuildingpartgradechange));
         }
 
-        private static void TriggeredEventPrefabPatch()
+        private static void EventTriggeredPatch()
         {
             var runevent = rustAssembly.GetType("TriggeredEventPrefab").GetMethod("RunEvent");
-            var onrunevent = hooksClass.GetMethod("On_RunEvent");
+            var oneventtriggered = hooksClass.GetMethod("On_EventTriggered");
 
             runevent.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
-                .AppendCall(onrunevent)
+                .AppendCall(oneventtriggered)
                 .Append(Instruction.Create(OpCodes.Ret));
 
             if (gendiffs && newAssCS)
-                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + runevent.FriendlyName + ".html", runevent.PrintAndLink(onrunevent));
+                File.WriteAllText("diffs" + Path.DirectorySeparatorChar + runevent.FriendlyName + ".html", runevent.PrintAndLink(oneventtriggered));
         }
 
         private static void DoorUsePatch()
@@ -827,7 +827,7 @@ namespace Pluton.Patcher
 
                 ClientConsoleCommandPatch();
                 ServerConsoleCommandPatch();
-                TriggeredEventPrefabPatch();
+                EventTriggeredPatch();
                 ShootEvent();
                 
                 Mining();

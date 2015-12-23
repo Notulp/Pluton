@@ -1,6 +1,6 @@
 ﻿namespace Pluton.Events
 {
-    public class GradeChangeEvent: CountedInstance
+    public class BuildingPartGradeChangeEvent: CountedInstance
     {
         private BuildingGrade.Enum grade;
 
@@ -14,7 +14,7 @@
         public string DestroyReason = string.Empty;
         public bool DoDestroy = false;
 
-        public GradeChangeEvent(BuildingBlock bb, BuildingGrade.Enum bgrade, BasePlayer player)
+        public BuildingPartGradeChangeEvent(BuildingBlock bb, BuildingGrade.Enum bgrade, BasePlayer player)
         {
             BuildingPart = new BuildingPart(bb);
             Builder = Server.GetPlayer(player);
