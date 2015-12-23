@@ -88,7 +88,7 @@
     <Compile Include="Events\BuildingPartGradeChangeEvent.cs" />
     <Compile Include="Events\BuildingPartDemolishedEvent.cs" />
     <Compile Include="Events\BuildingPartDestroyedEvent.cs" />
-    <Compile Include="Events\RunEventEvent.cs" />
+    <Compile Include="Events\EventTriggeredEvent.cs" />
     <Compile Include="Events\HammerEvent.cs" />
     <Compile Include="Events\ConsumeFuelEvent.cs" />
     <Compile Include="Events\InventoryModEvent.cs" />

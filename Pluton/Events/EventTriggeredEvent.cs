@@ -1,11 +1,11 @@
 ﻿namespace Pluton.Events
 {
-    public class RunEventEvent : CountedInstance
+    public class EventTriggeredEvent : CountedInstance
     {
         bool stopevent = false;
         GameObjectRef targetPrefab = null;
 
-        public RunEventEvent(TriggeredEventPrefab triggeredEventPrefab)
+        public EventTriggeredEvent(TriggeredEventPrefab triggeredEventPrefab)
         {
             targetPrefab = triggeredEventPrefab.targetPrefab;
         }

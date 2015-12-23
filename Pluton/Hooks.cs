@@ -395,7 +395,7 @@ namespace Pluton
 
         public static void On_EventTriggered(TriggeredEventPrefab tep)
         {
-            RunEventEvent ree = new RunEventEvent(tep);
+            EventTriggeredEvent ree = new EventTriggeredEvent(tep);
             OnNext("On_EventTriggered", ree);
             if (ree.Stop) return;
             Debug.Log("[event] " + ree.Prefab);
