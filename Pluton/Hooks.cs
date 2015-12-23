@@ -36,9 +36,10 @@ namespace Pluton
         static internal List<string> HookNames = new List<string>() {
             "On_AllPluginsLoaded",
             "On_BeingHammered",
+            "On_BuildingComplete",
             "On_BuildingPartDemolished",
             "On_BuildingPartDestroyed",
-            "On_BuildingComplete",
+            "On_BuildingPartGradeChange",
             "On_Chat",
             "On_ClientAuth",
             "On_ClientConsole",
@@ -49,6 +50,7 @@ namespace Pluton
             "On_CorpseHurt",
             "On_DoorCode",
             "On_DoorUse",
+            "On_EventTriggered",
             "On_ItemAdded",
             "On_ItemLoseCondition",
             "On_ItemPickup",
@@ -242,7 +244,7 @@ namespace Pluton
         public static void On_Command(ConsoleSystem.Arg arg)
         {
             Player player = Server.GetPlayer(arg.Player());
-            string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[]{ " " }, StringSplitOptions.None);
+            string[] args = arg.ArgsStr.Substring(2, arg.ArgsStr.Length - 3).Replace("\\", "").Split(new string[] { " " }, StringSplitOptions.None);
 
             CommandEvent cmd = new CommandEvent(player, args);
             // TODO: do this part in a different function to be documented
@@ -283,32 +285,32 @@ namespace Pluton
 
         public static void On_ItemUsed(Item item, int amountToConsume)
         {
-            OnNext("On_ItemUsed", new  ItemUsedEvent(item, amountToConsume));
+            OnNext("On_ItemUsed", new ItemUsedEvent(item, amountToConsume));
         }
 
         public static void On_QuarryMining(MiningQuarry miningQuarry)
         {
-            OnNext("On_QuarryMining", miningQuarry );
+            OnNext("On_QuarryMining", miningQuarry);
         }
 
         public static void On_WeaponThrow(ThrownWeapon thrownWeapon, BaseEntity.RPCMessage msg)
         {
-            OnNext("On_WeaponThrow", new  WeaponThrowEvent(thrownWeapon, msg));
+            OnNext("On_WeaponThrow", new WeaponThrowEvent(thrownWeapon, msg));
         }
 
         public static void On_RocketShooting(BaseLauncher baseLauncher, BaseEntity.RPCMessage msg, BaseEntity baseEntity)
         {
-            OnNext("On_RocketShooting", new  RocketShootEvent(baseLauncher, msg, baseEntity));
+            OnNext("On_RocketShooting", new RocketShootEvent(baseLauncher, msg, baseEntity));
         }
 
         public static void On_ItemPickup(CollectibleEntity ce, BaseEntity.RPCMessage msg, Item i)
         {
-            OnNext("On_ItemPickup", new  ItemPickupEvent(ce, msg, i));
+            OnNext("On_ItemPickup", new ItemPickupEvent(ce, msg, i));
         }
 
         public static void On_ConsumeFuel(BaseOven bo, Item fuel, ItemModBurnable burn)
         {
-            OnNext("On_ConsumeFuel", new  ConsumeFuelEvent(bo, fuel, burn));
+            OnNext("On_ConsumeFuel", new ConsumeFuelEvent(bo, fuel, burn));
         }
 
         public static void On_PlayerSleep(BasePlayer bp)
@@ -350,7 +352,7 @@ namespace Pluton
         {
             OnNext("On_PlayerSyringeOther", new SyringeUseEvent(sw, msg, false));
         }
-        
+
         public static void On_PlayerHealthChange(BasePlayer p, float f, float f2)
         {
             OnNext("On_PlayerHealthChange", new PlayerHealthChangeEvent(p, f, f2));
@@ -360,7 +362,7 @@ namespace Pluton
         {
             OnNext("On_ItemAdded", new InventoryModEvent(ic, i));
         }
-        
+
         public static void On_ItemRemoved(ItemContainer ic, Item i)
         {
             OnNext("On_ItemRemoved", new InventoryModEvent(ic, i));
@@ -391,13 +393,46 @@ namespace Pluton
             OnNext("On_BeingHammered", new HammerEvent(info, ownerPlayer));
         }
 
+        public static void On_EventTriggered(TriggeredEventPrefab tep)
+        {
+            EventTriggeredEvent ete = new EventTriggeredEvent(tep);
+            OnNext("On_EventTriggered", ete);
+            if (ete.Stop) return;
+            Debug.Log("[event] " + ete.Prefab);
+            BaseEntity baseEntity = GameManager.server.CreateEntity(ete.Prefab);
+            if (baseEntity) baseEntity.Spawn();
+        }
+
+        public static void On_BuildingPartGradeChange(BuildingBlock bb, BaseEntity.RPCMessage msg)
+        {
+            BuildingGrade.Enum bgrade = (BuildingGrade.Enum)msg.read.Int32();
+            BasePlayer player = msg.player;
+            BuildingPartGradeChangeEvent bpgce = new BuildingPartGradeChangeEvent(bb, bgrade, player);
+            OnNext("On_BuildingPartGradeChange", bpgce);
+            ConstructionGrade cg = (ConstructionGrade)bb.CallMethod("GetGrade", bpgce.Grade);
+            if (bpgce.DoDestroy) {
+                bpgce.Builder.Message(bpgce.DestroyReason);
+                UnityEngine.Object.Destroy(bb);
+                return;
+            }
+            if (cg == null) return;
+	        if (!bpgce.HasPrivilege) return;
+            if (bpgce.PayForUpgrade && !(bool)bb.CallMethod("CanAffordUpgrade", bpgce.Grade, player)) return;
+	        if (bb.TimeSinceAttacked() < 8f) return;
+            if (bpgce.PayForUpgrade) bb.CallMethod("PayForUpgrade", cg, player);
+            bb.SetGrade(bpgce.Grade);
+            bb.SetHealthToMax();
+            if (bpgce.Rotatable) bb.CallMethod("StartBeingRotatable");
+            bb.SendNetworkUpdate();
+            bb.CallMethod("UpdateSkin");
+            Effect.server.Run("assets/bundled/prefabs/fx/build/promote_" + bpgce.Grade.ToString().ToLower() + ".prefab", bb, 0u, Vector3.zero, Vector3.zero);
+        }
+
         public static void On_CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info, bool useProtection = true)
         {
             try {
                 Assert.Test(combatEnt.isServer, "This should be called serverside only");
-                if (combatEnt.IsDead()) {
-                    return;
-                }
+                if (combatEnt.IsDead()) return;
                 using (TimeWarning.New("Hurt", 50)) {
                     BaseNPC npc = combatEnt.GetComponent<BaseNPC>();
                     BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
