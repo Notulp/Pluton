@@ -962,44 +962,51 @@ namespace Pluton
         public static void SetModded()
         {
             try {
-                SteamGameServer.SetServerName(ConVar.Server.hostname);
-                SteamGameServer.SetMaxPlayerCount(ConVar.Server.maxplayers);
-                SteamGameServer.SetPasswordProtected(false);
-                SteamGameServer.SetMapName(Application.loadedLevelName);
-                string pchGameTags = String.Format("mp{0},cp{1},v{2},cc{3},procsd{4},procsz{5},{6}{7}",
-                                         new object[] {
-                        ConVar.Server.maxplayers,
-                        BasePlayer.activePlayerList.Count,
-                        Rust.Protocol.network,
-                        Steamworks.SteamGameServerUtils.GetIPCountry(),
-                        global::World.Seed,
-                        global::World.Size,
-                        ConVar.Server.pve ? "pve," : string.Empty,
-                        pluton.enabled ? "modded,pluton" : string.Empty
-                    });
-
-                SteamGameServer.SetGameTags(pchGameTags);
-                for (int i = 0; i < 16; i++) {
-                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), string.Empty);
+                ServerMgr.Instance.SetFieldValue("m_ValidateAuthTicketResponse", Callback<ValidateAuthTicketResponse_t>.CreateGameServer(new Callback<ValidateAuthTicketResponse_t>.DispatchDelegate((pCallback) => {
+                    if (Auth_Steam.ValidateConnecting(pCallback.m_SteamID.m_SteamID, pCallback.m_OwnerSteamID.m_SteamID, pCallback.m_eAuthSessionResponse)) return;
+                    Connection connection = Net.sv.connections.FirstOrDefault((Connection x) => x.userid == pCallback.m_SteamID.m_SteamID);
+                    if (connection == null) {
+                        Debug.LogWarning(string.Concat(new object[] {
+                            "Steam gave us a ",
+                            pCallback.m_eAuthSessionResponse,
+                            " ticket response for unconnected id ",
+                            pCallback.m_SteamID.m_SteamID
+                        }));
+                        return;
+                    }
+                    if (pCallback.m_eAuthSessionResponse == EAuthSessionResponse.k_EAuthSessionResponseOK) {
+                        Debug.LogWarning("Steam gave us a 'ok' ticket response for already connected id " + pCallback.m_SteamID.m_SteamID);
+                        return;
+                    }
+                    if (pCallback.m_eAuthSessionResponse == EAuthSessionResponse.k_EAuthSessionResponseVACCheckTimedOut) return;
+                    connection.authStatus = pCallback.m_eAuthSessionResponse.ToString();
+                    Net.sv.Kick(connection, "Steam: " + pCallback.m_eAuthSessionResponse.ToString());
+                })));
+                uint num = 0u;
+                if (!string.IsNullOrEmpty(ConVar.Server.ip)) {
+                    byte[] addressBytes = System.Net.IPAddress.Parse(ConVar.Server.ip).GetAddressBytes();
+                    num = (uint)((uint)addressBytes[0] << 24);
+                    num += (uint)((uint)addressBytes[1] << 16);
+                    num += (uint)((uint)addressBytes[2] << 8);
+                    num += (uint)addressBytes[3];
                 }
-                string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
-                for (int j = 0; j < array.Length; j++) {
-                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", j), array[j]);
+                ushort usQueryPort = 65535;
+                if (!GameServer.Init(num, (ushort)UnityEngine.Random.Range(1000, 5000), (ushort)Network.Net.sv.port, usQueryPort, (!ConVar.Server.secure) ? EServerMode.eServerModeAuthentication : EServerMode.eServerModeAuthenticationAndSecure, 1341.ToString())) {
+                    Debug.LogWarning("Couldn't initialize Steam Server (" + num + ")");
+                    return;
                 }
-                SteamGameServer.SetKeyValue("country", SteamGameServerUtils.GetIPCountry());
-                SteamGameServer.SetKeyValue("world.seed", global::World.Seed.ToString());
-                SteamGameServer.SetKeyValue("world.size", global::World.Size.ToString());
-                SteamGameServer.SetKeyValue("official", ConVar.Server.official.ToString());
-                SteamGameServer.SetKeyValue("pve", ConVar.Server.pve.ToString());
-                SteamGameServer.SetKeyValue("headerimage", ConVar.Server.headerimage);
-                SteamGameServer.SetKeyValue("url", ConVar.Server.url);
-                SteamGameServer.SetKeyValue("uptime", ((int)Time.realtimeSinceStartup).ToString());
+                SteamGameServer.SetModDir("rust");
+                SteamGameServer.SetProduct("rust");
+                SteamGameServer.SetGameDescription("rust_server");
+                SteamGameServer.LogOnAnonymous();
+                SteamGameServer.EnableHeartbeats(true);
+                ServerMgr.Instance.InvokeRepeating("UpdateServerInformation", 1f, 10f);
+                Debug.Log("Connected to Steam");
             } catch (Exception ex) {
                 Logger.LogError("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
             }
         }
-
         #endregion
     }
 }
