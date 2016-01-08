@@ -962,37 +962,46 @@ namespace Pluton
         public static void SetModded()
         {
             try {
-                SteamGameServer.SetServerName(ConVar.Server.hostname);
-                SteamGameServer.SetMaxPlayerCount(ConVar.Server.maxplayers);
-                SteamGameServer.SetPasswordProtected(false);
-                SteamGameServer.SetMapName(Application.loadedLevelName);
-                string pchGameTags = string.Format("mp{0},cp{1},v{2},cc{3},procsd{4},procsz{5},{6}{7}", new object[] {
-					ConVar.Server.maxplayers,
-					BasePlayer.activePlayerList.Count,
-					Rust.Protocol.network,
-					Steamworks.SteamGameServerUtils.GetIPCountry(),
-					global::World.Seed,
-					global::World.Size,
-					ConVar.Server.pve ? "pve," : string.Empty,
-					pluton.enabled ? "modded,pluton" : string.Empty
-				});
+                using (TimeWarning.New ("UpdateServerInformation", 0.1f)) {
+                    SteamGameServer.SetServerName(ConVar.Server.hostname);
+                    SteamGameServer.SetMaxPlayerCount(ConVar.Server.maxplayers);
+                    SteamGameServer.SetPasswordProtected(false);
+                    SteamGameServer.SetMapName(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                    string pchGameTags = string.Format("mp{0},cp{1},v{2}{3}{4}", new object[] {
+    					ConVar.Server.maxplayers,
+    					BasePlayer.activePlayerList.Count,
+    					Rust.Protocol.network,
+    					ConVar.Server.pve ? ",pve" : string.Empty,
+    					pluton.enabled ? ",modded,pluton" : string.Empty
+    				});
 
-                SteamGameServer.SetGameTags(pchGameTags);
-                for (int i = 0; i < 16; i++) {
-                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), string.Empty);
+                    SteamGameServer.SetGameTags(pchGameTags);
+                    string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
+                    for (int i = 0; i < 16; i++) {
+                        if (i < array.Length) {
+                            SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), array[i]);
+                        }
+                        else {
+                            SteamGameServer.SetKeyValue(string.Format("description_{0:00}", i), String.Empty);
+                        }
+                    }
+                    SteamGameServer.SetKeyValue("country", SteamGameServerUtils.GetIPCountry());
+                    SteamGameServer.SetKeyValue("world.seed", global::World.Seed.ToString());
+                    SteamGameServer.SetKeyValue("world.size", global::World.Size.ToString());
+                    SteamGameServer.SetKeyValue("official", ConVar.Server.official.ToString());
+                    SteamGameServer.SetKeyValue("pve", ConVar.Server.pve.ToString());
+                    SteamGameServer.SetKeyValue("headerimage", ConVar.Server.headerimage);
+                    SteamGameServer.SetKeyValue("url", ConVar.Server.url);
+                    SteamGameServer.SetKeyValue("uptime", ((int)Time.realtimeSinceStartup).ToString());
+                    SteamGameServer.SetKeyValue("mem_ws", Performance.usedMemoryWorkingSetMB.ToString());
+                    SteamGameServer.SetKeyValue("mem_pv", Performance.usedMemoryPrivateMB.ToString());
+                    SteamGameServer.SetKeyValue("gc_mb", Performance.memoryAllocations.ToString());
+                    SteamGameServer.SetKeyValue("gc_cl", Performance.memoryCollections.ToString());
+                    SteamGameServer.SetKeyValue("fps", Performance.frameRate.ToString());
+                    SteamGameServer.SetKeyValue("fps_avg", Performance.frameRateAverage.ToString("0.00"));
+                    SteamGameServer.SetKeyValue("ent_cnt", BaseNetworkable.serverEntities.Count.ToString());
+                    SteamGameServer.SetKeyValue("build", BuildInformation.VersionStampDays.ToString());
                 }
-                string[] array = ConVar.Server.description.SplitToChunks(100).ToArray();
-                for (int j = 0; j < array.Length; j++) {
-                    SteamGameServer.SetKeyValue(string.Format("description_{0:00}", j), array[j]);
-                }
-                SteamGameServer.SetKeyValue("country", SteamGameServerUtils.GetIPCountry());
-                SteamGameServer.SetKeyValue("world.seed", global::World.Seed.ToString());
-                SteamGameServer.SetKeyValue("world.size", global::World.Size.ToString());
-                SteamGameServer.SetKeyValue("official", ConVar.Server.official.ToString());
-                SteamGameServer.SetKeyValue("pve", ConVar.Server.pve.ToString());
-                SteamGameServer.SetKeyValue("headerimage", ConVar.Server.headerimage);
-                SteamGameServer.SetKeyValue("url", ConVar.Server.url);
-                SteamGameServer.SetKeyValue("uptime", ((int)Time.realtimeSinceStartup).ToString());
             } catch (Exception ex) {
                 Logger.LogError("[Hooks] Error while setting the server modded.");
                 Logger.LogException(ex);
