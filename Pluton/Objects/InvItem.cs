@@ -29,6 +29,18 @@ namespace Pluton
             }
         }
 
+        public InvItem(int itemid, int amount = 1)
+        {
+             var item = ItemManager.CreateByItemId(itemid, amount);
+             if (item == null) {
+                Logger.LogDebug(String.Format("[InvItem] Couldn't create item: {0}x{1}", amount, itemid));
+                _item = null;
+            } else {
+                _item = item;
+                containerPref = GetContainerPreference(Category);
+            }
+        }
+
         public InvItem(string name)
         {
             var item = ItemManager.CreateByItemID(GetItemID(name), 1);
