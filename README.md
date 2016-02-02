@@ -3,8 +3,8 @@
 Pluton
 ======
 
-<a href='http://jenkins.pluton-team.org/job/Pluton/'>
-  <img src='http://jenkins.pluton-team.org/buildStatus/icon?job=Pluton'></a>
+<a href='http://jenkins.pluton.team/job/Pluton/'>
+  <img src='http://jenkins.pluton.team/buildStatus/icon?job=Pluton'></a>
 <a href='https://github.com/Notulp/Pluton/blob/master/LICENSE'>
   <img src='https://img.shields.io/github/license/notulp/pluton.svg'></a>
 <a href='https://github.com/Notulp/Pluton/releases/latest'>
@@ -17,18 +17,18 @@ Pluton
   <img src='https://img.shields.io/github/issues/notulp/pluton.svg'></a>
 <a href='https://gitter.im/Notulp/Pluton'>
   <img src='https://badges.gitter.im/Join%20Chat.svg'></a>
-<a href='http://forum.pluton-team.org/chat/'>
+<a href='http://forum.pluton.team/chat/'>
   <img src='https://img.shields.io/badge/IRC-JOIN_CHAT-lightgrey.svg'></a>
   
 
 Pluton is a server mod for the active branch of the survival sandbox game Rust. By using our simple API, you can to easily change the gameplay drastically.
 
-* [Homepage](http://pluton-team.org) 
-* [Forum](http://forum.pluton-team.org)
-* [Wiki](http://forum.pluton-team.org/wiki/index/)
-* [Binaries](http://dl.pluton-team.org)
-* [Compiling](http://forum.pluton-team.org/wiki/compiling/)
-* [FAQ](http://forum.pluton-team.org/wiki/faq/)
+* [Homepage](http://pluton.team) 
+* [Forum](http://forum.pluton.team)
+* [Wiki](http://forum.pluton.team/wiki/index/)
+* [Binaries](http://dl.pluton.team)
+* [Compiling](http://forum.pluton.team/wiki/compiling/)
+* [FAQ](http://forum.pluton.team/wiki/faq/)
 
 
 Our sponsors:
