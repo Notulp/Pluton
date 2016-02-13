@@ -92,6 +92,11 @@ namespace Pluton
             if (flds.Count != 0)
                 return flds[0];
 
+            // if not found on the current type, check the base
+            if (objType.BaseType != null) {
+                return GetFieldInfo (objType.BaseType, fieldName);
+            }
+
             return null;
         }
 
