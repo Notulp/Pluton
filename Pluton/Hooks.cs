@@ -424,7 +424,7 @@ namespace Pluton
             bb.SetHealthToMax();
             if (bpgce.Rotatable) bb.CallMethod("StartBeingRotatable");
             bb.SendNetworkUpdate();
-            bb.CallMethod("UpdateSkin");
+            bb.CallMethod("UpdateSkin", false);
             Effect.server.Run("assets/bundled/prefabs/fx/build/promote_" + bpgce.Grade.ToString().ToLower() + ".prefab", bb, 0u, Vector3.zero, Vector3.zero);
         }
 
