@@ -26,7 +26,9 @@ namespace Pluton
 
         public Socket_Base FindSocket(string name)
         {
-            return buildingBlock.FindSocket(name);
+            return (from socket in _buildingBlock.blockDefinition.allSockets
+                    where socket.socketName == name
+                    select socket).First();
         }
 
         public void Destroy()
