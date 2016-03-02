@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Pluton
 {
@@ -18,6 +19,68 @@ namespace Pluton
                 return metInf.As<MethodInfo>().Invoke(obj, args);
             
             return (object)null;
+        }
+
+        public static object CallMethodOnBase(this object obj, string methodName, params object[] args)
+        {
+            Type Base = obj.GetType().BaseType;
+            if (Base != null)
+            {
+                return CallMethodOnBase(obj, GetMethodInfo(Base, methodName), args);
+            }
+            return null;
+        }
+
+        public static object CallMethodOnBase(this object obj, Type Base, string methodname, params object[] args)
+        {
+            return CallMethodOnBase(obj, GetMethodInfo(Base, methodname), args);
+        }
+
+        public static object CallMethodOnBase(this object obj, MethodInfo method, params object[] args)
+        {
+            var parameters = method.GetParameters();
+
+            if (parameters.Length == 0) {
+                if (args != null && args.Length != 0) 
+                    throw new Exception("Arguments count doesn't match");
+            } else {
+                if (parameters.Length != args.Length)
+                    throw new Exception("Arguments count doesn't match");
+            }
+
+            Type returnType = null;
+            if (method.ReturnType != typeof(void)) {
+                returnType = method.ReturnType;
+            }
+
+            var type = obj.GetType();
+            var dynamicMethod = new DynamicMethod("", returnType, 
+                                                  new Type[] { type, typeof(Object) }, type);
+
+            var iLGenerator = dynamicMethod.GetILGenerator();
+            iLGenerator.Emit(OpCodes.Ldarg_0);
+
+            for (var i = 0; i < parameters.Length; i++) {
+                var parameter = parameters[i];
+
+                iLGenerator.Emit(OpCodes.Ldarg_1);
+
+                iLGenerator.Emit(OpCodes.Ldc_I4_S, i);
+                iLGenerator.Emit(OpCodes.Ldelem_Ref);
+
+                var parameterType = parameter.ParameterType;
+                if (parameterType.IsPrimitive) {
+                    iLGenerator.Emit(OpCodes.Unbox_Any, parameterType);
+                } else if (parameterType == typeof(Object)) {
+                } else {
+                    iLGenerator.Emit(OpCodes.Castclass, parameterType);
+                }
+            }
+
+            iLGenerator.Emit(OpCodes.Call, method);
+            iLGenerator.Emit(OpCodes.Ret);
+
+            return dynamicMethod.Invoke(null, new [] { obj, args });
         }
 
         public static object GetFieldValue(this object obj, string fieldName)
