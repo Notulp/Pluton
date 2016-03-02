@@ -7,6 +7,7 @@ namespace Pluton.Events
         public readonly HitInfo _info;
         public bool dropLoot = true;
         public readonly string HitBone;
+        public bool Die = true;
 
         public DeathEvent(HitInfo info)
         {

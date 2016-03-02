@@ -292,8 +292,11 @@ namespace Pluton.Patcher
             var basePlayerDie = rustAssembly.GetType("BasePlayer").GetMethod("Die");
             var onPlayerDied = hooksClass.GetMethod("On_PlayerDied");
 
-            basePlayerDie.RemoveAt(36)
-                .InsertCallBefore(36, onPlayerDied);
+            basePlayerDie.Clear()
+                         .Append(Instruction.Create(OpCodes.Ldarg_0))
+                         .Append(Instruction.Create(OpCodes.Ldarg_1))
+                         .AppendCall(onPlayerDied)
+                         .Append(Instruction.Create(OpCodes.Ret));
 
             if (gendiffs && newAssCS)
                 File.WriteAllText("diffs" + Path.DirectorySeparatorChar + basePlayerDie.FriendlyName + ".html", basePlayerDie.PrintAndLink(onPlayerDied));

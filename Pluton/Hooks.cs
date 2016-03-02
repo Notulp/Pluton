@@ -754,35 +754,58 @@ namespace Pluton
         }
 
         // BasePlayer.Die()
-        public static bool On_PlayerDied(BasePlayer player, HitInfo info)
+        public static void On_PlayerDied(BasePlayer player, HitInfo info)
         {
-            if (info == null) {
-                info = new HitInfo();
-                info.damageTypes.Add(player.lastDamage, Single.MaxValue);
-                info.Initiator = player as BaseEntity;
-            }
+            using (TimeWarning.New("Player.Die", 0.1f))
+            {
+                if (!player.IsDead())
+                {
+                    if (info == null)
+                    {
+                        info = new HitInfo();
+                        info.damageTypes.Add(player.lastDamage, Single.MaxValue);
+                        info.Initiator = player as BaseEntity;
+                    }
 
-            Player victim = Server.GetPlayer(player);
-            if (!((bool)player.CallMethod("WoundInsteadOfDying", info))) {
-                if (info.Initiator != null) {
-                    PlayerStats statsV = victim.Stats;
+                    Player victim = Server.GetPlayer(player);
+                    if (!((bool)player.CallMethod("WoundInsteadOfDying", info)))
+                    {
 
-                    if (info.Initiator is BasePlayer) {
-                        Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
-                        victim.Stats.AddDeath(true, false);
-                    } else if (info.Initiator is BaseNPC) {
-                        victim.Stats.AddDeath(false, true);
+                        var pde = new PlayerDeathEvent(victim, info);
+                        OnNext("On_PlayerDied", pde);
+
+                        if (pde.Die)
+                        {
+                            if (info.Initiator != null)
+                            {
+                                PlayerStats statsV = victim.Stats;
+
+                                if (info.Initiator is BasePlayer)
+                                {
+                                    Server.GetPlayer(info.Initiator as BasePlayer).Stats.AddKill(true, false);
+                                    victim.Stats.AddDeath(true, false);
+                                }
+                                else if (info.Initiator is BaseNPC)
+                                {
+                                    victim.Stats.AddDeath(false, true);
+                                }
+                            }
+
+                            if (!pde.dropLoot)
+                            {
+                                if (player.belt != null)
+                                {
+                                    var vector = new Vector3(UnityEngine.Random.Range(-2f, 2f), 0.2f, UnityEngine.Random.Range(-2f, 2f));
+                                    player.belt.DropActive(vector.normalized * 3f);
+                                }
+                                player.inventory.Strip();
+                            }
+
+                            player.CallMethodOnBase(typeof(BaseCombatEntity), "Die", info);
+                        }
                     }
                 }
-
-                Events.PlayerDeathEvent pde = new Events.PlayerDeathEvent(victim, info);
-                OnNext("On_PlayerDied", pde);
-
-                if (!pde.dropLoot)
-                    player.inventory.Strip();
-                return false;
             }
-            return true;
         }
 
 
