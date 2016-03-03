@@ -160,7 +160,7 @@
             }
         }
 
-        public bool SendCommand(string command, params object[] args)
+        public string SendCommand(string command, params object[] args)
         {
             return ConsoleSystem.Run.Server.Normal(command, args);
         }
