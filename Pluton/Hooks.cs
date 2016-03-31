@@ -438,7 +438,7 @@ namespace Pluton
                     BaseCorpse corpse = combatEnt.GetComponent<BaseCorpse>();
                     BasePlayer player = combatEnt.GetComponent<BasePlayer>();
 
-                    combatEnt.ScaleDamage(info, useProtection);
+                    combatEnt.ScaleDamage(info);
 
                     HurtEvent he;
                     if (player != null) {
@@ -466,7 +466,7 @@ namespace Pluton
                         DirectionProperties[] directionProperties = (DirectionProperties[])combatEnt.GetFieldValue("propDirection");
                         for (int i = 0; i < directionProperties.Length; i++) {
                             if (!(directionProperties[i].extraProtection == null)) {
-                                if (directionProperties[i].IsPointWithinRadius(combatEnt.transform, info.PointStart)) {
+                                if (directionProperties[i].IsWeakspot(combatEnt.transform, info)) {
                                     directionProperties[i].extraProtection.Scale(info.damageTypes);
                                 }
                             }
