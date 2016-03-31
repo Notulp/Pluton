@@ -428,7 +428,7 @@ namespace Pluton
             Effect.server.Run("assets/bundled/prefabs/fx/build/promote_" + bpgce.Grade.ToString().ToLower() + ".prefab", bb, 0u, Vector3.zero, Vector3.zero);
         }
 
-        public static void On_CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info, bool useProtection = true)
+        public static void On_CombatEntityHurt(BaseCombatEntity combatEnt, HitInfo info)
         {
             try {
                 Assert.Test(combatEnt.isServer, "This should be called serverside only");
