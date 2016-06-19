@@ -3,8 +3,8 @@
 Pluton
 ======
 
-<a href='http://jenkins.pluton.team/job/Pluton/'>
-  <img src='http://jenkins.pluton.team/buildStatus/icon?job=Pluton'></a>
+<a href='https://jenkins.pluton.team/job/Pluton.Rust/'>
+  <img src='http://jenkins.pluton.team/buildStatus/icon?job=Pluton.Rust'></a>
 <a href='https://github.com/Notulp/Pluton/blob/master/LICENSE'>
   <img src='https://img.shields.io/github/license/notulp/pluton.svg'></a>
 <a href='https://github.com/Notulp/Pluton/releases/latest'>
