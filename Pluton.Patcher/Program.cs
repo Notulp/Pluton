@@ -109,7 +109,6 @@ namespace Pluton.Patcher
             hurt.Clear()
                 .Append(Instruction.Create(OpCodes.Ldarg_0))
                 .Append(Instruction.Create(OpCodes.Ldarg_1))
-                .Append(Instruction.Create(OpCodes.Ldarg_2))
                 .AppendCall(onHurtHook)
                 .Append(Instruction.Create(OpCodes.Ret));
             
