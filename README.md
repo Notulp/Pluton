@@ -36,5 +36,3 @@ Our sponsors:
 
 <a href="http://www.streamline-servers.com" alt="Streamline Servers">
   <img src="https://i.imgur.com/ZlZ3vBN.png"></a>
-<a href="http://fpsplayers.com" alt="FPS Players">
-  <img src="http://i.imgur.com/z7OEC52.png"></a>
